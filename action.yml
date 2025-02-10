@@ -30,6 +30,9 @@ runs:
   using: 'composite'
   steps:
     - run: |
+        bash $GITHUB_ACTION_PATH/src/checks.sh
+      shell: bash
+    - run: |
         bash $GITHUB_ACTION_PATH/src/prepare_deployment.sh
       shell: bash
     - run: |
