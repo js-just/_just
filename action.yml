@@ -30,14 +30,14 @@ runs:
   using: 'composite'
   steps:
     - run: |
-        bash src/prepare_deployment.sh
+        bash $GITHUB_ACTION_PATH/src/prepare_deployment.sh
       shell: bash
     - run: |
-        bash src/create_api_endpoints.sh
+        bash $GITHUB_ACTION_PATH/src/create_api_endpoints.sh
       shell: bash
     - run: |
-        bash src/modify_deployment.sh
+        bash $GITHUB_ACTION_PATH/src/modify_deployment.sh
       shell: bash
     - run: |
-        bash src/override_deployment.sh
+        bash $GITHUB_ACTION_PATH/src/override_deployment.sh
       shell: bash
