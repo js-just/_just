@@ -57,3 +57,4 @@ runs:
           sed -i '/<\/head>/i\ '"$(cat \"$html_file\")" "$html_file"
         done
         cp _just/404.html deploy/404.html
+      shell: bash
