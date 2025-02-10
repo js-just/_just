@@ -1,5 +1,8 @@
 # Check for directories
 if [ ! -d "_just" ]; then
+  echo ""
+  echo "----------------"
+  echo ""
   echo "_just Checks:"
   echo ""
   echo "  ✕ (root)/_just/"
@@ -11,6 +14,9 @@ if [ ! -d "_just" ]; then
   exit 1
 fi
 if [ ! -d "_just/js" ]; then
+  echo ""
+  echo "----------------"
+  echo ""
   echo "_just Checks:"
   echo ""
   echo "  ✓ (root)/_just/"
@@ -22,6 +28,9 @@ if [ ! -d "_just/js" ]; then
   exit 1
 fi
 if [ ! -d "_just/style" ]; then
+  echo ""
+  echo "----------------"
+  echo ""
   echo "_just Checks:"
   echo ""
   echo "  ✓ (root)/_just/"
@@ -33,6 +42,9 @@ if [ ! -d "_just/style" ]; then
   exit 1
 fi
 if [ ! -f "_just/404.html" ]; then
+  echo ""
+  echo "----------------"
+  echo ""
   echo "_just Checks:"
   echo ""
   echo "  ✓ (root)/_just/"
@@ -43,6 +55,9 @@ if [ ! -f "_just/404.html" ]; then
   echo "Error: The _just/404.html file is missing." >&2
   exit 1
 fi
+echo ""
+echo "----------------"
+echo ""
 echo "_just Checks:"
 echo ""
 echo "  ✓ (root)/_just/"
