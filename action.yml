@@ -1,6 +1,8 @@
 name: '_just'
 description: 'A GitHub Action to modify and override your Next.js site on Github Pages.'
 author: 'JustDeveloper1'
+icon: 'edit'
+color: 'purple'
 runs:
   using: 'node20'
   main: 'index.bash'
