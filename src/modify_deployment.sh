@@ -23,11 +23,7 @@
 # Modify Deployment
 mkdir -p deploy/_just/
 FILE_ID=1
-echo ""
-echo "----------------"
-echo ""
-echo "_just Chunks:"
-echo ""
+echo -e "\n----------------\n\n_just Chunks:\n"
 for file in _just/js/*; do
   cp "$file" "deploy/_just/${FILE_ID}.js"
   echo "_just/${FILE_ID}.js"
@@ -43,11 +39,7 @@ echo ""
 echo "End _just Chunks"
 echo ""
 echo "----------------"
-echo ""
-echo "----------------"
-echo ""
-echo "Dangerously Inserted Files:"
-echo ""
+echo -e "\n----------------\n\nDangerously Inserted Files:\n"
 for file in _just/dangerously-insert-files/*; do
   cp "$file" "deploy/$(basename "$file")"
   echo "$(basename "$file")"
