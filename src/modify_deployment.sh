@@ -35,12 +35,12 @@ for file in _just/style/*; do
   echo "_just/${FILE_ID}.css"
   FILE_ID=$((FILE_ID + 1))
 done
-echo "End _just Chunks\n"
-echo "----------------\n"
+echo -e "\nEnd _just Chunks\n"
+echo -e "----------------\n"
 echo -e "\n----------------\n\nDangerously Inserted Files:\n"
 for file in _just/dangerously-insert-files/*; do
   cp "$file" "deploy/$(basename "$file")"
   echo "$(basename "$file")"
 done
-echo "End Dangerously Inserted Files\n"
-echo "----------------\n"
+echo -e "\nEnd Dangerously Inserted Files\n"
+echo -e "----------------\n"
