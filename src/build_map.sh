@@ -60,3 +60,8 @@ find deploy -mindepth 1 -print | while read -r path; do
 done
 echo -e "End Build Map\n"
 echo -e "----------------\n"
+echo "window._just_Manifest = _just_buildManifest;" >> deploy/_just/static/$BUILD_ID/buildManifest.js
+# Override Deployment
+for html_file in deploy/*.html; do
+  echo "<script src=\"_just/static/$BUILD_ID/buildManifest.js\"></script>" >> "$html_file"
+done
