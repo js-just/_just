@@ -28,7 +28,7 @@ for html_file in deploy/*.html; do
   for css_file in deploy/_just/*.css; do
     echo "<link href=\"_just/$(basename "$css_file")\" rel=\"stylesheet\">" >> "$html_file"
   done
-  echo "$(cat ysiaasfyasifyaif)" >> "$html_file"
+  echo "$(cat $GITHUB_ACTION_PATH/src/comment.html)" >> "$html_file"
   sed -i '/<\/head>/i\ '"$(cat "$html_file")" "$html_file"
 done
 cp _just/404.html deploy/404.html
