@@ -28,7 +28,7 @@ mkdir -p deploy/_just/static/$BUILD_ID/
 
 echo "const _just_buildManifest = [];" > deploy/_just/static/$BUILD_ID/buildManifest.js
 
-echo "Build Map:"
+echo -e "\n----------------\n\nBuild Map:\n"
 FILE_ID=1
 TOTAL_FILES=$(find deploy -mindepth 1 -print | wc -l)
 find deploy -mindepth 1 -print | while read -r path; do
