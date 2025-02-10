@@ -60,7 +60,6 @@ find deploy -mindepth 1 -print | while read -r path; do
 done
 echo -e "End Build Map\n"
 echo -e "----------------\n"
-# echo "window._just_Manifest = _just_buildManifest;" >> deploy/_just/static/$BUILD_ID/buildManifest.js
 echo "$(cat $GITHUB_ACTION_PATH/src/buildManifest_end.js)" >> deploy/_just/static/$BUILD_ID/buildManifest.js
 # Override Deployment
 for html_file in deploy/*.html; do
