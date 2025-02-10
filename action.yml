@@ -8,14 +8,14 @@ runs:
   using: 'composite'
   steps:
     - run: |
-        bash prepare_deployment.sh
+        bash src/prepare_deployment.sh
       shell: bash
     - run: |
-        bash create_api_endpoints.sh
+        bash src/create_api_endpoints.sh
       shell: bash
     - run: |
-        bash modify_deployment.sh
+        bash src/modify_deployment.sh
       shell: bash
     - run: |
-        bash override_deployment.sh
+        bash src/override_deployment.sh
       shell: bash
