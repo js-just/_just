@@ -21,6 +21,10 @@
 # SOFTWARE.
 
 # Modify Deployment
+if [ -d "deploy/_just" ]; then
+  echo "Error: Your website have _just directory in the root. Please remove it to proceed." >&2
+  exit 1
+fi
 mkdir -p deploy/_just/
 FILE_ID=1
 echo -e "\n----------------\n\n_just Chunks:\n"
