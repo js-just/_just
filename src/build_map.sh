@@ -28,9 +28,10 @@ mkdir -p deploy/_just/static/$BUILD_ID/
 
 echo "const _just_buildManifest = [];" > deploy/_just/static/$BUILD_ID/buildManifest.js
 
+echo "Build Map:"
 find deploy -mindepth 1 -print | while read -r path; do
     relative_path=${path#deploy/}
-    echo "$relative_path"
+    echo "├ $relative_path"
     
     if [ -f "$path" ]; then
         case "${path##*.}" in
