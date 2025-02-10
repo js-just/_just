@@ -26,7 +26,8 @@ BUILD_ID=$(cat .next/BUILD_ID)
 mkdir -p deploy/_just/static/
 mkdir -p deploy/_just/static/$BUILD_ID/
 
-echo "const _just_buildManifest = [];" > deploy/_just/static/$BUILD_ID/buildManifest.js
+# echo "const _just_buildManifest = [];" > deploy/_just/static/$BUILD_ID/buildManifest.js
+echo "$(cat $GITHUB_ACTION_PATH/src/buildManifest_start.js)" > deploy/_just/static/$BUILD_ID/buildManifest.js
 
 echo -e "\n----------------\n\nBuild Map:\n"
 FILE_ID=1
