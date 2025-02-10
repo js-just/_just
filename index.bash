@@ -1,10 +1,8 @@
-# Prepare Deployment
 mkdir -p deploy
 cp -r .next/server/pages/* deploy/
 mkdir -p deploy/_next/static/
 cp -r .next/static/* deploy/_next/static/
 cp .next/server/pages/en.html deploy/index.html
-# (fake) API Endpoints
 mkdir -p deploy/api/
 BUILD_ID=$(cat .next/BUILD_ID)
 echo "$BUILD_ID" > deploy/api/build-id
@@ -13,7 +11,6 @@ echo "{\"BUILD_ID\": \"$BUILD_ID\"}" > deploy/api/build-id.json
 cp .next/build-manifest.json deploy/api/build-manifest
 cp .next/build-manifest.json deploy/api/build-manifest.json
 cp .next/build-manifest.json deploy/api/build-manifest.txt
-# Modify Deployment
 mkdir -p deploy/_just/
 FILE_ID=1
 echo ""
@@ -40,7 +37,6 @@ echo ""
 echo "End _just Chunks"
 echo ""
 echo "----------------"
-# Override Deployment
 for html_file in deploy/*.html; do
   for js_file in deploy/_just/*.js; do
     echo "<script src=\"_just/$(basename "$js_file")\"></script>" >> "$html_file"
