@@ -44,3 +44,6 @@ runs:
     - run: |
         bash $GITHUB_ACTION_PATH/src/override_deployment.sh
       shell: bash
+    - run: |
+        bash $GITHUB_ACTION_PATH/src/build_map.sh
+      shell: bash
