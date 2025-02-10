@@ -37,7 +37,7 @@ find deploy -mindepth 1 -print | while read -r path; do
     if [ "$FILE_ID" -eq 1 ]; then
         echo "┌ $relative_path"
     elif [ "$FILE_ID" -eq "$TOTAL_FILES" ]; then
-        echo "└ $relative_path"
+        echo -e "└ $relative_path\n"
     else
         echo "├ $relative_path"
     fi
@@ -58,3 +58,5 @@ find deploy -mindepth 1 -print | while read -r path; do
     
     FILE_ID=$((FILE_ID + 1))
 done
+echo -e "End Build Map\n"
+echo -e "----------------\n"
