@@ -30,9 +30,17 @@ echo "const _just_buildManifest = [];" > deploy/_just/static/$BUILD_ID/buildMani
 
 echo "Build Map:"
 FILE_ID=1
+TOTAL_FILES=$(find deploy -mindepth 1 -print | wc -l)
 find deploy -mindepth 1 -print | while read -r path; do
     relative_path=${path#deploy/}
-    echo "├ $relative_path"
+
+    if [ "$FILE_ID" -eq 1 ]; then
+        echo "┌ $relative_path"
+    elif [ "$FILE_ID" -eq "$TOTAL_FILES" ]; then
+        echo "└ $relative_path"
+    else
+        echo "├ $relative_path"
+    fi
     
     if [ -f "$path" ]; then
         case "${path##*.}" in
@@ -47,4 +55,6 @@ find deploy -mindepth 1 -print | while read -r path; do
         esac
         echo "    _just_buildManifest.push({\"type\": \"$type\", \"path\": \"$relative_path\"});" >> deploy/_just/static/$BUILD_ID/buildManifest.js
     fi
+    
+    FILE_ID=$((FILE_ID + 1))
 done
