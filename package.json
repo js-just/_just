@@ -1,0 +1,40 @@
+{
+  "name": "justdev_just",
+  "version": "0.0.10",
+  "description": "w.i.p.",
+  "main": "index.sh",
+  "scripts": {
+    "test": "echo \"https://github.com/JustDeveloper1/_just#readme\" && exit 1",
+    "about": "echo \"https://github.com/JustDeveloper1/_just#readme\" && exit 1",
+    "info": "echo \"https://github.com/JustDeveloper1/_just#readme\" && exit 1",
+    "repo": "echo \"https://github.com/JustDeveloper1/_just#readme\" && exit 1",
+    "help": "echo \"https://github.com/JustDeveloper1/_just#readme\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JustDeveloper1/_just.git"
+  },
+  "keywords": [
+    "postprocessor",
+    "_just",
+    "justdeveloper",
+    "web",
+    "backend",
+    "back-end",
+    "frontend",
+    "front-end",
+    "fullstack",
+    "full-stack",
+    "nodejs",
+    "github",
+    "pages",
+    "github",
+    "pages"
+  ],
+  "author": "JustDeveloper",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/JustDeveloper1/_just/issues"
+  },
+  "homepage": "https://github.com/JustDeveloper1/_just#readme"
+}
