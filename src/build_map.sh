@@ -52,7 +52,7 @@ find _just_data -mindepth 1 -print | while read -r path; do
     if [ -f "$path" ]; then
         if [[ "$first_line" != "// _just hide" || 
             "$first_line" != "// _just doNotModify+hide" ]]; then
-            echo "    _justManifest_.push(\"$relative_path\");" >> deploy/_just/static/$BUILD_ID/_justManifest.js
+            echo "    _just_Manifest0.push(\"$relative_path\");" >> deploy/_just/static/$BUILD_ID/_justManifest.js
         fi
     fi
 done
@@ -140,7 +140,7 @@ find deploy -mindepth 1 -print | while read -r path; do
         # Build manifest entry
         if [[ "$first_line" != "// _just hide" || 
             "$first_line" != "// _just doNotModify+hide" ]]; then
-            echo "    _just_buildManifest.push({\"type\": \"$type\", \"path\": \"$relative_path\", \"size\": {\"bytes\": $file_size, \"string\": \"$(human_readable_size $file_size)\"}});" >> deploy/_just/static/$BUILD_ID/buildManifest.js
+            echo "    _just_buildManifest0.push({\"type\": \"$type\", \"path\": \"$relative_path\", \"size\": {\"bytes\": $file_size, \"string\": \"$(human_readable_size $file_size)\"}});" >> deploy/_just/static/$BUILD_ID/buildManifest.js
         fi
     fi
     
@@ -162,6 +162,7 @@ for html_file in deploy/*.html; do
     
     echo "<script src=\"_just/static/$BUILD_ID/buildManifest.js\"></script>" >> "$html_file"
     echo "<script src=\"_just/static/$BUILD_ID/_justManifest.js\"></script>" >> "$html_file"
+    echo "<script src=\"_just/static/chunks/$clearCache_name.js\"></script>" >> "$html_file"
     
     echo "</body>" >> "$html_file"
     echo "</html>" >> "$html_file"
