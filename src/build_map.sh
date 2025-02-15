@@ -98,20 +98,20 @@ find deploy -mindepth 1 -print | while read -r path; do
         esac
         file_size=$(stat -c%s "$path")
         TOTAL_SIZE=$((TOTAL_SIZE + file_size))
-        
+
         # Output formatting
         if [ "$FILE_ID" -eq 1 ]; then
-            printf "┌ %3d B | %s\n" "$(human_readable_size $file_size)" "$relative_path"
+            printf "┌ %s | %s\n" "$(human_readable_size $file_size)" "$relative_path"
         elif [ "$FILE_ID" -eq "$TOTAL_FILES" ]; then
-            printf "└ %3d B | %s\n" "$(human_readable_size $file_size)" "$relative_path"
+            printf "└ %s | %s\n" "$(human_readable_size $file_size)" "$relative_path"
         else
-            printf "├ %3d B | %s\n" "$(human_readable_size $file_size)" "$relative_path"
+            printf "├ %s | %s\n" "$(human_readable_size $file_size)" "$relative_path"
         fi
         
         # Build manifest entry
         if [[ "$first_line" != "// _just hide" || 
             "$first_line" != "// _just doNotModify+hide" ]]; then
-            echo "    _just_buildManifest.push({\"type\": \"$type\", \"path\": \"$relative_path\", \"size\": {\"bytes\": $file_size, \"string\": $(human_readable_size $file_size)}});" >> deploy/_just/static/$BUILD_ID/buildManifest.js
+            echo "    _just_buildManifest.push({\"type\": \"$type\", \"path\": \"$relative_path\", \"size\": {\"bytes\": $file_size, \"string\": \"$(human_readable_size $file_size)\"}});" >> deploy/_just/static/$BUILD_ID/buildManifest.js
         fi
     fi
     
