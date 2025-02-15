@@ -49,7 +49,11 @@ while [[ $(stat -c%s "$merged_file") -lt 131072 ]]; do
   if [[ -z "$largest_file" ]]; then
     break  # Exit the loop if no largest file is found
   fi
-  sed -i "/$(basename "$largest_file")/d" "$merged_file"  # Remove the largest file from merged file
+  if grep -q "$(basename "$largest_file")" "$merged_file"; then
+    sed -i "/$(basename "$largest_file")/d" "$merged_file"  # Remove the largest file from merged file
+  else
+    break  # Exit the loop if the largest file is not found in the merged file
+  fi
 done
 
 echo "t2"
