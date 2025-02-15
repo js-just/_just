@@ -41,11 +41,18 @@ for file in _just/js/*; do
   fi
 done
 
+echo "t1"
+
 # Check if merged file is less than 128KB
 while [[ $(stat -c%s "$merged_file") -lt 131072 ]]; do
   largest_file=$(ls -S "$merged_file" | head -n 1)  # Get the largest file
+  if [[ -z "$largest_file" ]]; then
+    break  # Exit the loop if no largest file is found
+  fi
   sed -i "/$(basename "$largest_file")/d" "$merged_file"  # Remove the largest file from merged file
 done
+
+echo "t2"
 
 # Move unmerged files to _just/js/
 for file in _just/js/*; do
@@ -57,6 +64,8 @@ for file in _just/js/*; do
     cp "$file" "_just/js/$(basename "$file")"  # Keep unmerged files
   fi
 done
+
+echo "t3"
 
 # Move js files to deploy/_just/
 FILE_ID=1
