@@ -97,12 +97,13 @@ echo -e "\n----------------\n\nDangerously Inserted Files:\n"
 
 # Dangerously insert files
 find _just/dangerously-insert-files/ -type f | while read -r file; do
-  target_dir="deploy/$(dirname "$file" | sed 's|_just/dangerously-insert-files/||')"
+  relative_path="${file#_just/dangerously-insert-files/}"
+  target_dir="deploy/$(dirname "$relative_path")"
   mkdir -p "$target_dir"
   if [ -f "$target_dir/$(basename "$file")" ]; then
     echo "Warning: Failed to insert file \"$target_dir/$(basename "$file")\"."
   fi
-  if [ ! -f "deploy/404.html" ]; then
+  if [ ! -f "$target_dir/$(basename "$file")" ]; then
     cp "$file" "$target_dir/$(basename "$file")"
     echo "$target_dir/$(basename "$file")"
   fi

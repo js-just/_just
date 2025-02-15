@@ -28,6 +28,20 @@ mkdir -p deploy/_just/static/$BUILD_ID/
 
 echo "$(cat $GITHUB_ACTION_PATH/src/buildManifest_start.js)" > deploy/_just/static/$BUILD_ID/buildManifest.js
 
+# Convert bytes to human-readable format
+function human_readable_size {
+    local size=$1
+    if [ "$size" -ge 1073741824 ]; then
+        echo "$(bc <<< "scale=2; $size/1073741824") GB"
+    elif [ "$size" -ge 1048576 ]; then
+        echo "$(bc <<< "scale=2; $size/1048576") MB"
+    elif [ "$size" -ge 1024 ]; then
+        echo "$(bc <<< "scale=2; $size/1024") KB"
+    else
+        echo "$size B"
+    fi
+}
+
 echo -e "\n----------------\n\nBuild Map:\n"
 FILE_ID=1
 TOTAL_FILES=$(find deploy -mindepth 1 -print | wc -l)
@@ -37,7 +51,7 @@ find deploy -mindepth 1 -print | while read -r path; do
     
     if [ -f "$path" ]; then
         case "${path##*.}" in
-
+            
             # Website files (idk how to name them) 
             html) type="HTML" ;;
             php) type="PHP" ;;
@@ -80,20 +94,24 @@ find deploy -mindepth 1 -print | while read -r path; do
             
             # Todo: more files support
             *) type="Other" ;;
+
         esac
         file_size=$(stat -c%s "$path")
-        TOTAL_SIZE=$((TOTAL_SIZE + $file_size))
-            if [ "$FILE_ID" -eq 1 ]; then
-                printf "┌ %3d B | %s\n" "$file_size" "$relative_path"
-            elif [ "$FILE_ID" -eq "$TOTAL_FILES" ]; then
-                printf "└ %3d B | %s\n" "$file_size" "$relative_path"
-            else
-                printf "├ %3d B | %s\n" "$file_size" "$relative_path"
-            fi
-        first_line=$(head -n 1 "$js_file")
-        if [![ "$first_line" == "// _just hide" || 
-            "$first_line" == "// _just doNotModify+hide" ]]; then
-            echo "    _just_buildManifest.push({\"type\": \"$type\", \"path\": \"$relative_path\", \"size\": $file_size});" >> deploy/_just/static/$BUILD_ID/buildManifest.js
+        TOTAL_SIZE=$((TOTAL_SIZE + file_size))
+        
+        # Output formatting
+        if [ "$FILE_ID" -eq 1 ]; then
+            printf "┌ %3d B | %s\n" "$(human_readable_size $file_size)" "$relative_path"
+        elif [ "$FILE_ID" -eq "$TOTAL_FILES" ]; then
+            printf "└ %3d B | %s\n" "$(human_readable_size $file_size)" "$relative_path"
+        else
+            printf "├ %3d B | %s\n" "$(human_readable_size $file_size)" "$relative_path"
+        fi
+        
+        # Build manifest entry
+        if [[ "$first_line" != "// _just hide" || 
+            "$first_line" != "// _just doNotModify+hide" ]]; then
+            echo "    _just_buildManifest.push({\"type\": \"$type\", \"path\": \"$relative_path\", \"size\": {\"bytes\": $file_size, \"string\": $(human_readable_size $file_size)}});" >> deploy/_just/static/$BUILD_ID/buildManifest.js
         fi
     fi
     
@@ -102,8 +120,8 @@ done
 
 manifest_size=$(stat -c%s "deploy/_just/static/$BUILD_ID/buildManifest.js")
 echo -e "End Build Map\n\n"
-echo -e "_just/static/$BUILD_ID/buildManifest.js size: $manifest_size bytes\n"
-echo -e "                            Total build size: $TOTAL_SIZE bytes\n\n"
+echo -e "_just/static/$BUILD_ID/buildManifest.js size: $(human_readable_size $manifest_size)\n"
+echo -e "                            Total build size: $(human_readable_size $TOTAL_SIZE)\n\n"
 echo -e "----------------\n"
 echo "$(cat $GITHUB_ACTION_PATH/src/buildManifest_end.js)" >> deploy/_just/static/$BUILD_ID/buildManifest.js
 
