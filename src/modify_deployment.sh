@@ -45,7 +45,7 @@ echo "t1"
 
 # Check if merged file is less than 128KB
 while [[ $(stat -c%s "$merged_file") -lt 131072 ]]; do
-  largest_file=$(ls -S "$merged_file" | head -n 1)  # Get the largest file
+  largest_file=$(ls -S _just/js/* | head -n 1)  # Get the largest original file
   if [[ -z "$largest_file" ]]; then
     break  # Exit the loop if no largest file is found
   fi
