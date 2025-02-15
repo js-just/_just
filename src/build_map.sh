@@ -139,8 +139,8 @@ echo "$(cat $GITHUB_ACTION_PATH/src/_justManifest_end.js)" >> deploy/_just/stati
 
 # Override Pages
 for html_file in deploy/*.html; do
-    sed -i.bak '/<\/body>/d' "$html_file"
-    sed -i.bak '/<\/html>/d' "$html_file"
+    sed -i.bak '/<\/body>/!d' "$html_file"
+    sed -i.bak '/<\/html>/!d' "$html_file"
     echo "<script src=\"_just/static/$BUILD_ID/buildManifest.js\"></script>" >> "$html_file"
     echo "<script src=\"_just/static/$BUILD_ID/_justManifest.js\"></script>" >> "$html_file"
     echo "</body></html>" >> "$html_file"
