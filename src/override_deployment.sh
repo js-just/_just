@@ -47,3 +47,6 @@ fi
 if [ ! -f "deploy/404.html" ]; then
   cp _just/404.html deploy/404.html
 fi
+
+mkdir -p deploy/_just/e/
+echo "$(cat $GITHUB_ACTION_PATH/src/error.html)" > deploy/_just/e/1.html

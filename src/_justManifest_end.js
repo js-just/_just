@@ -1,1 +1,1 @@
-window._justManifest = _justManifest_;
+window._just_Manifest = _just_Manifest0;

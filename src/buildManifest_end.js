@@ -1,4 +1,4 @@
-window._just_Manifest = _just_buildManifest;
+window._just_buildManifest = _just_buildManifest0;
 
 /* Example usage:
 

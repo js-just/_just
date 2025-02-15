@@ -25,16 +25,34 @@
 BUILD_ID=$(cat .next/BUILD_ID)
 mkdir -p deploy/_just/static/
 mkdir -p deploy/_just/static/$BUILD_ID/
+mkdir -p deploy/_just/static/chunks/
+
+generate_strings() {
+    local count=$1
+    local length=$2
+    local chars="qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM1234567890-_"
+    for ((i=0; i<count; i++)); do
+        local random_string=""
+        for ((j=0; j<length; j++)); do
+            random_string+="${chars:RANDOM%32:1}"
+        done
+        echo "$random_string"
+    done
+}
+
+random_strings=($(generate_strings 1 16))
+clearCache_name=${random_strings[0]}c
 
 echo "$(cat $GITHUB_ACTION_PATH/src/buildManifest_start.js)" > deploy/_just/static/$BUILD_ID/buildManifest.js
 echo "$(cat $GITHUB_ACTION_PATH/src/_justManifest_start.js)" > deploy/_just/static/$BUILD_ID/_justManifest.js
+echo "$(cat $GITHUB_ACTION_PATH/src/clearCache.js)" > deploy/_just/static/chunks/$clearCache_name.js
 find _just_data -mindepth 1 -print | while read -r path; do
     relative_path=${path#_just_data/}
     first_line=$(head -n 1 "$path")
     if [ -f "$path" ]; then
         if [[ "$first_line" != "// _just hide" || 
             "$first_line" != "// _just doNotModify+hide" ]]; then
-            echo "    _just_buildManifest.push(\"$relative_path\");" >> deploy/_just/static/$BUILD_ID/_justManifest.js
+            echo "    _justManifest_.push(\"$relative_path\");" >> deploy/_just/static/$BUILD_ID/_justManifest.js
         fi
     fi
 done
