@@ -21,7 +21,16 @@
 # SOFTWARE.
 
 # (fake) API Endpoints
+
+# Check
+if [ -d "deploy/api" ]; then
+  echo "Error: Your website have api directory in the root. Please remove it to proceed." >&2
+  exit 1
+fi
+
 mkdir -p deploy/api/
+
+# Get Next.js data and copy it to API Endpoints
 BUILD_ID=$(cat .next/BUILD_ID)
 echo "$BUILD_ID" > deploy/api/build-id
 echo "$BUILD_ID" > deploy/api/build-id.txt

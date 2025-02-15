@@ -21,30 +21,79 @@
 # SOFTWARE.
 
 # Modify Deployment
+
 if [ -d "deploy/_just" ]; then
-  echo "Error: Your website have _just directory in the root. Please remove it to proceed." >&2
+  echo "Error: Your website has a _just directory in the root. Please remove it to proceed." >&2
   exit 1
 fi
+
 mkdir -p deploy/_just/
-FILE_ID=1
 echo -e "\n----------------\n\n_just Chunks:\n"
+
+# Merging logic
+merged_file="deploy/_just/merged.js"
+> "$merged_file"
 for file in _just/js/*; do
+  file_size=$(stat -c%s "$file")
+  if [[ $file_size -gt 51200 ]]; then  # Check if file is greater than 50KB
+    cat "$file" >> "$merged_file"
+    echo -e "\n" >> "$merged_file"  # Add new line after each file
+  fi
+done
+
+# Check if merged file is less than 128KB
+while [[ $(stat -c%s "$merged_file") -lt 131072 ]]; do
+  largest_file=$(ls -S "$merged_file" | head -n 1)  # Get the largest file
+  sed -i "/$(basename "$largest_file")/d" "$merged_file"  # Remove the largest file from merged file
+done
+
+# Move unmerged files to _just/js/
+for file in _just/js/*; do
+  first_line=$(head -n 1 "$file")
+  if [[ $first_line == "// _just ignore"* ]]; then
+    continue
+  fi
+  if [[ ! -f "$merged_file" || $(stat -c%s "$merged_file") -lt 131072 ]]; then
+    cp "$file" "_just/js/$(basename "$file")"  # Keep unmerged files
+  fi
+done
+
+# Move js files to deploy/_just/
+FILE_ID=1
+for file in _just/js/*; do
+  first_line=$(head -n 1 "$file")
+  if [[ $first_line == "// _just ignore"* ]]; then
+    continue
+  fi
   cp "$file" "deploy/_just/${FILE_ID}.js"
   echo "_just/${FILE_ID}.js"
   FILE_ID=$((FILE_ID + 1))
 done
+
+# Move css files to deploy/_just/
 FILE_ID=1
 for file in _just/style/*; do
   cp "$file" "deploy/_just/${FILE_ID}.css"
   echo "_just/${FILE_ID}.css"
   FILE_ID=$((FILE_ID + 1))
 done
+
 echo -e "\nEnd _just Chunks\n"
 echo -e "----------------\n"
 echo -e "\n----------------\n\nDangerously Inserted Files:\n"
-for file in _just/dangerously-insert-files/*; do
-  cp "$file" "deploy/$(basename "$file")"
-  echo "$(basename "$file")"
+
+# Dangerously insert files
+find _just/dangerously-insert-files/ -type f | while read -r file; do
+  target_dir="deploy/$(dirname "$file" | sed 's|_just/dangerously-insert-files/||')"
+  mkdir -p "$target_dir"
+  if [ -f "$target_dir/$(basename "$file")" ]; then
+    echo "Warning: Failed to insert file \"$target_dir/$(basename "$file")\"."
+  fi
+  if [ ! -f "deploy/404.html" ]; then
+    cp "$file" "$target_dir/$(basename "$file")"
+    echo "$target_dir/$(basename "$file")"
+  fi
 done
+
 echo -e "\nEnd Dangerously Inserted Files\n"
 echo -e "----------------\n"

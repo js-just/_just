@@ -37,6 +37,8 @@ find deploy -mindepth 1 -print | while read -r path; do
     
     if [ -f "$path" ]; then
         case "${path##*.}" in
+
+            # Website files (idk how to name them) 
             html) type="HTML" ;;
             php) type="PHP" ;;
             css) type="CSS" ;;
@@ -46,6 +48,7 @@ find deploy -mindepth 1 -print | while read -r path; do
             xml) type="XML" ;;
             webmanifest) type="Webmanifest" ;;
 
+            # Media
             png) type="Image/Png" ;;
             svg) type="Image/SVG" ;;
             jpeg|jpg) type="Image/Jpeg" ;;
@@ -54,15 +57,9 @@ find deploy -mindepth 1 -print | while read -r path; do
             gif) type="Image/GIF" ;;
             heic) type="Image/HEIC" ;;
             ico) type="Favicon" ;;
-
             mp4) type="Video/MP4" ;;
             mov) type="Video/Mov" ;;
             webm) type="Video/Webm" ;;
-
-            otf) type="Font/OTF" ;;
-            woff) type="Font/WOFF" ;;
-            woff2) type="Font/WOFF2" ;;
-
             m4a) type="Audio/M4A" ;;
             mp2) type="Audio/MP2" ;;
             mp3) type="Audio/MP3" ;;
@@ -70,11 +67,18 @@ find deploy -mindepth 1 -print | while read -r path; do
             wav) type="Audio/WAV" ;;
             wma) type="Audio/WMA" ;;
 
+            # Fonts
+            otf) type="Font/OTF" ;;
+            woff) type="Font/WOFF" ;;
+            woff2) type="Font/WOFF2" ;;
+
+            # Archive
             7z) type="Archive/7z" ;;
             tar) type="Archive/TAR" ;;
             rar) type="Archive/RAR" ;;
             zip) type="Archive/ZIP" ;;
             
+            # Todo: more files support
             *) type="Other" ;;
         esac
         file_size=$(stat -c%s "$path")
@@ -86,7 +90,11 @@ find deploy -mindepth 1 -print | while read -r path; do
             else
                 printf "├ %3d B | %s\n" "$file_size" "$relative_path"
             fi
-        echo "    _just_buildManifest.push({\"type\": \"$type\", \"path\": \"$relative_path\", \"size\": $file_size});" >> deploy/_just/static/$BUILD_ID/buildManifest.js
+        first_line=$(head -n 1 "$js_file")
+        if [![ "$first_line" == "// _just hide" || 
+            "$first_line" == "// _just doNotModify+hide" ]]; then
+            echo "    _just_buildManifest.push({\"type\": \"$type\", \"path\": \"$relative_path\", \"size\": $file_size});" >> deploy/_just/static/$BUILD_ID/buildManifest.js
+        fi
     fi
     
     FILE_ID=$((FILE_ID + 1))

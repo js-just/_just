@@ -21,6 +21,7 @@
 # SOFTWARE.
 
 # Directory & File Checks
+
 for dir in "_just" "_just/js" "_just/style"; do
   if [ ! -d "$dir" ]; then
     echo -e "\n----------------\n\n_just Checks:\n"
