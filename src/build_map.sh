@@ -34,7 +34,7 @@ find _just_data -mindepth 1 -print | while read -r path; do
     if [ -f "$path" ]; then
         if [[ "$first_line" != "// _just hide" || 
             "$first_line" != "// _just doNotModify+hide" ]]; then
-            echo "    _just_buildManifest.push($relative_path);" >> deploy/_just/static/$BUILD_ID/buildManifest.js
+            echo "    _just_buildManifest.push(\"$relative_path\");" >> deploy/_just/static/$BUILD_ID/_justManifest.js
         fi
     fi
 done
@@ -139,9 +139,12 @@ echo "$(cat $GITHUB_ACTION_PATH/src/_justManifest_end.js)" >> deploy/_just/stati
 
 # Override Pages
 for html_file in deploy/*.html; do
-    sed -i.bak '/<\/body>/!d' "$html_file"
-    sed -i.bak '/<\/html>/!d' "$html_file"
+    sed -i.bak '/^[[:space:]]*<\/body>[[:space:]]*$/d' "$html_file"
+    sed -i.bak '/^[[:space:]]*<\/html>[[:space:]]*$/d' "$html_file"
+    
     echo "<script src=\"_just/static/$BUILD_ID/buildManifest.js\"></script>" >> "$html_file"
     echo "<script src=\"_just/static/$BUILD_ID/_justManifest.js\"></script>" >> "$html_file"
-    echo "</body></html>" >> "$html_file"
+    
+    echo "</body>" >> "$html_file"
+    echo "</html>" >> "$html_file"
 done
