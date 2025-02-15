@@ -27,6 +27,17 @@ mkdir -p deploy/_just/static/
 mkdir -p deploy/_just/static/$BUILD_ID/
 
 echo "$(cat $GITHUB_ACTION_PATH/src/buildManifest_start.js)" > deploy/_just/static/$BUILD_ID/buildManifest.js
+echo "$(cat $GITHUB_ACTION_PATH/src/_justManifest_start.js)" > deploy/_just/static/$BUILD_ID/_justManifest.js
+find _just_data -mindepth 1 -print | while read -r path; do
+    relative_path=${path#_just_data/}
+    first_line=$(head -n 1 "$path")
+    if [ -f "$path" ]; then
+        if [[ "$first_line" != "// _just hide" || 
+            "$first_line" != "// _just doNotModify+hide" ]]; then
+            echo "    _just_buildManifest.push($relative_path);" >> deploy/_just/static/$BUILD_ID/buildManifest.js
+        fi
+    fi
+done
 
 # Convert bytes to human-readable format
 function human_readable_size {
@@ -48,7 +59,7 @@ TOTAL_FILES=$(find deploy -mindepth 1 -print | wc -l)
 TOTAL_SIZE=0
 find deploy -mindepth 1 -print | while read -r path; do
     relative_path=${path#deploy/}
-    
+    first_line=$(head -n 1 "$path")
     if [ -f "$path" ]; then
         case "${path##*.}" in
             
@@ -97,7 +108,7 @@ find deploy -mindepth 1 -print | while read -r path; do
 
         esac
         file_size=$(stat -c%s "$path")
-        TOTAL_SIZE=$((TOTAL_SIZE + file_size))
+        TOTAL_SIZE=$((TOTAL_SIZE + $file_size))
 
         # Output formatting
         if [ "$FILE_ID" -eq 1 ]; then
@@ -124,8 +135,13 @@ echo -e "_just/static/$BUILD_ID/buildManifest.js size: $(human_readable_size $ma
 echo -e "                            Total build size: $(human_readable_size $TOTAL_SIZE)\n\n"
 echo -e "----------------\n"
 echo "$(cat $GITHUB_ACTION_PATH/src/buildManifest_end.js)" >> deploy/_just/static/$BUILD_ID/buildManifest.js
+echo "$(cat $GITHUB_ACTION_PATH/src/_justManifest_end.js)" >> deploy/_just/static/$BUILD_ID/_justManifest.js
 
-# Override Deployment
+# Override Pages
 for html_file in deploy/*.html; do
-  echo "<script src=\"_just/static/$BUILD_ID/buildManifest.js\"></script>" >> "$html_file"
+    sed -i.bak '/<\/body>/d' "$html_file"
+    sed -i.bak '/<\/html>/d' "$html_file"
+    echo "<script src=\"_just/static/$BUILD_ID/buildManifest.js\"></script>" >> "$html_file"
+    echo "<script src=\"_just/static/$BUILD_ID/_justManifest.js\"></script>" >> "$html_file"
+    echo "</body></html>" >> "$html_file"
 done

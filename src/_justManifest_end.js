@@ -1,0 +1,1 @@
+window._justManifest = _justManifest_;

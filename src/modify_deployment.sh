@@ -22,16 +22,42 @@
 
 # Modify Deployment
 
+# Checks
 if [ -d "deploy/_just" ]; then
   echo "Error: Your website has a _just directory in the root. Please remove it to proceed." >&2
+  exit 1
+fi
+if [ -d "_just/dangerously-insert-files/_just" ]; then
+  echo "Error: Inserting files in _just directory is not allowed." >&2
+  exit 1
+fi
+if [ -d "_just/dangerously-insert-files/_next" ]; then
+  echo "Error: Inserting files in _next directory is not allowed." >&2
   exit 1
 fi
 
 mkdir -p deploy/_just/
 echo -e "\n----------------\n\n_just Chunks:\n"
 
+generate_strings() {
+    local count=$1
+    local length=$2
+    local chars="qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM1234567890-_"
+    for ((i=0; i<count; i++)); do
+        local random_string=""
+        for ((j=0; j<length; j++)); do
+            random_string+="${chars:RANDOM%32:1}"
+        done
+        echo "$random_string"
+    done
+}
+
 # Merging logic
-merged_file="deploy/_just/merged.js"
+mkdir -p _just/dangerously-insert-files/_just/
+merged_data=($(generate_strings 1 16))
+merged_name=${merged_data[0]}
+mkdir -p _just/dangerously-insert-files/_just/$merged_name/
+merged_file="_just/dangerously-insert-files/_just/$merged_name/merged.js"
 > "$merged_file"
 for file in _just/js/*; do
   file_size=$(stat -c%s "$file")
@@ -40,8 +66,6 @@ for file in _just/js/*; do
     echo -e "\n" >> "$merged_file"  # Add new line after each file
   fi
 done
-
-echo "t1"
 
 # Check if merged file is less than 128KB
 while [[ $(stat -c%s "$merged_file") -lt 131072 ]]; do
@@ -56,8 +80,6 @@ while [[ $(stat -c%s "$merged_file") -lt 131072 ]]; do
   fi
 done
 
-echo "t2"
-
 # Move unmerged files to _just/js/
 for file in _just/js/*; do
   first_line=$(head -n 1 "$file")
@@ -69,25 +91,41 @@ for file in _just/js/*; do
   fi
 done
 
-echo "t3"
+mkdir -p _just_data/_just/
 
 # Move js files to deploy/_just/
+TOTAL_FILES_JS=0
+for file in _just/js/*; do
+  TOTAL_FILES_JS=$((TOTAL_FILES_JS + 1))
+done
+random_strings_js=($(generate_strings $TOTAL_FILES_JS 14))
 FILE_ID=1
 for file in _just/js/*; do
   first_line=$(head -n 1 "$file")
   if [[ $first_line == "// _just ignore"* ]]; then
     continue
   fi
-  cp "$file" "deploy/_just/${FILE_ID}.js"
-  echo "_just/${FILE_ID}.js"
+  FILE_ID_M1=$((FILE_ID - 1))
+  FILE_NAME=${random_strings_js[$FILE_ID_M1]}
+  cp "$file" "deploy/_just/${FILE_NAME}${FILE_ID}.js"
+  cp "$file" "_just_data/_just/${FILE_NAME}${FILE_ID}.js"
+  echo "_just/${FILE_NAME}${FILE_ID}.js"
   FILE_ID=$((FILE_ID + 1))
 done
 
 # Move css files to deploy/_just/
+TOTAL_FILES_CSS=0
+for file in _just/style/*; do
+  TOTAL_FILES_CSS=$((TOTAL_FILES_CSS + 1))
+done
+random_strings_css=($(generate_strings $TOTAL_FILES_CSS 14))
 FILE_ID=1
 for file in _just/style/*; do
-  cp "$file" "deploy/_just/${FILE_ID}.css"
-  echo "_just/${FILE_ID}.css"
+  FILE_ID_M1=$((FILE_ID - 1))
+  FILE_NAME=${random_strings_css[$FILE_ID_M1]}
+  cp "$file" "deploy/_just/${FILE_NAME}${FILE_ID}.css"
+  cp "$file" "_just_data/_just/${FILE_NAME}${FILE_ID}.css"
+  echo "_just/${FILE_NAME}${FILE_ID}.css"
   FILE_ID=$((FILE_ID + 1))
 done
 
@@ -99,12 +137,15 @@ echo -e "\n----------------\n\nDangerously Inserted Files:\n"
 find _just/dangerously-insert-files/ -type f | while read -r file; do
   relative_path="${file#_just/dangerously-insert-files/}"
   target_dir="deploy/$(dirname "$relative_path")"
+  target_dir2="_just_data/$(dirname "$relative_path")"
   mkdir -p "$target_dir"
+  mkdir -p "$target_dir2"
   if [ -f "$target_dir/$(basename "$file")" ]; then
     echo "Warning: Failed to insert file \"$target_dir/$(basename "$file")\"."
   fi
   if [ ! -f "$target_dir/$(basename "$file")" ]; then
     cp "$file" "$target_dir/$(basename "$file")"
+    cp "$file" "$target_dir2/$(basename "$file")"
     echo "$target_dir/$(basename "$file")"
   fi
 done

@@ -22,8 +22,19 @@
 
 # Prepare Deployment
 
+if [ -d "deploy" ]; then
+  echo "Error: Your repository has a deploy directory in the root. Please remove it to proceed." >&2
+  exit 1
+fi
+if [ -d "_just_data" ]; then
+  echo "Error: Your repository has a _just_data directory in the root. Please remove it to proceed." >&2
+  exit 1
+fi
 mkdir -p deploy
+mkdir -p _just_data
 cp -r .next/server/pages/* deploy/
 mkdir -p deploy/_next/static/
 cp -r .next/static/* deploy/_next/static/
-cp .next/server/pages/en.html deploy/index.html
+if [ -f ".next/server/pages/en.html" ]; then
+  cp .next/server/pages/en.html deploy/index.html
+fi
