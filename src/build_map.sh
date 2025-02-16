@@ -43,9 +43,14 @@ generate_strings() {
 random_strings=($(generate_strings 1 16))
 clearCache_name=${random_strings[0]}c
 
+echo "[" > deploy/api/build-manifest
+echo "" > deploy/api/build-manifest.txt
+echo "[" > deploy/api/_just_build-manifest
+echo "" > deploy/api/_just_build-manifest.txt
+
 echo "$(cat $GITHUB_ACTION_PATH/src/buildManifest_start.js)" > deploy/_just/static/$BUILD_ID/buildManifest.js
 echo "$(cat $GITHUB_ACTION_PATH/src/_justManifest_start.js)" > deploy/_just/static/$BUILD_ID/_justManifest.js
-echo "$(cat $GITHUB_ACTION_PATH/src/clearCache.js)" > deploy/_just/static/chunks/$clearCache_name.js
+echo "$(cat $GITHUB_ACTION_PATH/src/insert/clearCache.js)" > deploy/_just/static/chunks/$clearCache_name.js
 find _just_data -mindepth 1 -print | while read -r path; do
     relative_path=${path#_just_data/}
     first_line=$(head -n 1 "$path")
@@ -53,6 +58,8 @@ find _just_data -mindepth 1 -print | while read -r path; do
         if [[ "$first_line" != "// _just hide" || 
             "$first_line" != "// _just doNotModify+hide" ]]; then
             echo "    _just_Manifest0.push(\"$relative_path\");" >> deploy/_just/static/$BUILD_ID/_justManifest.js
+            echo "\"$relative_path\"," >> deploy/api/_just_build-manifest
+            echo "$relative_path\n" >> deploy/api/_just_build-manifest.txt
         fi
     fi
 done
@@ -140,7 +147,10 @@ find deploy -mindepth 1 -print | while read -r path; do
         # Build manifest entry
         if [[ "$first_line" != "// _just hide" || 
             "$first_line" != "// _just doNotModify+hide" ]]; then
-            echo "    _just_buildManifest0.push({\"type\": \"$type\", \"path\": \"$relative_path\", \"size\": {\"bytes\": $file_size, \"string\": \"$(human_readable_size $file_size)\"}});" >> deploy/_just/static/$BUILD_ID/buildManifest.js
+            buildManifestJSONString="{\"type\": \"$type\", \"path\": \"$relative_path\", \"size\": {\"bytes\": $file_size, \"string\": \"$(human_readable_size $file_size)\"}}"
+            echo "    _just_buildManifest0.push($buildManifestJSONString);" >> deploy/_just/static/$BUILD_ID/buildManifest.js
+            echo "$buildManifestJSONString" >> deploy/api/build-manifest
+            echo "($type) $relative_path - $(human_readable_size $file_size)\n" >> deploy/api/build-manifest.txt
         fi
     fi
     
@@ -167,3 +177,7 @@ for html_file in deploy/*.html; do
     echo "</body>" >> "$html_file"
     echo "</html>" >> "$html_file"
 done
+
+# Add API Endpoints
+cp deploy/api/_just_build-manifest deploy/api/_just_build-manifest.json
+cp deploy/api/build-manifest deploy/api/build-manifest.json
