@@ -59,7 +59,7 @@ find _just_data -mindepth 1 -print | while read -r path; do
             "$first_line" != "// _just doNotModify+hide" ]]; then
             echo "    _just_Manifest0.push(\"$relative_path\");" >> deploy/_just/static/$BUILD_ID/_justManifest.js
             echo "\"$relative_path\"," >> deploy/api/_just_build-manifest
-            echo "$relative_path\n" >> deploy/api/_just_build-manifest.txt
+            echo "$relative_path" >> deploy/api/_just_build-manifest.txt
         fi
     fi
 done
@@ -149,8 +149,8 @@ find deploy -mindepth 1 -print | while read -r path; do
             "$first_line" != "// _just doNotModify+hide" ]]; then
             buildManifestJSONString="{\"type\": \"$type\", \"path\": \"$relative_path\", \"size\": {\"bytes\": $file_size, \"string\": \"$(human_readable_size $file_size)\"}}"
             echo "    _just_buildManifest0.push($buildManifestJSONString);" >> deploy/_just/static/$BUILD_ID/buildManifest.js
-            echo "$buildManifestJSONString" >> deploy/api/build-manifest
-            echo "($type) $relative_path - $(human_readable_size $file_size)\n" >> deploy/api/build-manifest.txt
+            echo "$buildManifestJSONString," >> deploy/api/build-manifest
+            echo "($type) $relative_path - $(human_readable_size $file_size)" >> deploy/api/build-manifest.txt
         fi
     fi
     
@@ -179,5 +179,9 @@ for html_file in deploy/*.html; do
 done
 
 # Add API Endpoints
+echo "{}]" >> deploy/api/build-manifest
+echo "" >> deploy/api/build-manifest.txt
+echo "\"\"]" >> deploy/api/_just_build-manifest
+echo "" >> deploy/api/_just_build-manifest.txt
 cp deploy/api/_just_build-manifest deploy/api/_just_build-manifest.json
 cp deploy/api/build-manifest deploy/api/build-manifest.json
