@@ -31,12 +31,12 @@ find deploy -type f -name "*.html" | while read -r html_file; do # Get all HTML 
           "$first_line" == "// _just doNotModify+hide" ]]; then
       continue # Do not insert file
     fi
-    echo "<script src=\"_just/$(basename "$js_file")\"></script>" >> "$html_file" # Insert js files as <script src="PATH TO FILE" />
+    echo "<script src=\"/_just/$(basename "$js_file")\"></script>" >> "$html_file" # Insert js files as <script src="PATH TO FILE" />
   done
   for css_file in deploy/_just/*.css; do
-    echo "<link href=\"_just/$(basename "$css_file")\" rel=\"stylesheet\">" >> "$html_file" # Insert css files as <link href="PATH TO FILE" rel="stylesheet" />
+    echo "<link href=\"/_just/$(basename "$css_file")\" rel=\"stylesheet\">" >> "$html_file" # Insert css files as <link href="PATH TO FILE" rel="stylesheet" />
   done
-  echo "<link href=\"_just/e.css\" rel=\"stylesheet\">" >> "$html_file"
+  echo "<link href=\"/_just/e.css\" rel=\"stylesheet\">" >> "$html_file"
   echo "$(cat $GITHUB_ACTION_PATH/src/comment.html)" >> "$html_file"
   sed -i '/<\/head>/i\ '"$(cat "$html_file")" "$html_file"
 done
