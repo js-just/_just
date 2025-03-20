@@ -22,7 +22,7 @@
 
 # Override Deployment
 
-for html_file in deploy/*.html; do # Get all HTML files
+find deploy -type f -name "*.html" | while read -r html_file; do # Get all HTML files
   for js_file in deploy/_just/*.js; do
     first_line=$(head -n 1 "$js_file")
     if [[ "$first_line" == "// _just doNotInsert" || 
