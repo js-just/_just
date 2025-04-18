@@ -22,7 +22,8 @@
 
 #!/bin/bash
 ERRORS_FILE="$GITHUB_ACTION_PATH/data/codes.json"
-CONFIG_FILE="just.config.js"
+CONFIG_JSON=$(node -e "console.log(JSON.stringify(require('./just.config.js')));")
+echo "Parsed CONFIG_JSON: $CONFIG_JSON" # debug
 
 if [ ! -f "$CONFIG_FILE" ]; then
     ERROR_CODE="0108"
