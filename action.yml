@@ -21,7 +21,7 @@
 # SOFTWARE.
 
 name: '_just'
-description: 'A GitHub Action to modify and override your Next.js site on GitHub Pages.'
+description: 'Just an Ultimate Site Tool. A GitHub Action to modify and override your Next.js site on GitHub Pages (Postprocessor).'
 author: 'JustDeveloper1'
 branding:
   icon: 'edit'
@@ -29,21 +29,11 @@ branding:
 runs:
   using: 'composite'
   steps:
-    - run: |
-        bash $GITHUB_ACTION_PATH/src/checks.sh
-      shell: bash
-    - run: |
-        bash $GITHUB_ACTION_PATH/src/prepare_deployment.sh
-      shell: bash
-    - run: |
-        bash $GITHUB_ACTION_PATH/src/create_api_endpoints.sh
-      shell: bash
-    - run: |
-        bash $GITHUB_ACTION_PATH/src/modify_deployment.sh
-      shell: bash
-    - run: |
-        bash $GITHUB_ACTION_PATH/src/override_deployment.sh
-      shell: bash
-    - run: |
-        bash $GITHUB_ACTION_PATH/src/build_map.sh
-      shell: bash
+    - name: Checkout code
+      uses: actions/checkout@v2
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '14'
+    - name: Run _just
+      run: bash $GITHUB_ACTION_PATH/src/run.sh

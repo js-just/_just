@@ -20,21 +20,9 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-# (fake) API Endpoints
-
-# Check
-if [ -d "deploy/api" ]; then
-  echo "Error: Your website have api directory in the root. Please remove it to proceed." >&2
-  exit 1
-fi
-
-mkdir -p deploy/api/
-
-# Get Next.js data and copy it to API Endpoints
-BUILD_ID=$(cat .next/BUILD_ID)
-echo "$BUILD_ID" > deploy/api/build-id
-echo "$BUILD_ID" > deploy/api/build-id.txt
-echo "{\"BUILD_ID\": \"$BUILD_ID\"}" > deploy/api/build-id.json
-cp .next/build-manifest.json deploy/api/next_build-manifest
-cp .next/build-manifest.json deploy/api/next_build-manifest.json
-cp .next/build-manifest.json deploy/api/next_build-manifest.txt
+bash $GITHUB_ACTION_PATH/src/postprocessor/checks.sh && \
+bash $GITHUB_ACTION_PATH/src/postprocessor/prepare_deployment.sh && \
+bash $GITHUB_ACTION_PATH/src/postprocessor/create_api_endpoints.sh && \
+bash $GITHUB_ACTION_PATH/src/postprocessor/modify_deployment.sh && \
+bash $GITHUB_ACTION_PATH/src/postprocessor/override_deployment.sh && \
+bash $GITHUB_ACTION_PATH/src/postprocessor/build_map.sh

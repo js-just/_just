@@ -20,6 +20,19 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-# DO NOT USE THIS. READ THE DOCS (coming soon). USE ACTION.YML.
-echo "Warning: Attempt to use the \"Just an Ultimate Site Tool\" as a postprocessor in the wrond way. This may not work correctly. Please read the documentation (coming soon)."
-bash $GITHUB_ACTION_PATH/src/postprocessor.sh
+# API Endpoints
+
+if [ -d "deploy/api" ]; then
+  echo "Error: Your website have api directory in the root. Please remove it to proceed." >&2
+  exit 1
+fi
+
+mkdir -p deploy/api/
+
+BUILD_ID=$(cat .next/BUILD_ID)
+echo "$BUILD_ID" > deploy/api/build-id
+echo "$BUILD_ID" > deploy/api/build-id.txt
+echo "{\"BUILD_ID\": \"$BUILD_ID\"}" > deploy/api/build-id.json
+cp .next/build-manifest.json deploy/api/next_build-manifest
+cp .next/build-manifest.json deploy/api/next_build-manifest.json
+cp .next/build-manifest.json deploy/api/next_build-manifest.txt

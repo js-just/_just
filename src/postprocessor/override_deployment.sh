@@ -22,14 +22,14 @@
 
 # Override Deployment
 
-find deploy -type f -name "*.html" | while read -r html_file; do # Get all HTML files
+find deploy -type f -name "*.html" | while read -r html_file; do
   for js_file in deploy/_just/*.js; do
     first_line=$(head -n 1 "$js_file")
     if [[ "$first_line" == "// _just doNotInsert" || 
           "$first_line" == "// _just hide" || 
           "$first_line" == "// _just doNotModify+doNotInsert" || 
           "$first_line" == "// _just doNotModify+hide" ]]; then
-      continue # Do not insert file
+      continue
     fi
     echo "<script src=\"/_just/$(basename "$js_file")\"></script>" >> "$html_file" # Insert js files as <script src="PATH TO FILE" />
   done
@@ -37,11 +37,10 @@ find deploy -type f -name "*.html" | while read -r html_file; do # Get all HTML 
     echo "<link href=\"/_just/$(basename "$css_file")\" rel=\"stylesheet\">" >> "$html_file" # Insert css files as <link href="PATH TO FILE" rel="stylesheet" />
   done
   echo "<link href=\"/_just/e.css\" rel=\"stylesheet\">" >> "$html_file"
-  echo "$(cat $GITHUB_ACTION_PATH/src/comment.html)" >> "$html_file"
+  echo "$(cat $GITHUB_ACTION_PATH/src/postprocessor/insert/comment.html)" >> "$html_file"
   sed -i '/<\/head>/i\ '"$(cat "$html_file")" "$html_file"
 done
 
-# Insert custom 404.html file
 if [ -f "deploy/404.html" ]; then
   echo "Warning: Your website already has a 404.html file, _just/404.html won't be inserted."
 fi
@@ -49,5 +48,5 @@ if [ ! -f "deploy/404.html" ]; then
   cp _just/404.html deploy/404.html
 fi
 
-echo "$(cat $GITHUB_ACTION_PATH/src/insert/error.html)" > deploy/_just/e.html
-echo "$(cat $GITHUB_ACTION_PATH/src/insert/error.css)" > deploy/_just/e.css
+echo "$(cat $GITHUB_ACTION_PATH/src/postprocessor/insert/error.html)" > deploy/_just/e.html
+echo "$(cat $GITHUB_ACTION_PATH/src/postprocessor/insert/error.css)" > deploy/_just/e.css

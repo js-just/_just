@@ -1,0 +1,131 @@
+{
+    "README": {
+        " CODES ": {
+            "      OK ": " 0000 - 0099 ",
+            "   CRASH ": " 0100 - 0199 ",
+            " WARNING ": " 0200 - 0299 "
+        }
+    },
+    "important_dirs": [
+        {
+            "code": "0106",
+            "message": "Your repository has a deploy directory in the root directory. Please remove it.",
+            "crashed": true,
+            "link": ""
+        },
+        {
+            "code": "0107",
+            "message": "Your repository has a _just_data directory in the root directory. Please remove it.",
+            "crashed": true,
+            "link": ""
+        }
+    ],
+    "index.sh": [
+        {
+            "code": "0204",
+            "message": "Attempt to use \"Just an Ultimate Site Tool\" as a postprocessor in the wrond way. This may not work correctly. Please read the documentation (coming soon).",
+            "crashed": true,
+            "link": ""
+        }
+    ],
+    "run.sh": [
+        {
+            "code": "0108",
+            "message": "The just.config.js file in the root directory is missing.",
+            "crashed": true,
+            "link": ""
+        },
+        {
+            "code": "0109",
+            "message": "The just.config.js file cannot be parsed.",
+            "crashed": true,
+            "link": ""
+        },
+        {
+            "code": "0110",
+            "message": "Unable to get value of property \"type\" in just.config.js.",
+            "crashed": true,
+            "link": ""
+        },
+        {
+            "code": "0111",
+            "message": "Invalid value of property \"type\" in just.config.js. It must be one of: \"postprocessor\", \"redirect\".",
+            "crashed": true,
+            "link": ""
+        },
+        {
+            "code": "0112",
+            "message": "The just.config.js' \"module.exports\" json cannot be parsed.",
+            "crashed": true,
+            "link": ""
+        }
+    ],
+    "postprocessor/checks.sh": [
+        {
+            "code": "0100",
+            "message": "( DIRECTORY IS MISSING )",
+            "crashed": true,
+            "link": ""
+        },
+        {
+            "code": "0101",
+            "message": "The _just/404.html file is missing.",
+            "crashed": true,
+            "link": ""
+        },
+        {
+            "code": "0200",
+            "message": "The _just/404.html file is missing. So, the 404 page will be an \"Just an Ultimate Site Tool\" postprocessor's error 404 template page.",
+            "crashed": false,
+            "link": ""
+        }
+    ],
+    "postprocessor/create_api_endpoints.sh": [
+        {
+            "code": "0102",
+            "message": "Your website has an API directory in the root directory. Please remove it.",
+            "crashed": true,
+            "link": ""
+        }
+    ],
+    "postprocessor/modify_deployment.sh": [
+        {
+            "code": "0103",
+            "message": "Your website has a _just directory in the root directory. Please remove it.",
+            "crashed": true,
+            "link": ""
+        },
+        {
+            "code": "0104",
+            "message": "Inserting files in _just directory is not allowed.",
+            "crashed": true,
+            "link": ""
+        },
+        {
+            "code": "0105",
+            "message": "Inserting files in _next directory is not allowed..",
+            "crashed": true,
+            "link": ""
+        },
+        {
+            "code": "0201",
+            "message": "( FAILED TO INSERT A FILE )",
+            "crashed": false,
+            "link": ""
+        }
+    ],
+    "postprocessor/override_deployment.sh": [
+        {
+            "code": "0202",
+            "message": "Your website already has a 404.html file, _just/404.html won't be inserted.",
+            "crashed": false,
+            "link": ""
+        },
+        {
+            "code": "0203",
+            "message": "Your website already has a 404.html file, \"Just an Ultimate Site Tool\" postprocessor's error 404 template page file won't be inserted.",
+            "crashed": false,
+            "link": ""
+        }
+    ]
+}
