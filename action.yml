@@ -29,12 +29,6 @@ branding:
 runs:
   using: 'composite'
   steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
-    - name: Set up Node.js
-      uses: actions/setup-node@v2
-      with:
-        node-version: '14'
     - name: Run _just
       run: bash $GITHUB_ACTION_PATH/src/run.sh
       shell: bash
