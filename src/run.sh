@@ -22,8 +22,7 @@
 
 #!/bin/bash
 ERRORS_FILE="$GITHUB_ACTION_PATH/data/codes.json"
-CONFIG_JSON=$(node -e "console.log(JSON.stringify(require('./just.config.js')));")
-echo "Parsed CONFIG_JSON: $CONFIG_JSON" # debug
+CONFIG_FILE="just.config.js"
 
 if [ ! -f "$CONFIG_FILE" ]; then
     ERROR_CODE="0108"
@@ -33,14 +32,15 @@ if [ ! -f "$CONFIG_FILE" ]; then
     exit 1
 fi
 
-CONFIG_CONTENT=$(cat "$CONFIG_FILE")
-if ! CONFIG_JSON=$(echo "$CONFIG_CONTENT" | node -e "console.log(JSON.stringify(eval('(' + process.stdin.read() + ')')));"); then
+CONFIG_JSON=$(node -e "console.log(JSON.stringify(require('./just.config.js')));")
+if [ $? -ne 0 ]; then
     ERROR_MESSAGE=$(jq -r '.["run.sh"][] | select(.code=="0109") | .message' "$ERRORS_FILE")
     ERROR_CODE="0109"
     ERROR_LINK=$(jq -r '.["run.sh"][] | select(.code=="0109") | .link' "$ERRORS_FILE")
     echo "Error $ERROR_CODE: $ERROR_MESSAGE $ERROR_LINK"
     exit 1
 fi
+echo "Parsed CONFIG_JSON: $CONFIG_JSON" # debug
 
 if [ -z "$(echo "$CONFIG_JSON" | jq -r '.module.exports')" ]; then
     ERROR_MESSAGE=$(jq -r '.["run.sh"][] | select(.code=="0112") | .message' "$ERRORS_FILE")
