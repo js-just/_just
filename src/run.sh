@@ -62,7 +62,7 @@ if [[ "$TYPE" != "postprocessor" && "$TYPE" != "redirect" ]]; then
     ERROR_MESSAGE=$(jq -r '.["run.sh"][] | select(.code=="0111") | .message' "$ERRORS_FILE")
     ERROR_CODE="0111"
     ERROR_LINK=$(jq -r '.["run.sh"][] | select(.code=="0111") | .link' "$ERRORS_FILE")
-    echo "Error $ERROR_CODE: $ERROR_MESSAGE $ERROR_LINK"
+    echo "Error $ERROR_CODE: $ERROR_MESSAGE $ERROR_LINK (Got \"$TYPE\")"
     exit 1
 fi
 
