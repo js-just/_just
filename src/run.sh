@@ -50,7 +50,7 @@ if [ -z "$(echo "$CONFIG_JSON" | jq -r '.module.exports')" ]; then
     exit 1
 fi
 
-TYPE=$(echo "$CONFIG_JSON" | jq -r '.module.exports.type')
+TYPE=$(echo "$CONFIG_JSON" | jq -r '.type')
 if [ -z "$TYPE" ]; then
     ERROR_MESSAGE=$(jq -r '.["run.sh"][] | select(.code=="0110") | .message' "$ERRORS_FILE")
     ERROR_CODE="0110"
