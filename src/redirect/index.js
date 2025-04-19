@@ -67,6 +67,8 @@ const generatePage = (url, title, path_) => {
 
 generatePage(redirectConfig.url, redirectConfig.title);
 
-redirectConfig.paths.forEach(({ path_, url, title }) => {
-    generatePage(url, title, path_);
-});
+if (redirectConfig.paths) {
+    redirectConfig.paths.forEach(({ path_, url, title }) => {
+        generatePage(url, title, path_);
+    });
+}
