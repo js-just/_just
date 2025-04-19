@@ -20,11 +20,18 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-# Prepare Deployment
+#!/bin/bash
+generate_strings() {
+    local count=$1
+    local length=$2
+    local chars="qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM1234567890-_"
+    for ((i=0; i<count; i++)); do
+        local random_string=""
+        for ((j=0; j<length; j++)); do
+            random_string+="${chars:RANDOM%32:1}"
+        done
+        echo "$random_string"
+    done
+}
 
-cp -r .next/server/pages/* deploy/
-mkdir -p deploy/_next/static/
-cp -r .next/static/* deploy/_next/static/
-if [ -f ".next/server/pages/en.html" ]; then
-  cp .next/server/pages/en.html deploy/index.html
-fi
+export -f generate_strings

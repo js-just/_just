@@ -25,63 +25,71 @@ ERRORS_FILE="$GITHUB_ACTION_PATH/data/codes.json"
 CONFIG_FILE="just.config.js"
 CONFIG_DATA="just.config.json"
 
-ErrorMessage() {
-    local ERROR_CODE=$1
-    local ERROR_MESSAGE=$(jq -r ".[\"run.sh\"][] | select(.code==\"$ERROR_CODE\") | .message" "$ERRORS_FILE")
-    local ERROR_LINK=$(jq -r '.["run.sh"][] | select(.code=="0108") | .link' "$ERRORS_FILE")
-    echo -e "\n\n\n\nError $ERROR_CODE: $ERROR_MESSAGE $ERROR_LINK"
-}
+source $GITHUB_ACTION_PATH/src/modules/errmsg.sh
 
 if [ -f "$CONFIG_DATA" ]; then
-    local ERROR_MESSAGE=($(ErrorMessage "0113"))
+    local ERROR_MESSAGE=($(ErrorMessage "run.sh" "0113"))
     echo $ERROR_MESSAGE && exit 1
 fi
 
 if [ ! -f "$CONFIG_FILE" ]; then
-    ERROR_CODE="0108"
-    ERROR_MESSAGE=$(jq -r ".[\"run.sh\"][] | select(.code==\"$ERROR_CODE\") | .message" "$ERRORS_FILE")
-    ERROR_LINK=$(jq -r '.["run.sh"][] | select(.code=="0108") | .link' "$ERRORS_FILE")
-    echo "Error $ERROR_CODE: $ERROR_MESSAGE $ERROR_LINK"
-    exit 1
+    local ERROR_MESSAGE=($(ErrorMessage "run.sh" "0108"))
+    echo $ERROR_MESSAGE && exit 1
 fi
 
 CONFIG_JSON=$(node -e "console.log(JSON.stringify(require('./just.config.js')));")
 if [ $? -ne 0 ]; then
-    ERROR_MESSAGE=$(jq -r '.["run.sh"][] | select(.code=="0109") | .message' "$ERRORS_FILE")
-    ERROR_CODE="0109"
-    ERROR_LINK=$(jq -r '.["run.sh"][] | select(.code=="0109") | .link' "$ERRORS_FILE")
-    echo "Error $ERROR_CODE: $ERROR_MESSAGE $ERROR_LINK"
-    exit 1
+    local ERROR_MESSAGE=($(ErrorMessage "run.sh" "0109"))
+    echo $ERROR_MESSAGE && exit 1
 fi
 echo "Parsed CONFIG_JSON: $CONFIG_JSON" # debug
+echo "$CONFIG_JSON" > "$CONFIG_DATA"
 
 if [ -z "$(echo "$CONFIG_JSON" | jq -r '.module.exports')" ]; then
-    ERROR_MESSAGE=$(jq -r '.["run.sh"][] | select(.code=="0112") | .message' "$ERRORS_FILE")
-    ERROR_CODE="0112"
-    ERROR_LINK=$(jq -r '.["run.sh"][] | select(.code=="0112") | .link' "$ERRORS_FILE")
-    echo "Error $ERROR_CODE: $ERROR_MESSAGE $ERROR_LINK"
-    exit 1
+    local ERROR_MESSAGE=($(ErrorMessage "run.sh" "0112"))
+    echo $ERROR_MESSAGE && exit 1
 fi
 
 TYPE=$(echo "$CONFIG_JSON" | jq -r '.type')
 if [ -z "$TYPE" ]; then
-    ERROR_MESSAGE=$(jq -r '.["run.sh"][] | select(.code=="0110") | .message' "$ERRORS_FILE")
-    ERROR_CODE="0110"
-    ERROR_LINK=$(jq -r '.["run.sh"][] | select(.code=="0110") | .link' "$ERRORS_FILE")
-    echo "Error $ERROR_CODE: $ERROR_MESSAGE $ERROR_LINK"
-    exit 1
+    local ERROR_MESSAGE=($(ErrorMessage "run.sh" "0110"))
+    echo $ERROR_MESSAGE && exit 1
 fi
 
 if [[ "$TYPE" != "postprocessor" && "$TYPE" != "redirect" ]]; then
-    ERROR_MESSAGE=$(jq -r '.["run.sh"][] | select(.code=="0111") | .message' "$ERRORS_FILE")
-    ERROR_CODE="0111"
-    ERROR_LINK=$(jq -r '.["run.sh"][] | select(.code=="0111") | .link' "$ERRORS_FILE")
-    echo "Error $ERROR_CODE: $ERROR_MESSAGE $ERROR_LINK (Got \"$TYPE\")"
-    exit 1
+    local ERROR_MESSAGE=($(ErrorMessage "run.sh" "0111"))
+    echo $ERROR_MESSAGE && exit 1
 fi
 
+if [ -d "deploy" ]; then
+    local ERROR_MESSAGE=($(ErrorMessage "important_dirs" "0106"))
+    echo $ERROR_MESSAGE && exit 1
+fi
+if [ -d "_just_data" ]; then
+    local ERROR_MESSAGE=($(ErrorMessage "important_dirs" "0107"))
+    echo $ERROR_MESSAGE && exit 1
+fi
+mkdir -p deploy
+mkdir -p _just_data
+
+if [ -d "deploy/_just" ]; then
+    local ERROR_MESSAGE=($(ErrorMessage "postprocessor/modify_deployment.sh" "0103"))
+    echo $ERROR_MESSAGE && exit 1
+fi
+mkdir -p deploy/_just/
+
 if [ "$TYPE" == "postprocessor" ]; then
-    bash $GITHUB_ACTION_PATH/src/postprocessor/checks.sh && \
+    set -e
+    postprocessor_checks=$(bash $GITHUB_ACTION_PATH/src/postprocessor/checks.sh 2>&1) || {
+        local error_code=$?
+        if [ $error_code -eq 1 ]; then
+            local ERROR_MESSAGE=($(ErrorMessage "postprocessor/checks.sh" "0100" "$postprocessor_checks"))
+            if [ "$postprocessor_checks" == "0101" ]; then 
+                ERROR_MESSAGE=($(ErrorMessage "postprocessor/checks.sh" "0101"))
+            fi
+            echo $ERROR_MESSAGE && exit 1
+        fi
+    } && \
     bash $GITHUB_ACTION_PATH/src/postprocessor/prepare_deployment.sh && \
     bash $GITHUB_ACTION_PATH/src/postprocessor/create_api_endpoints.sh && \
     bash $GITHUB_ACTION_PATH/src/postprocessor/modify_deployment.sh && \

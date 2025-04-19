@@ -37,11 +37,11 @@ const generatePage = (url, title, path_) => {
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>${title}</title>
-        <link rel="stylesheet" href="${page}.css">
+        <link rel="stylesheet" href="/_just/${page}.css">
     </head>
     <body>
         <h1>${title}</h1>
-        <script src="${page}.js"></script>
+        <script src="/_just/${page}.js"></script>
     </body>
     </html>
     `;
@@ -55,14 +55,14 @@ const generatePage = (url, title, path_) => {
     }
     `;
     
-    fs.writeFileSync(`deploy/${page}.css`, cssContent);
+    fs.writeFileSync(`deploy/_just/${page}.css`, cssContent);
     
     const jsContent = `
     console.log('Redirecting to ${url}');
     window.location.href = '${url}';
     `;
     
-    fs.writeFileSync(`deploy/${page}.js`, jsContent);
+    fs.writeFileSync(`deploy/_just/${page}.js`, jsContent);
 };
 
 generatePage(redirectConfig.url, redirectConfig.title);

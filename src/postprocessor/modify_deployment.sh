@@ -22,10 +22,6 @@
 
 # Modify Deployment
 
-if [ -d "deploy/_just" ]; then
-  echo "Error: Your website has a _just directory in the root. Please remove it to proceed." >&2
-  exit 1
-fi
 if [ -d "_just/dangerously-insert-files/_just" ]; then
   echo "Error: Inserting files in _just directory is not allowed." >&2
   exit 1
@@ -35,21 +31,9 @@ if [ -d "_just/dangerously-insert-files/_next" ]; then
   exit 1
 fi
 
-mkdir -p deploy/_just/
 echo -e "\n----------------\n\n_just Chunks:\n"
 
-generate_strings() {
-    local count=$1
-    local length=$2
-    local chars="qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM1234567890-_"
-    for ((i=0; i<count; i++)); do
-        local random_string=""
-        for ((j=0; j<length; j++)); do
-            random_string+="${chars:RANDOM%32:1}"
-        done
-        echo "$random_string"
-    done
-}
+source $GITHUB_ACTION_PATH/src/modules/string.sh
 
 mkdir -p _just/dangerously-insert-files/_just/
 merged_data=($(generate_strings 1 16))

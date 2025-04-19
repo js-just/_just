@@ -31,7 +31,7 @@ for dir in "_just" "_just/js" "_just/style"; do
     echo -e "  ? (root)/_just/404.html\n"
     echo -e "End _just Checks\n"
     echo -e "----------------\n"
-    echo "Error: The $dir directory is missing. Please create it to proceed." >&2
+    echo "The $dir directory is missing." >&2
     exit 1
   fi
 done
@@ -44,7 +44,7 @@ if [ ! -f "_just/404.html" ]; then
   echo -e "  ✕ (root)/_just/404.html\n"
   echo -e "End _just Checks\n"
   echo -e "----------------\n"
-  echo "Error: The _just/404.html file is missing." >&2
+  echo "0101" >&2
   exit 1
 fi
 

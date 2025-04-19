@@ -27,18 +27,7 @@ mkdir -p deploy/_just/static/
 mkdir -p deploy/_just/static/$BUILD_ID/
 mkdir -p deploy/_just/static/chunks/
 
-generate_strings() {
-    local count=$1
-    local length=$2
-    local chars="qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM1234567890-_"
-    for ((i=0; i<count; i++)); do
-        local random_string=""
-        for ((j=0; j<length; j++)); do
-            random_string+="${chars:RANDOM%32:1}"
-        done
-        echo "$random_string"
-    done
-}
+source $GITHUB_ACTION_PATH/src/modules/string.sh
 
 random_strings=($(generate_strings 1 16))
 clearCache_name=${random_strings[0]}c

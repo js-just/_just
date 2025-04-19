@@ -20,11 +20,14 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-# Prepare Deployment
+#!/bin/bash
+ERRORS_FILE="$GITHUB_ACTION_PATH/data/codes.json"
 
-cp -r .next/server/pages/* deploy/
-mkdir -p deploy/_next/static/
-cp -r .next/static/* deploy/_next/static/
-if [ -f ".next/server/pages/en.html" ]; then
-  cp .next/server/pages/en.html deploy/index.html
-fi
+ErrorMessage() {
+    local ERROR_CODE=$2
+    local ERROR_MESSAGE=${3:-$(jq -r ".[\"$1\"][] | select(.code==\"$ERROR_CODE\") | .message" "$ERRORS_FILE")}
+    local ERROR_LINK=$(jq -r ".[\"$1\"][] | select(.code==\"$ERROR_CODE\") | .link" "$ERRORS_FILE")
+    echo -e "\n\n\n\nError $ERROR_CODE: $ERROR_MESSAGE $ERROR_LINK"
+}
+
+export -f ErrorMessage
