@@ -90,6 +90,6 @@ if [ "$TYPE" == "postprocessor" ]; then
 elif [ "$TYPE" == "redirect" ]; then
     sudo apt update
     sudo apt install -y nodejs npm
-    node src/redirect/index.js
+    node $GITHUB_ACTION_PATH/src/redirect/index.js
 fi
 
