@@ -23,6 +23,19 @@
 #!/bin/bash
 ERRORS_FILE="$GITHUB_ACTION_PATH/data/codes.json"
 CONFIG_FILE="just.config.js"
+CONFIG_DATA="just.config.json"
+
+ErrorMessage() {
+    local ERROR_CODE=$1
+    local ERROR_MESSAGE=$(jq -r ".[\"run.sh\"][] | select(.code==\"$ERROR_CODE\") | .message" "$ERRORS_FILE")
+    local ERROR_LINK=$(jq -r '.["run.sh"][] | select(.code=="0108") | .link' "$ERRORS_FILE")
+    echo -e "\n\n\n\nError $ERROR_CODE: $ERROR_MESSAGE $ERROR_LINK"
+}
+
+if [ -f "$CONFIG_DATA" ]; then
+    local ERROR_MESSAGE=($(ErrorMessage "0113"))
+    echo $ERROR_MESSAGE && exit 1
+fi
 
 if [ ! -f "$CONFIG_FILE" ]; then
     ERROR_CODE="0108"
@@ -68,5 +81,15 @@ if [[ "$TYPE" != "postprocessor" && "$TYPE" != "redirect" ]]; then
 fi
 
 if [ "$TYPE" == "postprocessor" ]; then
-    bash "$GITHUB_ACTION_PATH/src/postprocessor.sh"
+    bash $GITHUB_ACTION_PATH/src/postprocessor/checks.sh && \
+    bash $GITHUB_ACTION_PATH/src/postprocessor/prepare_deployment.sh && \
+    bash $GITHUB_ACTION_PATH/src/postprocessor/create_api_endpoints.sh && \
+    bash $GITHUB_ACTION_PATH/src/postprocessor/modify_deployment.sh && \
+    bash $GITHUB_ACTION_PATH/src/postprocessor/override_deployment.sh && \
+    bash $GITHUB_ACTION_PATH/src/postprocessor/build_map.sh
+elif [ "$TYPE" == "redirect" ]; then
+    sudo apt update
+    sudo apt install -y nodejs npm
+    node src/redirect/index.js
 fi
+

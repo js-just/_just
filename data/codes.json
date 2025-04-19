@@ -55,7 +55,13 @@
         },
         {
             "code": "0112",
-            "message": "The just.config.js' \"module.exports\" json cannot be parsed.",
+            "message": "The just.config.js' \"module.exports\" cannot be parsed as json.",
+            "crashed": true,
+            "link": ""
+        },
+        {
+            "code": "0113",
+            "message": "Your repository has a just.config.json file in the root directory. Please remove it.",
             "crashed": true,
             "link": ""
         }
