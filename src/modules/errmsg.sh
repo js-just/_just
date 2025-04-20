@@ -36,7 +36,7 @@ ErrorMessage() {
     echo -e "$_N_ $ERROR_PREFIX: $ERROR_TYPE $ERROR_CODE: $ERROR_MESSAGE $ERROR_LINK $_N_"
 }
 
-Message() {
+_justMessage() {
     local MESSAGE=$1
     echo -e "$_N_ $ERROR_PREFIX: INFO: $MESSAGE $_N_"
 }
