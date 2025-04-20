@@ -24,8 +24,30 @@
 ERRORS_FILE="$GITHUB_ACTION_PATH/data/codes.json"
 CONFIG_FILE="just.config.js"
 CONFIG_DATA="just.config.json"
-
 source $GITHUB_ACTION_PATH/src/modules/errmsg.sh
+
+VERSION=$(echo "$GITHUB_ACTION_PATH" | grep -oP '(?<=/v)[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9]+)?')
+msg1=($(Message "Running Just an Ultimate Site Tool v$VERSION"))
+msg2=($(Message "Installing Node.js"))
+msg3=($(Message "Installed Node.js"))
+msg4=($(Message "Postprocessing completed"))
+msg5=($(Message "Generating completed"))
+msg6=($(Message "Compressing completed"))
+echo $msg1
+
+installNodejs() {
+    echo $msg2
+    sudo apt update -qq && sudo apt install -y nodejs npm > /dev/null 2>&1
+    if [ $? -ne 0 ]; then
+        local ERROR_MESSAGE=($(ErrorMessage "run.sh" "0205"))
+        echo $ERROR_MESSAGE
+        sudo apt update
+        sudo apt install -y nodejs npm && \
+        echo $msg3
+    elif
+        echo $msg3
+    fi
+}
 
 if [ -f "$CONFIG_DATA" ]; then
     local ERROR_MESSAGE=($(ErrorMessage "run.sh" "0113"))
@@ -56,21 +78,23 @@ if [ -z "$TYPE" ]; then
     echo $ERROR_MESSAGE && exit 1
 fi
 
-if [[ "$TYPE" != "postprocessor" && "$TYPE" != "redirect" ]]; then
+if [[ "$TYPE" != "postprocessor" && "$TYPE" != "redirector" && "$TYPE" != "compressor" ]]; then
     local ERROR_MESSAGE=($(ErrorMessage "run.sh" "0111"))
     echo $ERROR_MESSAGE && exit 1
 fi
 
-if [ -d "deploy" ]; then
-    local ERROR_MESSAGE=($(ErrorMessage "important_dirs" "0106"))
-    echo $ERROR_MESSAGE && exit 1
+if [ "$TYPE" != "compressor" ]; then
+    if [ -d "deploy" ]; then
+        local ERROR_MESSAGE=($(ErrorMessage "important_dirs" "0106"))
+        echo $ERROR_MESSAGE && exit 1
+    fi
+    if [ -d "_just_data" ]; then
+        local ERROR_MESSAGE=($(ErrorMessage "important_dirs" "0107"))
+        echo $ERROR_MESSAGE && exit 1
+    fi
+    mkdir -p deploy
+    mkdir -p _just_data
 fi
-if [ -d "_just_data" ]; then
-    local ERROR_MESSAGE=($(ErrorMessage "important_dirs" "0107"))
-    echo $ERROR_MESSAGE && exit 1
-fi
-mkdir -p deploy
-mkdir -p _just_data
 
 if [ "$TYPE" == "postprocessor" ]; then
     set -e
@@ -88,15 +112,17 @@ if [ "$TYPE" == "postprocessor" ]; then
     bash $GITHUB_ACTION_PATH/src/postprocessor/create_api_endpoints.sh && \
     bash $GITHUB_ACTION_PATH/src/postprocessor/modify_deployment.sh && \
     bash $GITHUB_ACTION_PATH/src/postprocessor/override_deployment.sh && \
-    bash $GITHUB_ACTION_PATH/src/postprocessor/build_map.sh
-elif [ "$TYPE" == "redirect" ]; then
+    installNodejs && \
+    node $GITHUB_ACTION_PATH/src/compress.js "deploy" && \
+    bash $GITHUB_ACTION_PATH/src/postprocessor/build_map.sh && \
+    echo $msg4
+elif [ "$TYPE" == "redirector" ]; then
     mkdir -p deploy/_just
-    sudo apt update -qq && sudo apt install -y nodejs npm > /dev/null 2>&1
-    if [ $? -ne 0 ]; then
-        local ERROR_MESSAGE=($(ErrorMessage "run.sh" "0205"))
-        echo $ERROR_MESSAGE
-        sudo apt update
-        sudo apt install -y nodejs npm
-    fi
-    node $GITHUB_ACTION_PATH/src/redirect/index.js
+    installNodejs && \
+    node $GITHUB_ACTION_PATH/src/redirect/index.js && \
+    echo $msg5
+elif [ "$TYPE" == "compressor" ]; then
+    installNodejs && \
+    node $GITHUB_ACTION_PATH/src/compress.js && \
+    echo $msg6
 fi

@@ -23,6 +23,7 @@
 #!/bin/bash
 ERRORS_FILE="$GITHUB_ACTION_PATH/data/codes.json"
 ERROR_PREFIX="Just an Ultimate Site Tool"
+_N_="\n\n\n\n"
 
 ErrorMessage() {
     local ERROR_CODE=$2
@@ -32,7 +33,12 @@ ErrorMessage() {
     if [[ $ERROR_CODE == 02* ]]; then
         ERROR_TYPE="Warning"
     fi
-    echo -e "\n\n\n\n$ERROR_PREFIX: $ERROR_TYPE $ERROR_CODE: $ERROR_MESSAGE $ERROR_LINK\n\n\n\n"
+    echo -e "$_N_ $ERROR_PREFIX: $ERROR_TYPE $ERROR_CODE: $ERROR_MESSAGE $ERROR_LINK $_N_"
+}
+
+Message() {
+    local MESSAGE=$1
+    echo -e "$_N_ $ERROR_PREFIX: INFO: $MESSAGE $_N_"
 }
 
 export -f ErrorMessage
