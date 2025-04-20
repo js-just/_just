@@ -42,7 +42,7 @@ if [ $? -ne 0 ]; then
     local ERROR_MESSAGE=($(ErrorMessage "run.sh" "0109"))
     echo $ERROR_MESSAGE && exit 1
 fi
-echo "Parsed CONFIG_JSON: $CONFIG_JSON" # debug
+echo "Parsed just.config.js module.exports: $CONFIG_JSON" # debug
 echo "$CONFIG_JSON" > "$CONFIG_DATA"
 
 if [ -z "$(echo "$CONFIG_JSON" | jq -r '.module.exports')" ]; then
@@ -90,7 +90,13 @@ if [ "$TYPE" == "postprocessor" ]; then
     bash $GITHUB_ACTION_PATH/src/postprocessor/override_deployment.sh && \
     bash $GITHUB_ACTION_PATH/src/postprocessor/build_map.sh
 elif [ "$TYPE" == "redirect" ]; then
-    sudo apt update
-    sudo apt install -y nodejs npm
+    mkdir -p deploy/_just
+    sudo apt update -qq && sudo apt install -y nodejs npm > /dev/null 2>&1
+    if [ $? -ne 0 ]; then
+        local ERROR_MESSAGE=($(ErrorMessage "run.sh" "0205"))
+        echo $ERROR_MESSAGE
+        sudo apt update
+        sudo apt install -y nodejs npm
+    fi
     node $GITHUB_ACTION_PATH/src/redirect/index.js
 fi
