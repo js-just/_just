@@ -27,12 +27,13 @@ const template = {
     "description": "Made with Just an Ultimate Site Tool"
 }
 const fs = require('fs');
+const path = require('path');
 const compress = (string) => string.replaceAll(`\n`,'').replaceAll('    ','');
 
 const config = JSON.parse(fs.readFileSync('just.config.json', 'utf-8'));
 const redirectConfig = config.redirect_config;
 
-const cssContent = compress(fs.readFileSync('./style.css', 'utf-8'));
+const cssContent = compress(fs.readFileSync(path.join(__dirname, 'style.css'), 'utf-8'));
 fs.writeFileSync(`deploy/_just/style.css`, cssContent);
 
 const generatePage = (url, params, path_) => {
