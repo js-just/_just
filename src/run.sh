@@ -42,7 +42,7 @@ installNodejs() {
         local ERROR_MESSAGE=($(ErrorMessage "run.sh" "0205"))
         echo $ERROR_MESSAGE
         sudo apt update
-        sudo apt install -y nodejs npm && \
+        sudo apt install -y nodejs npm
     fi
     echo $msg3
 }
