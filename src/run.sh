@@ -43,10 +43,8 @@ installNodejs() {
         echo $ERROR_MESSAGE
         sudo apt update
         sudo apt install -y nodejs npm && \
-        echo $msg3
-    elif
-        echo $msg3
     fi
+    echo $msg3
 }
 
 if [ -f "$CONFIG_DATA" ]; then

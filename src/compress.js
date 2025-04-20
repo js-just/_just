@@ -73,3 +73,13 @@ function findAndCompressFiles(dir) {
 }
 
 findAndCompressFiles(deployDir);
+
+/*
+
+EXAMPLE just.config.js FILE for compressing your static website:
+
+module.exports = {
+    type: "compressor"
+}
+
+*/
