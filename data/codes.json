@@ -65,6 +65,12 @@
             "message": "Your repository has a just.config.json file in the root directory. Please remove it.",
             "crashed": true,
             "link": ""
+        },
+        {
+            "code": "0205",
+            "message": "Error occurred during Node.js installation. Retrying to install Node.js with console output enabled...",
+            "crashed": false,
+            "link": ""
         }
     ],
     "postprocessor/checks.sh": [
