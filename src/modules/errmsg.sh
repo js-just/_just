@@ -22,12 +22,17 @@
 
 #!/bin/bash
 ERRORS_FILE="$GITHUB_ACTION_PATH/data/codes.json"
+ERROR_PREFIX="Just an Ultimate Site Tool"
 
 ErrorMessage() {
     local ERROR_CODE=$2
     local ERROR_MESSAGE=${3:-$(jq -r ".[\"$1\"][] | select(.code==\"$ERROR_CODE\") | .message" "$ERRORS_FILE")}
     local ERROR_LINK=$(jq -r ".[\"$1\"][] | select(.code==\"$ERROR_CODE\") | .link" "$ERRORS_FILE")
-    echo -e "\n\n\n\nError $ERROR_CODE: $ERROR_MESSAGE $ERROR_LINK"
+    local ERROR_TYPE="Error"
+    if [[ $ERROR_CODE == 02* ]]; then
+        ERROR_TYPE="Warning"
+    fi
+    echo -e "\n\n\n\n$ERROR_PREFIX: $ERROR_TYPE $ERROR_CODE: $ERROR_MESSAGE $ERROR_LINK\n\n\n\n"
 }
 
 export -f ErrorMessage

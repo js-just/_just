@@ -72,12 +72,6 @@ fi
 mkdir -p deploy
 mkdir -p _just_data
 
-if [ -d "deploy/_just" ]; then
-    local ERROR_MESSAGE=($(ErrorMessage "postprocessor/modify_deployment.sh" "0103"))
-    echo $ERROR_MESSAGE && exit 1
-fi
-mkdir -p deploy/_just/
-
 if [ "$TYPE" == "postprocessor" ]; then
     set -e
     postprocessor_checks=$(bash $GITHUB_ACTION_PATH/src/postprocessor/checks.sh 2>&1) || {
@@ -100,4 +94,3 @@ elif [ "$TYPE" == "redirect" ]; then
     sudo apt install -y nodejs npm
     node $GITHUB_ACTION_PATH/src/redirect/index.js
 fi
-
