@@ -27,12 +27,12 @@ CONFIG_DATA="just.config.json"
 source $GITHUB_ACTION_PATH/src/modules/errmsg.sh
 
 VERSION=$(echo "$GITHUB_ACTION_PATH" | grep -oP '(?<=/v)[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9]+)?')
-msg1=($(Message "Running Just an Ultimate Site Tool v$VERSION"))
-msg2=($(Message "Installing Node.js"))
-msg3=($(Message "Installed Node.js"))
-msg4=($(Message "Postprocessing completed"))
-msg5=($(Message "Generating completed"))
-msg6=($(Message "Compressing completed"))
+msg1=($(_justMessage "Running Just an Ultimate Site Tool v$VERSION"))
+msg2=($(_justMessage "Installing Node.js"))
+msg3=($(_justMessage "Installed Node.js"))
+msg4=($(_justMessage "Postprocessing completed"))
+msg5=($(_justMessage "Generating completed"))
+msg6=($(_justMessage "Compressing completed"))
 echo $msg1
 
 installNodejs() {
@@ -120,6 +120,8 @@ elif [ "$TYPE" == "redirector" ]; then
     node $GITHUB_ACTION_PATH/src/redirect/index.js && \
     echo $msg5
 elif [ "$TYPE" == "compressor" ]; then
+    mkdir -p deploy && \
+    find . -path ./deploy -prune -o -print | sed 's|^\./||' | cp --parents -t deploy - && \
     installNodejs && \
     node $GITHUB_ACTION_PATH/src/compress.js && \
     echo $msg6

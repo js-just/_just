@@ -42,4 +42,4 @@ Message() {
 }
 
 export -f ErrorMessage
-export -f Message
+export -f _justMessage
