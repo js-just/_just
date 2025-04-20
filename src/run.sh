@@ -123,6 +123,6 @@ elif [ "$TYPE" == "compressor" ]; then
     mkdir -p deploy && \
     find . -path ./deploy -prune -o -print | sed 's|^\./||' | cp --parents -t deploy - && \
     installNodejs && \
-    node $GITHUB_ACTION_PATH/src/compress.js && \
+    node $GITHUB_ACTION_PATH/src/compress.js "deploy" && \
     echo $msg6
 fi
