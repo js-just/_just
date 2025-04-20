@@ -42,3 +42,4 @@ Message() {
 }
 
 export -f ErrorMessage
+export -f Message
