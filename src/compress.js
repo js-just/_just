@@ -33,7 +33,7 @@ function compressFile(filePath) {
     let content = fs.readFileSync(filePath, 'utf8');
 
     if (filePath.endsWith('.js')) {
-        content = content.replace(/\/\/.*\n/g, '\n');
+        content = content.replace(/(^|[^"'\`])\/\/.*\n/g, '$1\n');
     }
 
     content = content.replace(/(\s*["'`])([^"'\n`]*)(["'`]\s*)/g, (match, p1, p2, p3) => {
