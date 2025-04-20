@@ -121,7 +121,7 @@ elif [ "$TYPE" == "redirector" ]; then
     echo $msg5
 elif [ "$TYPE" == "compressor" ]; then
     mkdir -p deploy && \
-    find . -path ./deploy -prune -o -print | sed 's|^\./||' | xargs -I {} cp -r --parents {} deploy/ && \
+    find . -path ./deploy -prune -o -path ./.git -prune -o -print | sed 's|^\./||' | xargs -I {} cp -r --parents {} deploy/ && \
     installNodejs && \
     node $GITHUB_ACTION_PATH/src/compress.js "deploy" && \
     echo $msg6
