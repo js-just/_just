@@ -38,7 +38,10 @@
     "next",
     "nextjs",
     "react",
-    "reactjs"
+    "reactjs",
+    "redirect",
+    "compress",
+    "minify"
   ],
   "author": "JustDeveloper",
   "license": "MIT",
