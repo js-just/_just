@@ -191,4 +191,40 @@ module.exports = {
     }
 }
 
+
+------------------------
+
+everything combined:
+
+module.exports = {
+    type: "redirect", 
+    redirect_config: {
+        url: "https://justdeveloper.is-a.dev/", 
+        params: {
+            title: "JustDeveloper",
+            description: "the one who created this shi-",
+            keywords: "Just, an, Ultimate, Site, Tool",
+            htmlLang: "en",
+            robots: "index",
+            charset: "UTF-8",
+            viewport: "width=device-width",
+            yandex: "abc123",
+            google: "abc123",
+            googleAnalytics: "abc123",
+            content: {
+                text1: "Hello, World!",
+                text2: "do not click anywhere.",
+                text3: "click here!"
+            }
+            og: {
+                title: "Redirect",
+                description: "Hello, World!"
+            },
+            twitter: {
+                card: "summary_large_image"
+            }
+        }
+    }
+}
+
 */
