@@ -121,7 +121,7 @@ find deploy -mindepth 1 -print | while read -r path; do
 
         esac
         file_size=$(stat -c%s "$path")
-        TOTAL_SIZE=$((TOTAL_SIZE + $file_size))
+        TOTAL_SIZE=$((TOTAL_SIZE + $((file_size))))
 
         if [ "$FILE_ID" -eq 1 ]; then
             printf "┌ %s | %s\n" "$(human_readable_size $file_size)" "$relative_path"

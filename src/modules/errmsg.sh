@@ -41,5 +41,9 @@ _justMessage() {
     echo -e "$NEWLINES $ERROR_PREFIX: INFO: $MESSAGE $NEWLINES"
 }
 
+customErrorMessage() {
+    echo -e "$NEWLINES $ERROR_PREFIX: $1 $2: $3 $NEWLINES"
+}
+
 export -f ErrorMessage
 export -f _justMessage

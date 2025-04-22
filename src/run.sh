@@ -117,6 +117,7 @@ if [ "$TYPE" == "postprocessor" ]; then
 elif [ "$TYPE" == "redirector" ]; then
     mkdir -p deploy/_just
     installNodejs && \
+    bash $GITHUB_ACTION_PATH/src/redirect/checks.sh && \
     node $GITHUB_ACTION_PATH/src/redirect/index.js && \
     echo $msg5
 elif [ "$TYPE" == "compressor" ]; then

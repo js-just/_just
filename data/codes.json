@@ -140,5 +140,25 @@
             "crashed": false,
             "link": ""
         }
+    ],
+    "redirect/checks.sh": [
+        {
+            "code": "0114",
+            "message": "Missing \"url\" in \"redirect_config\" in \"module.exports\" at \"just.config.js\" file.",
+            "crashed": true,
+            "link": ""
+        },
+        {
+            "code": "0115",
+            "message": "( MISSING URL IN {} IN PATHS[] IN REDIRECT_CONFIG{} IN MODULE.EXPORTS AT JUST.CONFIG.JS )",
+            "crashed": true,
+            "link": ""
+        },
+        {
+            "code": "0116",
+            "message": "( MISSING PATH_ IN {} IN PATHS[] IN REDIRECT_CONFIG{} IN MODULE.EXPORTS AT JUST.CONFIG.JS )",
+            "crashed": true,
+            "link": ""
+        }
     ]
 }
