@@ -33,7 +33,10 @@ function compressFile(filePath) {
     let content = fs.readFileSync(filePath, 'utf8');
 
     if (filePath.endsWith('.js')) {
-        content = content.replace(/(?<!["'`])\/\/.*\n/g, '\n');
+        content = content.replace(/(?<!["'`])\/\/.*\n/g, '\n')
+            .replace(/(?<!['"`][\s\S]*)\btrue\b(?!['"`][\s\S]*)/g, '!![]')
+            .replace(/(?<!['"`][\s\S]*)\bfalse\b(?!['"`][\s\S]*)/g, '![]')
+            .replace(/(?<!['"`][\s\S]*)\bundefined\b(?!['"`][\s\S]*)/g, '[][[]]');
     }    
 
     content = content.replace(/(\s*["'`])([^"'\n`]*)(["'`]\s*)/g, (match, p1, p2, p3) => {
@@ -76,7 +79,7 @@ findAndCompressFiles(deployDir);
 
 /*
 
-EXAMPLE just.config.js FILE for compressing your static website:
+EXAMPLE just.config.js FILE to minify js, css, html files in your static website:
 
 module.exports = {
     type: "compressor"
