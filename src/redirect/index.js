@@ -26,11 +26,14 @@ SOFTWARE.
 
 const template = {
     "title": (url) => `Redirecting to ${url}...`,
-    "description": "Made with Just an Ultimate Site Tool"
+    "description": "Made with Just an Ultimate Site Tool",
+    "viewport": "width=device-width, initial-scale=1.0",
+    "twitter": "summary_large_image"
 }
 const fs = require('fs');
 const path = require('path');
 const compress = (string) => string.replaceAll(`\n`,'').replaceAll('    ','');
+const filter = (input) => input ? input.replace(/[^a-zA-Z0-9]/g, (char) => `&#${char.charCodeAt(0)};`) : undefined;
 
 const config = JSON.parse(fs.readFileSync('just.config.json', 'utf-8'));
 const redirectConfig = config.redirect_config;
@@ -39,55 +42,101 @@ const cssContent = compress(fs.readFileSync(path.join(__dirname, 'style.css'), '
 fs.writeFileSync(`deploy/_just/style.css`, cssContent);
 
 const generatePage = (url, params, path_) => {
-    const tempTitle = template.title(url);
+    const URL = compress(`${url}`);
+    const PATH = (path_) => {
+        let output = compress(`${path_}`).toLowerCase();
+        if (output.startsWith('/')) {
+            output = output.slice(1);
+        }
+        if (output.endsWith('/')) {
+            output += 'index';
+        }
+        return output;
+    }
+
+    const tempTitle = template.title(URL);
     const tempDescription = template.description;
-    const tempTwitterCard = "summary_large_image";
+    const tempViewport = template.viewport;
 
     const title = params ? params.title || tempTitle : tempTitle;
     const description = params ? params.description || tempDescription : tempDescription;
     const metaKeywords = params ? params.keywords || undefined : undefined;
     const lang = params ? params.htmlLang || undefined : undefined;
+    const robots = params ? params.robots || undefined : undefined;
+    const charset = params ? params.charset || "UTF-8" : "UTF-8";
+    const viewport = params ? params.viewport || tempViewport : tempViewport;
+
+    const text1 = params && params.content ? filter(params.content.text1) || undefined : undefined;
+    const text2 = params && params.content ? filter(params.content.text2) || undefined : undefined;
+    const text3 = params && params.content ? filter(params.content.text3) || undefined : undefined;
     
     const ogTitle = params && params.og ? params.og.title || title : title;
     const ogDescription = params && params.og ? params.og.description || description : description;
     
-    const twitterCard = params && params.twitter ? params.twitter.card || tempTwitterCard : tempTwitterCard;
+    const twitterCard = params && params.twitter ? params.twitter.card || template.twitter : template.twitter;
 
-    const page = path_ || "index";
+    const yandexVerification = params ? params.yandex || undefined : undefined;
+
+    const googleAnalytics = params ? params.googleAnalytics || undefined : undefined;
+    const googleVerification = params ? params.google || undefined : undefined;
+
+    const page = path_ ? PATH() : "index";
     const keywords = metaKeywords ? `<meta name="keywords" content="${metaKeywords}"/>` : '';
     const htmlLang = lang ? ` lang="${`${lang}`.toLowerCase()}"` : '';
+    const optionalstuff = () => {
+        let output = '';
+        if (yandexVerification) {
+            output += `\n<meta name="yandex-verification" content="${yandexVerification}"/>`;
+        }
+        if (googleVerification) {
+            output += `\n<meta name="google-site-verification" content="${googleVerification}" />`;
+        }
+        if (googleAnalytics) {
+            output += `\n<script async src="https://www.googletagmanager.com/gtag/js?id=${googleAnalytics}"></script>
+                        <script>
+                            window.dataLayer = window.dataLayer || [];
+                            function gtag() {
+                                dataLayer.push(arguments);
+                            }
+                            gtag('js', new Date());
+                            gtag('config', '${googleAnalytics}');
+                        </script>`
+        }
+        if (robots) {
+            output += `\n<meta name="robots" content="${robots}" />`
+        }
+    }
 
-    const linkElement = `<a href="${url}" target="_self">`;
-    const htmlContent = compress(`<just/>
-    <html${htmlLang}>
+    const link = `<a href="${URL}" target="_self">`;
+    const meta = '<meta property=';
+    const htmlContent = '<!DOCTYPE html>\n' + compress(`<html${htmlLang}>
     <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta charset="${charset}">
+        <meta name="viewport" content="${viewport}">
         <title>${title}</title>
         <link rel="stylesheet" href="/_just/style.css">
         <meta name="description" content="${description}"/>${keywords}
-        <meta property="og:title" content="${title}"/>
-        <meta property="og:description" content="${description}"/>
-        <meta property="og:type" content="website"/>
-        <meta property="twitter:card" content="${twitterCard}"/>
-        <meta property="og:title" content="${ogTitle}"/>
-        <meta property="og:description" content="${ogDescription}"/>
-        <meta property="og:url" content="${url}"/>
+        ${meta}"og:title" content="${title}"/>
+        ${meta}"og:description" content="${description}"/>
+        ${meta}"og:type" content="website"/>
+        ${meta}"twitter:card" content="${twitterCard}"/>
+        ${meta}"og:title" content="${ogTitle}"/>
+        ${meta}"og:description" content="${ogDescription}"/>
+        ${meta}"og:url" content="${URL}"/>${optionalstuff()}
     </head>
     <body>
         <h1>${title}</h1>
         <div>
-            <span class="r">Redirecting...<br><small>to ${linkElement}${url}</a></small></span>
-            <span class="d">Didn't get redirected? ${linkElement}Click here!</a></span>
+            <span class="r">${text1 || `Redirecting...<br><small>to ${link}${URL}</a></small>`}</span>
+            <span class="d">${text2 || "Didn't get redirected?"} ${link}${text3 || 'Click here!'}</a></span>
         </div>
         <script src="/_just/${page}.js"></script>
     </body>
-    </html>
-    `).replace('<just/>','<!DOCTYPE html>\n');
+    </html>`);
     
     fs.writeFileSync(`deploy/${page}.html`, htmlContent);
     
-    const jsContent = `window.location.href='${url}';`;
+    const jsContent = `window.location.href='${URL}';`;
     fs.writeFileSync(`deploy/_just/${page}.js`, jsContent);
 };
 
