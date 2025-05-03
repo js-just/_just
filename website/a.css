@@ -1,0 +1,54 @@
+* {
+    margin: 0;
+}
+html {
+    color: #ffffff;
+    font-family: monospace;
+    text-align: center;
+}
+body {
+    background-color: #000000;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    translate: -50% -50%;
+    height: auto;
+    width: 75%;
+}
+@property --angle1 {
+    syntax: "<angle>";
+    initial-value: 0deg;
+    inherits: false
+}
+h1 {
+    font-size: 30px;
+    -webkit-text-stroke-color: hsl(var(--angle1) 100% 50%);
+    -webkit-text-stroke-width: 0.5px;
+    filter: drop-shadow(0px 20px 50px hsl(var(--angle1) 100% 50%)) drop-shadow(10px 5px 5px hsl(var(--angle1) 100% 50% / 50%)) drop-shadow(400px -10px 50px hsl(var(--angle1) 100% 50% / 50%)) drop-shadow(-400px 20px 50px hsl(var(--angle1) 100% 50% / 50%));
+    animation: 3s rgb linear infinite;
+}
+@keyframes rgb {
+    from {
+        --angle1: 0deg
+    }
+    to {
+        --angle1: 360deg
+    }
+}
+span {
+    position: fixed;
+    translate: -50% 2px;
+    width: 100%;
+    background: hsl(0deg 0% 100% / 25%);
+    background: radial-gradient(circle, hsl(0deg 0% 100% / 25%) 0%, hsl(0deg 0% 0% / 0%) 100%);
+    background: -moz-radial-gradient(circle, hsl(0deg 0% 100% / 25%) 0%, hsl(0deg 0% 0% / 0%) 100%);
+    background: -webkit-radial-gradient(circle, hsl(0deg 0% 100% / 25%) 0%, hsl(0deg 0% 0% / 0%) 100%);
+    max-width: 700px;
+    color: hsl(0 0% 75%);
+    filter: saturate(0%);
+    opacity: 0.4;
+    padding-bottom: 5px;
+}
+h4 {
+    translate: 0% calc(100% + 9px);
+}
