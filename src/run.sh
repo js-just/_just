@@ -134,6 +134,7 @@ elif [ "$TYPE" == "generator" ]; then
     JS=$(cat "$GITHUB_ACTION_PATH/src/documentation/templates/page.js")
     mkdir -p deploy && \
     echo "$msg7" && \
+    sudo npm init && \
     sudo npm cache clean --force && \
     sudo npm install jsdom --save --force > /dev/null 2>&1 && \
     echo "$msg8" && \
