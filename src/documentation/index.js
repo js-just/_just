@@ -363,8 +363,8 @@ markdownFiles.forEach(file => {
         .replace('REPLACE_LOGO', logo)
         .replace('REPLACE_NAME', filterText(name))
         .replace('REPLACE_PAGES', filterText(pages))
-        .replace('REPLACE_CONTENTS', filterText(pageHeaders));
-        .replace('REPLACE_FOOTER', filterText(footer))
+        .replace('REPLACE_CONTENTS', filterText(pageHeaders))
+        .replace('REPLACE_FOOTER', filterText(footer));
     
     fs.writeFileSync(outFilePath('html'), outHTML.replace('REPLACE_CONTENT', toHTML), charset);
     fs.writeFileSync(outFilePath('css'), CSS, template.charset);
