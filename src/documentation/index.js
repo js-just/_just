@@ -41,7 +41,6 @@ const biMDtoHTML = (input) => {
     text = text.replace(/(?<=\s|^|[.,!?;:])__\s*(.*?)\s*__(?=\s|[.,!?;:]|$)/g, '<em>$1</em>');
 
     text = text.replace(/(?<=\s|^|[.,!?;:])__\*\s*(.*?)\s*\*\__(?=\s|[.,!?;:]|$)/g, '<em><strong>$1</strong></em>');
-    text = text.replace(/(?<=\s|^|[.,!?;:])\*\*\s*(.*?)\s*_**(?=\s|[.,!?;:]|$)/g, '<em><strong>$1</strong></em>');
 
     return text;
 }
