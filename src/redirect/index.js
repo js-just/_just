@@ -105,6 +105,7 @@ const generatePage = (url, params, path_) => {
         if (robots) {
             output += `\n<meta name="robots" content="${robots}" />`
         }
+        return output;
     }
 
     const link = `<a href="${URL}" target="_self">`;

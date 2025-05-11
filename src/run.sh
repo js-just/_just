@@ -37,7 +37,7 @@ msg7=$(_justMessage "Generating completed")
 echo "$msg1"
 
 installNodejs() {
-    echo $msg2
+    echo "$msg2"
     sudo apt update -qq && sudo apt install -y nodejs npm > /dev/null 2>&1
     if [ $? -ne 0 ]; then
         local ERROR_MESSAGE=($(ErrorMessage "run.sh" "0205"))
@@ -45,7 +45,7 @@ installNodejs() {
         sudo apt update
         sudo apt install -y nodejs npm
     fi
-    echo $msg3
+    echo "$msg3"
 }
 
 if [ -f "$CONFIG_DATA" ]; then
@@ -114,18 +114,18 @@ if [ "$TYPE" == "postprocessor" ]; then
     installNodejs && \
     node $GITHUB_ACTION_PATH/src/compress.js "deploy" && \
     bash $GITHUB_ACTION_PATH/src/postprocessor/build_map.sh && \
-    echo $msg4
+    echo "$msg4"
 elif [ "$TYPE" == "redirector" ]; then
     mkdir -p deploy/_just
     installNodejs && \
     bash $GITHUB_ACTION_PATH/src/redirect/checks.sh && \
     node $GITHUB_ACTION_PATH/src/redirect/index.js && \
-    echo $msg5
+    echo "$msg5"
 elif [ "$TYPE" == "compressor" ]; then
     mkdir -p deploy && \
     installNodejs && \
     node $GITHUB_ACTION_PATH/src/compress.js "." && \
-    echo $msg6
+    echo "$msg6"
 elif [ "$TYPE" == "generator" ]; then
     HTML=$(cat "$GITHUB_ACTION_PATH/src/documentation/templates/page.html")
     CSS=$(cat "$GITHUB_ACTION_PATH/src/documentation/templates/page.css")
@@ -133,5 +133,7 @@ elif [ "$TYPE" == "generator" ]; then
     mkdir -p deploy && \
     installNodejs && \
     bash $GITHUB_ACTION_PATH/src/documentation/checks.sh && \
-    node "$GITHUB_ACTION_PATH/src/documentation/index.js" "$HTML" "$CSS" "$JS"
+    node "$GITHUB_ACTION_PATH/src/documentation/index.js" "$HTML" "$CSS" "$JS" && \
+    node $GITHUB_ACTION_PATH/src/compress.js "." && \
+    echo "$msg7"
 fi

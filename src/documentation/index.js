@@ -24,10 +24,121 @@ SOFTWARE.
 
 */
 
+const template = {
+    "charset": "utf-8",
+    "title": "Documentation",
+    "footer": `Made with ${link('_just', 'https://just.is-a.dev/')}.`,
+    "viewport": "width=device-width, initial-scale=1.0",
+    "twitter": "summary_large_image",
+    "lang": "en",
+    "headerTagIDStart": "hdr"
+}
 const fs = require('fs');
 const path = require('path');
-
+const { JSDOM } = require('jsdom');
 const [HTML, CSS, JS] = process.argv.slice(2);
+const config = JSON.parse(fs.readFileSync('just.config.json', template.charset));
+const docsConfig = config.docs_config;
+
+const charset = docsConfig ? docsConfig.charset || template.charset : template.charset;
+
+const rootDirA = './';
+const extensions = ['.md', '.mdx', '.html'];
+
+function getFiles(dir) {
+    let results = [];
+    const list = fs.readdirSync(dir);
+    list.forEach(file => {
+        const filePath = path.join(dir, file);
+        const stat = fs.statSync(filePath);
+        if (stat && stat.isDirectory()) {
+            results = results.concat(getFiles(filePath));
+        } else if (extensions.includes(path.extname(file))) {
+            results.push(filePath);
+        }
+    });
+    return results;
+}
+
+function getTitleFromHtml(filePath) {
+    const content = fs.readFileSync(filePath, charset);
+    const dom = new JSDOM(content);
+    const title = dom.window.document.querySelector('title');
+    return title ? title.textContent : null;
+}
+
+function getTitleFromMd(filePath) {
+    const content = fs.readFileSync(filePath, charset).split('\n');
+    if (content[0].startsWith('_just: title: ')) {
+        return content[0].replace('_just: title: ', '').trim();
+    }
+    return null;
+}
+
+function getPageList() {
+    const files = getFiles(rootDirA);
+    const pages = [];
+
+    files.forEach(file => {
+        const extname = path.extname(file);
+        let title;
+        let pagePath = file.replace(rootDirA, '').replace(extname, '');
+
+        if (pagePath.endsWith('/index')) {
+            pagePath = pagePath.split('').reverse().join('').replace('index'.split('').reverse().join(''), '').split('').reverse().join('');
+            title = 'Home';
+        } else {
+            title = path.basename(pagePath);
+        }
+
+        if (extname === '.html') {
+            const htmlTitle = getTitleFromHtml(file);
+            if (htmlTitle) title = htmlTitle;
+        } else if (extname === '.md' || extname === '.mdx') {
+            const mdTitle = getTitleFromMd(file);
+            if (mdTitle) title = mdTitle;
+        }
+
+        pages.push({ path: pagePath, title });
+    });
+
+    return pages;
+}
+function addFolderToPageList(pageList) {
+    return pageList.map(page => {
+        const folderNameArray = page.path.split('/').filter(Boolean);
+        const folderName = folderNameArray.length > 1 ? folderNameArray[folderNameArray.length - 2] : null;
+        return { ...page, folder: folderName };
+    });
+}
+const pageList = getPageList();
+
+function generateListItems(PageList) {
+    const folderMap = {};
+
+    PageList.forEach(page => {
+        const folder = page.folder || '';
+        if (!folderMap[folder]) {
+            folderMap[folder] = [];
+        }
+        folderMap[folder].push(page);
+    });
+
+    let listItemsHtml = '';
+
+    for (const [folderName, pages] of Object.entries(folderMap)) {
+        listItemsHtml += `${ folderName != '' ? `<li>
+                            <span><strong>${folderName}</strong></span>
+                            <ul>` : '<li><ul>'}`;
+        pages.forEach(page => {
+            listItemsHtml += `<li><a href="${page.path}"><span>${page.title}</span></a></li>`;
+        });
+        listItemsHtml += `   </ul>
+                        </li>`;
+    }
+
+    return listItemsHtml;
+}
 
 const biMDtoHTML = (input) => {
     let text = input;
@@ -120,6 +231,9 @@ function hbuoclpMDtoHTML(text, maxBlockquoteLevel = 4) {
     return resultTextArray.join('');
 }
 
+const link = (text, link_, ext = false) => `<a href="${link_}"${ext ? ' id="ext"' : ''}>${text}</a>`;
+const span = (text) => `<span>${text}</span>`;
+
 function findMarkdownFiles(dir) {
     let results = [];
     const list = fs.readdirSync(dir);
@@ -135,17 +249,122 @@ function findMarkdownFiles(dir) {
     return results;
 }
 
-const rootDir = process.cwd();
-const markdownFiles = findMarkdownFiles(rootDir);
+const rootDirB = process.cwd();
+const markdownFiles = findMarkdownFiles(rootDirB);
+
+const title = docsConfig ? docsConfig.title || template.title : template.title;
+const metatitle = docsConfig ? docsConfig.metatitle || title : title;
+const ogtitle = docsConfig && docsConfig.og ? docsConfig.og.title || metatitle : metatitle;
+const description = docsConfig ? docsConfig.description || undefined : undefined;
+const ogdescription = docsConfig && docsConfig.og ? docsConfig.og.description || description : description;
+const viewport = docsConfig ? docsConfig.viewport || template.viewport : template.viewport;
+const twitter = docsConfig && docsConfig.twitter ? docsConfig.twitter.card || template.twitter : template.twitter;
+const metaKeywords = docsConfig ? docsConfig.keywords || undefined : undefined;
+const lang = docsConfig ? docsConfig.htmlLang || template.lang : template.lang;
+const yandexVerification = docsConfig ? docsConfig.yandex || undefined : undefined;
+const googleAnalytics = docsConfig ? docsConfig.googleAnalytics || undefined : undefined;
+const googleVerification = docsConfig ? docsConfig.google || undefined : undefined;
+const logoPath = docsConfig ? docsConfig.logo || undefined : undefined;
+
+const insertHTMLinHead = docsConfig ? docsConfig.insertInHTMLHead || '' : '';
+
+const keywords = metaKeywords ? `<meta name="keywords" content="${metaKeywords}"/>` : '';
+const desc = description ? `<meta name="description" content="${description}"/>` : '';
+const ogdesc = ogdescription ? `<meta property="og:description" content="${ogdescription}"/>` : '';
+const ogtitl = ogtitle ? `<meta property="og:title" content="${ogtitle}"/>` : '';
+const logo = logoPath ? `<img src="${logoPath}" width="35px" height="auto" alt="Logo">` : '';
+const name = docsConfig && docsConfig.title ? span(title) : logoPath ? '' : span(title);
+const htmlLang = lang ? ` lang="${`${lang}`.toLowerCase()}"` : '';
+const htmlhead = () => {
+    let output = `
+    ${keywords}
+    ${desc}
+    ${ogtitl}
+    ${ogdesc}
+    <meta property="og:type" content="website"/>`;
+    if (twitter) {
+        output += `<meta property="twitter:card" content="${twitter}"/>`
+    }
+    if (yandexVerification) {
+        output += `\n<meta name="yandex-verification" content="${yandexVerification}"/>`;
+    }
+    if (googleVerification) {
+        output += `\n<meta name="google-site-verification" content="${googleVerification}" />`;
+    }
+    if (googleAnalytics) {
+        output += `\n<script async src="https://www.googletagmanager.com/gtag/js?id=${googleAnalytics}"></script>
+                    <script>
+                        window.dataLayer = window.dataLayer || [];
+                        function gtag() {
+                            dataLayer.push(arguments);
+                        }
+                        gtag('js', new Date());
+                        gtag('config', '${googleAnalytics}');
+                    </script>`
+    }
+    return output;
+}
+
+filterText = (text) => text
+    .replaceAll('_', `&#${'_'.charCodeAt(0)}`)
+    .replaceAll('<script>', `&#${'<'.charCodeAt(0)}script&#${'>'.charCodeAt(0)}`)
+    .replaceAll('</script>', `&#${'<'.charCodeAt(0)}&#${'/'.charCodeAt(0)}script&#${'>'.charCodeAt(0)}`);
+function makeJSDOM(data) {
+    return `<!DOCTYPE html>
+        <html>
+            <head>
+                <meta charset="${charset}">
+                <title>hello, world!</title>
+            </head>
+            <body>
+                ${data}
+            </body>
+        </html>`;
+}
 
 markdownFiles.forEach(file => {
-    const content = fs.readFileSync(file, 'utf-8');
+    const content = fs.readFileSync(file, charset);
     const fileNameWithoutExt = path.basename(file, path.extname(file));
     const outFilePath = (ext) => path.join(path.dirname(file), `${fileNameWithoutExt}.${ext}`);
 
-    const toHTML = hbuoclpMDtoHTML(content);
+    const toHTML = hbuoclpMDtoHTML(content).replace(/<h1>(.*?)<\/h1>/g, (match, p1) => {
+        return `<h1 id="${headerTagIDStart}${index++}">${p1}</h1>`;
+    }).replace(/<h2>(.*?)<\/h2>/g, (match, p1) => {
+        return `<h2 id="${headerTagIDStart}${index++}">${p1}</h2>`;
+    }).replace(/<h3>(.*?)<\/h3>/g, (match, p1) => {
+        return `<h3 id="${headerTagIDStart}${index++}">${p1}</h3>`;
+    });
+    const dom = new JSDOM(makeJSDOM(toHTML));
+    const document = dom.window.document;
+    const h1 = Array.from(document.querySelectorAll('h1')).map(h => [h.textContent, h.id]);
+    const hT = Array.from(document.querySelectorAll('h2, h3')).map(h => [h.textContent, h.id]);
+    const contents = [
+        ...h1.map(item => ({ ...item, first: true })),
+        ...hT.map(item => ({ ...item, first: false }))
+    ];
+    let pageHeaders = '';
+    for (const [text, id, first] of Object.entries(contents)) {
+        pageHeaders += `<li${ first ? ' class="secondary"' : '' }>
+                            <a href="#${id}">
+                                <span>${text}</span>
+                            </a>
+                        </li>`;
+    }
+
+    const pages = generateListItems(addFolderToPageList(pageList));
+    let outHTML = HTML
+        .replace('<html>', `<html lang="${htmlLang}">`)
+        .replace('REPLACE_CHARSET', charset)
+        .replace('REPLACE_VIEWPORT', viewport)
+        .replace('REPLACE_TITLE', metatitle)
+        .replace('REPLACE_DATA', htmlhead())
+        .replace('REPLACE_CUSTOM', insertHTMLinHead)
+        .replace('REPLACE_LOGO', logo)
+        .replace('REPLACE_NAME', filterText(name))
+        .replace('REPLACE_PAGES', filterText(pages))
+        .replace('REPLACE_CONTENTS', filterText(pageHeaders));
     
-    fs.writeFileSync(outFilePath('html'), HTML.replace('REPLACE_CONTENT', toHTML), 'utf-8');
-    fs.writeFileSync(outFilePath('css'), CSS, 'utf-8');
-    fs.writeFileSync(outFilePath('js'), JS, 'utf-8');
+    fs.writeFileSync(outFilePath('html'), outHTML.replace('REPLACE_CONTENT', toHTML), charset);
+    fs.writeFileSync(outFilePath('css'), CSS, template.charset);
+    fs.writeFileSync(outFilePath('js'), JS, template.charset);
 });
