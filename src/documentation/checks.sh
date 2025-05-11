@@ -24,7 +24,7 @@
 source $GITHUB_ACTION_PATH/src/modules/errmsg.sh
 config=$(cat just.config.json)
 
-local docs_config=$(echo "$config" | jq -r '.docs_config')
+docs_config=$(echo "$config" | jq -r '.docs_config')
 if ! echo "$config" | jq -e '.docs_config' > /dev/null; then
     local ERROR_MESSAGE=($(ErrorMessage "docs/checks.sh" "0118"))
     echo $ERROR_MESSAGE && exit 1

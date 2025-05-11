@@ -24,7 +24,7 @@
 source $GITHUB_ACTION_PATH/src/modules/errmsg.sh
 config=$(cat just.config.json)
 
-local redirect_config_=$(echo "$config" | jq -r '.redirect_config')
+redirect_config_=$(echo "$config" | jq -r '.redirect_config')
 if ! echo "$config" | jq -e '.redirect_config' > /dev/null; then
     local ERROR_MESSAGE=($(ErrorMessage "redirect/checks.sh" "0117"))
     echo $ERROR_MESSAGE && exit 1

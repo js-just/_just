@@ -127,9 +127,9 @@ elif [ "$TYPE" == "compressor" ]; then
     node $GITHUB_ACTION_PATH/src/compress.js "." && \
     echo $msg6
 elif [ "$TYPE" == "generator" ]; then
-    HTML=$(cat "$GITHUB_ACTION_PATH/src/documentation/template/page.html")
-    CSS=$(cat "$GITHUB_ACTION_PATH/src/documentation/template/page.css")
-    JS=$(cat "$GITHUB_ACTION_PATH/src/documentation/template/page.js")
+    HTML=$(cat "$GITHUB_ACTION_PATH/src/documentation/templates/page.html")
+    CSS=$(cat "$GITHUB_ACTION_PATH/src/documentation/templates/page.css")
+    JS=$(cat "$GITHUB_ACTION_PATH/src/documentation/templates/page.js")
     mkdir -p deploy && \
     installNodejs && \
     bash $GITHUB_ACTION_PATH/src/documentation/checks.sh && \
