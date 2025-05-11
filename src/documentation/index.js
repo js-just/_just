@@ -38,7 +38,8 @@ const template = {
 }
 const fs = require('fs');
 const path = require('path');
-const { JSDOM } = require('jsdom');
+const jsdom = require("jsdom");
+const { JSDOM } = jsdom;
 const [HTML, CSS, JS] = process.argv.slice(2);
 const config = JSON.parse(fs.readFileSync('just.config.json', template.charset));
 const docsConfig = config.docs_config;
