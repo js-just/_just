@@ -33,7 +33,9 @@ msg3=$(_justMessage "Installed Node.js")
 msg4=$(_justMessage "Postprocessing completed")
 msg5=$(_justMessage "Generating completed")
 msg6=$(_justMessage "Compressing completed")
-msg7=$(_justMessage "Generating completed")
+msg7=$(_justMessage "Installing JSDOM")
+msg8=$(_justMessage "Installed JSDOM")
+msg9=$(_justMessage "Generating completed")
 echo "$msg1"
 
 installNodejs() {
@@ -132,8 +134,11 @@ elif [ "$TYPE" == "generator" ]; then
     JS=$(cat "$GITHUB_ACTION_PATH/src/documentation/templates/page.js")
     mkdir -p deploy && \
     installNodejs && \
+    echo "$msg7" && \
+    npm install jsdom > /dev/null 2>&1 && \
+    echo "$msg8" && \
     bash $GITHUB_ACTION_PATH/src/documentation/checks.sh && \
     node "$GITHUB_ACTION_PATH/src/documentation/index.js" "$HTML" "$CSS" "$JS" && \
     node $GITHUB_ACTION_PATH/src/compress.js "." && \
-    echo "$msg7"
+    echo "$msg9"
 fi
