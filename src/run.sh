@@ -34,7 +34,7 @@ msg4=($(_justMessage "Postprocessing completed"))
 msg5=($(_justMessage "Generating completed"))
 msg6=($(_justMessage "Compressing completed"))
 msg7=($(_justMessage "Generating completed"))
-echo $msg1
+echo "$msg1"
 
 installNodejs() {
     echo $msg2
@@ -82,7 +82,7 @@ if [[ "$TYPE" != "postprocessor" && "$TYPE" != "redirector" && "$TYPE" != "compr
     echo $ERROR_MESSAGE && exit 1
 fi
 
-if [ "$TYPE" != "compressor" || "$TYPE" != "generator" ]; then
+if [ "$TYPE" != "compressor" ]; then
     if [ -d "deploy" ]; then
         local ERROR_MESSAGE=($(ErrorMessage "important_dirs" "0106"))
         echo $ERROR_MESSAGE && exit 1
