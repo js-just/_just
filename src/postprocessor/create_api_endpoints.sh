@@ -25,8 +25,8 @@
 source $GITHUB_ACTION_PATH/src/modules/errmsg.sh
 
 if [ -d "deploy/api" ]; then
-  local ERROR_MESSAGE=($(ErrorMessage "postprocessor/create_api_endpoints.sh" "0102"))
-  echo $ERROR_MESSAGE && exit 1
+  local ERROR_MESSAGE=$(ErrorMessage "postprocessor/create_api_endpoints.sh" "0102")
+  echo "$ERROR_MESSAGE" && exit 1
 fi
 mkdir -p deploy/api/
 

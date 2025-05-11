@@ -44,8 +44,8 @@ find deploy -type f -name "*.html" | while read -r html_file; do
 done
 
 if [ -f "deploy/404.html" ]; then
-  local ERROR_MESSAGE=($(ErrorMessage "postprocessor/override_deployment.sh" "0202"))
-  echo $ERROR_MESSAGE
+  local ERROR_MESSAGE=$(ErrorMessage "postprocessor/override_deployment.sh" "0202")
+  echo "$ERROR_MESSAGE"
 fi
 if [ ! -f "deploy/404.html" ]; then
   cp _just/404.html deploy/404.html
