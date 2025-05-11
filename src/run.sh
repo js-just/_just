@@ -133,12 +133,10 @@ elif [ "$TYPE" == "generator" ]; then
     CSS=$(cat "$GITHUB_ACTION_PATH/src/documentation/templates/page.css")
     JS=$(cat "$GITHUB_ACTION_PATH/src/documentation/templates/page.js")
     mkdir -p deploy && \
-    echo "$msg7" && \
-    sudo npm init && \
-    sudo npm cache clean --force && \
-    sudo npm install jsdom --save --force > /dev/null 2>&1 && \
-    echo "$msg8" && \
     installNodejs && \
+    echo "$msg7" && \
+    npm install jsdom --save --force > /dev/null 2>&1 && \
+    echo "$msg8" && \
     bash $GITHUB_ACTION_PATH/src/documentation/checks.sh && \
     node "$GITHUB_ACTION_PATH/src/documentation/index.js" "$HTML" "$CSS" "$JS" && \
     node $GITHUB_ACTION_PATH/src/compress.js "." && \
