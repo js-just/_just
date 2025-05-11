@@ -135,8 +135,8 @@ elif [ "$TYPE" == "generator" ]; then
     mkdir -p deploy && \
     installNodejs && \
     echo "$msg7" && \
-    npm cache clean --force && \
-    npm install jsdom --save --force > /dev/null 2>&1 && \
+    sudo npm cache clean --force && \
+    sudo npm install jsdom --save --force > /dev/null 2>&1 && \
     echo "$msg8" && \
     bash $GITHUB_ACTION_PATH/src/documentation/checks.sh && \
     node "$GITHUB_ACTION_PATH/src/documentation/index.js" "$HTML" "$CSS" "$JS" && \
