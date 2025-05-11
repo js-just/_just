@@ -24,6 +24,9 @@ SOFTWARE.
 
 */
 
+
+const link = (text, link_, ext = false) => `<a href="${link_}"${ext ? ' id="ext"' : ''}>${text}</a>`;
+const span = (text) => `<span>${text}</span>`;
 const template = {
     "charset": "utf-8",
     "title": "Documentation",
@@ -231,9 +234,6 @@ function hbuoclpMDtoHTML(text, maxBlockquoteLevel = 4) {
     return resultTextArray.join('');
 }
 
-const link = (text, link_, ext = false) => `<a href="${link_}"${ext ? ' id="ext"' : ''}>${text}</a>`;
-const span = (text) => `<span>${text}</span>`;
-
 function findMarkdownFiles(dir) {
     let results = [];
     const list = fs.readdirSync(dir);
@@ -265,6 +265,7 @@ const yandexVerification = docsConfig ? docsConfig.yandex || undefined : undefin
 const googleAnalytics = docsConfig ? docsConfig.googleAnalytics || undefined : undefined;
 const googleVerification = docsConfig ? docsConfig.google || undefined : undefined;
 const logoPath = docsConfig ? docsConfig.logo || undefined : undefined;
+const footer = docsConfig ? docsConfig.footer || template.footer : template.footer;
 
 const insertHTMLinHead = docsConfig ? docsConfig.insertInHTMLHead || '' : '';
 
@@ -363,6 +364,7 @@ markdownFiles.forEach(file => {
         .replace('REPLACE_NAME', filterText(name))
         .replace('REPLACE_PAGES', filterText(pages))
         .replace('REPLACE_CONTENTS', filterText(pageHeaders));
+        .replace('REPLACE_FOOTER', filterText(footer))
     
     fs.writeFileSync(outFilePath('html'), outHTML.replace('REPLACE_CONTENT', toHTML), charset);
     fs.writeFileSync(outFilePath('css'), CSS, template.charset);
