@@ -26,20 +26,20 @@ config=$(cat just.config.json)
 
 docs_config=$(echo "$config" | jq -r '.docs_config')
 if ! echo "$config" | jq -e '.docs_config' > /dev/null; then
-    local ERROR_MESSAGE=($(ErrorMessage "docs/checks.sh" "0118"))
-    echo $ERROR_MESSAGE && exit 1
+    local ERROR_MESSAGE=$(ErrorMessage "docs/checks.sh" "0118")
+    echo "$ERROR_MESSAGE" && exit 1
 fi
 
 validate_docs_config() {
     local metatitle=$(echo "$config" | jq -r '.docs_config.metatitle' > /dev/null)
     if [[ -z "$metatitle" ]]; then
-        local ERROR_MESSAGE=($(ErrorMessage "docs/checks.sh" "0119"))
-        echo $ERROR_MESSAGE && exit 1
+        local ERROR_MESSAGE=$(ErrorMessage "docs/checks.sh" "0119")
+        echo "$ERROR_MESSAGE" && exit 1
     fi
     local domain=$(echo "$config" | jq -r '.docs_config.domain' > /dev/null)
     if [[ -z "$domain" ]]; then
-        local ERROR_MESSAGE=($(ErrorMessage "docs/checks.sh" "0120"))
-        echo $ERROR_MESSAGE && exit 1
+        local ERROR_MESSAGE=$(ErrorMessage "docs/checks.sh" "0120")
+        echo "$ERROR_MESSAGE" && exit 1
     fi
 }
 

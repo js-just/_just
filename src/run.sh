@@ -27,13 +27,13 @@ CONFIG_DATA="just.config.json"
 source $GITHUB_ACTION_PATH/src/modules/errmsg.sh
 
 VERSION=$(echo "$GITHUB_ACTION_PATH" | grep -oP '(?<=/v)[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9]+)?')
-msg1=($(_justMessage "Running Just an Ultimate Site Tool v$VERSION"))
-msg2=($(_justMessage "Installing Node.js"))
-msg3=($(_justMessage "Installed Node.js"))
-msg4=($(_justMessage "Postprocessing completed"))
-msg5=($(_justMessage "Generating completed"))
-msg6=($(_justMessage "Compressing completed"))
-msg7=($(_justMessage "Generating completed"))
+msg1=$(_justMessage "Running Just an Ultimate Site Tool v$VERSION")
+msg2=$(_justMessage "Installing Node.js")
+msg3=$(_justMessage "Installed Node.js")
+msg4=$(_justMessage "Postprocessing completed")
+msg5=$(_justMessage "Generating completed")
+msg6=$(_justMessage "Compressing completed")
+msg7=$(_justMessage "Generating completed")
 echo "$msg1"
 
 installNodejs() {
@@ -49,47 +49,47 @@ installNodejs() {
 }
 
 if [ -f "$CONFIG_DATA" ]; then
-    local ERROR_MESSAGE=($(ErrorMessage "run.sh" "0113"))
-    echo $ERROR_MESSAGE && exit 1
+    local ERROR_MESSAGE=$(ErrorMessage "run.sh" "0113")
+    echo "$ERROR_MESSAGE" && exit 1
 fi
 
 if [ ! -f "$CONFIG_FILE" ]; then
-    local ERROR_MESSAGE=($(ErrorMessage "run.sh" "0108"))
-    echo $ERROR_MESSAGE && exit 1
+    local ERROR_MESSAGE=$(ErrorMessage "run.sh" "0108")
+    echo "$ERROR_MESSAGE" && exit 1
 fi
 
 CONFIG_JSON=$(node -e "console.log(JSON.stringify(require('./just.config.js')));")
 if [ $? -ne 0 ]; then
-    local ERROR_MESSAGE=($(ErrorMessage "run.sh" "0109"))
-    echo $ERROR_MESSAGE && exit 1
+    local ERROR_MESSAGE=$(ErrorMessage "run.sh" "0109")
+    echo "$ERROR_MESSAGE" && exit 1
 fi
 echo "Parsed just.config.js module.exports: $CONFIG_JSON" # debug
 echo "$CONFIG_JSON" > "$CONFIG_DATA"
 
 if [ -z "$(echo "$CONFIG_JSON" | jq -r '.module.exports')" ]; then
-    local ERROR_MESSAGE=($(ErrorMessage "run.sh" "0112"))
-    echo $ERROR_MESSAGE && exit 1
+    local ERROR_MESSAGE=$(ErrorMessage "run.sh" "0112")
+    echo "$ERROR_MESSAGE" && exit 1
 fi
 
 TYPE=$(echo "$CONFIG_JSON" | jq -r '.type')
 if [ -z "$TYPE" ]; then
-    local ERROR_MESSAGE=($(ErrorMessage "run.sh" "0110"))
-    echo $ERROR_MESSAGE && exit 1
+    local ERROR_MESSAGE=$(ErrorMessage "run.sh" "0110")
+    echo "$ERROR_MESSAGE" && exit 1
 fi
 
 if [[ "$TYPE" != "postprocessor" && "$TYPE" != "redirector" && "$TYPE" != "compressor" && "$TYPE" != "generator" ]]; then
-    local ERROR_MESSAGE=($(ErrorMessage "run.sh" "0111"))
-    echo $ERROR_MESSAGE && exit 1
+    local ERROR_MESSAGE=$(ErrorMessage "run.sh" "0111")
+    echo "$ERROR_MESSAGE" && exit 1
 fi
 
 if [ "$TYPE" != "compressor" ]; then
     if [ -d "deploy" ]; then
-        local ERROR_MESSAGE=($(ErrorMessage "important_dirs" "0106"))
-        echo $ERROR_MESSAGE && exit 1
+        local ERROR_MESSAGE=$(ErrorMessage "important_dirs" "0106")
+        echo "$ERROR_MESSAGE" && exit 1
     fi
     if [ -d "_just_data" ]; then
-        local ERROR_MESSAGE=($(ErrorMessage "important_dirs" "0107"))
-        echo $ERROR_MESSAGE && exit 1
+        local ERROR_MESSAGE=$(ErrorMessage "important_dirs" "0107")
+        echo "$ERROR_MESSAGE" && exit 1
     fi
     mkdir -p deploy
     mkdir -p _just_data
@@ -100,11 +100,11 @@ if [ "$TYPE" == "postprocessor" ]; then
     postprocessor_checks=$(bash $GITHUB_ACTION_PATH/src/postprocessor/checks.sh 2>&1) || {
         local error_code=$?
         if [ $error_code -eq 1 ]; then
-            local ERROR_MESSAGE=($(ErrorMessage "postprocessor/checks.sh" "0100" "$postprocessor_checks"))
+            local ERROR_MESSAGE=$(ErrorMessage "postprocessor/checks.sh" "0100" "$postprocessor_checks")
             if [ "$postprocessor_checks" == "0101" ]; then 
-                ERROR_MESSAGE=($(ErrorMessage "postprocessor/checks.sh" "0101"))
+                ERROR_MESSAGE=$(ErrorMessage "postprocessor/checks.sh" "0101")
             fi
-            echo $ERROR_MESSAGE && exit 1
+            echo "$ERROR_MESSAGE" && exit 1
         fi
     } && \
     bash $GITHUB_ACTION_PATH/src/postprocessor/prepare_deployment.sh && \
