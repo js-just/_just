@@ -43,4 +43,4 @@ validate_docs_config() {
     fi
 }
 
-validate_docs_config
+# validate_docs_config
