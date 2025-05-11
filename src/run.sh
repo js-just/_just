@@ -33,6 +33,7 @@ msg3=($(_justMessage "Installed Node.js"))
 msg4=($(_justMessage "Postprocessing completed"))
 msg5=($(_justMessage "Generating completed"))
 msg6=($(_justMessage "Compressing completed"))
+msg7=($(_justMessage "Generating completed"))
 echo $msg1
 
 installNodejs() {
@@ -76,12 +77,12 @@ if [ -z "$TYPE" ]; then
     echo $ERROR_MESSAGE && exit 1
 fi
 
-if [[ "$TYPE" != "postprocessor" && "$TYPE" != "redirector" && "$TYPE" != "compressor" ]]; then
+if [[ "$TYPE" != "postprocessor" && "$TYPE" != "redirector" && "$TYPE" != "compressor" && "$TYPE" != "generator" ]]; then
     local ERROR_MESSAGE=($(ErrorMessage "run.sh" "0111"))
     echo $ERROR_MESSAGE && exit 1
 fi
 
-if [ "$TYPE" != "compressor" ]; then
+if [ "$TYPE" != "compressor" || "$TYPE" != "generator" ]; then
     if [ -d "deploy" ]; then
         local ERROR_MESSAGE=($(ErrorMessage "important_dirs" "0106"))
         echo $ERROR_MESSAGE && exit 1
@@ -125,4 +126,12 @@ elif [ "$TYPE" == "compressor" ]; then
     installNodejs && \
     node $GITHUB_ACTION_PATH/src/compress.js "." && \
     echo $msg6
+elif [ "$TYPE" == "generator" ]; then
+    HTML=$(cat "$GITHUB_ACTION_PATH/src/documentation/template/page.html")
+    CSS=$(cat "$GITHUB_ACTION_PATH/src/documentation/template/page.css")
+    JS=$(cat "$GITHUB_ACTION_PATH/src/documentation/template/page.js")
+    mkdir -p deploy && \
+    installNodejs && \
+    bash $GITHUB_ACTION_PATH/src/documentation/checks.sh && \
+    node "$GITHUB_ACTION_PATH/src/documentation/index.js" "$HTML" "$CSS" "$JS"
 fi

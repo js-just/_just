@@ -159,6 +159,32 @@
             "message": "( MISSING PATH_ IN {} IN PATHS[] IN REDIRECT_CONFIG{} IN MODULE.EXPORTS AT JUST.CONFIG.JS )",
             "crashed": true,
             "link": ""
+        },
+        {
+            "code": "0117",
+            "message": "Missing \"redirect_config\" in \"module.exports\" at \"just.config.js\" file.",
+            "crashed": true,
+            "link": ""
+        }
+    ],
+    "docs/checks.sh": [
+        {
+            "code": "0118",
+            "message": "Missing \"docs_config\" in \"module.exports\" at \"just.config.js\" file.",
+            "crashed": true,
+            "link": ""
+        },
+        {
+            "code": "0119",
+            "message": "Missing \"metatitle\" in \"docs_config\" in \"module.exports\" at \"just.config.js\" file.",
+            "crashed": true,
+            "link": ""
+        },
+        {
+            "code": "0120",
+            "message": "Missing \"domain\" in \"docs_config\" in \"module.exports\" at \"just.config.js\" file.",
+            "crashed": true,
+            "link": ""
         }
     ]
 }
