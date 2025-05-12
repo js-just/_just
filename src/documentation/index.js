@@ -313,12 +313,13 @@ markdownFiles.forEach(file => {
     const fileNameWithoutExt = path.basename(file, path.extname(file));
     const outFilePath = (ext) => path.join(path.dirname(file), `${fileNameWithoutExt}.${ext}`);
 
+    let headerID = 0;
     const toHTML = hbuoclpMDtoHTML(content).replace(/<h1>(.*?)<\/h1>/g, (match, p1) => {
-        return `<h1 id="${template.headerTagIDStart}${index++}">${p1}</h1>`;
+        return `<h1 id="${template.headerTagIDStart}${headerID++}">${p1}</h1>`;
     }).replace(/<h2>(.*?)<\/h2>/g, (match, p1) => {
-        return `<h2 id="${template.headerTagIDStart}${index++}">${p1}</h2>`;
+        return `<h2 id="${template.headerTagIDStart}${headerID++}">${p1}</h2>`;
     }).replace(/<h3>(.*?)<\/h3>/g, (match, p1) => {
-        return `<h3 id="${template.headerTagIDStart}${index++}">${p1}</h3>`;
+        return `<h3 id="${template.headerTagIDStart}${headerID++}">${p1}</h3>`;
     });
 
     const H1 = [...toHTML.matchAll(/<h1 id="([^"]+)">(.*?)<\/h1>/g)];
