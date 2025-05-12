@@ -1,4 +1,3 @@
-try {
 const page_ = 'p' + window.location.pathname;
 const scrll = localStorage.getItem('s' + page_);
 const theme = localStorage.getItem('t');
@@ -76,7 +75,7 @@ const getnsettheme = () => {
     } catch {
         document.documentElement.classList.add('l');
     }
-}
+};
 const checkTheme = () => localStorage.getItem('t');
 const autotheme = () => {
     function setColorScheme(scheme) {
@@ -162,7 +161,3 @@ document.addEventListener('DOMContentLoaded', () => {
         document.body.classList.add('ios');
     }
 });
-
-} catch (err) {
-    alert(err)
-}
