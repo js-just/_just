@@ -333,10 +333,10 @@ markdownFiles.forEach(file => {
         ...hT.map(item => ([ ...item, false ]))
     ];
     let pageHeaders = '';
-    for (const [text, id, first] of Object.entries(contents)) {
-        pageHeaders += `<li${ first ? ' class="secondary"' : '' }>
-                            <a href="#${id}">
-                                ${span(text)}
+    for (const [idk, headerdata] of Object.entries(contents)) {
+        pageHeaders += `<li${ headerdata[2] ? ' class="secondary"' : '' }>
+                            <a href="#${headerdata[1]}">
+                                ${span(headerdata[0])}
                             </a>
                         </li>`;
     }
