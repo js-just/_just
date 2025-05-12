@@ -24,7 +24,6 @@ SOFTWARE.
 
 */
 
-
 const link = (text, link_, ext = false) => `<a href="${link_}"${ext ? ' id="ext"' : ''}>${text}</a>`;
 const span = (text) => `<span>${text}</span>`;
 const template = {
@@ -308,18 +307,6 @@ filterText = (text) => text
     .replaceAll('_', `&#${'_'.charCodeAt(0)}`)
     .replaceAll('<script>', `&#${'<'.charCodeAt(0)}script&#${'>'.charCodeAt(0)}`)
     .replaceAll('</script>', `&#${'<'.charCodeAt(0)}&#${'/'.charCodeAt(0)}script&#${'>'.charCodeAt(0)}`);
-function makeJSDOM(data) {
-    return `<!DOCTYPE html>
-        <html>
-            <head>
-                <meta charset="${charset}">
-                <title>hello, world!</title>
-            </head>
-            <body>
-                ${data}
-            </body>
-        </html>`;
-}
 
 markdownFiles.forEach(file => {
     const content = fs.readFileSync(file, charset);
@@ -327,11 +314,11 @@ markdownFiles.forEach(file => {
     const outFilePath = (ext) => path.join(path.dirname(file), `${fileNameWithoutExt}.${ext}`);
 
     const toHTML = hbuoclpMDtoHTML(content).replace(/<h1>(.*?)<\/h1>/g, (match, p1) => {
-        return `<h1 id="${headerTagIDStart}${index++}">${p1}</h1>`;
+        return `<h1 id="${template.headerTagIDStart}${index++}">${p1}</h1>`;
     }).replace(/<h2>(.*?)<\/h2>/g, (match, p1) => {
-        return `<h2 id="${headerTagIDStart}${index++}">${p1}</h2>`;
+        return `<h2 id="${template.headerTagIDStart}${index++}">${p1}</h2>`;
     }).replace(/<h3>(.*?)<\/h3>/g, (match, p1) => {
-        return `<h3 id="${headerTagIDStart}${index++}">${p1}</h3>`;
+        return `<h3 id="${template.headerTagIDStart}${index++}">${p1}</h3>`;
     });
 
     const H1 = [...toHTML.matchAll(/<h1 id="([^"]+)">(.*?)<\/h1>/g)];
@@ -348,7 +335,7 @@ markdownFiles.forEach(file => {
     for (const [text, id, first] of Object.entries(contents)) {
         pageHeaders += `<li${ first ? ' class="secondary"' : '' }>
                             <a href="#${id}">
-                                <span>${text}</span>
+                                ${span(text)}
                             </a>
                         </li>`;
     }
