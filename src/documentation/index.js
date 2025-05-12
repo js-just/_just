@@ -38,8 +38,6 @@ const template = {
 }
 const fs = require('fs');
 const path = require('path');
-const jsdom = require("jsdom");
-const { JSDOM } = jsdom;
 const [HTML, CSS, JS] = process.argv.slice(2);
 const config = JSON.parse(fs.readFileSync('just.config.json', template.charset));
 const docsConfig = config.docs_config;
@@ -66,9 +64,8 @@ function getFiles(dir) {
 
 function getTitleFromHtml(filePath) {
     const content = fs.readFileSync(filePath, charset);
-    const dom = new JSDOM(content);
-    const title = dom.window.document.querySelector('title');
-    return title ? title.textContent : null;
+    const titleMatch = content.match(/<title>(.*?)<\/title>/i);
+    return titleMatch ? titleMatch[1] : null;
 }
 
 function getTitleFromMd(filePath) {
@@ -336,10 +333,13 @@ markdownFiles.forEach(file => {
     }).replace(/<h3>(.*?)<\/h3>/g, (match, p1) => {
         return `<h3 id="${headerTagIDStart}${index++}">${p1}</h3>`;
     });
-    const dom = new JSDOM(makeJSDOM(toHTML));
-    const document = dom.window.document;
-    const h1 = Array.from(document.querySelectorAll('h1')).map(h => [h.textContent, h.id]);
-    const hT = Array.from(document.querySelectorAll('h2, h3')).map(h => [h.textContent, h.id]);
+
+    const H1 = [...toHTML.matchAll(/<h1 id="([^"]+)">(.*?)<\/h1>/g)];
+    const HT = [...toHTML.matchAll(/<(h2|h3) id="([^"]+)">(.*?)<\/\1>/g)];
+
+    const h1 = H1.map(match => [match[2], match[1]]);
+    const hT = HT.map(match => [match[3], match[2]]);
+
     const contents = [
         ...h1.map(item => ({ ...item, first: true })),
         ...hT.map(item => ({ ...item, first: false }))
