@@ -329,8 +329,8 @@ markdownFiles.forEach(file => {
     const hT = HT.map(match => [match[3], match[2]]);
 
     const contents = [
-        ...h1.map(item => ({ ...item, first: true })),
-        ...hT.map(item => ({ ...item, first: false }))
+        ...h1.map(item => ([ ...item, true ])),
+        ...hT.map(item => ([ ...item, false ]))
     ];
     let pageHeaders = '';
     for (const [text, id, first] of Object.entries(contents)) {
