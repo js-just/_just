@@ -7,7 +7,6 @@ function isIOS() {
     return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
 }
 
-// navbar + sidebars
 window.addEventListener('scroll', () => {
     if (document.body.scrollTop > 150 || document.documentElement.scrollTop > 150) {
         document.querySelector(".navbar").classList.add("scroll");
@@ -66,7 +65,6 @@ document.addEventListener('touchend', function(event) {
     }
 }, false);
 
-// theme
 const getnsettheme = () => {
     try {
         const darkThemeMq = () => window?.matchMedia?.('(prefers-color-scheme:dark)')?.matches ?? false;
