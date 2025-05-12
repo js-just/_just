@@ -42,12 +42,25 @@ installNodejs() {
     echo "$msg2"
     sudo apt update -qq && sudo apt install -y nodejs npm > /dev/null 2>&1
     if [ $? -ne 0 ]; then
-        local ERROR_MESSAGE=($(ErrorMessage "run.sh" "0205"))
-        echo $ERROR_MESSAGE
+        local ERROR_MESSAGE=$(ErrorMessage "run.sh" "0205")
+        echo "$ERROR_MESSAGE"
         sudo apt update
         sudo apt install -y nodejs npm
     fi
     echo "$msg3"
+}
+installJSDOM() {
+    echo "$msg7" && \
+    mkdir -p node_modules/jsdom && \
+    curl -L https://registry.npmjs.org/jsdom/-/jsdom-20.0.0.tgz -o jsdom.tgz || {
+        local ERROR_MESSAGE=$(ErrorMessage "run.sh" "0121")
+        echo "$ERROR_MESSAGE" && exit 1
+    } && \
+    tar -xzf jsdom.tgz --strip-components=1 -C node_modules/jsdom || {
+        local ERROR_MESSAGE=$(ErrorMessage "run.sh" "0122")
+        echo "$ERROR_MESSAGE" && exit 1
+    } && \
+    echo "$msg8"
 }
 
 if [ -f "$CONFIG_DATA" ]; then
@@ -134,9 +147,7 @@ elif [ "$TYPE" == "generator" ]; then
     JS=$(cat "$GITHUB_ACTION_PATH/src/documentation/templates/page.js")
     mkdir -p deploy && \
     installNodejs && \
-    echo "$msg7" && \
-    npm install jsdom --save --force > /dev/null 2>&1 && \
-    echo "$msg8" && \
+    installJSDOM && \
     bash $GITHUB_ACTION_PATH/src/documentation/checks.sh && \
     node "$GITHUB_ACTION_PATH/src/documentation/index.js" "$HTML" "$CSS" "$JS" && \
     node $GITHUB_ACTION_PATH/src/compress.js "." && \

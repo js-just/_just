@@ -67,6 +67,18 @@
             "link": ""
         },
         {
+            "code": "0121",
+            "message": "Unable to install JSDOM (curl).",
+            "crashed": true,
+            "link": ""
+        },
+        {
+            "code": "0122",
+            "message": "Unable to install JSDOM (tar).",
+            "crashed": true,
+            "link": ""
+        },
+        {
             "code": "0205",
             "message": "Error occurred during Node.js installation. Retrying to install Node.js with console output enabled...",
             "crashed": false,
