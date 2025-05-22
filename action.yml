@@ -26,9 +26,15 @@ author: 'JustDeveloper1'
 branding:
   icon: 'edit'
   color: 'purple'
+inputs:
+  path:
+    description: 'Website directory (compress/generate)'
+    required: false
 runs:
   using: 'composite'
   steps:
     - name: Run _just
       run: bash $GITHUB_ACTION_PATH/src/run.sh
       shell: bash
+      env: 
+        PATH: ${{ inputs.path }}

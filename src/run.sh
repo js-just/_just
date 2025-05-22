@@ -25,6 +25,9 @@ ERRORS_FILE="$GITHUB_ACTION_PATH/data/codes.json"
 CONFIG_FILE="just.config.js"
 CONFIG_DATA="just.config.json"
 source $GITHUB_ACTION_PATH/src/modules/errmsg.sh
+if [ -z "$PATH" ]; then
+  PATH="."
+fi
 
 VERSION=$(echo "$GITHUB_ACTION_PATH" | grep -oP '(?<=/v)[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9]+)?')
 msg1=$(_justMessage "Running Just an Ultimate Site Tool v$VERSION")
@@ -124,7 +127,7 @@ elif [ "$TYPE" == "redirector" ]; then
 elif [ "$TYPE" == "compressor" ]; then
     mkdir -p deploy && \
     installNodejs && \
-    node $GITHUB_ACTION_PATH/src/compress.js "." && \
+    node $GITHUB_ACTION_PATH/src/compress.js "$PATH" && \
     echo "$msg6"
 elif [ "$TYPE" == "generator" ]; then
     HTML=$(cat "$GITHUB_ACTION_PATH/src/documentation/templates/page.html")
@@ -133,7 +136,7 @@ elif [ "$TYPE" == "generator" ]; then
     mkdir -p deploy && \
     installNodejs && \
     bash $GITHUB_ACTION_PATH/src/documentation/checks.sh && \
-    node "$GITHUB_ACTION_PATH/src/documentation/index.js" "$HTML" "$CSS" "$JS" && \
-    node $GITHUB_ACTION_PATH/src/compress.js "." && \
+    node "$GITHUB_ACTION_PATH/src/documentation/index.js" "$HTML" "$CSS" "$JS" "$PATH" && \
+    node $GITHUB_ACTION_PATH/src/compress.js "$PATH" && \
     echo "$msg9"
 fi

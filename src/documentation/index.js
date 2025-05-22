@@ -37,13 +37,13 @@ const template = {
 }
 const fs = require('fs');
 const path = require('path');
-const [HTML, CSS, JS] = process.argv.slice(2);
+const [HTML, CSS, JS, PATH] = process.argv.slice(2);
 const config = JSON.parse(fs.readFileSync('just.config.json', template.charset));
 const docsConfig = config.docs_config;
 
 const charset = docsConfig ? docsConfig.charset || template.charset : template.charset;
 
-const rootDirA = './';
+const rootDirA = PATH || './';
 const extensions = ['.md', '.mdx', '.html'];
 
 function getFiles(dir) {
