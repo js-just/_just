@@ -25,7 +25,9 @@ ERRORS_FILE="$GITHUB_ACTION_PATH/data/codes.json"
 CONFIG_FILE="just.config.js"
 CONFIG_DATA="just.config.json"
 source $GITHUB_ACTION_PATH/src/modules/errmsg.sh
-if [ -z "$PATH" ]; then
+if [ "$PATH" == ""]; then
+  PATH="."
+elif [ -z "$PATH" ]; then
   PATH="."
 fi
 
