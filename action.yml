@@ -36,3 +36,5 @@ runs:
     - name: Run _just
       run: bash $GITHUB_ACTION_PATH/src/run.sh
       shell: bash
+      env: 
+        INPUT_PATH: ${{ inputs.path }}

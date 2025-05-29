@@ -30,10 +30,10 @@ CONFIG_DATA="just.config.json"
 echo "DEBUG: LINE 30"
 source $GITHUB_ACTION_PATH/src/modules/errmsg.sh
 echo "DEBUG: LINE 32"
-if [ "$PATH" == ""]; then
-  PATH="."
-elif [ -z "$PATH" ]; then
-  PATH="."
+if [ "$INPUT_PATH" == ""]; then
+  INPUT_PATH="."
+elif [ -z "$INPUT_PATH" ]; then
+  INPUT_PATH="."
 fi
 echo "DEBUG: LINE 38"
 
@@ -135,7 +135,7 @@ elif [ "$TYPE" == "redirector" ]; then
 elif [ "$TYPE" == "compressor" ]; then
     mkdir -p deploy && \
     installNodejs && \
-    node $GITHUB_ACTION_PATH/src/compress.js "$PATH" && \
+    node $GITHUB_ACTION_PATH/src/compress.js "$INPUT_PATH" && \
     echo "$msg6"
 elif [ "$TYPE" == "generator" ]; then
     HTML=$(cat "$GITHUB_ACTION_PATH/src/documentation/templates/page.html")
@@ -144,7 +144,7 @@ elif [ "$TYPE" == "generator" ]; then
     mkdir -p deploy && \
     installNodejs && \
     bash $GITHUB_ACTION_PATH/src/documentation/checks.sh && \
-    node "$GITHUB_ACTION_PATH/src/documentation/index.js" "$HTML" "$CSS" "$JS" "$PATH" && \
-    node $GITHUB_ACTION_PATH/src/compress.js "$PATH" && \
+    node "$GITHUB_ACTION_PATH/src/documentation/index.js" "$HTML" "$CSS" "$JS" "$INPUT_PATH" && \
+    node $GITHUB_ACTION_PATH/src/compress.js "$INPUT_PATH" && \
     echo "$msg9"
 fi
