@@ -42,7 +42,7 @@ const config = JSON.parse(fs.readFileSync('just.config.json', template.charset))
 const docsConfig = config.docs_config;
 
 const charset = docsConfig ? docsConfig.charset || template.charset : template.charset;
-let logs = '';
+let logs = `${new Date.getTime()}`;
 
 const rootDirA = PATH || './';
 const extensions = ['.md', '.mdx', '.html'];
@@ -83,7 +83,7 @@ function getPageList() {
     let fileID = 0;
     files.forEach(file => {
         fileID++;
-        logs += `\n    FILE #${fileID}:`;
+        logs += `\n    FILE #${fileID} "${file}":`;
         const extname = path.extname(file);
         logs += `\n        EXTNAME: ${extname}`;
         let title;
@@ -377,4 +377,4 @@ markdownFiles.forEach(file => {
     fs.writeFileSync(outFilePath('js'), JS, template.charset);
 });
 
-fs.writeFileSync(path.join(rootDirB, 'output.txt'), logs, template.charset);
+fs.writeFileSync(path.join(rootDirB, '_just_data', 'output.txt'), logs, template.charset);
