@@ -42,6 +42,7 @@ const config = JSON.parse(fs.readFileSync('just.config.json', template.charset))
 const docsConfig = config.docs_config;
 
 const charset = docsConfig ? docsConfig.charset || template.charset : template.charset;
+let logs = '';
 
 const rootDirA = PATH || './';
 const extensions = ['.md', '.mdx', '.html'];
@@ -78,11 +79,16 @@ function getTitleFromMd(filePath) {
 function getPageList() {
     const files = getFiles(rootDirA);
     const pages = [];
-
+    logs += '\n\nGET PAGE LIST:';
+    let fileID = 0;
     files.forEach(file => {
+        fileID++;
+        logs += `\n    FILE #${fileID}:`;
         const extname = path.extname(file);
+        logs += `\n        EXTNAME: ${extname}`;
         let title;
         let pagePath = file.replace(rootDirA, '').replace(extname, '');
+        logs += `\n        PAGEPATH (before): ${pagePath}`;
 
         if (pagePath.endsWith('/index')) {
             pagePath = pagePath.split('').reverse().join('').replace('index'.split('').reverse().join(''), '').split('').reverse().join('');
@@ -90,6 +96,8 @@ function getPageList() {
         } else {
             title = path.basename(pagePath);
         }
+        logs += `\n        PAGEPATH (after): ${pagePath}`;
+        logs += `\n        TITLE (before): ${title}`;
 
         if (extname === '.html') {
             const htmlTitle = getTitleFromHtml(file);
@@ -98,6 +106,7 @@ function getPageList() {
             const mdTitle = getTitleFromMd(file);
             if (mdTitle) title = mdTitle;
         }
+        logs += `\n        TITLE (after): ${title}`;
 
         pages.push({ path: pagePath, title });
     });
@@ -125,12 +134,20 @@ function generateListItems(PageList) {
     });
 
     let listItemsHtml = '';
+    const folders = Object.keys(folderMap);
+    const sortedFolders = folders.sort((a, b) => {
+        if (a === '' || a === null) return -1;
+        if (b === '' || b === null) return 1;
+        return a.localeCompare(b);
+    });
+    for (const folderName of sortedFolders) {
+        const pages = folderMap[folderName];
 
-    for (const [folderName, pages] of Object.entries(folderMap)) {
         listItemsHtml += `${ folderName != '' ? `<li>
                             <span><strong>${folderName}</strong></span>
                             <ul>` : '<li><ul>'}`;
         pages.forEach(page => {
+            page.title = page.title == 'index' ? 'Home' : String(page.title).charAt(0).toUpperCase() + String(page.title).slice(1);
             listItemsHtml += `<li><a href="${page.path}"><span>${page.title}</span></a></li>`;
         });
         listItemsHtml += `   </ul>
@@ -359,3 +376,5 @@ markdownFiles.forEach(file => {
     fs.writeFileSync(outFilePath('css'), CSS, template.charset);
     fs.writeFileSync(outFilePath('js'), JS, template.charset);
 });
+
+fs.writeFileSync(path.join(rootDirB, 'output.txt'), logs, template.charset);
