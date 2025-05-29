@@ -42,7 +42,7 @@ const config = JSON.parse(fs.readFileSync('just.config.json', template.charset))
 const docsConfig = config.docs_config;
 
 const charset = docsConfig ? docsConfig.charset || template.charset : template.charset;
-let logs = `${new Date.getTime()}`;
+let logs = `${new Date().getTime()}`;
 
 const rootDirA = PATH || './';
 const extensions = ['.md', '.mdx', '.html'];
