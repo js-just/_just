@@ -113,7 +113,7 @@ const autotheme = () => {
         setColorScheme(getPreferredColorScheme());
     }
 
-    if(window.matchMedia){if (theme && theme == 'l')
+    if(window.matchMedia){
         var colorSchemeQuery = window.matchMedia('(prefers-color-scheme: dark)');
         colorSchemeQuery.addEventListener('change', updateColorScheme);
     }
