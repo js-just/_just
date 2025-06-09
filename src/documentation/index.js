@@ -446,7 +446,7 @@ markdownFiles.forEach(file => {
         .replace('REPLACE_CONTENTS', filterText(pageHeaders))
         .replace('REPLACE_FOOTER', filterText(footer));
     
-    fs.writeFileSync(outFilePath('html'), outHTML.replace('REPLACE_CONTENT', toHTML), charset);
+    fs.writeFileSync(outFilePath('html'), outHTML.replace('REPLACE_CONTENT', toHTML.replaceAll('\n', '<br>')), charset);
     logs += `${l[2]}OUTPUT: ${outFilePath('html')} (${fileSize(fs.statSync(outFilePath('html')).size)})`;
 });
 
