@@ -172,7 +172,7 @@ const biMDtoHTML = (input) => {
     let text = MDescape(input);
 
     text = text.replace(/```([\w]*)[\r\n]+([\S\s]*?)```/g, '<code class="code">$2</code>');
-    text = text.replace(/(?<=\s|^|[.,!?;:])`(.*?)`(?=\s|[.,!?;:]|$)/g, (match, code) => {return `<code>${MDcode(code)}</code>`});
+    text = text.replace(/(?<=\s|^|[.,!?;:*_])`(.*?)`(?=\s|[.,!?;:*_]|$)/g, (match, code) => {return `<code>${MDcode(code)}</code>`});
 
     text = text.replace(/(?<=\s|^|[.,!?;:])___(.*?)___(?=\s|[.,!?;:]|$)/g, '<em><strong>$1</strong></em>');
     text = text.replace(/(?<=\s|^|[.,!?;:])\*\*\*(.*?)\*\*\*(?=\s|[.,!?;:]|$)/g, '<em><strong>$1</strong></em>');
