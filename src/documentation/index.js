@@ -80,7 +80,7 @@ function getTitleFromMd(filePath) {
 function getPageList() {
     const files = getFiles(rootDirA);
     const pages = [];
-    logs += `${l[0]}GET PAGE LIST:`;
+    logs += `${l[0]}PAGE LIST:`;
     let fileID = 0;
     files.forEach(file => {
         fileID++;
@@ -386,5 +386,6 @@ markdownFiles.forEach(file => {
     fs.writeFileSync(outFilePath('js'), JS, template.charset);
 });
 
-console.log(logs);
+console.log('\n\n\n\n\n'+logs);
+console.warn('test');
 fs.writeFileSync(path.join(rootDirB, '_just_data', 'output.txt'), logs, template.charset);
