@@ -151,5 +151,6 @@ elif [ "$TYPE" == "generator" ]; then
     bash $GITHUB_ACTION_PATH/src/documentation/checks.sh && \
     node "$GITHUB_ACTION_PATH/src/documentation/index.js" "$HTML" "$CSS" "$JS" "$INPUT_PATH" && \
     node $GITHUB_ACTION_PATH/src/compress.js "$INPUT_PATH" && \
+    node "$GITHUB_ACTION_PATH/src/documentation/logs.js" && \
     echo "$msg9"
 fi

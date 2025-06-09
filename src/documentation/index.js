@@ -435,15 +435,6 @@ markdownFiles.forEach(file => {
         .replace('REPLACE_FOOTER', filterText(footer));
     
     fs.writeFileSync(outFilePath('html'), outHTML.replace('REPLACE_CONTENT', toHTML), charset);
-    let sl = false;
-    try {
-        fs.unlink(file, function(err) {
-            logs += err ? `${l[2]}DELETED: NO. (${err}) (fs)` : logs += `${l[2]}DELETED: YES.`;
-            sl = true;
-        })
-    } catch (err) {
-        logs += sl ? '' : `${l[2]}DELETED: NO. (${err}) (tc)`; // tc here means try{}catch(){}
-    }
     logs += `${l[2]}OUTPUT: ${outFilePath('html')} (${fileSize(fs.statSync(outFilePath('html')).size)})`;
 });
 
