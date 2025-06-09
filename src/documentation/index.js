@@ -446,7 +446,25 @@ markdownFiles.forEach(file => {
         .replace('REPLACE_CONTENTS', filterText(pageHeaders))
         .replace('REPLACE_FOOTER', filterText(footer));
     
-    fs.writeFileSync(outFilePath('html'), outHTML.replace('REPLACE_CONTENT', toHTML.replaceAll('\n', '<br>')), charset);
+    fs.writeFileSync(
+        outFilePath('html'), 
+        outHTML.replace(
+            'REPLACE_CONTENT', 
+            toHTML
+                .replaceAll('\n', '<br>')
+                .replaceAll('</h1><br>', '</h1>')
+                .replaceAll('</h2><br>', '</h2>')
+                .replaceAll('</h3><br>', '</h3>')
+                .replaceAll('</h4><br>', '</h4>')
+                .replaceAll('</h5><br>', '</h5>')
+                .replaceAll('</h6><br>', '</h6>')
+                .replaceAll('</ol><br>', '</ol>')
+                .replaceAll('</ul><br>', '</ul>')
+                .replaceAll('</blockquote><br>', '</blockquote>')
+                .replaceAll('<br><blockquote', '<blockquote')
+        ),
+        charset
+    );
     logs += `${l[2]}OUTPUT: ${outFilePath('html')} (${fileSize(fs.statSync(outFilePath('html')).size)})`;
 });
 
