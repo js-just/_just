@@ -662,6 +662,7 @@ code {
     border-bottom-right-radius: 10px;
     padding-top: 35px;
     line-height: 20px;
+    padding-right: 10px;
 }
 .note:before, .ntip:before, .impr:before, .warn:before, .caut:before {
     position: fixed;
