@@ -19,6 +19,12 @@
             "message": "Your repository has a _just_data directory in the root directory. Please remove it.",
             "crashed": true,
             "link": ""
+        },
+        {
+            "code": "0121",
+            "message": "Your repository has a _just directory in the root directory. Please remove it.",
+            "crashed": true,
+            "link": ""
         }
     ],
     "index.sh": [

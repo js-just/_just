@@ -141,6 +141,11 @@ elif [ "$TYPE" == "generator" ]; then
     HTML=$(cat "$GITHUB_ACTION_PATH/src/documentation/templates/page.html")
     CSS=$(cat "$GITHUB_ACTION_PATH/src/documentation/templates/page.css")
     JS=$(cat "$GITHUB_ACTION_PATH/src/documentation/templates/page.js")
+    if [ -d "_just" ]; then
+        local ERROR_MESSAGE=$(ErrorMessage "important_dirs" "0121")
+        echo "$ERROR_MESSAGE" && exit 1
+    fi && \
+    mkdir -p _just && \
     mkdir -p deploy && \
     installNodejs && \
     bash $GITHUB_ACTION_PATH/src/documentation/checks.sh && \

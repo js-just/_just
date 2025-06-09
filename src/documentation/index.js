@@ -41,9 +41,42 @@ const [HTML, CSS, JS, PATH] = process.argv.slice(2);
 const config = JSON.parse(fs.readFileSync('just.config.json', template.charset));
 const docsConfig = config.docs_config;
 
+const charss = [
+    '_', '-'
+];
+for (let i = 65; i <= 90; i++) {
+    charss.push(String.fromCharCode(i));
+}
+for (let i = 97; i <= 122; i++) {
+    charss.push(String.fromCharCode(i));
+}
+for (let i = 48; i <= 57; i++) {
+    charss.push(String.fromCharCode(i));
+}
+function randomChar() {
+    const index = Math.floor(Math.random() * charss.length);
+    const charr = charss[index];
+    charss.splice(index, 1);
+    return charr;
+}
+function randomChars(count) {
+    let output = '';
+    for (let i = 0; i <= count; i++) {
+        output += randomChar() || '';
+    }
+    return output;
+}
+
+const filename = {
+    'css': randomChars(8),
+    'js': randomChars(8)
+}
+
 const charset = docsConfig ? docsConfig.charset || template.charset : template.charset;
-let logs = `${new Date().getTime()}`;
+
 const l = ['\n\n','\n    ','\n        '];
+const date = new Date();
+let logs = `${date} (${date.getTime()})${l[0]}_JUST FILES:${l[1]}CSS: ${filename.css}${l[1]}JS: ${filename.js}`;
 
 const rootDirA = PATH || './';
 const extensions = ['.md', '.mdx', '.html'];
@@ -334,10 +367,28 @@ filterText = (text) => text
     .replaceAll('<script>', `&#${'<'.charCodeAt(0)}script&#${'>'.charCodeAt(0)}`)
     .replaceAll('</script>', `&#${'<'.charCodeAt(0)}&#${'/'.charCodeAt(0)}script&#${'>'.charCodeAt(0)}`);
 
+function fileSize(bytes) {
+    if (bytes <= 1024) {
+        return `${bytes}B`;
+    } else if (bytes <= 1024**2) {
+        return `${Math.ceil(( bytes / 1024 ) * 100) / 100}KB`;
+    } else if (bytes <= 1024**3) {
+        return `${Math.ceil(( bytes / ( 1024**2 ) ) * 100) / 100}MB`;
+    } else if (bytes <= 1024**4) {
+        return `${Math.ceil(( bytes / ( 1024**3 ) ) * 100) / 100}GB`;
+    } else if (bytes <= 1024**5) {
+        return `${Math.ceil(( bytes / ( 1024**4 ) ) * 100) / 100}TB`;
+    }
+}
+
+logs += `${l[0]}MARKDOWN FILES:`;
+let fileID = 0;
 markdownFiles.forEach(file => {
     const content = fs.readFileSync(file, charset);
     const fileNameWithoutExt = path.basename(file, path.extname(file));
     const outFilePath = (ext) => path.join(path.dirname(file), `${fileNameWithoutExt}.${ext}`);
+    fileID++;
+    logs += `${l[1]}FILE #${fileID} "${file}":${l[2]}INPUT: ${fileSize(fs.statSync(file).size)}`;
 
     let headerID = 0;
     const toHTML = hbuoclpMDtoHTML(content).replace(/<h1>(.*?)<\/h1>/g, (match, p1) => {
@@ -370,6 +421,8 @@ markdownFiles.forEach(file => {
     const pages = generateListItems(addFolderToPageList(pageList));
     let outHTML = HTML
         .replace('<html>', `<html lang="${htmlLang}">`)
+        .replace('REPLACE_CSS', filename.css)
+        .replace('REPLACE_JS', filename.js)
         .replace('REPLACE_CHARSET', charset)
         .replace('REPLACE_VIEWPORT', viewport)
         .replace('REPLACE_TITLE', metatitle)
@@ -382,10 +435,19 @@ markdownFiles.forEach(file => {
         .replace('REPLACE_FOOTER', filterText(footer));
     
     fs.writeFileSync(outFilePath('html'), outHTML.replace('REPLACE_CONTENT', toHTML), charset);
-    fs.writeFileSync(outFilePath('css'), CSS, template.charset);
-    fs.writeFileSync(outFilePath('js'), JS, template.charset);
+    let sl = false;
+    try {
+        fs.unlink(file, function(err) {
+            logs += err ? `${l[2]}DELETED: NO. (${err}) (fs)` : logs += `${l[2]}DELETED: YES.`;
+            sl = true;
+        })
+    } catch (err) {
+        logs += sl ? '' : `${l[2]}DELETED: NO. (${err}) (tc)`; // tc here means try{}catch(){}
+    }
+    logs += `${l[2]}OUTPUT: ${outFilePath('html')} (${fileSize(fs.statSync(outFilePath('html')).size)})`;
 });
 
 console.log('\n\n\n\n\n'+logs);
-console.warn('test');
 fs.writeFileSync(path.join(rootDirB, '_just_data', 'output.txt'), logs, template.charset);
+fs.writeFileSync(path.join(rootDirB, '_just', `${filename.css}.css`), CSS, template.charset);
+fs.writeFileSync(path.join(rootDirB, '_just', `${filename.js}.js`), JS, template.charset);
