@@ -193,14 +193,14 @@ function generateListItems(PageList) {
 
 const MDescape = (input) => {
     return input
-        .replaceAll('\\\\', '&#92;')
+        .replaceAll('\\\\', `&#${'\\'.charCodeAt(0)};`)
         .replace(/\\(.)/g, (match, textdata) => {return `&#${textdata.charCodeAt(0)};${textdata.slice(1)}`})
         .replaceAll('\\', '');
 }
 const MDcode = (input) => {
     return input
-        .replaceAll('*', '&#42;')
-        .replaceAll('_', '&#95;')
+        .replaceAll('*', `&#${'*'.charCodeAt(0)};`)
+        .replaceAll('_', `&#${'_'.charCodeAt(0)};`)
 }
 const biMDtoHTML = (input) => {
     let text = MDescape(input);
@@ -210,6 +210,12 @@ const biMDtoHTML = (input) => {
 
     text = text.replace(/(?<=\s|^|[.,!?;:])___(.*?)___(?=\s|[.,!?;:]|$)/g, '<em><strong>$1</strong></em>');
     text = text.replace(/(?<=\s|^|[.,!?;:])\*\*\*(.*?)\*\*\*(?=\s|[.,!?;:]|$)/g, '<em><strong>$1</strong></em>');
+
+    text = text.replace(/(?<=\s|^|[.,!?;:])_\*\*(.*?)\*\*_(?=\s|[.,!?;:]|$)/g, '<em><strong>$1</strong></em>');
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*\*_(.*?)_\*\*(?=\s|[.,!?;:]|$)/g, '<em><strong>$1</strong></em>');
+
+    text = text.replace(/(?<=\s|^|[.,!?;:])__\*(.*?)\*__(?=\s|[.,!?;:]|$)/g, '<em><strong>$1</strong></em>');
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*__(.*?)__\*(?=\s|[.,!?;:]|$)/g, '<em><strong>$1</strong></em>');
 
     text = text.replace(/(?<=\s|^|[.,!?;:])__(.*?)__(?=\s|[.,!?;:]|$)/g, '<strong>$1</strong>');
     text = text.replace(/(?<=\s|^|[.,!?;:])\*\*(.*?)\*\*(?=\s|[.,!?;:]|$)/g, '<strong>$1</strong>');
@@ -369,9 +375,9 @@ const htmlhead = () => {
 }
 
 filterText = (text) => text
-    .replaceAll('_', `&#${'_'.charCodeAt(0)}`)
-    .replaceAll('<script>', `&#${'<'.charCodeAt(0)}script&#${'>'.charCodeAt(0)}`)
-    .replaceAll('</script>', `&#${'<'.charCodeAt(0)}&#${'/'.charCodeAt(0)}script&#${'>'.charCodeAt(0)}`);
+    .replaceAll('_', `&#${'_'.charCodeAt(0)};`)
+    .replaceAll('<script>', `&#${'<'.charCodeAt(0)};script&#${'>'.charCodeAt(0)};`)
+    .replaceAll('</script>', `&#${'<'.charCodeAt(0)};&#${'/'.charCodeAt(0)};script&#${'>'.charCodeAt(0)};`);
 
 function fileSize(bytes) {
     if (bytes <= 1024) {
