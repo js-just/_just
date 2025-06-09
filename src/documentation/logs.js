@@ -74,16 +74,20 @@ findMarkdownFiles(rootDir).forEach(file => {
         newlogs += `${l[2]}ERROR: ${err}`;
     }
     let sl = false;
+    let fd = false;
     try {
         fs.unlink(file, function(err) {
-            logs += err ? `${l[2]}MARKDOWN FILE DELETED: NO. (${err}) (fs)` : logs += `${l[2]}MARKDOWN FILE DELETED: YES.`;
+            newlogs += err ? `${l[2]}MARKDOWN FILE DELETED: NO. (${err}) (fs)` : newlogs += `${l[2]}MARKDOWN FILE DELETED: YES.`;
             sl = true;
+            fd = true;
         })
     } catch (err) {
-        logs += sl ? '' : `${l[2]}MARKDOWN FILE DELETED: NO. (${err}) (tc)`; // tc here means try{}catch(){}
+        newlogs += sl ? '' : `${l[2]}MARKDOWN FILE DELETED: NO. (${err}) (tc)`; // tc here means try{}catch(){}
+        fd = true;
     }
+    while (fd == false) {}
 });
 
 console.log('\n\n\n\n\n'+newlogs);
 logsstr += newlogs;
-fs.writeFileSync(path.join(rootDir, '_just_data', 'output.txt'), logs, charset);
+fs.writeFileSync(path.join(rootDir, '_just_data', 'output.txt'), logsstr, charset);
