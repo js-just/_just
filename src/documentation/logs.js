@@ -85,7 +85,6 @@ findMarkdownFiles(rootDir).forEach(file => {
         newlogs += sl ? '' : `${l[2]}MARKDOWN FILE DELETED: NO. (${err}) (tc)`; // tc here means try{}catch(){}
         fd = true;
     }
-    while (fd == false) {}
 });
 
 console.log('\n\n\n\n\n'+newlogs);
