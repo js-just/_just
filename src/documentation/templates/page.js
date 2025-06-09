@@ -113,13 +113,13 @@ const autotheme = () => {
         setColorScheme(getPreferredColorScheme());
     }
 
-    if(window.matchMedia){
+    if(window.matchMedia){if (theme && theme == 'l')
         var colorSchemeQuery = window.matchMedia('(prefers-color-scheme: dark)');
         colorSchemeQuery.addEventListener('change', updateColorScheme);
     }
 
     updateColorScheme();
-}
+};
 
 if (theme && theme == 'l') {
     document.documentElement.classList.add('l');
