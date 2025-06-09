@@ -229,8 +229,8 @@ function hbuoclpMDtoHTML(text, maxBlockquoteLevel = 4) {
         const regex = new RegExp(`^(>\\s+){${level}}(.*?)\\s*$`, 'gm');
         return biMDtoHTML(inputText.replace(regex, (match, p1, p2) => {
             const innerBlockquote = processBlockquotes(p2.trim(), level + 1);
-            const classAttr = p1.includes('[!NOTE]') ? ' class="note"' : '';
-            return `<blockquote${classAttr}>${(level > 1 ? '<br>' : '')}${innerBlockquote}</blockquote>`;
+            const classAttr = p2.includes(' [!NOTE] ') ? function(){p2=p2.replace(' [!NOTE] ',''); return ' class="note"'} : ()=>'';
+            return `<blockquote${classAttr()}>${(level > 1 ? '<br>' : '')}${innerBlockquote}</blockquote>`;
         }));
     }
 
