@@ -43,6 +43,7 @@ const docsConfig = config.docs_config;
 
 const charset = docsConfig ? docsConfig.charset || template.charset : template.charset;
 let logs = `${new Date().getTime()}`;
+const l = ['\n\n','\n    ','\n        '];
 
 const rootDirA = PATH || './';
 const extensions = ['.md', '.mdx', '.html'];
@@ -79,16 +80,16 @@ function getTitleFromMd(filePath) {
 function getPageList() {
     const files = getFiles(rootDirA);
     const pages = [];
-    logs += '\n\nGET PAGE LIST:';
+    logs += `${l[0]}GET PAGE LIST:`;
     let fileID = 0;
     files.forEach(file => {
         fileID++;
-        logs += `\n    FILE #${fileID} "${file}":`;
+        logs += `${l[1]}FILE #${fileID} "${file}":`;
         const extname = path.extname(file);
-        logs += `\n        EXTNAME: ${extname}`;
+        logs += `${l[2]}EXTNAME: ${extname}`;
         let title;
         let pagePath = file.replace(rootDirA, '').replace(extname, '');
-        logs += `\n        PAGEPATH (before): ${pagePath}`;
+        logs += `${l[2]}PAGEPATH (before): ${pagePath}`;
 
         if (pagePath.endsWith('/index')) {
             pagePath = pagePath.split('').reverse().join('').replace('index'.split('').reverse().join(''), '').split('').reverse().join('');
@@ -96,8 +97,8 @@ function getPageList() {
         } else {
             title = path.basename(pagePath);
         }
-        logs += `\n        PAGEPATH (after): ${pagePath}`;
-        logs += `\n        TITLE (before): ${title}`;
+        logs += `${l[2]}PAGEPATH (after): ${pagePath}`;
+        logs += `${l[2]}TITLE (before): ${title}`;
 
         if (extname === '.html') {
             const htmlTitle = getTitleFromHtml(file);
@@ -106,7 +107,7 @@ function getPageList() {
             const mdTitle = getTitleFromMd(file);
             if (mdTitle) title = mdTitle;
         }
-        logs += `\n        TITLE (after): ${title}`;
+        logs += `${l[2]}TITLE (after): ${title}`;
 
         pages.push({ path: pagePath, title });
     });
@@ -165,8 +166,8 @@ const MDescape = (input) => {
 }
 const MDcode = (input) => {
     return input
-        .replaceAll('*', '')
-        .replaceAll('_', '')
+        .replaceAll('*', '&#42;')
+        .replaceAll('_', '&#95;')
 }
 const biMDtoHTML = (input) => {
     let text = MDescape(input);
@@ -385,4 +386,5 @@ markdownFiles.forEach(file => {
     fs.writeFileSync(outFilePath('js'), JS, template.charset);
 });
 
+console.log(logs);
 fs.writeFileSync(path.join(rootDirB, '_just_data', 'output.txt'), logs, template.charset);
