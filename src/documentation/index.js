@@ -160,12 +160,14 @@ function generateListItems(PageList) {
 const MDescape = (input) => {
     return input
         .replaceAll('\\\\', '&#92;')
-        .replace(/\\(.)/g, (match, textdata) => {console.log(textdata);return `&#${textdata.charCodeAt(0)};${textdata.slice(1)}`});
+        .replace(/\\(.)/g, (match, textdata) => {console.log(textdata);return `&#${textdata.charCodeAt(0)};${textdata.slice(1)}`})
+        .replaceAll('\\', '');
 }
 const biMDtoHTML = (input) => {
-    let text = input;
+    let text = MDescape(input);
 
-    text = text.replace(/(?<=\s|^|[.,!?;:])`(.*?)`(?=\s|[.,!?;:]|$)/g, (match, code) => {return `<code>${MDescape(code)}</code>`});
+    text = text.replace(/```([\w]*)[\r\n]+([\S\s]*?)```/g, '<code class="code">$2</code>');
+    text = text.replace(/(?<=\s|^|[.,!?;:])`(.*?)`(?=\s|[.,!?;:]|$)/g, '<code>$1</code>');
 
     text = text.replace(/(?<=\s|^|[.,!?;:])___(.*?)___(?=\s|[.,!?;:]|$)/g, '<em><strong>$1</strong></em>');
     text = text.replace(/(?<=\s|^|[.,!?;:])\*\*\*(.*?)\*\*\*(?=\s|[.,!?;:]|$)/g, '<em><strong>$1</strong></em>');
@@ -209,9 +211,6 @@ function hbuoclpMDtoHTML(text, maxBlockquoteLevel = 4) {
         const items = match.split('\n').map(item => item.replace(/^\d+\.\s*/, ''));
         return `<ol>${items.map(item => `<li>${biMDtoHTML(item.trim())}</li>`).join('')}</ol>`;
     });
-    
-    const multiLineCodeRegex = /```([\w]*)[\r\n]+([\S\s]*?)```/g;
-    text = text.replace(multiLineCodeRegex, '<code>$2</code>');
 
     const dividerRegex = /(\n\s*[*_-]{3,}\s*\n)+/g;
     text = text.replace(dividerRegex, '<div class="line"></div>');
