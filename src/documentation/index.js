@@ -157,18 +157,24 @@ function generateListItems(PageList) {
     return listItemsHtml;
 }
 
+const MDescape = (input) => {
+    return input
+        .replaceAll('\\\\', '&#92;')
+        .replace(/\\(.)/g, (match, textdata) => {console.log(textdata);return `&#${textdata.charCodeAt(0)};${textdata.slice(1)}`});
+}
 const biMDtoHTML = (input) => {
     let text = input;
 
-    text = text.replace(/___(.*?)___/g, '<em><strong>$1</strong></em>');
+    text = text.replace(/(?<=\s|^|[.,!?;:])`(.*?)`(?=\s|[.,!?;:]|$)/g, (match, code) => {return `<code>${MDescape(code)}</code>`});
 
-    text = text.replace(/(?<=\s|^|[.,!?;:])__\*(.*?)\*\__(?=\s|[.,!?;:]|$)/g, '<strong>$1</strong>');
+    text = text.replace(/(?<=\s|^|[.,!?;:])___(.*?)___(?=\s|[.,!?;:]|$)/g, '<em><strong>$1</strong></em>');
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*\*\*(.*?)\*\*\*(?=\s|[.,!?;:]|$)/g, '<em><strong>$1</strong></em>');
+
+    text = text.replace(/(?<=\s|^|[.,!?;:])__(.*?)__(?=\s|[.,!?;:]|$)/g, '<strong>$1</strong>');
     text = text.replace(/(?<=\s|^|[.,!?;:])\*\*(.*?)\*\*(?=\s|[.,!?;:]|$)/g, '<strong>$1</strong>');
 
     text = text.replace(/(?<=\s|^|[.,!?;:])_(.*?)_(?=\s|[.,!?;:]|$)/g, '<em>$1</em>');
-    text = text.replace(/(?<=\s|^|[.,!?;:])__\s*(.*?)\s*__(?=\s|[.,!?;:]|$)/g, '<em>$1</em>');
-
-    text = text.replace(/(?<=\s|^|[.,!?;:])__\*\s*(.*?)\s*\*\__(?=\s|[.,!?;:]|$)/g, '<em><strong>$1</strong></em>');
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*(.*?)\*(?=\s|[.,!?;:]|$)/g, '<em>$1</em>');
 
     return text;
 }
@@ -203,8 +209,6 @@ function hbuoclpMDtoHTML(text, maxBlockquoteLevel = 4) {
         const items = match.split('\n').map(item => item.replace(/^\d+\.\s*/, ''));
         return `<ol>${items.map(item => `<li>${biMDtoHTML(item.trim())}</li>`).join('')}</ol>`;
     });
-
-    text = text.replace(/`([^`]+)`/g, '<code>$1</code>');
     
     const multiLineCodeRegex = /```([\w]*)[\r\n]+([\S\s]*?)```/g;
     text = text.replace(multiLineCodeRegex, '<code>$2</code>');
