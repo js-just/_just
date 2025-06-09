@@ -160,14 +160,19 @@ function generateListItems(PageList) {
 const MDescape = (input) => {
     return input
         .replaceAll('\\\\', '&#92;')
-        .replace(/\\(.)/g, (match, textdata) => {console.log(textdata);return `&#${textdata.charCodeAt(0)};${textdata.slice(1)}`})
+        .replace(/\\(.)/g, (match, textdata) => {return `&#${textdata.charCodeAt(0)};${textdata.slice(1)}`})
         .replaceAll('\\', '');
+}
+const MDcode = (input) => {
+    return input
+        .replaceAll('*', '')
+        .replaceAll('_', '')
 }
 const biMDtoHTML = (input) => {
     let text = MDescape(input);
 
     text = text.replace(/```([\w]*)[\r\n]+([\S\s]*?)```/g, '<code class="code">$2</code>');
-    text = text.replace(/(?<=\s|^|[.,!?;:])`(.*?)`(?=\s|[.,!?;:]|$)/g, '<code>$1</code>');
+    text = text.replace(/(?<=\s|^|[.,!?;:])`(.*?)`(?=\s|[.,!?;:]|$)/g, (match, code) => {return `<code>${MDcode(code)}</code>`});
 
     text = text.replace(/(?<=\s|^|[.,!?;:])___(.*?)___(?=\s|[.,!?;:]|$)/g, '<em><strong>$1</strong></em>');
     text = text.replace(/(?<=\s|^|[.,!?;:])\*\*\*(.*?)\*\*\*(?=\s|[.,!?;:]|$)/g, '<em><strong>$1</strong></em>');
