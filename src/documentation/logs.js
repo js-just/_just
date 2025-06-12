@@ -54,7 +54,7 @@ function findMarkdownFiles(dir) {
 let fileID = 0;
 findMarkdownFiles(rootDir).forEach(file => {
     fileID++;
-    newlogs += `${l[1]}FILE #${fileID} "${_just.string.runnerPath(file)}":`;
+    newlogs += `${l[1]}FILE #${fileID} "${_just.string.removeLast(_just.string.runnerPath(file), 'md')}html":`;
     try {
         const fileNameWithoutExt = path.basename(file, path.extname(file));
         const outFilePath = (ext) => path.join(path.dirname(file), `${fileNameWithoutExt}.${ext}`);

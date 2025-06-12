@@ -120,7 +120,7 @@ function getPageList() {
     let fileID = 0;
     files.forEach(file => {
         fileID++;
-        logs += `${l[1]}FILE #${fileID} "${_just.string.runnerPath(file)}":`;
+        logs += `${l[1]}FILE #${fileID} "${file}":`;
         const extname = path.extname(file);
         const ext = extname.slice(1);
         logs += `${l[2]}EXTNAME: ${extname}`;
@@ -390,7 +390,7 @@ markdownFiles.forEach(file => {
     const fileNameWithoutExt = path.basename(file, path.extname(file));
     const outFilePath = (ext) => path.join(path.dirname(file), `${fileNameWithoutExt}.${ext}`);
     fileID++;
-    logs += `${l[1]}FILE #${fileID} "${file}":${l[2]}INPUT: ${_just.string.fileSize(fs.statSync(file).size)}`;
+    logs += `${l[1]}FILE #${fileID} "${_just.string.runnerPath(file)}":${l[2]}INPUT: ${_just.string.fileSize(fs.statSync(file).size)}`;
 
     let headerID = 0;
     const toHTML = hbuoclpMDtoHTML(content).replace(/<h1>(.*?)<\/h1>/g, (match, p1) => {
@@ -463,7 +463,7 @@ markdownFiles.forEach(file => {
         ),
         charset
     );
-    logs += `${l[2]}OUTPUT: ${outFilePath('html')} (${_just.string.fileSize(fs.statSync(outFilePath('html')).size)})`;
+    logs += `${l[2]}OUTPUT: ${_just.string.runnerPath(outFilePath('html'))} (${_just.string.fileSize(fs.statSync(outFilePath('html')).size)})`;
 });
 
 console.log('\n\n\n\n\n'+logs);
