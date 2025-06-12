@@ -24,22 +24,12 @@ SOFTWARE.
 
 */
 
+const [ACTIONPATH] = process.argv.slice(2);
+import {removeLast, fileSize, runnerPath} from `${ACTIONPATH}/src/modules/string.js`;
+
 const charset = "utf-8";
 const fs = require('fs');
 const path = require('path');
-function fileSize(bytes) {
-    if (bytes <= 1024) {
-        return `${bytes}B`;
-    } else if (bytes <= 1024**2) {
-        return `${Math.ceil(( bytes / 1024 ) * 100) / 100}KB`;
-    } else if (bytes <= 1024**3) {
-        return `${Math.ceil(( bytes / ( 1024**2 ) ) * 100) / 100}MB`;
-    } else if (bytes <= 1024**4) {
-        return `${Math.ceil(( bytes / ( 1024**3 ) ) * 100) / 100}GB`;
-    } else if (bytes <= 1024**5) {
-        return `${Math.ceil(( bytes / ( 1024**4 ) ) * 100) / 100}TB`;
-    }
-}
 const rootDir = process.cwd();
 const logs = fs.readFileSync(path.join(rootDir, '_just_data', 'output.txt'), charset);
 let logsstr = logs;
@@ -64,12 +54,12 @@ function findMarkdownFiles(dir) {
 let fileID = 0;
 findMarkdownFiles(rootDir).forEach(file => {
     fileID++;
-    newlogs += `${l[1]}FILE #${fileID} "${file}":`;
+    newlogs += `${l[1]}FILE #${fileID} "${runnerPath(file)}":`;
     try {
         const fileNameWithoutExt = path.basename(file, path.extname(file));
         const outFilePath = (ext) => path.join(path.dirname(file), `${fileNameWithoutExt}.${ext}`);
         const htmlsize = fileSize(fs.statSync(outFilePath('html')).size);
-        newlogs += `${l[2]}SIZE: ${htmlsize}`;
+        newlogs += `${l[2]}SIZE: ${htmlsize} (html output)`;
     } catch (err) {
         newlogs += `${l[2]}ERROR: ${err}`;
     }

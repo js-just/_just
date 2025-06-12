@@ -24,6 +24,9 @@ SOFTWARE.
 
 */
 
+const [HTML, CSS, JS, PATH, ACTIONPATH] = process.argv.slice(2);
+import {removeLast, fileSize, runnerPath} from `${ACTIONPATH}/src/modules/string.js`;
+
 const link = (text, link_, ext = false) => `<a href="${link_}"${ext ? ' id="ext"' : ''}>${text}</a>`;
 const span = (text) => `<span>${text}</span>`;
 const template = {
@@ -37,7 +40,6 @@ const template = {
 }
 const fs = require('fs');
 const path = require('path');
-const [HTML, CSS, JS, PATH] = process.argv.slice(2);
 const config = JSON.parse(fs.readFileSync('just.config.json', template.charset));
 const docsConfig = config.docs_config;
 
@@ -110,15 +112,6 @@ function getTitleFromMd(filePath) {
     return null;
 }
 
-function removeLast (input, removeThis) {
-    return `${input}`
-        .split('').reverse().join('')
-        .replace(
-            `${removeThis}`.split('').reverse().join(''),
-            '')
-        .split('').reverse().join('');
-}
-
 function getPageList() {
     const files = getFiles(rootDirA);
     const pages = [];
@@ -126,7 +119,7 @@ function getPageList() {
     let fileID = 0;
     files.forEach(file => {
         fileID++;
-        logs += `${l[1]}FILE #${fileID} "${file}":`;
+        logs += `${l[1]}FILE #${fileID} "${runnerPath(file)}":`;
         const extname = path.extname(file);
         const ext = extname.slice(1);
         logs += `${l[2]}EXTNAME: ${extname}`;
@@ -389,20 +382,6 @@ filterText = (text) => text
     .replaceAll('<script>', `&#${'<'.charCodeAt(0)};script&#${'>'.charCodeAt(0)};`)
     .replaceAll('</script>', `&#${'<'.charCodeAt(0)};&#${'/'.charCodeAt(0)};script&#${'>'.charCodeAt(0)};`);
 
-function fileSize(bytes) {
-    if (bytes <= 1024) {
-        return `${bytes}B`;
-    } else if (bytes <= 1024**2) {
-        return `${Math.ceil(( bytes / 1024 ) * 100) / 100}KB`;
-    } else if (bytes <= 1024**3) {
-        return `${Math.ceil(( bytes / ( 1024**2 ) ) * 100) / 100}MB`;
-    } else if (bytes <= 1024**4) {
-        return `${Math.ceil(( bytes / ( 1024**3 ) ) * 100) / 100}GB`;
-    } else if (bytes <= 1024**5) {
-        return `${Math.ceil(( bytes / ( 1024**4 ) ) * 100) / 100}TB`;
-    }
-}
-
 logs += `${l[0]}MARKDOWN FILES:`;
 let fileID = 0;
 markdownFiles.forEach(file => {
@@ -481,4 +460,8 @@ markdownFiles.forEach(file => {
 console.log('\n\n\n\n\n'+logs);
 fs.writeFileSync(path.join(rootDirB, '_just_data', 'output.txt'), logs, template.charset);
 fs.writeFileSync(path.join(rootDirB, '_just', `${filename.css}.css`), CSS, template.charset);
-fs.writeFileSync(path.join(rootDirB, '_just', `${filename.js}.js`), JS, template.charset);
+fs.writeFileSync(
+    path.join(rootDirB, '_just', `${filename.js}.js`), 
+    JS.replace('\'PUBLICOUTPUT\'', true), 
+    template.charset
+);
