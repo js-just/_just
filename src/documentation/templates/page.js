@@ -41,6 +41,7 @@ window.addEventListener('scroll', () => {
     } else if (scrolldata) {
         scrolldata = false;
         window.location.hash = window.location.hash.replace(hashmatch[0], '');
+        document.documentElement.scrollTo(0, localStorage.getItem('s' + page_));
     }
 
     document.body.style.setProperty('--hc', headerIndex >= 0 ? headerIndex : 0);
