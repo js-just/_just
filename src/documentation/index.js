@@ -459,6 +459,7 @@ markdownFiles.forEach(file => {
                 .replaceAll('</blockquote><blockquote>', '<br>')
                 .replace(/<blockquote>(.*?)<br>> (.*?)<br>(.*?)<\/blockquote>/, '<blockquote>$1<blockquote>$2</blockquote><br>$3</blockquote>')
                 .replaceAll('</blockquote><br>', '</blockquote>')
+                .replace(/<\/blockquote>> (.*?)<blockquote>/, '</blockquote><blockquote>$1</blockquote><blockquote>')
         ),
         charset
     );
