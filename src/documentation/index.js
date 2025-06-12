@@ -422,7 +422,7 @@ markdownFiles.forEach(file => {
 
     const pages = generateListItems(addFolderToPageList(pageList));
     let outHTML = HTML
-        .replace('<html>', `<html lang="${htmlLang}">`)
+        .replace('<html>', `<html${htmlLang}>`)
         .replace('REPLACE_CSS', filename.css)
         .replace('REPLACE_JS', filename.js)
         .replace('REPLACE_CHARSET', charset)
@@ -452,6 +452,7 @@ markdownFiles.forEach(file => {
                 .replaceAll('</ul><br>', '</ul>')
                 .replaceAll('</blockquote><br>', '</blockquote>')
                 .replaceAll('<br><blockquote', '<blockquote')
+                .replaceAll('</blockquote><blockquote>', '<br>')
         ),
         charset
     );
