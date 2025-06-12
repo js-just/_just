@@ -27,6 +27,7 @@ SOFTWARE.
 const _just = {};
 const [HTML, CSS, JS, PATH] = process.argv.slice(2);
 _just.string = require('../modules/string.js');
+_just.element = (type, insert) => `<_just${type ? ` element="${type}"` : ''}>${insert || ''}</_just>`;
 
 const link = (text, link_, ext = false) => `<a href="${link_}"${ext ? ' id="ext"' : ''}>${text}</a>`;
 const span = (text) => `<span>${text}</span>`;
@@ -441,6 +442,7 @@ markdownFiles.forEach(file => {
         outHTML.replace(
             'REPLACE_CONTENT', 
             toHTML
+                .replaceAll('\n\n>', _just.element('blockquote separator') + '\n\n>')
                 .replaceAll('\n', '<br>')
                 .replaceAll('</h1><br>', '</h1>')
                 .replaceAll('</h2><br>', '</h2>')
@@ -450,17 +452,18 @@ markdownFiles.forEach(file => {
                 .replaceAll('</h6><br>', '</h6>')
                 .replaceAll('</ol><br>', '</ol>')
                 .replaceAll('</ul><br>', '</ul>')
-                //.replaceAll('</blockquote><br>', '</blockquote>')
+                .replaceAll('</blockquote><br>', '</blockquote>')
                 .replaceAll('<br><blockquote', '<blockquote')
-                //.replaceAll('</blockquote><blockquote>', '<br>')
+                .replaceAll('</blockquote><blockquote>', '<br>')
                 .replaceAll('<br><blockquote><br>', '<blockquote>')
                 .replace(/<blockquote>>(.*?)<\/blockquote>/, '<blockquote><blockquote>$1</blockquote></blockquote>')
                 .replaceAll('</blockquote></blockquote><blockquote><blockquote>', '<br>')
-                //.replaceAll('</blockquote><blockquote>', '<br>')
+                .replaceAll('</blockquote><blockquote>', '<br>')
                 .replace(/<blockquote>(.*?)<br>> (.*?)<br>(.*?)<\/blockquote>/, '<blockquote>$1<blockquote>$2</blockquote><br>$3</blockquote>')
                 .replaceAll('</blockquote><br>', '</blockquote>')
                 .replace(/<\/blockquote>> (.*?)<blockquote>/, '</blockquote><blockquote>$1</blockquote><blockquote>')
                 .replaceAll('</blockquote><blockquote>', '<br>')
+                .replaceAll(_just.element('blockquote separator'), '</blockquote><blockquote>')
         ),
         charset
     );
