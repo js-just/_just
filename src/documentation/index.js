@@ -25,7 +25,7 @@ SOFTWARE.
 */
 
 const [HTML, CSS, JS, PATH, ACTIONPATH] = process.argv.slice(2);
-import {removeLast, fileSize, runnerPath} from `${ACTIONPATH}/src/modules/string.js`;
+import {removeLast, fileSize, runnerPath} from `file://${ACTIONPATH}/src/modules/string.js`;
 
 const link = (text, link_, ext = false) => `<a href="${link_}"${ext ? ' id="ext"' : ''}>${text}</a>`;
 const span = (text) => `<span>${text}</span>`;

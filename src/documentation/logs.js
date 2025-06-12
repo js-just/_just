@@ -25,7 +25,7 @@ SOFTWARE.
 */
 
 const [ACTIONPATH] = process.argv.slice(2);
-import {removeLast, fileSize, runnerPath} from `${ACTIONPATH}/src/modules/string.js`;
+import {removeLast, fileSize, runnerPath} from `file://${ACTIONPATH}/src/modules/string.js`;
 
 const charset = "utf-8";
 const fs = require('fs');
