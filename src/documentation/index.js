@@ -442,7 +442,7 @@ markdownFiles.forEach(file => {
         outHTML.replace(
             'REPLACE_CONTENT', 
             toHTML
-                .replaceAll('\n\n> ', `${_just.element('blockquote separator')}\n\n> `)
+                .replaceAll('\n\n\n> ', `${_just.element('blockquote separator')}\n\n\n> `)
                 .replaceAll('\n', '<br>')
                 .replaceAll('</h1><br>', '</h1>')
                 .replaceAll('</h2><br>', '</h2>')
