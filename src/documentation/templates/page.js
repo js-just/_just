@@ -40,7 +40,7 @@ window.addEventListener('scroll', () => {
         scrolldata = true;
     } else if (scrolldata) {
         scrolldata = false;
-        window.location.hash = window.location.hash.replace(`#hdr${hashmatch}`, '');
+        window.location.hash = window.location.hash.replace(hashmatch[0], '');
     }
 
     document.body.style.setProperty('--hc', headerIndex >= 0 ? headerIndex : 0);
