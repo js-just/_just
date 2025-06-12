@@ -13,7 +13,6 @@ if (publicOutput) {
     console.log(`_just output: ${window.location.protocol}//${window.location.hostname}/_just_data/output.txt`)
 }
 
-let scrolldata = false;
 window.addEventListener('scroll', () => {
     if (document.body.scrollTop > 150 || document.documentElement.scrollTop > 150) {
         document.querySelector(".navbar").classList.add("scroll");
@@ -25,33 +24,33 @@ window.addEventListener('scroll', () => {
 
     const elements = document.querySelectorAll(`${main_} h1, ${main_} h2, ${main_} h3`);
     let headerIndex = -1;
+    let headers;
+    let lastindex = undefined;
     elements.forEach((element, index) => {
         const rect = element.getBoundingClientRect();
         const isInView = (rect.top + rect.height / 2) <= (window.innerHeight / 2);
-        
+
+        if (lastindex === undefined) {
+            lastindex = index;
+        } else if (index > lastindex) {
+            lastindex = index;
+            headers = index;
+        }
+
         if (isInView) {
             headerIndex = index;
         }
     });
-    
-    const hashmatch = window.location.hash.match(/^#hdr(\d+)$/);
-    if (!scrolldata && hashmatch) {
-        headerIndex = hashmatch[1];
-        scrolldata = true;
-    } else if (scrolldata) {
-        scrolldata = false;
-        window.location.hash = window.location.hash.replace(hashmatch[0], '');
-        document.documentElement.scrollTo(0, localStorage.getItem('s' + page_));
-    }
-
-    document.body.style.setProperty('--hc', headerIndex >= 0 ? headerIndex : 0);
 
     const { scrollHeight, scrollTop, clientHeight } = document.documentElement;
     if (scrollTop + clientHeight >= scrollHeight) {
         document.body.classList.add('stb');
+        headerIndex = headers;
     } else {
         document.body.classList.remove('stb');
     }
+
+    document.body.style.setProperty('--hc', headerIndex >= 0 ? headerIndex : 0);
 });
 
 if (scrll) {
