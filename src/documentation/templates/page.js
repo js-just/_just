@@ -32,6 +32,10 @@ window.addEventListener('scroll', () => {
             headerIndex = index;
         }
     });
+    const hashmatch = window.location.hash.match(/^#hdr(\d+)$/);
+    if (hashmatch) {
+        headerIndex = hashmatch[1];
+    }
     document.body.style.setProperty('--hc', headerIndex >= 0 ? headerIndex : 0);
 
     const { scrollHeight, scrollTop, clientHeight } = document.documentElement;
