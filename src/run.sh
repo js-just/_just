@@ -21,21 +21,15 @@
 # SOFTWARE.
 
 #!/bin/bash
-echo "DEBUG: LINE 24"
 ERRORS_FILE="$GITHUB_ACTION_PATH/data/codes.json"
-echo "DEBUG: LINE 26"
 CONFIG_FILE="just.config.js"
-echo "DEBUG: LINE 28"
 CONFIG_DATA="just.config.json"
-echo "DEBUG: LINE 30"
 source $GITHUB_ACTION_PATH/src/modules/errmsg.sh
-echo "DEBUG: LINE 32"
 if [ "$INPUT_PATH" == ""]; then
   INPUT_PATH="."
 elif [ -z "$INPUT_PATH" ]; then
   INPUT_PATH="."
 fi
-echo "DEBUG: LINE 38"
 
 VERSION=$(echo "$GITHUB_ACTION_PATH" | grep -oP '(?<=/v)[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9]+)?')
 msg1=$(_justMessage "Running Just an Ultimate Site Tool v$VERSION")
