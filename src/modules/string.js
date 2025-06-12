@@ -24,7 +24,7 @@ SOFTWARE.
 
 */
 
-export function removeLast(input, removeThis) {
+exports.removeLast = function (input, removeThis) {
     return `${input}`
         .split('').reverse().join('')
         .replace(
@@ -33,7 +33,7 @@ export function removeLast(input, removeThis) {
         .split('').reverse().join('');
 }
 
-export function fileSize(bytes) {
+exports.fileSize =  function (bytes) {
     if (bytes <= 1024) {
         return `${bytes}B`;
     } else if (bytes <= 1024**2) {
@@ -47,7 +47,7 @@ export function fileSize(bytes) {
     }
 }
 
-export function runnerPath(input = '') {
+exports.runnerPath = function (input = '') {
     const GitHubRunner = '/home/runner/work'
     if (input.startsWith(GitHubRunner)) {
         input = input.replace(GitHubRunner, '_just')

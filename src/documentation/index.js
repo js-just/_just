@@ -24,8 +24,9 @@ SOFTWARE.
 
 */
 
-const [HTML, CSS, JS, PATH, ACTIONPATH] = process.argv.slice(2);
-const [removeLast, fileSize, runnerPath] = require('../modules/string.js');
+const _just = {};
+const [HTML, CSS, JS, PATH] = process.argv.slice(2);
+_just.string = require('../modules/string.js');
 
 const link = (text, link_, ext = false) => `<a href="${link_}"${ext ? ' id="ext"' : ''}>${text}</a>`;
 const span = (text) => `<span>${text}</span>`;
@@ -119,19 +120,19 @@ function getPageList() {
     let fileID = 0;
     files.forEach(file => {
         fileID++;
-        logs += `${l[1]}FILE #${fileID} "${runnerPath(file)}":`;
+        logs += `${l[1]}FILE #${fileID} "${_just.string.runnerPath(file)}":`;
         const extname = path.extname(file);
         const ext = extname.slice(1);
         logs += `${l[2]}EXTNAME: ${extname}`;
         let title;
-        let pagePath = removeLast(file.replace(rootDirA, '').replace(extname, ''), ext);
+        let pagePath = _just.string.removeLast(file.replace(rootDirA, '').replace(extname, ''), ext);
         logs += `${l[2]}PAGEPATH (before): ${pagePath}`;
 
         if (pagePath.endsWith('/index') || pagePath === 'index') {
-            pagePath = removeLast(pagePath, 'index')
+            pagePath = _just.string.removeLast(pagePath, 'index')
             title = 'Home';
         } else {
-            title = removeLast(path.basename(pagePath), ext);
+            title = _just.string.removeLast(path.basename(pagePath), ext);
         }
         logs += `${l[2]}PAGEPATH (after): ${pagePath}`;
         logs += `${l[2]}TITLE (before): ${title}`;
@@ -389,7 +390,7 @@ markdownFiles.forEach(file => {
     const fileNameWithoutExt = path.basename(file, path.extname(file));
     const outFilePath = (ext) => path.join(path.dirname(file), `${fileNameWithoutExt}.${ext}`);
     fileID++;
-    logs += `${l[1]}FILE #${fileID} "${file}":${l[2]}INPUT: ${fileSize(fs.statSync(file).size)}`;
+    logs += `${l[1]}FILE #${fileID} "${file}":${l[2]}INPUT: ${_just.string.fileSize(fs.statSync(file).size)}`;
 
     let headerID = 0;
     const toHTML = hbuoclpMDtoHTML(content).replace(/<h1>(.*?)<\/h1>/g, (match, p1) => {
@@ -454,7 +455,7 @@ markdownFiles.forEach(file => {
         ),
         charset
     );
-    logs += `${l[2]}OUTPUT: ${outFilePath('html')} (${fileSize(fs.statSync(outFilePath('html')).size)})`;
+    logs += `${l[2]}OUTPUT: ${outFilePath('html')} (${_just.string.fileSize(fs.statSync(outFilePath('html')).size)})`;
 });
 
 console.log('\n\n\n\n\n'+logs);
