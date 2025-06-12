@@ -13,6 +13,7 @@ if (publicOutput) {
     console.log(`_just output: ${window.location.protocol}//${window.location.hostname}/_just_data/output.txt`)
 }
 
+let scrolldata = false;
 window.addEventListener('scroll', () => {
     if (document.body.scrollTop > 150 || document.documentElement.scrollTop > 150) {
         document.querySelector(".navbar").classList.add("scroll");
@@ -32,10 +33,16 @@ window.addEventListener('scroll', () => {
             headerIndex = index;
         }
     });
+    
     const hashmatch = window.location.hash.match(/^#hdr(\d+)$/);
-    if (hashmatch) {
+    if (!scrolldata && hashmatch) {
         headerIndex = hashmatch[1];
+        scrolldata = true;
+    } else if (scrolldata) {
+        scrolldata = false;
+        window.location.hash = window.location.hash.replace(`#hdr${hashmatch}`, '');
     }
+
     document.body.style.setProperty('--hc', headerIndex >= 0 ? headerIndex : 0);
 
     const { scrollHeight, scrollTop, clientHeight } = document.documentElement;
