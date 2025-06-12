@@ -110,6 +110,15 @@ function getTitleFromMd(filePath) {
     return null;
 }
 
+function removeLast (input, removeThis) {
+    return `${input}`
+        .split('').reverse().join('')
+        .replace(
+            `${removeThis}`.split('').reverse().join(''),
+            '')
+        .split('').reverse().join('');
+}
+
 function getPageList() {
     const files = getFiles(rootDirA);
     const pages = [];
@@ -119,16 +128,17 @@ function getPageList() {
         fileID++;
         logs += `${l[1]}FILE #${fileID} "${file}":`;
         const extname = path.extname(file);
+        const ext = extname.slice(1);
         logs += `${l[2]}EXTNAME: ${extname}`;
         let title;
-        let pagePath = file.replace(rootDirA, '').replace(extname, '');
+        let pagePath = removeLast(file.replace(rootDirA, '').replace(extname, ''), ext);
         logs += `${l[2]}PAGEPATH (before): ${pagePath}`;
 
-        if (pagePath.endsWith('/index')) {
-            pagePath = pagePath.split('').reverse().join('').replace('index'.split('').reverse().join(''), '').split('').reverse().join('');
+        if (pagePath.endsWith('/index') || pagePath === 'index') {
+            pagePath = removeLast(pagePath, 'index')
             title = 'Home';
         } else {
-            title = path.basename(pagePath);
+            title = removeLast(path.basename(pagePath), ext);
         }
         logs += `${l[2]}PAGEPATH (after): ${pagePath}`;
         logs += `${l[2]}TITLE (before): ${title}`;
