@@ -252,7 +252,7 @@ function hbuoclpMDtoHTML(text, maxBlockquoteLevel = 4) {
     }
 
     for (let i = 1; i <= maxBlockquoteLevel; i++) {
-        text = processBlockquotes(text.replaceAll('\n\n> ', `${_just.element('blockquote separator')}\n\n> a`), i);
+        text = processBlockquotes(text.replace(/> (.*?)\n\n> (.*?)\n/, `> $1\n\n> ${_just.element('blockquote separator')}$2\n`), i);
     }
 
     const ulRegex = /^(?:-\s+|\*\s+|\+\s+)(.*?)(?:\n(?:-\s+|\*\s+|\+\s+)(.*?))*$/gm;
