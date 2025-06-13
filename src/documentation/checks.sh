@@ -26,7 +26,7 @@ config=$(cat just.config.json)
 
 docs_config=$(echo "$config" | jq -r '.docs_config')
 if ! echo "$config" | jq -e '.docs_config' > /dev/null; then
-    local ERROR_MESSAGE=$(ErrorMessage "docs/checks.sh" "0118")
+    ERROR_MESSAGE=$(ErrorMessage "docs/checks.sh" "0118")
     echo "$ERROR_MESSAGE" && exit 1
 fi
 
