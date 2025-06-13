@@ -21,10 +21,10 @@
 # SOFTWARE.
 
 name: '_just'
-description: 'Just an Ultimate Site Tool. A GitHub Action to modify and override your Next.js site on GitHub Pages (Postprocessor).'
+description: 'Just an Ultimate Site Tool.'
 author: 'JustStudio.'
 branding:
-  icon: 'edit'
+  icon: 'tool'
   color: 'purple'
 inputs:
   path:

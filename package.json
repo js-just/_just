@@ -4,15 +4,15 @@
   "description": "Just an Ultimate Site Tool (W.I.P.)",
   "main": "index.sh",
   "scripts": {
-    "test": "echo \"https://github.com/JustDeveloper1/_just#readme\" && exit 1",
-    "about": "echo \"https://github.com/JustDeveloper1/_just#readme\" && exit 1",
-    "info": "echo \"https://github.com/JustDeveloper1/_just#readme\" && exit 1",
-    "repo": "echo \"https://github.com/JustDeveloper1/_just#readme\" && exit 1",
-    "help": "echo \"https://github.com/JustDeveloper1/_just#readme\" && exit 1"
+    "test": "echo \"https://github.com/js-just/_just#readme\" && exit 1",
+    "about": "echo \"https://github.com/js-just/_just#readme\" && exit 1",
+    "info": "echo \"https://github.com/js-just/_just#readme\" && exit 1",
+    "repo": "echo \"https://github.com/js-just/_just#readme\" && exit 1",
+    "help": "echo \"https://github.com/js-just/_just#readme\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/JustDeveloper1/_just.git"
+    "url": "git+https://github.com/js-just/_just.git"
   },
   "keywords": [
     "postprocessor",
@@ -46,7 +46,7 @@
   "author": "JustStudio.",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/JustDeveloper1/_just/issues"
+    "url": "https://github.com/js-just/_just/issues"
   },
-  "homepage": "https://github.com/JustDeveloper1/_just#readme"
+  "homepage": "https://github.com/js-just/_just#readme"
 }
