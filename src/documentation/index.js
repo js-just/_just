@@ -76,7 +76,7 @@ const filename = {
 const dataname = [];
 for (let i = 1; i <= 12; i++) {
     dataname.push(randomChars(4));
-    if (i == 1) {
+    if (i == 2) {
         charss.push('_', '-');
         for (let i = 48; i <= 57; i++) {
             charss.push(String.fromCharCode(i));
