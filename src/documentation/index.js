@@ -49,22 +49,28 @@ const config = JSON.parse(fs.readFileSync('just.config.json', template.charset))
 const docsConfig = config.docs_config;
 
 const charss = [];
+const chars2 = ['_', '-'];
 for (let i = 65; i <= 90; i++) {
     charss.push(String.fromCharCode(i));
 }
 for (let i = 97; i <= 122; i++) {
     charss.push(String.fromCharCode(i));
 }
-function randomChar() {
-    const index = Math.floor(Math.random() * charss.length);
-    const charr = charss[index];
-    charss.splice(index, 1);
+for (let i = 48; i <= 57; i++) {
+    chars2.push(String.fromCharCode(i));
+}
+function randomChar(i) {
+    const exp = i % 2 === 0 && chars2.length > 0;
+    const tbsplcd = exp ? chars2 : charss;
+    const index = Math.floor(Math.random() * tbsplcd.length);
+    const charr = tbsplcd[index];
+    tbsplcd.splice(index, 1);
     return charr;
 }
 function randomChars(count) {
     let output = '';
     for (let i = 1; i <= count; i++) {
-        output += randomChar() || '';
+        output += randomChar(i) || '';
     }
     return output;
 }
@@ -76,12 +82,6 @@ const filename = {
 const dataname = [];
 for (let i = 1; i <= 12; i++) {
     dataname.push(randomChars(4));
-    if (i == 2) {
-        charss.push('_', '-');
-        for (let i = 48; i <= 57; i++) {
-            charss.push(String.fromCharCode(i));
-        }
-    }
 }
 
 const charset = docsConfig ? docsConfig.charset || template.charset : template.charset;
@@ -423,6 +423,7 @@ const addEnd = (text, end) => {
 let linklogs = `${l[0]}LINKS:`;
 let buttonlogs = `${l[0]}BUTTONS:`;
 let uniqueNames = {};
+let uniqueNames_= [];
 const htmlnav = (type = 0) => {
     let output = '';
     let addcss = '';
@@ -444,8 +445,9 @@ const htmlnav = (type = 0) => {
         output += type == 0 ? `<a${linkdata[1] ? ` href="${linkdata[1]}"` : ''}${linkdata[1] ? ` target="${linkdata[2] ? linkdata[2] : ext ? '_blank' : '_self'}"` : ''}${ext ? ' id="ext"' : ''}>${filterText(linkdata[0])}</a>` : type == 1 ? `<button id="${dataname[0]}${bid}">${filterText(linkdata[0])}</button>` : '';
         JS += type == 1 && linkdata[1] ? `\ndocument.getElementById('${dataname[0]}${bid}').addEventListener("click",()=>{const link=document.createElement('a');link.href='${linkdata[1]}';link.target='${linkdata[2] ? linkdata[2] : ext ? '_blank' : '_self'}';link.classList.add('${dataname[0]}${bid}');document.body.appendChild(link);link.click();document.body.removeChild(link);});` : '';
         addcss += type == 1 && linkdata[1] ? `.${dataname[0]}${bid},` : '';
-        bid++;
         uniqueNames[`${dataname[0]}${bid}`] = 1;
+        uniqueNames_.push(`${dataname[0]}${bid}`);
+        bid++;
     }
     CSS += addcss != '' ? `\n${_just.string.removeLast(addcss, ',')}{display:none}` : '';
     return output;
@@ -465,9 +467,11 @@ const htmlnav = (type = 0) => {
 function uniqueName(input) {
     if (!uniqueNames[input]) {
         uniqueNames[input] = 1;
+        uniqueNames_.push(input);
         return input;
     } else {
         uniqueNames[input]++;
+        uniqueNames_.push(input + uniqueNames[input]);
         return input + uniqueNames[input];
     }
 }
@@ -569,6 +573,7 @@ markdownFiles.forEach(file => {
 });
 
 logs += linklogs; logs += buttonlogs;
+logs += `${l[0]}USED NAMES:${l[1]}"${uniqueNames_.join('", "')}"${l[0]}DATA NAMES:${l[1]}"${dataname.join('", "')}"`;
 console.log('\n\n\n\n\n'+logs);
 fs.writeFileSync(path.join(rootDirB, '_just_data', 'output.txt'), logs, template.charset);
 fs.writeFileSync(path.join(rootDirB, '_just', `${filename.css}.css`), CSS, template.charset);
