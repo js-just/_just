@@ -252,7 +252,7 @@ function hbuoclpMDtoHTML(text, maxBlockquoteLevel = 4) {
     }
 
     for (let i = 1; i <= maxBlockquoteLevel; i++) {
-        text = processBlockquotes(text.replaceAll('\n\n\n> ', `${_just.element('blockquote separator')}\n\n\n> a`), i);
+        text = processBlockquotes(text.replaceAll('\n\n> ', `${_just.element('blockquote separator')}\n\n> a`), i);
     }
 
     const ulRegex = /^(?:-\s+|\*\s+|\+\s+)(.*?)(?:\n(?:-\s+|\*\s+|\+\s+)(.*?))*$/gm;
@@ -463,7 +463,7 @@ markdownFiles.forEach(file => {
                 .replaceAll('</blockquote><br>', '</blockquote>')
                 .replace(/<\/blockquote>> (.*?)<blockquote>/, '</blockquote><blockquote>$1</blockquote><blockquote>')
                 .replaceAll('</blockquote><blockquote>', '<br>')
-                .replaceAll(_just.element('blockquote separator'), '</blockquote><blockquote>')
+                //.replaceAll(_just.element('blockquote separator'), '</blockquote><blockquote>')
         ),
         charset
     );
