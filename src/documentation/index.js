@@ -455,33 +455,40 @@ markdownFiles.forEach(file => {
             addEnd(
                 _just.string.removeLast(
                     addEnd(
-                        toHTML
-                            .replaceAll('\n', '<br>')
-                            .replaceAll('</h1><br>', '</h1>')
-                            .replaceAll('</h2><br>', '</h2>')
-                            .replaceAll('</h3><br>', '</h3>')
-                            .replaceAll('</h4><br>', '</h4>')
-                            .replaceAll('</h5><br>', '</h5>')
-                            .replaceAll('</h6><br>', '</h6>')
-                            .replaceAll('</ol><br>', '</ol>')
-                            .replaceAll('</ul><br>', '</ul>')
-                            .replace(/<blockquote><br>(.*?)<\/blockquote>/, '<blockquote><blockquote>$1</blockquote></blockquote>')
-                            .replace(/<blockquote><br>> (.*?)<\/blockquote>/, '<blockquote><blockquote><blockquote>$1</blockquote></blockquote></blockquote>')
-                            .replaceAll('</blockquote><br>', '</blockquote>')
-                            .replaceAll('<br><blockquote', '<blockquote')
-                            .replaceAll('</blockquote><blockquote>', '<br>')
-                            .replaceAll('<br><blockquote><br>', '<blockquote>')
-                            .replace(/<blockquote>> (.*?)<\/blockquote>/, '<blockquote><blockquote>$1</blockquote></blockquote>')
-                            .replaceAll('</blockquote></blockquote><blockquote><blockquote>', '<br>')
-                            .replaceAll('</blockquote><blockquote>', '<br>')
-                            .replace(/<blockquote>(.*?)<br>> (.*?)<br>(.*?)<\/blockquote>/, '<blockquote>$1<blockquote>$2</blockquote><br>$3</blockquote>')
-                            .replaceAll('</blockquote><br>', '</blockquote>')
-                            .replace(/<\/blockquote>> (.*?)<blockquote>/, '</blockquote><blockquote>$1</blockquote><blockquote>')
-                            .replaceAll('</blockquote><blockquote>', '<br>')
-                            .replaceAll(_just.element('blockquote separator'), '</blockquote><blockquote>'),
-                        '<br>'
+                        _just.string.removeLast(
+                            addEnd(
+                                toHTML
+                                    .replaceAll('\n', '<br>')
+                                    .replaceAll('</h1><br>', '</h1>')
+                                    .replaceAll('</h2><br>', '</h2>')
+                                    .replaceAll('</h3><br>', '</h3>')
+                                    .replaceAll('</h4><br>', '</h4>')
+                                    .replaceAll('</h5><br>', '</h5>')
+                                    .replaceAll('</h6><br>', '</h6>')
+                                    .replaceAll('</ol><br>', '</ol>')
+                                    .replaceAll('</ul><br>', '</ul>')
+                                    .replace(/<blockquote><br>(.*?)<\/blockquote>/, '<blockquote><blockquote>$1</blockquote></blockquote>')
+                                    .replace(/<blockquote><br>> (.*?)<\/blockquote>/, '<blockquote><blockquote><blockquote>$1</blockquote></blockquote></blockquote>')
+                                    .replaceAll('</blockquote><br>', '</blockquote>')
+                                    .replaceAll('<br><blockquote', '<blockquote')
+                                    .replaceAll('</blockquote><blockquote>', '<br>')
+                                    .replaceAll('<br><blockquote><br>', '<blockquote>')
+                                    .replace(/<blockquote>> (.*?)<\/blockquote>/, '<blockquote><blockquote>$1</blockquote></blockquote>')
+                                    .replaceAll('</blockquote></blockquote><blockquote><blockquote>', '<br>')
+                                    .replaceAll('</blockquote><blockquote>', '<br>')
+                                    .replace(/<blockquote>(.*?)<br>> (.*?)<br>(.*?)<\/blockquote>/, '<blockquote>$1<blockquote>$2</blockquote><br>$3</blockquote>')
+                                    .replaceAll('</blockquote><br>', '</blockquote>')
+                                    .replace(/<\/blockquote>> (.*?)<blockquote>/, '</blockquote><blockquote>$1</blockquote><blockquote>')
+                                    .replaceAll('</blockquote><blockquote>', '<br>')
+                                    .replaceAll(_just.element('blockquote separator'), '</blockquote><blockquote>')
+                                    .replaceAll('</blockquote><br><blockquote>', '<br>'),
+                                '<br>'
+                            ),
+                            '<br>'
+                        ),
+                        '<p></p>'
                     ),
-                    '<br>'
+                    '<p></p>'
                 ),
                 '.'
             )
