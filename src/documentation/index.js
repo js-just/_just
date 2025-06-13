@@ -421,6 +421,8 @@ const addEnd = (text, end) => {
     return text
 }
 
+let linklogs = `${l[0]}LINKS:`;
+let buttonlogs = `${l[0]}BUTTONS:`;
 const htmlnav = (type = 0) => {
     let output = '';
     let addcss = '';
@@ -437,6 +439,8 @@ const htmlnav = (type = 0) => {
         if (linkdata[1] && linkdata[1].startsWith('/')) {
             ext = false;
         }
+        linklogs += type == 0 ? `${l[1]}#${bid}:${l[2]}NAME:${linkdata[0]}${l[2]}FILTERED NAME:${filterText(linkdata[0])}${l[2]}HREF:${linkdata[1]}${l[2]}TARGET:${linkdata[2]}` : '';
+        buttonlogs += type == 1 ? `${l[1]}#${bid}:${l[2]}NAME:${linkdata[0]}${l[2]}FILTERED NAME:${filterText(linkdata[0])}${l[2]}LINK:${linkdata[1]}${l[2]}TARGET:${linkdata[2]}` : '';
         output += type == 0 ? `<a${linkdata[1] ? ` href="${linkdata[1]}"` : ''}${linkdata[1] ? ` target="${linkdata[2] || ext ? '_blank' : '_self'}"` : ''}${ext ? ' id="ext"' : ''}>${filterText(linkdata[0])}</a>` : type == 1 ? `<button id="${dataname[0]}${bid}">${filterText(linkdata[0])}</button>` : '';
         JS += type == 1 && linkdata[1] ? `\ndocument.getElementById('${dataname[0]}${bid}').addEventListener("click",()=>{const link=document.createElement('a');link.href='${linkdata[1]}';link.target='${linkdata[2] || ext ? '_blank' : '_self'}';link.classList.add('${dataname[0]}${bid}');document.body.appendChild(link);link.click();document.body.removeChild(link);});` : '';
         addcss += type == 1 && linkdata[1] ? `.${dataname[0]}${bid},` : '';
@@ -554,6 +558,7 @@ markdownFiles.forEach(file => {
     logs += `${l[2]}OUTPUT: ${_just.string.runnerPath(outFilePath('html'))} (${_just.string.fileSize(fs.statSync(outFilePath('html')).size)})`;
 });
 
+logs += linklogs; logs += buttonlogs;
 console.log('\n\n\n\n\n'+logs);
 fs.writeFileSync(path.join(rootDirB, '_just_data', 'output.txt'), logs, template.charset);
 fs.writeFileSync(path.join(rootDirB, '_just', `${filename.css}.css`), CSS, template.charset);
