@@ -252,7 +252,7 @@ function hbuoclpMDtoHTML(text, maxBlockquoteLevel = 4) {
     }
 
     for (let i = 1; i <= maxBlockquoteLevel; i++) {
-        text = processBlockquotes(text.replace(/> (.*?)\n\n> (.*?)\n/, `> $1\n\n> ${_just.element('blockquote separator')}$2\n`), i);
+        text = processBlockquotes(text, i);
     }
 
     const ulRegex = /^(?:-\s+|\*\s+|\+\s+)(.*?)(?:\n(?:-\s+|\*\s+|\+\s+)(.*?))*$/gm;
@@ -394,7 +394,7 @@ markdownFiles.forEach(file => {
     logs += `${l[1]}FILE #${fileID} "${_just.string.runnerPath(file)}":${l[2]}INPUT: ${_just.string.fileSize(fs.statSync(file).size)}`;
 
     let headerID = 0;
-    const toHTML = hbuoclpMDtoHTML(content).replace(/<h1>(.*?)<\/h1>/g, (match, p1) => {
+    const toHTML = hbuoclpMDtoHTML(content.replace(/> (.*?)\n\n> (.*?)\n/, `> $1\n\n> ${_just.element('blockquote separator')}$2\n`)).replace(/<h1>(.*?)<\/h1>/g, (match, p1) => {
         return `<h1 id="${template.headerTagIDStart}${headerID++}">${p1}</h1>`;
     }).replace(/<h2>(.*?)<\/h2>/g, (match, p1) => {
         return `<h2 id="${template.headerTagIDStart}${headerID++}">${p1}</h2>`;
