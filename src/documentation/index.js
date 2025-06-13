@@ -120,6 +120,7 @@ HTML = HTML
     .replace('<div class="buttons">', `<div class="${cssclass.buttons}">`)
     .replace('<div class="slider"></div>', `<div class="${cssclass.slider}"></div>`);
 JS = JS
+    .replaceAll('".navbar"', `".${cssclass.navbar}"`)
     .replaceAll('\'navleft\'', `'${cssclass.navleft}'`)
     .replaceAll('\'ios\'', `'${cssclass.ios}'`);
 /*
