@@ -22,7 +22,7 @@
 
 name: '_just'
 description: 'Just an Ultimate Site Tool. A GitHub Action to modify and override your Next.js site on GitHub Pages (Postprocessor).'
-author: 'JustDeveloper1'
+author: 'JustStudio.'
 branding:
   icon: 'edit'
   color: 'purple'
