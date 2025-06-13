@@ -41,24 +41,18 @@ const template = {
     "footer": `Made with ${link('_just', 'https://just.is-a.dev/')}.`,
     "viewport": "width=device-width, initial-scale=1.0",
     "twitter": "summary_large_image",
-    "lang": "en",
-    "headerTagIDStart": "hdr"
+    "lang": "en"
 }
 const fs = require('fs');
 const path = require('path');
 const config = JSON.parse(fs.readFileSync('just.config.json', template.charset));
 const docsConfig = config.docs_config;
 
-const charss = [
-    '_', '-'
-];
+const charss = [];
 for (let i = 65; i <= 90; i++) {
     charss.push(String.fromCharCode(i));
 }
 for (let i = 97; i <= 122; i++) {
-    charss.push(String.fromCharCode(i));
-}
-for (let i = 48; i <= 57; i++) {
     charss.push(String.fromCharCode(i));
 }
 function randomChar() {
@@ -80,10 +74,15 @@ const filename = {
     'js': randomChars(8)
 }
 const dataname = [];
-for (let i = 1; i <= 11; i++) {
+for (let i = 1; i <= 12; i++) {
     dataname.push(randomChars(4));
+    if (i == 1) {
+        charss.push('_', '-');
+        for (let i = 48; i <= 57; i++) {
+            charss.push(String.fromCharCode(i));
+        }
+    }
 }
-dataname.push(randomChars(2));
 
 const charset = docsConfig ? docsConfig.charset || template.charset : template.charset;
 
@@ -249,7 +248,7 @@ function hbuoclpMDtoHTML(text, maxBlockquoteLevel = 4) {
         const regex = new RegExp(`^(>\\s+){${level}}(.*?)\\s*$`, 'gm');
         return biMDtoHTML(inputText.replace(regex, (match, p1, p2) => {
             const innerBlockquote = processBlockquotes(p2.trim(), level + 1);
-            const classAttr = (num) => 
+            const classAttr = (num) =>
                 p2.startsWith('[!NOTE]') ? num ? 7 : ' class="note"' :
                 p2.startsWith('[!TIP]') ? num ? 6 : ' class="ntip"' :
                 p2.startsWith('[!IMPORTANT]') ? num ? 12 : ' class="impr"' :
@@ -423,6 +422,7 @@ const addEnd = (text, end) => {
 
 let linklogs = `${l[0]}LINKS:`;
 let buttonlogs = `${l[0]}BUTTONS:`;
+let uniqueNames = {};
 const htmlnav = (type = 0) => {
     let output = '';
     let addcss = '';
@@ -445,6 +445,7 @@ const htmlnav = (type = 0) => {
         JS += type == 1 && linkdata[1] ? `\ndocument.getElementById('${dataname[0]}${bid}').addEventListener("click",()=>{const link=document.createElement('a');link.href='${linkdata[1]}';link.target='${linkdata[2] ? linkdata[2] : ext ? '_blank' : '_self'}';link.classList.add('${dataname[0]}${bid}');document.body.appendChild(link);link.click();document.body.removeChild(link);});` : '';
         addcss += type == 1 && linkdata[1] ? `.${dataname[0]}${bid},` : '';
         bid++;
+        uniqueNames[`${dataname[0]}${bid}`] = 1;
     }
     CSS += addcss != '' ? `\n${_just.string.removeLast(addcss, ',')}{display:none}` : '';
     return output;
@@ -461,6 +462,16 @@ const htmlnav = (type = 0) => {
     ]
 */
 
+function uniqueName(input) {
+    if (!uniqueNames[input]) {
+        uniqueNames[input] = 1;
+        return input;
+    } else {
+        uniqueNames[input]++;
+        return input + uniqueNames[input];
+    }
+}
+
 logs += `${l[0]}MARKDOWN FILES:`;
 let fileID = 0;
 markdownFiles.forEach(file => {
@@ -470,13 +481,12 @@ markdownFiles.forEach(file => {
     fileID++;
     logs += `${l[1]}FILE #${fileID} "${_just.string.runnerPath(file)}":${l[2]}INPUT: ${_just.string.fileSize(fs.statSync(file).size)}`;
 
-    let headerID = 0;
     const toHTML = hbuoclpMDtoHTML(addEnd(content, '\n').replace(/> (.*?)\n\n> (.*?)\n/g, `> $1\n\n> ${_just.element('blockquote separator')}$2\n`)).replace(/<h1>(.*?)<\/h1>/g, (match, p1) => {
-        return `<h1 id="${template.headerTagIDStart}${headerID++}">${p1}</h1>`;
+        return `<h1 id="${uniqueName(p1)}">${p1}</h1>`;
     }).replace(/<h2>(.*?)<\/h2>/g, (match, p1) => {
-        return `<h2 id="${template.headerTagIDStart}${headerID++}">${p1}</h2>`;
+        return `<h2 id="${uniqueName(p1)}">${p1}</h2>`;
     }).replace(/<h3>(.*?)<\/h3>/g, (match, p1) => {
-        return `<h3 id="${template.headerTagIDStart}${headerID++}">${p1}</h3>`;
+        return `<h3 id="${uniqueName(p1)}">${p1}</h3>`;
     });
 
     const H1 = [...toHTML.matchAll(/<h1 id="([^"]+)">(.*?)<\/h1>/g)];
@@ -518,9 +528,9 @@ markdownFiles.forEach(file => {
     
     fs.writeFileSync(outFilePath('txt'), toHTML, charset);
     fs.writeFileSync(
-        outFilePath('html'), 
+        outFilePath('html'),
         outHTML.replace(
-            'REPLACE_CONTENT', 
+            'REPLACE_CONTENT',
             _just.string.removeLast(
                 addEnd(
                     toHTML
@@ -563,7 +573,7 @@ console.log('\n\n\n\n\n'+logs);
 fs.writeFileSync(path.join(rootDirB, '_just_data', 'output.txt'), logs, template.charset);
 fs.writeFileSync(path.join(rootDirB, '_just', `${filename.css}.css`), CSS, template.charset);
 fs.writeFileSync(
-    path.join(rootDirB, '_just', `${filename.js}.js`), 
-    JS.replace('\'PUBLICOUTPUT\'', true), 
+    path.join(rootDirB, '_just', `${filename.js}.js`),
+    JS.replace('\'PUBLICOUTPUT\'', true),
     template.charset
 );
