@@ -441,8 +441,8 @@ const htmlnav = (type = 0) => {
         }
         linklogs += type == 0 ? `${l[1]}#${bid}:${l[2]}NAME:${linkdata[0]}${l[2]}FILTERED NAME:${filterText(linkdata[0])}${l[2]}HREF:${linkdata[1]}${l[2]}TARGET:${linkdata[2]}` : '';
         buttonlogs += type == 1 ? `${l[1]}#${bid}:${l[2]}NAME:${linkdata[0]}${l[2]}FILTERED NAME:${filterText(linkdata[0])}${l[2]}LINK:${linkdata[1]}${l[2]}TARGET:${linkdata[2]}` : '';
-        output += type == 0 ? `<a${linkdata[1] ? ` href="${linkdata[1]}"` : ''}${linkdata[1] ? ` target="${linkdata[2] || ext ? '_blank' : '_self'}"` : ''}${ext ? ' id="ext"' : ''}>${filterText(linkdata[0])}</a>` : type == 1 ? `<button id="${dataname[0]}${bid}">${filterText(linkdata[0])}</button>` : '';
-        JS += type == 1 && linkdata[1] ? `\ndocument.getElementById('${dataname[0]}${bid}').addEventListener("click",()=>{const link=document.createElement('a');link.href='${linkdata[1]}';link.target='${linkdata[2] || ext ? '_blank' : '_self'}';link.classList.add('${dataname[0]}${bid}');document.body.appendChild(link);link.click();document.body.removeChild(link);});` : '';
+        output += type == 0 ? `<a${linkdata[1] ? ` href="${linkdata[1]}"` : ''}${linkdata[1] ? ` target="${linkdata[2] ? linkdata[2] : ext ? '_blank' : '_self'}"` : ''}${ext ? ' id="ext"' : ''}>${filterText(linkdata[0])}</a>` : type == 1 ? `<button id="${dataname[0]}${bid}">${filterText(linkdata[0])}</button>` : '';
+        JS += type == 1 && linkdata[1] ? `\ndocument.getElementById('${dataname[0]}${bid}').addEventListener("click",()=>{const link=document.createElement('a');link.href='${linkdata[1]}';link.target='${linkdata[2] ? linkdata[2] : ext ? '_blank' : '_self'}';link.classList.add('${dataname[0]}${bid}');document.body.appendChild(link);link.click();document.body.removeChild(link);});` : '';
         addcss += type == 1 && linkdata[1] ? `.${dataname[0]}${bid},` : '';
         bid++;
     }
