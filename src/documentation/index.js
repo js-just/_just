@@ -379,10 +379,20 @@ const htmlhead = () => {
     return output;
 }
 
-filterText = (text) => text
+const filterText = (text) => text
     .replaceAll('_', `&#${'_'.charCodeAt(0)};`)
-    .replaceAll('<script>', `&#${'<'.charCodeAt(0)};script&#${'>'.charCodeAt(0)};`)
-    .replaceAll('</script>', `&#${'<'.charCodeAt(0)};&#${'/'.charCodeAt(0)};script&#${'>'.charCodeAt(0)};`);
+    .replaceAll('<script', `&#${'<'.charCodeAt(0)};script`)
+    .replaceAll('</script>', `&#${'<'.charCodeAt(0)};&#${'/'.charCodeAt(0)};script&#${'>'.charCodeAt(0)};`)
+    .replaceAll('<style', `&#${'<'.charCodeAt(0)};style`)
+    .replaceAll('</style>', `&#${'<'.charCodeAt(0)};&#${'/'.charCodeAt(0)};style&#${'>'.charCodeAt(0)};`)
+    .replaceAll('<link', `&#${'<'.charCodeAt(0)};link`)
+    .replaceAll('</link>', `&#${'<'.charCodeAt(0)};&#${'/'.charCodeAt(0)};link&#${'>'.charCodeAt(0)};`);
+const addEnd = (text, end) => {
+    if (!text.endsWith(end)) {
+        text += end
+    }
+    return text
+}
 
 logs += `${l[0]}MARKDOWN FILES:`;
 let fileID = 0;
@@ -394,7 +404,7 @@ markdownFiles.forEach(file => {
     logs += `${l[1]}FILE #${fileID} "${_just.string.runnerPath(file)}":${l[2]}INPUT: ${_just.string.fileSize(fs.statSync(file).size)}`;
 
     let headerID = 0;
-    const toHTML = hbuoclpMDtoHTML(content.replace(/> (.*?)\n\n> (.*?)\n/, `> $1\n\n> ${_just.element('blockquote separator')}$2\n`)).replace(/<h1>(.*?)<\/h1>/g, (match, p1) => {
+    const toHTML = hbuoclpMDtoHTML(addEnd(content, '\n').replace(/> (.*?)\n\n> (.*?)\n/g, `> $1\n\n> ${_just.element('blockquote separator')}$2\n`)).replace(/<h1>(.*?)<\/h1>/g, (match, p1) => {
         return `<h1 id="${template.headerTagIDStart}${headerID++}">${p1}</h1>`;
     }).replace(/<h2>(.*?)<\/h2>/g, (match, p1) => {
         return `<h2 id="${template.headerTagIDStart}${headerID++}">${p1}</h2>`;
@@ -442,28 +452,37 @@ markdownFiles.forEach(file => {
         outFilePath('html'), 
         outHTML.replace(
             'REPLACE_CONTENT', 
-            toHTML
-                .replaceAll('\n', '<br>')
-                .replaceAll('</h1><br>', '</h1>')
-                .replaceAll('</h2><br>', '</h2>')
-                .replaceAll('</h3><br>', '</h3>')
-                .replaceAll('</h4><br>', '</h4>')
-                .replaceAll('</h5><br>', '</h5>')
-                .replaceAll('</h6><br>', '</h6>')
-                .replaceAll('</ol><br>', '</ol>')
-                .replaceAll('</ul><br>', '</ul>')
-                .replaceAll('</blockquote><br>', '</blockquote>')
-                .replaceAll('<br><blockquote', '<blockquote')
-                .replaceAll('</blockquote><blockquote>', '<br>')
-                .replaceAll('<br><blockquote><br>', '<blockquote>')
-                .replace(/<blockquote>>(.*?)<\/blockquote>/, '<blockquote><blockquote>$1</blockquote></blockquote>')
-                .replaceAll('</blockquote></blockquote><blockquote><blockquote>', '<br>')
-                .replaceAll('</blockquote><blockquote>', '<br>')
-                .replace(/<blockquote>(.*?)<br>> (.*?)<br>(.*?)<\/blockquote>/, '<blockquote>$1<blockquote>$2</blockquote><br>$3</blockquote>')
-                .replaceAll('</blockquote><br>', '</blockquote>')
-                .replace(/<\/blockquote>> (.*?)<blockquote>/, '</blockquote><blockquote>$1</blockquote><blockquote>')
-                .replaceAll('</blockquote><blockquote>', '<br>')
-                //.replaceAll(_just.element('blockquote separator'), '</blockquote><blockquote>')
+            addEnd(
+                _just.string.removeLast(
+                    addEnd(
+                        toHTML
+                            .replaceAll('\n', '<br>')
+                            .replaceAll('</h1><br>', '</h1>')
+                            .replaceAll('</h2><br>', '</h2>')
+                            .replaceAll('</h3><br>', '</h3>')
+                            .replaceAll('</h4><br>', '</h4>')
+                            .replaceAll('</h5><br>', '</h5>')
+                            .replaceAll('</h6><br>', '</h6>')
+                            .replaceAll('</ol><br>', '</ol>')
+                            .replaceAll('</ul><br>', '</ul>')
+                            .replaceAll('</blockquote><br>', '</blockquote>')
+                            .replaceAll('<br><blockquote', '<blockquote')
+                            .replaceAll('</blockquote><blockquote>', '<br>')
+                            .replaceAll('<br><blockquote><br>', '<blockquote>')
+                            .replace(/<blockquote>>(.*?)<\/blockquote>/, '<blockquote><blockquote>$1</blockquote></blockquote>')
+                            .replaceAll('</blockquote></blockquote><blockquote><blockquote>', '<br>')
+                            .replaceAll('</blockquote><blockquote>', '<br>')
+                            .replace(/<blockquote>(.*?)<br>> (.*?)<br>(.*?)<\/blockquote>/, '<blockquote>$1<blockquote>$2</blockquote><br>$3</blockquote>')
+                            .replaceAll('</blockquote><br>', '</blockquote>')
+                            .replace(/<\/blockquote>> (.*?)<blockquote>/, '</blockquote><blockquote>$1</blockquote><blockquote>')
+                            .replaceAll('</blockquote><blockquote>', '<br>')
+                            .replaceAll(_just.element('blockquote separator'), '</blockquote><blockquote>'),
+                        '<br>'
+                    ),
+                    '<br>'
+                ),
+                '.'
+            )
         ),
         charset
     );
