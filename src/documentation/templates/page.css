@@ -628,7 +628,7 @@ code {
     height: 5px;
     background-color: var(--md);
     margin-top: 20px;
-    margin-bottom: 20px;
+    margin-bottom: 1px;
     overflow: hidden;
 }
 .line:after {

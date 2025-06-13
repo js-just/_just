@@ -192,5 +192,25 @@
             "crashed": true,
             "link": ""
         }
+    ],
+    "docs/index.js": [
+        {
+            "code": "0122",
+            "message": "( WRONG DOMAIN NAME )",
+            "crashed": true,
+            "link": ""
+        },
+        {
+            "code": "0123",
+            "message": "( .IS-A.DEV SUBDOMAIN DOES NOT EXIST )",
+            "crashed": true,
+            "link": ""
+        },
+        {
+            "code": "0206",
+            "message": "( FAILED TO FETCH RAW.IS-A.DEV/V2.JSON )",
+            "crashed": false,
+            "link": ""
+        }
     ]
 }

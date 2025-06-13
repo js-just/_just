@@ -25,9 +25,13 @@ SOFTWARE.
 */
 
 const _just = {};
-const [HTML, CSS, JS, PATH] = process.argv.slice(2);
+const [HTML, CSStemplate, JStemplate, PATH] = process.argv.slice(2);
+let JS = JStemplate;
+let CSS = CSStemplate;
 _just.string = require('../modules/string.js');
 _just.element = (type, insert) => `<_just${type ? ` element="${type}"` : ''}>${insert || ''}</_just>`;
+_just.error = require('../modules/errmsg.js');
+_just.ssapi = require('../modules/ssapi.js');
 
 const link = (text, link_, ext = false) => `<a href="${link_}"${ext ? ' id="ext"' : ''}>${text}</a>`;
 const span = (text) => `<span>${text}</span>`;
@@ -65,7 +69,7 @@ function randomChar() {
 }
 function randomChars(count) {
     let output = '';
-    for (let i = 0; i <= count; i++) {
+    for (let i = 1; i <= count; i++) {
         output += randomChar() || '';
     }
     return output;
@@ -75,6 +79,11 @@ const filename = {
     'css': randomChars(8),
     'js': randomChars(8)
 }
+const dataname = [];
+for (let i = 1; i <= 11; i++) {
+    dataname.push(randomChars(4));
+}
+dataname.push(randomChars(2));
 
 const charset = docsConfig ? docsConfig.charset || template.charset : template.charset;
 
@@ -269,7 +278,7 @@ function hbuoclpMDtoHTML(text, maxBlockquoteLevel = 4) {
     });
 
     const dividerRegex = /(\n\s*[*_-]{3,}\s*\n)+/g;
-    text = text.replace(dividerRegex, '<div class="line"></div>');
+    text = text.replace(dividerRegex, '<div class="line"></div><br>');
 
     const paragraphsRegex = /([^\n]+(?:\n(?![\*_-]{3}).*)*)/g;
     
@@ -340,6 +349,24 @@ const googleVerification = docsConfig ? docsConfig.google || undefined : undefin
 const logoPath = docsConfig ? docsConfig.logo || undefined : undefined;
 const footer = docsConfig ? docsConfig.footer || template.footer : template.footer;
 
+const domainregex = /^(?=.{1,253}$)(?:(?:[_a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)\.)+[a-zA-Z]{2,63}$/; // regex made by @wdhdev - https://github.com/wdhdev ( commit: https://github.com/is-a-dev/register/commit/6339f26bef0d9dbf56737ffddaca7794cf35bd24#diff-80b3110840a7eedb8cc2c29ead4fe4c98f157738ff3dcf22f05f3094ad6ca9bbR6 )
+function checkdomain(input) {
+    if (input && domainregex.test(input)) {
+        return input;
+    } else if (!input) {
+        return undefined;
+    } else {
+        throw new Error(_just.error.errormessage('0122', `"${input}" is not a domain name.`));
+    }
+}
+const domain = docsConfig ? checkdomain(docsConfig.domain) || undefined : undefined;
+if (domain && domain.endsWith('.is-a.dev')) {
+    _just.ssapi["is-a.dev"](domain);
+}
+
+const links = docsConfig ? docsConfig.links || [] : [];
+const buttons = docsConfig ? docsConfig.buttons || [] : [];
+
 const insertHTMLinHead = docsConfig ? docsConfig.insertInHTMLHead || '' : '';
 
 const keywords = metaKeywords ? `<meta name="keywords" content="${metaKeywords}"/>` : '';
@@ -394,6 +421,42 @@ const addEnd = (text, end) => {
     return text
 }
 
+const htmlnav = (type = 0) => {
+    let output = '';
+    let addcss = '';
+    let bid = 0;
+    for (const [idk, linkdata] of Object.entries(type == 0 ? links : type == 1 ? buttons : undefined)) {
+        let ext = true;
+        try {
+            const url = new URL(linkdata[1]);
+            const domain_ = url.hostname;
+            if (domain && domain_ && domain_ === domain) {
+                ext = false;
+            }
+        } catch (eerr) {}
+        if (linkdata[1] && linkdata[1].startsWith('/')) {
+            ext = false;
+        }
+        output += type == 0 ? `<a${linkdata[1] ? ` href="${linkdata[1]}"` : ''}${linkdata[1] ? ` target="${linkdata[2] || ext ? '_blank' : '_self'}"` : ''}${ext ? ' id="ext"' : ''}>${filterText(linkdata[0])}</a>` : type == 1 ? `<button id="${dataname[0]}${bid}">${filterText(linkdata[0])}</button>` : '';
+        JS += type == 1 && linkdata[1] ? `\ndocument.getElementById('${dataname[0]}${bid}').addEventListener("click",()=>{const link=document.createElement('a');link.href='${linkdata[1]}';link.target='${linkdata[2] || ext ? '_blank' : '_self'}';link.classList.add('${dataname[0]}${bid}');document.body.appendChild(link);link.click();document.body.removeChild(link);});` : '';
+        addcss += type == 1 && linkdata[1] ? `.${dataname[0]}${bid},` : '';
+        bid++;
+    }
+    CSS += addcss != '' ? `\n${_just.string.removeLast(addcss, ',')}{display:none}` : '';
+    return output;
+}
+/*
+    "links": [
+        ["name", "link", "target"],
+        ["link2", "https://just.is-a.dev/"]
+    ]
+
+    "buttons": [
+        ["name", "link", "target"],
+        ["button2", "https://just.is-a.dev/"]
+    ]
+*/
+
 logs += `${l[0]}MARKDOWN FILES:`;
 let fileID = 0;
 markdownFiles.forEach(file => {
@@ -445,53 +508,46 @@ markdownFiles.forEach(file => {
         .replace('REPLACE_NAME', filterText(name))
         .replace('REPLACE_PAGES', filterText(pages))
         .replace('REPLACE_CONTENTS', filterText(pageHeaders))
-        .replace('REPLACE_FOOTER', filterText(footer));
+        .replace('REPLACE_FOOTER', filterText(footer))
+        .replace('REPLACE_LINKS', htmlnav())
+        .replace('REPLACE_BUTTONS', htmlnav(1));
     
     fs.writeFileSync(outFilePath('txt'), toHTML, charset);
     fs.writeFileSync(
         outFilePath('html'), 
         outHTML.replace(
             'REPLACE_CONTENT', 
-            addEnd(
-                _just.string.removeLast(
-                    addEnd(
-                        _just.string.removeLast(
-                            addEnd(
-                                toHTML
-                                    .replaceAll('\n', '<br>')
-                                    .replaceAll('</h1><br>', '</h1>')
-                                    .replaceAll('</h2><br>', '</h2>')
-                                    .replaceAll('</h3><br>', '</h3>')
-                                    .replaceAll('</h4><br>', '</h4>')
-                                    .replaceAll('</h5><br>', '</h5>')
-                                    .replaceAll('</h6><br>', '</h6>')
-                                    .replaceAll('</ol><br>', '</ol>')
-                                    .replaceAll('</ul><br>', '</ul>')
-                                    .replace(/<blockquote><br>(.*?)<\/blockquote>/, '<blockquote><blockquote>$1</blockquote></blockquote>')
-                                    .replace(/<blockquote><br>> (.*?)<\/blockquote>/, '<blockquote><blockquote><blockquote>$1</blockquote></blockquote></blockquote>')
-                                    .replaceAll('</blockquote><br>', '</blockquote>')
-                                    .replaceAll('<br><blockquote', '<blockquote')
-                                    .replaceAll('</blockquote><blockquote>', '<br>')
-                                    .replaceAll('<br><blockquote><br>', '<blockquote>')
-                                    .replace(/<blockquote>> (.*?)<\/blockquote>/, '<blockquote><blockquote>$1</blockquote></blockquote>')
-                                    .replaceAll('</blockquote></blockquote><blockquote><blockquote>', '<br>')
-                                    .replaceAll('</blockquote><blockquote>', '<br>')
-                                    .replace(/<blockquote>(.*?)<br>> (.*?)<br>(.*?)<\/blockquote>/, '<blockquote>$1<blockquote>$2</blockquote><br>$3</blockquote>')
-                                    .replaceAll('</blockquote><br>', '</blockquote>')
-                                    .replace(/<\/blockquote>> (.*?)<blockquote>/, '</blockquote><blockquote>$1</blockquote><blockquote>')
-                                    .replaceAll('</blockquote><blockquote>', '<br>')
-                                    .replaceAll(_just.element('blockquote separator'), '</blockquote><blockquote>')
-                                    .replaceAll('</blockquote><br><blockquote>', '<br>'),
-                                '<br>'
-                            ),
-                            '<br>'
-                        ),
-                        '<p></p>'
-                    ),
-                    '<p></p>'
+            _just.string.removeLast(
+                addEnd(
+                    toHTML
+                        .replaceAll('\n', '<br>')
+                        .replaceAll('</h1><br>', '</h1>')
+                        .replaceAll('</h2><br>', '</h2>')
+                        .replaceAll('</h3><br>', '</h3>')
+                        .replaceAll('</h4><br>', '</h4>')
+                        .replaceAll('</h5><br>', '</h5>')
+                        .replaceAll('</h6><br>', '</h6>')
+                        .replaceAll('</ol><br>', '</ol>')
+                        .replaceAll('</ul><br>', '</ul>')
+                        .replace(/<blockquote><br>(.*?)<\/blockquote>/, '<blockquote><blockquote>$1</blockquote></blockquote>')
+                        .replace(/<blockquote><br>> (.*?)<\/blockquote>/, '<blockquote><blockquote><blockquote>$1</blockquote></blockquote></blockquote>')
+                        .replaceAll('</blockquote><br>', '</blockquote>')
+                        .replaceAll('<br><blockquote', '<blockquote')
+                        .replaceAll('</blockquote><blockquote>', '<br>')
+                        .replaceAll('<br><blockquote><br>', '<blockquote>')
+                        .replace(/<blockquote>> (.*?)<\/blockquote>/, '<blockquote><blockquote>$1</blockquote></blockquote>')
+                        .replaceAll('</blockquote></blockquote><blockquote><blockquote>', '<br>')
+                        .replaceAll('</blockquote><blockquote>', '<br>')
+                        .replace(/<blockquote>(.*?)<br>> (.*?)<br>(.*?)<\/blockquote>/, '<blockquote>$1<blockquote>$2</blockquote><br>$3</blockquote>')
+                        .replaceAll('</blockquote><br>', '</blockquote>')
+                        .replace(/<\/blockquote>> (.*?)<blockquote>/, '</blockquote><blockquote>$1</blockquote><blockquote>')
+                        .replaceAll('</blockquote><blockquote>', '<br>')
+                        .replaceAll(_just.element('blockquote separator'), '</blockquote><blockquote>')
+                        .replaceAll('</blockquote><br><blockquote>', '<br>'),
+                    '<br>'
                 ),
-                '.'
-            )
+                '<br>'
+            ).replace(/<blockquote>(.*?)<br><br><blockquote>/, '<blockquote>$1<blockquote>')
         ),
         charset
     );
