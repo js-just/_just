@@ -25,9 +25,10 @@ SOFTWARE.
 */
 
 const _just = {};
-const [HTML, CSStemplate, JStemplate, PATH] = process.argv.slice(2);
-let JS = JStemplate;
+const [HTMLtemplate, CSStemplate, JStemplate, PATH] = process.argv.slice(2);
+let HTML = HTMLtemplate;
 let CSS = CSStemplate;
+let JS = JStemplate;
 _just.string = require('../modules/string.js');
 _just.element = (type, insert) => `<_just${type ? ` element="${type}"` : ''}>${insert || ''}</_just>`;
 _just.error = require('../modules/errmsg.js');
@@ -83,6 +84,47 @@ const dataname = [];
 for (let i = 1; i <= 12; i++) {
     dataname.push(randomChars(4));
 }
+HTML = HTML.replace('--hc:', `--${dataname[0].slice(0,-1)}:`);
+CSS = CSS.replaceAll('var(--hc)', `var(--${dataname[0].slice(0,-1)})`);
+JS = JS.replace('\'--hc\'', `'--${dataname[0].slice(0,-1)}'`);
+
+const cssclass = {
+    "left": dataname[0],
+    "main": dataname[1],
+    "code": dataname[2],
+    "note": dataname[3],
+    "ntip": dataname[4],
+    "impr": dataname[5],
+    "warn": dataname[6],
+    "caut": dataname[7],
+    "line": dataname[8],
+    "right": dataname[9],
+    "navbar": dataname[1]+'0',
+    "heading": dataname[1]+'1',
+    "links": dataname[1]+'2',
+    "buttons": dataname[1]+'3',
+    "slider": dataname[1]+'4',
+    "navleft": dataname[2]+'0',
+    "ios": dataname[2]+'1'
+}
+Object.entries(cssclass).forEach(([key, class_]) => {
+    CSS = CSS.replaceAll(`.${key}`, `.${class_}`);
+});
+HTML = HTML
+    .replace('<nav class="left">', `<nav class="${cssclass.left}">`)
+    .replace('<nav class="right">', `<nav class="${cssclass.right}">`)
+    .replace('<article class="main">', `<article class="${cssclass.main}">`)
+    .replace('<nav class="navbar">', `<nav class="${cssclass.navbar}">`)
+    .replace('<div class="heading">', `<div class="${cssclass.heading}">`)
+    .replace('<div class="links">', `<div class="${cssclass.links}">`)
+    .replace('<div class="buttons">', `<div class="${cssclass.buttons}">`)
+    .replace('<div class="slider"></div>', `<div class="${cssclass.slider}"></div>`);
+JS = JS
+    .replaceAll('\'navleft\'', `'${cssclass.navleft}'`)
+    .replaceAll('\'ios\'', `'${cssclass.ios}'`);
+/*
+.left, .main, .code, .note, .ntip, .impr, .warn, .caut, .line
+*/
 
 const charset = docsConfig ? docsConfig.charset || template.charset : template.charset;
 
@@ -218,7 +260,7 @@ const MDcode = (input) => {
 const biMDtoHTML = (input) => {
     let text = MDescape(input);
 
-    text = text.replace(/```([\w]*)[\r\n]+([\S\s]*?)```/g, '<code class="code">$2</code>');
+    text = text.replace(/```([\w]*)[\r\n]+([\S\s]*?)```/g, `<code class="${cssclass.code}">$2</code>`);
     text = text.replace(/(?<=\s|^|[.,!?;:*_])`(.*?)`(?=\s|[.,!?;:*_]|$)/g, (match, code) => {return `<code>${MDcode(code)}</code>`});
 
     text = text.replace(/(?<=\s|^|[.,!?;:])___(.*?)___(?=\s|[.,!?;:]|$)/g, '<em><strong>$1</strong></em>');
@@ -249,11 +291,11 @@ function hbuoclpMDtoHTML(text, maxBlockquoteLevel = 4) {
         return biMDtoHTML(inputText.replace(regex, (match, p1, p2) => {
             const innerBlockquote = processBlockquotes(p2.trim(), level + 1);
             const classAttr = (num) =>
-                p2.startsWith('[!NOTE]') ? num ? 7 : ' class="note"' :
-                p2.startsWith('[!TIP]') ? num ? 6 : ' class="ntip"' :
-                p2.startsWith('[!IMPORTANT]') ? num ? 12 : ' class="impr"' :
-                p2.startsWith('[!WARNING]') ? num ? 10 : ' class="warn"' :
-                p2.startsWith('[!CAUTION]') ? num ? 10 : ' class="caut"' :
+                p2.startsWith('[!NOTE]') ? num ? 7 : ` class="${cssclass.note}"` :
+                p2.startsWith('[!TIP]') ? num ? 6 : ` class="${cssclass.ntip}"` :
+                p2.startsWith('[!IMPORTANT]') ? num ? 12 : ` class="${cssclass.impr}"` :
+                p2.startsWith('[!WARNING]') ? num ? 10 : ` class="${cssclass.warn}"` :
+                p2.startsWith('[!CAUTION]') ? num ? 10 : ` class="${cssclass.caut}"` :
                 num ? undefined : '';
             return `<blockquote${classAttr()}>${(level > 1 ? '<br>' : '')}${classAttr(true) ? innerBlockquote.trim().slice(classAttr(true)).trim() : innerBlockquote}</blockquote>`;
         }));
@@ -277,7 +319,7 @@ function hbuoclpMDtoHTML(text, maxBlockquoteLevel = 4) {
     });
 
     const dividerRegex = /(\n\s*[*_-]{3,}\s*\n)+/g;
-    text = text.replace(dividerRegex, '<div class="line"></div><br>');
+    text = text.replace(dividerRegex, `<div class="${cssclass.line}"></div><br>`);
 
     const paragraphsRegex = /([^\n]+(?:\n(?![\*_-]{3}).*)*)/g;
     
@@ -347,6 +389,7 @@ const googleAnalytics = docsConfig ? docsConfig.googleAnalytics || undefined : u
 const googleVerification = docsConfig ? docsConfig.google || undefined : undefined;
 const logoPath = docsConfig ? docsConfig.logo || undefined : undefined;
 const footer = docsConfig ? docsConfig.footer || template.footer : template.footer;
+const publicOutput = config.OutputLinkInConsole || false;
 
 const domainregex = /^(?=.{1,253}$)(?:(?:[_a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)\.)+[a-zA-Z]{2,63}$/; // regex made by @wdhdev - https://github.com/wdhdev ( commit: https://github.com/is-a-dev/register/commit/6339f26bef0d9dbf56737ffddaca7794cf35bd24#diff-80b3110840a7eedb8cc2c29ead4fe4c98f157738ff3dcf22f05f3094ad6ca9bbR6 )
 function checkdomain(input) {
@@ -429,9 +472,14 @@ let uniqueNames = {
     "ext": 1,
     "main": 1
 };
+uniqueNames[dataname[0].slice(0,-1)] = 1;
 let uniqueNames_= [
-    "a", "d", "l", "ext", "main"
+    "a", "d", "l", "ext", "main", dataname[0].slice(0,-1)
 ];
+for (i = 0; i <= dataname.length; i++) {
+    uniqueNames[dataname[i]] = 1;
+    uniqueNames_.push(dataname[i]);
+}
 const htmlnav = (type = 0) => {
     let output = '';
     let addcss = '';
@@ -587,6 +635,6 @@ fs.writeFileSync(path.join(rootDirB, '_just_data', 'output.txt'), logs, template
 fs.writeFileSync(path.join(rootDirB, '_just', `${filename.css}.css`), CSS, template.charset);
 fs.writeFileSync(
     path.join(rootDirB, '_just', `${filename.js}.js`),
-    JS.replace('\'PUBLICOUTPUT\'', true),
+    JS.replace('\'PUBLICOUTPUT\'', publicOutput),
     template.charset
 );
