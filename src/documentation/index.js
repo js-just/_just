@@ -422,8 +422,16 @@ const addEnd = (text, end) => {
 
 let linklogs = `${l[0]}LINKS:`;
 let buttonlogs = `${l[0]}BUTTONS:`;
-let uniqueNames = {};
-let uniqueNames_= [];
+let uniqueNames = {
+    "a": 1,
+    "d": 1,
+    "l": 1,
+    "ext": 1,
+    "main": 1
+};
+let uniqueNames_= [
+    "a", "d", "l", "ext", "main"
+];
 const htmlnav = (type = 0) => {
     let output = '';
     let addcss = '';
