@@ -18,7 +18,7 @@ jobs:
       - run: bash tests/compressor.sh
         shell: bash
       - name: Compress with _just
-        uses: action.yml
+        uses: ${{ GITHUB_REPOSITORY }}@main
         env:
           GITHUB_ACTION_PATH:
         with:
