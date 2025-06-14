@@ -87,7 +87,8 @@ if [[ "$TYPE" != "postprocessor" && "$TYPE" != "redirector" && "$TYPE" != "compr
     echo "$ERROR_MESSAGE" && exit 1
 fi
 
-if [ "$TYPE" != "compressor" ]; then
+_just_d="no" && \
+if [[ "$TYPE" != "compressor" && ! ( "$TYPE" == "generator" && "$INPUT_PATH" != "." ) ]]; then
     if [ -d "deploy" ]; then
         ERROR_MESSAGE=$(ErrorMessage "important_dirs" "0106")
         echo "$ERROR_MESSAGE" && exit 1
@@ -98,6 +99,20 @@ if [ "$TYPE" != "compressor" ]; then
     fi
     mkdir -p deploy
     mkdir -p _just_data
+elif [ "$TYPE" == "generator" ]; then
+    JDD=$(echo "$INPUT_PATH/_just_data" | sed 's#//*#/#g')
+    _just_dir=$(echo "$INPUT_PATH/_just" | sed 's#//*#/#g')
+    if [ -d "$JDD" ]; then
+        ERROR_MESSAGE=$(ErrorMessage "important_dirs" "0125")
+        echo "$ERROR_MESSAGE" && exit 1
+    fi
+    if [ -d "$_just_dir" ]; then
+        ERROR_MESSAGE=$(ErrorMessage "important_dirs" "0125")
+        echo "$ERROR_MESSAGE" && exit 1
+    fi
+    mkdir -p "$JDD"
+    mkdir -p "$_just_dir"
+    _just_d="yes"
 fi
 
 if [ "$TYPE" == "postprocessor" ]; then
@@ -135,7 +150,7 @@ elif [ "$TYPE" == "generator" ]; then
     HTML=$(cat "$GITHUB_ACTION_PATH/src/documentation/templates/page.html")
     CSS=$(cat "$GITHUB_ACTION_PATH/src/documentation/templates/page.css")
     JS=$(cat "$GITHUB_ACTION_PATH/src/documentation/templates/page.js")
-    if [ -d "_just" ]; then
+    if [[ -d "_just" && "$_just_d" == "no" ]]; then
         local ERROR_MESSAGE=$(ErrorMessage "important_dirs" "0121")
         echo "$ERROR_MESSAGE" && exit 1
     fi && \
