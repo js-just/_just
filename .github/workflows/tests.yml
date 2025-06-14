@@ -1,0 +1,34 @@
+name: Tests
+
+on:
+  pull_request:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.ref }}-ci
+
+jobs:
+  compressor:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - run: bash tests/compressor.sh
+        shell: bash
+      - name: Compress with _just
+        uses: js-just/_just@main
+        with:
+          path: test
+  generator:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - run: bash tests/generator.sh
+        shell: bash
+      - name: Generate with _just
+        uses: js-just/_just@main
+        with:
+          path: test
