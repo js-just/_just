@@ -624,13 +624,14 @@ markdownFiles.forEach(file => {
     fileID++;
     logs += `${l[1]}FILE #${fileID} "${_just.string.runnerPath(file)}":${l[2]}INPUT: ${_just.string.fileSize(fs.statSync(file).size)}`;
 
-    const toHTML = hbuoclpMDtoHTML(addEnd(content, '\n').replace(/> (.*?)\n\n> (.*?)\n/g, `> $1\n\n> ${_just.element('blockquote separator')}$2\n`)).replace(/<h1>(.*?)<\/h1>/g, (match, p1) => {
+    const headers = [];
+    const toHTML = hbuoclpMDtoHTML(addEnd(content.replace('\n\n>', '\n \n>'), '\n').replace(/> (.*?)\n\n> (.*?)\n/g, `> $1\n\n> ${_just.element('blockquote separator')}$2\n`)).replace(/<h1>(.*?)<\/h1>/g, (match, p1) => {
         return `<h1 id="${uniqueName(p1)}">${p1}</h1>`;
     }).replace(/<h2>(.*?)<\/h2>/g, (match, p1) => {
         return `<h2 id="${uniqueName(p1)}">${p1}</h2>`;
     }).replace(/<h3>(.*?)<\/h3>/g, (match, p1) => {
         return `<h3 id="${uniqueName(p1)}">${p1}</h3>`;
-    }).replace('\n\n>', '\n \n>');
+    }).replace(/<(h1|h2|h3) id="([^"]+)">(.*?)<\/\1>/g, (match, p1, p2, p3) => {headers.push(p2);return`<${p1} id="${p2}">${p3}</${p1}>`});
 
     const H1 = [...toHTML.matchAll(/<h1 id="([^"]+)">(.*?)<\/h1>/g)];
     const HT = [...toHTML.matchAll(/<(h2|h3) id="([^"]+)">(.*?)<\/\1>/g)];
@@ -638,10 +639,16 @@ markdownFiles.forEach(file => {
     const h1 = H1.map(match => [match[2], match[1]]);
     const hT = HT.map(match => [match[3], match[2]]);
 
+    const headermap = new Map(headers.map((id, index) => [id, index]));
     const contents = [
         ...h1.map(item => ([ ...item, false ])),
         ...hT.map(item => ([ ...item, true ]))
     ];
+    contents.sort((a, b) => {
+        const indexA = headermap.get(a[1]) ?? Infinity;
+        const indexB = headermap.get(b[1]) ?? Infinity;
+        return indexA - indexB;
+    });
     let pageHeaders = '';
     for (const [idk, headerdata] of Object.entries(contents)) {
         pageHeaders += `<li${ headerdata[2] ? ' class="secondary"' : '' }>
