@@ -19,6 +19,8 @@ jobs:
         shell: bash
       - name: Compress with _just
         uses: js-just/_just@main
+        env:
+          GITHUB_ACTION_PATH: 
         with:
           path: test
   generator:
