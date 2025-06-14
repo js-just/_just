@@ -51,9 +51,10 @@ const docsConfig = config.docs_config;
 
 const charss = [];
 const chars2 = ['_', '-'];
-for (let i = 65; i <= 90; i++) {
+const addchars = () => { for (let i = 65; i <= 90; i++) {
     charss.push(String.fromCharCode(i));
-}
+}}
+addchars();
 for (let i = 97; i <= 122; i++) {
     charss.push(String.fromCharCode(i));
 }
@@ -70,7 +71,7 @@ function randomChar(i) {
 }
 function randomChars(count) {
     let output = '';
-    for (let i = 1; i <= count; i++) {
+    for (let i = 0; i <= count-1; i++) {
         output += randomChar(i) || '';
     }
     return output;
@@ -81,34 +82,51 @@ const filename = {
     'js': randomChars(8)
 }
 const dataname = [];
-for (let i = 1; i <= 12; i++) {
+for (let i = 0; i <= 11; i++) {
     dataname.push(randomChars(4));
 }
 HTML = HTML.replace('--hc:', `--${dataname[0].slice(0,-1)}:`);
 CSS = CSS.replaceAll('var(--hc)', `var(--${dataname[0].slice(0,-1)})`);
 JS = JS.replace('\'--hc\'', `'--${dataname[0].slice(0,-1)}'`);
 
+addchars();
+for (let i = 48; i <= 57; i++) {
+    charss.push(String.fromCharCode(i));
+}
 const cssclass = {
+    "l": dataname[2],
+    "a": dataname[2]+randomChar(1),
     "left": dataname[0],
-    "main": dataname[1],
-    "code": dataname[2],
-    "note": dataname[3],
-    "ntip": dataname[4],
-    "impr": dataname[5],
-    "warn": dataname[6],
-    "caut": dataname[7],
-    "line": dataname[8],
-    "right": dataname[9],
-    "navbar": dataname[1]+'0',
-    "heading": dataname[1]+'1',
-    "links": dataname[1]+'2',
-    "buttons": dataname[1]+'3',
-    "slider": dataname[1]+'4',
-    "navleft": dataname[2]+'0',
-    "ios": dataname[2]+'1'
+    "main": dataname[2]+randomChar(1),
+    "code": dataname[2]+randomChar(1),
+    "note": dataname[3]+randomChar(1),
+    "ntip": dataname[3]+randomChar(1),
+    "impr": dataname[3]+randomChar(1),
+    "warn": dataname[3]+randomChar(1),
+    "caut": dataname[3]+randomChar(1),
+    "line": dataname[3]+randomChar(1),
+    "right": dataname[1],
+    "navbar": dataname[1]+randomChar(1),
+    "heading": dataname[1]+randomChar(1),
+    "links": dataname[1]+randomChar(1),
+    "buttons": dataname[1]+randomChar(1),
+    "slider": dataname[1]+randomChar(1),
+    "navleft": dataname[4]+randomChar(1),
+    "ios": dataname[4]+randomChar(1),
+    "scroll": dataname[4]+randomChar(1),
+    "stb": dataname[4]+randomChar(1),
+}
+const cssid = {
+    "l": dataname[5]+randomChar(1),
+    "d": dataname[5]+randomChar(1),
+    "a": dataname[5]+randomChar(1),
+    "main": dataname[5]+randomChar(1)
 }
 Object.entries(cssclass).forEach(([key, class_]) => {
-    CSS = CSS.replaceAll(`.${key}`, `.${class_}`);
+    CSS = key === "l" ? CSS.replaceAll(`.${key} `, `.${class_} `).replaceAll(`.${key}:`, `.${class_}:`).replaceAll(`.${key})`, `.${class_}:`) : CSS.replaceAll(`.${key}`, `.${class_}`);
+})
+Object.entries(cssid).forEach(([key, id_]) => {
+    CSS = CSS.replaceAll(`#${key}`, `#${id_}`);
 });
 HTML = HTML
     .replace('<nav class="left">', `<nav class="${cssclass.left}">`)
@@ -120,13 +138,19 @@ HTML = HTML
     .replace('<div class="buttons">', `<div class="${cssclass.buttons}">`)
     .replace('<div class="slider"></div>', `<div class="${cssclass.slider}"></div>`);
 JS = JS
-    .replace('html > body > main > div#main > article.main', `html > body > main > div#main > article.${cssclass.main}`)
+    .replace('html > body > main > div#main > article.main', `html > body > main > div#${cssid.main} > article.${cssclass.main}`)
     .replaceAll('".navbar"', `".${cssclass.navbar}"`)
     .replaceAll('\'navleft\'', `'${cssclass.navleft}'`)
-    .replaceAll('\'ios\'', `'${cssclass.ios}'`);
-/*
-.left, .main, .code, .note, .ntip, .impr, .warn, .caut, .line
-*/
+    .replaceAll('\'ios\'', `'${cssclass.ios}'`)
+    .replaceAll('"scroll"', `"${cssclass.scroll}"`)
+    .replaceAll('\'stb\'', `'${cssclass.stb}'`)
+    .replaceAll(".add('l')", `.add('${cssclass.l}')`)
+    .replaceAll(".remove('l')", `.remove('${cssclass.l}')`)
+    .replaceAll(".add('a')", `.add('${cssclass.a}')`)
+    .replaceAll(".remove('a')", `.remove('${cssclass.a}')`)
+    .replaceAll("Id('l')", `Id('${cssid.l}')`)
+    .replaceAll("Id('d')", `Id('${cssid.d}')`)
+    .replaceAll("Id('a')", `Id('${cssid.a}')`);
 
 const charset = docsConfig ? docsConfig.charset || template.charset : template.charset;
 
@@ -482,6 +506,14 @@ for (i = 0; i <= dataname.length; i++) {
     uniqueNames[dataname[i]] = 1;
     uniqueNames_.push(dataname[i]);
 }
+const csstouniquenames = (cssclassorcssid) => Object.entries(cssclassorcssid).forEach(([key, dataname_]) => {
+    if (!uniqueNames_.includes(dataname_)) {
+        uniqueNames[dataname_] = 1;
+        uniqueNames_.push(dataname_);
+    }
+});
+csstouniquenames(cssclass);
+csstouniquenames(cssid);
 const htmlnav = (type = 0) => {
     let output = '';
     let addcss = '';
@@ -499,12 +531,14 @@ const htmlnav = (type = 0) => {
             ext = false;
         }
         linklogs += type == 0 ? `${l[1]}#${bid}:${l[2]}NAME:${linkdata[0]}${l[2]}FILTERED NAME:${filterText(linkdata[0])}${l[2]}HREF:${linkdata[1]}${l[2]}TARGET:${linkdata[2]}` : '';
-        buttonlogs += type == 1 ? `${l[1]}#${bid}:${l[2]}NAME:${linkdata[0]}${l[2]}FILTERED NAME:${filterText(linkdata[0])}${l[2]}LINK:${linkdata[1]}${l[2]}TARGET:${linkdata[2]}` : '';
+        buttonlogs += type == 1 ? `${l[1]}#${bid}:${l[2]}NAME:${linkdata[0]}${l[2]}FILTERED NAME:${filterText(linkdata[0])}${l[2]}LINK:${linkdata[1]}${l[2]}TARGET:${linkdata[2]}${l[2]}ID:${dataname[0]}${bid}` : '';
         output += type == 0 ? `<a${linkdata[1] ? ` href="${linkdata[1]}"` : ''}${linkdata[1] ? ` target="${linkdata[2] ? linkdata[2] : ext ? '_blank' : '_self'}"` : ''}${ext ? ' id="ext"' : ''}>${filterText(linkdata[0])}</a>` : type == 1 ? `<button id="${dataname[0]}${bid}">${filterText(linkdata[0])}</button>` : '';
-        JS += type == 1 && linkdata[1] ? `\ndocument.getElementById('${dataname[0]}${bid}').addEventListener("click",()=>{const link=document.createElement('a');link.href='${linkdata[1]}';link.target='${linkdata[2] ? linkdata[2] : ext ? '_blank' : '_self'}';link.classList.add('${dataname[0]}${bid}');document.body.appendChild(link);link.click();document.body.removeChild(link);});` : '';
+        JS = type == 1 && linkdata[1] ? _just.string.removeLast(JS, '});') + `\ndocument.getElementById('${dataname[0]}${bid}').addEventListener("click",()=>{const link=document.createElement('a');link.href='${linkdata[1]}';link.target='${linkdata[2] ? linkdata[2] : ext ? '_blank' : '_self'}';link.classList.add('${dataname[0]}${bid}');document.body.appendChild(link);link.click();document.body.removeChild(link);});` + '\n});' : JS;
         addcss += type == 1 && linkdata[1] ? `.${dataname[0]}${bid},` : '';
-        uniqueNames[`${dataname[0]}${bid}`] = 1;
-        uniqueNames_.push(`${dataname[0]}${bid}`);
+        if (type == 1 && linkdata[1]) {
+            uniqueNames[`${dataname[0]}${bid}`] = 1;
+            uniqueNames_.push(`${dataname[0]}${bid}`);
+        }
         bid++;
     }
     CSS += addcss != '' ? `\n${_just.string.removeLast(addcss, ',')}{display:none}` : '';
