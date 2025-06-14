@@ -630,7 +630,7 @@ markdownFiles.forEach(file => {
         return `<h2 id="${uniqueName(p1)}">${p1}</h2>`;
     }).replace(/<h3>(.*?)<\/h3>/g, (match, p1) => {
         return `<h3 id="${uniqueName(p1)}">${p1}</h3>`;
-    });
+    }).replace('\n\n>', '\n \n>');
 
     const H1 = [...toHTML.matchAll(/<h1 id="([^"]+)">(.*?)<\/h1>/g)];
     const HT = [...toHTML.matchAll(/<(h2|h3) id="([^"]+)">(.*?)<\/\1>/g)];
