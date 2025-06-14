@@ -30,7 +30,15 @@ Some code here
 > [!WARNING] A warning!
 > [!CAUTION] Another warning?
 
-> [!NOTE] Notes, tips, warnings, etc. are should be in one line. (You can add \<br> tags to break line for HTML) <br> > Notes, tips, warnings, etc. cannot have nested blockquotes.
+> [!NOTE] `[!NOTE]`, `[!TIP]`, `[!IMPORTANT]`, `[!WARNING]` and `[!CAUTION]` are should be in one line. You can add \<br> tags to break the line for HTML. <br> > `[!NOTE]`, `[!TIP]`, `[!IMPORTANT]`, `[!WARNING]` and `[!CAUTION]` cannot have nested blockquotes.
+
+# Headers test (h1)
+## h2
+### h3
+#### h4
+##### h5
+###### h6
+> [!IMPORTANT] Only h1, h2 and h3 will be included in the "On this page" content list and will have their own unique IDs for shortlinks.
 
 # Escape test
 Not a line:
@@ -42,8 +50,10 @@ Not a line:
 \- Not a list
 \- (no numbers)
 
-\```
+\`\`\`
 No code here
-```
+\`\`\`
 
 \> Not a blockquote.
+
+> \[!NOTE] A blockquote, but not a note.

@@ -924,3 +924,6 @@ h1, h2, h3 {
 .underline, .main a {
     text-decoration: underline;
 }
+.main a {
+    color: var(--kb);
+}
