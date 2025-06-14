@@ -34,7 +34,7 @@ _just.element = (type, insert) => `<_just${type ? ` element="${type}"` : ''}>${i
 _just.error = require('../modules/errmsg.js');
 _just.ssapi = require('../modules/ssapi.js');
 
-const link = (text, link_, ext = false) => `<a href="${link_}"${ext ? ' id="ext"' : ''}>${text}</a>`;
+const link = (text, link_, ext = false, extid = "ext", target = "_blank") => `<a href="${link_}" target="${target}"${ext ? ` id="${extid}"` : ''}>${text}</a>`;
 const span = (text) => `<span>${text}</span>`;
 const template = {
     "charset": "utf-8",
@@ -309,6 +309,35 @@ function generateListItems(PageList) {
     return listItemsHtml;
 }
 
+const domainregex = /^(?=.{1,253}$)(?:(?:[_a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)\.)+[a-zA-Z]{2,63}$/; // regex made by @wdhdev - https://github.com/wdhdev ( commit: https://github.com/is-a-dev/register/commit/6339f26bef0d9dbf56737ffddaca7794cf35bd24#diff-80b3110840a7eedb8cc2c29ead4fe4c98f157738ff3dcf22f05f3094ad6ca9bbR6 )
+function checkdomain(input) {
+    if (input && domainregex.test(input)) {
+        return input;
+    } else if (!input) {
+        return undefined;
+    } else {
+        throw new Error(_just.error.errormessage('0122', `"${input}" is not a domain name.`));
+    }
+}
+const domain = docsConfig ? checkdomain(docsConfig.domain) || undefined : undefined;
+if (domain && domain.endsWith('.is-a.dev')) {
+    _just.ssapi["is-a.dev"](domain);
+}
+function extlink(url_) {
+    let ext = true;
+    try {
+        const url = new URL(url_);
+        const domain_ = url.hostname;
+        if (domain && domain_ && domain_ === domain) {
+            ext = false;
+        }
+    } catch (eerr) {}
+    if (url_ && url_.startsWith('/')) {
+        ext = false;
+    }
+    return ext;
+}
+
 const MDescape = (input) => {
     return input
         .replaceAll('\\\\', `&#${'\\'.charCodeAt(0)};`)
@@ -325,6 +354,7 @@ const biMDtoHTML = (input) => {
 
     text = text.replace(/```([\w]*)[\r\n]+([\S\s]*?)```/g, `<code class="${cssclass.code}">$2</code>`);
     text = text.replace(/(?<=\s|^|[.,!?;:*_])`(.*?)`(?=\s|[.,!?;:*_]|$)/g, (match, code) => {return `<code>${MDcode(code)}</code>`});
+    text = text.replace(/(?<=\s|^|[.,!?;:*_])\[(.*?)\]\((.*?)\)(?=\s|[.,!?;:*_]|$)/g, (match, text, link_) => {return link(text, link_, extlink(link_), cssid.ext)});
 
     text = text.replace(/(?<=\s|^|[.,!?;:])__\*\*\*(.*?)\*\*\*__(?=\s|[.,!?;:]|$)/g, `<em class="${cssclass.underline}"><strong>$1</strong></em>`);
     text = text.replace(/(?<=\s|^|[.,!?;:])\*\*\*__(.*?)__\*\*\*(?=\s|[.,!?;:]|$)/g, `<em class="${cssclass.underline}"><strong>$1</strong></em>`);
@@ -467,21 +497,6 @@ const logoPath = docsConfig ? docsConfig.logo || undefined : undefined;
 const footer = docsConfig ? docsConfig.footer || template.footer : template.footer;
 const publicOutput = config.OutputLinkInConsole || false;
 
-const domainregex = /^(?=.{1,253}$)(?:(?:[_a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)\.)+[a-zA-Z]{2,63}$/; // regex made by @wdhdev - https://github.com/wdhdev ( commit: https://github.com/is-a-dev/register/commit/6339f26bef0d9dbf56737ffddaca7794cf35bd24#diff-80b3110840a7eedb8cc2c29ead4fe4c98f157738ff3dcf22f05f3094ad6ca9bbR6 )
-function checkdomain(input) {
-    if (input && domainregex.test(input)) {
-        return input;
-    } else if (!input) {
-        return undefined;
-    } else {
-        throw new Error(_just.error.errormessage('0122', `"${input}" is not a domain name.`));
-    }
-}
-const domain = docsConfig ? checkdomain(docsConfig.domain) || undefined : undefined;
-if (domain && domain.endsWith('.is-a.dev')) {
-    _just.ssapi["is-a.dev"](domain);
-}
-
 const links = docsConfig ? docsConfig.links || [] : [];
 const buttons = docsConfig ? docsConfig.buttons || [] : [];
 
@@ -561,17 +576,7 @@ const htmlnav = (type = 0) => {
     let addcss = '';
     let bid = 0;
     for (const [idk, linkdata] of Object.entries(type == 0 ? links : type == 1 ? buttons : undefined)) {
-        let ext = true;
-        try {
-            const url = new URL(linkdata[1]);
-            const domain_ = url.hostname;
-            if (domain && domain_ && domain_ === domain) {
-                ext = false;
-            }
-        } catch (eerr) {}
-        if (linkdata[1] && linkdata[1].startsWith('/')) {
-            ext = false;
-        }
+        let ext = extlink(linkdata[1]);
         linklogs += type == 0 ? `${l[1]}#${bid}:${l[2]}NAME:${linkdata[0]}${l[2]}FILTERED NAME:${filterText(linkdata[0])}${l[2]}HREF:${linkdata[1]}${l[2]}TARGET:${linkdata[2]}` : '';
         buttonlogs += type == 1 ? `${l[1]}#${bid}:${l[2]}NAME:${linkdata[0]}${l[2]}FILTERED NAME:${filterText(linkdata[0])}${l[2]}LINK:${linkdata[1]}${l[2]}TARGET:${linkdata[2]}${l[2]}ID:${dataname[0]}${bid}` : '';
         output += type == 0 ? `<a${linkdata[1] ? ` href="${linkdata[1]}"` : ''}${linkdata[1] ? ` target="${linkdata[2] ? linkdata[2] : ext ? '_blank' : '_self'}"` : ''}${ext ? ` id="${cssid.ext}"` : ''}>${filterText(linkdata[0])}</a>` : type == 1 ? `<button id="${dataname[0]}${bid}">${filterText(linkdata[0])}</button>` : '';
