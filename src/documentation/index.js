@@ -193,7 +193,7 @@ const l = ['\n\n','\n    ','\n        '];
 const date = new Date();
 let logs = `${date} (${date.getTime()})${l[0]}_JUST FILES:${l[1]}CSS: ${filename.css}${l[1]}JS: ${filename.js}`;
 
-const rootDirA = PATH || './';
+const rootDirA = PATH || '.';
 const extensions = ['.md', '.mdx', '.html'];
 
 function getFiles(dir) {
@@ -694,10 +694,10 @@ markdownFiles.forEach(file => {
 logs += linklogs; logs += buttonlogs;
 logs += `${l[0]}USED NAMES:${l[1]}"${uniqueNames_.join('", "')}"${l[0]}DATA NAMES:${l[1]}"${dataname.join('", "')}"`;
 console.log('\n\n\n\n\n'+logs);
-fs.writeFileSync(path.join(rootDirB, '_just_data', 'output.txt'), logs, template.charset);
-fs.writeFileSync(path.join(rootDirB, '_just', `${filename.css}.css`), CSS, template.charset);
+fs.writeFileSync(path.join(rootDirA !== '.' ? rootDirA : rootDirB, '_just_data', 'output.txt'), logs, template.charset);
+fs.writeFileSync(path.join(rootDirA !== '.' ? rootDirA : rootDirB, '_just', `${filename.css}.css`), CSS, template.charset);
 fs.writeFileSync(
-    path.join(rootDirB, '_just', `${filename.js}.js`),
+    path.join(rootDirA !== '.' ? rootDirA : rootDirB, '_just', `${filename.js}.js`),
     JS.replace('\'PUBLICOUTPUT\'', publicOutput),
     template.charset
 );
