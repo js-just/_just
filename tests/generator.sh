@@ -24,5 +24,8 @@
 mkdir -p test
 CONFIG=$(cat "tests/generator.js")
 MARKDOWN=$(cat "tests/generator.md")
+rm -f "just.config.js"
+rm -r "website"
+rm -r "data"
 echo "$CONFIG" > "just.config.js"
 echo "$MARKDOWN" > "test/index.md"
