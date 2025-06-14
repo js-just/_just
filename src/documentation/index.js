@@ -526,17 +526,9 @@ const addEnd = (text, end) => {
 
 let linklogs = `${l[0]}LINKS:`;
 let buttonlogs = `${l[0]}BUTTONS:`;
-let uniqueNames = {
-    "a": 1,
-    "d": 1,
-    "l": 1,
-    "ext": 1,
-    "main": 1
-};
+let uniqueNames = {};
+let uniqueNames_= [dataname[0].slice(0,-1)];
 uniqueNames[dataname[0].slice(0,-1)] = 1;
-let uniqueNames_= [
-    "a", "d", "l", "ext", "main", dataname[0].slice(0,-1)
-];
 for (i = 0; i <= dataname.length; i++) {
     uniqueNames[dataname[i]] = 1;
     uniqueNames_.push(dataname[i]);
