@@ -123,11 +123,41 @@ const cssid = {
     "main": dataname[5]+randomChar(1),
     "ext": dataname[5]+randomChar(1)
 }
+const cssvar = {
+    "bg": dataname[6]+randomChar(1),
+    "cl": dataname[6]+randomChar(1),
+    "kb": dataname[6]+randomChar(1),
+    "tf": dataname[6]+randomChar(1),
+    "bh": dataname[6]+randomChar(1),
+    "bp": dataname[6]+randomChar(1),
+    "br": dataname[6]+randomChar(1),
+    "mp": dataname[6]+randomChar(1),
+    "mn": dataname[6]+randomChar(1),
+    "nh": dataname[6]+randomChar(1),
+    "fr": dataname[6]+randomChar(1)
+}
+addchars();
+cssvar["md"] = dataname[7]+randomChar(1);
+cssvar["nt"] = dataname[7]+randomChar(1);
+cssvar["nb"] = dataname[7]+randomChar(1);
+cssvar["tt"] = dataname[7]+randomChar(1);
+cssvar["tb"] = dataname[7]+randomChar(1);
+cssvar["it"] = dataname[7]+randomChar(1);
+cssvar["ib"] = dataname[7]+randomChar(1);
+cssvar["wt"] = dataname[7]+randomChar(1);
+cssvar["wb"] = dataname[7]+randomChar(1);
+addchars();
+cssvar["ct"] = dataname[8]+randomChar(1);
+cssvar["cb"] = dataname[8]+randomChar(1);
+cssvar["sb"] = dataname[8]+randomChar(1);
 Object.entries(cssclass).forEach(([key, class_]) => {
     CSS = key === "l" ? CSS.replaceAll(`.${key} `, `.${class_} `).replaceAll(`.${key}:`, `.${class_}:`).replaceAll(`.${key})`, `.${class_})`) : CSS.replaceAll(`.${key}`, `.${class_}`);
 })
 Object.entries(cssid).forEach(([key, id_]) => {
     CSS = CSS.replaceAll(`#${key}`, `#${id_}`);
+});
+Object.entries(cssvar).forEach(([key, var_]) => {
+    CSS = CSS.replaceAll(`--${key}`, `--${var_}`);
 });
 HTML = HTML
     .replace('<nav class="left">', `<nav class="${cssclass.left}">`)
