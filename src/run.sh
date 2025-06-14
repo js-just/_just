@@ -54,46 +54,46 @@ installNodejs() {
 }
 
 if [ -f "$CONFIG_DATA" ]; then
-    local ERROR_MESSAGE=$(ErrorMessage "run.sh" "0113")
+    ERROR_MESSAGE=$(ErrorMessage "run.sh" "0113")
     echo "$ERROR_MESSAGE" && exit 1
 fi
 
 if [ ! -f "$CONFIG_FILE" ]; then
-    local ERROR_MESSAGE=$(ErrorMessage "run.sh" "0108")
+    ERROR_MESSAGE=$(ErrorMessage "run.sh" "0108")
     echo "$ERROR_MESSAGE" && exit 1
 fi
 
 CONFIG_JSON=$(node -e "console.log(JSON.stringify(require('./just.config.js')));")
 if [ $? -ne 0 ]; then
-    local ERROR_MESSAGE=$(ErrorMessage "run.sh" "0109")
+    ERROR_MESSAGE=$(ErrorMessage "run.sh" "0109")
     echo "$ERROR_MESSAGE" && exit 1
 fi
 echo "Parsed just.config.js module.exports: $CONFIG_JSON" # debug
 echo "$CONFIG_JSON" > "$CONFIG_DATA"
 
 if [ -z "$(echo "$CONFIG_JSON" | jq -r '.module.exports')" ]; then
-    local ERROR_MESSAGE=$(ErrorMessage "run.sh" "0112")
+    ERROR_MESSAGE=$(ErrorMessage "run.sh" "0112")
     echo "$ERROR_MESSAGE" && exit 1
 fi
 
 TYPE=$(echo "$CONFIG_JSON" | jq -r '.type')
 if [ -z "$TYPE" ]; then
-    local ERROR_MESSAGE=$(ErrorMessage "run.sh" "0110")
+    ERROR_MESSAGE=$(ErrorMessage "run.sh" "0110")
     echo "$ERROR_MESSAGE" && exit 1
 fi
 
 if [[ "$TYPE" != "postprocessor" && "$TYPE" != "redirector" && "$TYPE" != "compressor" && "$TYPE" != "generator" ]]; then
-    local ERROR_MESSAGE=$(ErrorMessage "run.sh" "0111")
+    ERROR_MESSAGE=$(ErrorMessage "run.sh" "0111")
     echo "$ERROR_MESSAGE" && exit 1
 fi
 
 if [ "$TYPE" != "compressor" ]; then
     if [ -d "deploy" ]; then
-        local ERROR_MESSAGE=$(ErrorMessage "important_dirs" "0106")
+        ERROR_MESSAGE=$(ErrorMessage "important_dirs" "0106")
         echo "$ERROR_MESSAGE" && exit 1
     fi
     if [ -d "_just_data" ]; then
-        local ERROR_MESSAGE=$(ErrorMessage "important_dirs" "0107")
+        ERROR_MESSAGE=$(ErrorMessage "important_dirs" "0107")
         echo "$ERROR_MESSAGE" && exit 1
     fi
     mkdir -p deploy
@@ -103,9 +103,9 @@ fi
 if [ "$TYPE" == "postprocessor" ]; then
     set -e
     postprocessor_checks=$(bash $GITHUB_ACTION_PATH/src/postprocessor/checks.sh 2>&1) || {
-        local error_code=$?
+        error_code=$?
         if [ $error_code -eq 1 ]; then
-            local ERROR_MESSAGE=$(ErrorMessage "postprocessor/checks.sh" "0100" "$postprocessor_checks")
+            ERROR_MESSAGE=$(ErrorMessage "postprocessor/checks.sh" "0100" "$postprocessor_checks")
             if [ "$postprocessor_checks" == "0101" ]; then 
                 ERROR_MESSAGE=$(ErrorMessage "postprocessor/checks.sh" "0101")
             fi
