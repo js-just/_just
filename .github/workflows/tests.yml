@@ -18,9 +18,9 @@ jobs:
       - run: bash tests/compressor.sh
         shell: bash
       - name: Compress with _just
-        uses: js-just/_just@main
+        uses: action.yml
         env:
-          GITHUB_ACTION_PATH: 
+          GITHUB_ACTION_PATH:
         with:
           path: test
   generator:
