@@ -711,7 +711,7 @@ markdownFiles.forEach(file => {
                     '<br>'
                 ),
                 '<br>'
-            ).replace(/<blockquote>(.*?)<br><br><blockquote>/, '<blockquote>$1<blockquote>')
+            ).replace(/<blockquote>((?:(?!<h[1-6][^>]*>.*?<\/h[1-6]>).)*?)<br><br><blockquote>/, '<blockquote>$1<blockquote>')
         ),
         charset
     );
