@@ -150,6 +150,12 @@ if (theme && theme == 'l') {
     getnsettheme()
 }
 
+const updateMinHeight = () => {
+    document.querySelector('.main').style.minHeight = `${window.innerHeight-62*2-1}px`
+}
+updateMinHeight();
+window.addEventListener('resize', updateMinHeight);
+
 document.addEventListener('DOMContentLoaded', () => {
     let ltb = document.getElementById('l');
     let dtb = document.getElementById('d');
@@ -178,4 +184,5 @@ document.addEventListener('DOMContentLoaded', () => {
     if (isIOS()) {
         document.body.classList.add('ios');
     }
+    updateMinHeight();
 });

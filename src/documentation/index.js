@@ -174,6 +174,7 @@ HTML = HTML
     .replace('<button id="a"', `<button id="${cssid.a}"`);
 JS = JS
     .replace('html > body > main > div#main > article.main', `html > body > main > div#${cssid.main} > article.${cssclass.main}`)
+    .replace('\'.main\'', `'.${cssclass.main}'`)
     .replaceAll('".navbar"', `".${cssclass.navbar}"`)
     .replaceAll('\'navleft\'', `'${cssclass.navleft}'`)
     .replaceAll('\'ios\'', `'${cssclass.ios}'`)
