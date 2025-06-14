@@ -25,13 +25,15 @@ SOFTWARE.
 */
 
 const _just = {};
+const [PATH] = process.argv.slice(2);
 _just.string = require('../modules/string.js');
 
 const charset = "utf-8";
 const fs = require('fs');
 const path = require('path');
-const rootDir = process.cwd();
-const logs = fs.readFileSync(path.join(rootDir, '_just_data', 'output.txt'), charset);
+const rootDirA = PATH || '.';
+const rootDirB = process.cwd();
+const logs = fs.readFileSync(path.join(rootDirA !== '.' ? rootDirA : rootDirB, '_just_data', 'output.txt'), charset);
 let logsstr = logs;
 const l = ['\n\n','\n    ','\n        '];
 logsstr += l[0];
@@ -52,7 +54,7 @@ function findMarkdownFiles(dir) {
     return results;
 }
 let fileID = 0;
-findMarkdownFiles(rootDir).forEach(file => {
+findMarkdownFiles(rootDirB).forEach(file => {
     fileID++;
     newlogs += `${l[1]}FILE #${fileID} "${_just.string.removeLast(_just.string.runnerPath(file), 'md')}html":`;
     try {
@@ -79,4 +81,4 @@ findMarkdownFiles(rootDir).forEach(file => {
 
 console.log('\n\n\n\n\n'+newlogs);
 logsstr += newlogs;
-fs.writeFileSync(path.join(rootDir, '_just_data', 'output.txt'), logsstr, charset);
+fs.writeFileSync(path.join(rootDirA !== '.' ? rootDirA : rootDirB, '_just_data', 'output.txt'), logsstr, charset);
