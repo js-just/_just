@@ -151,7 +151,9 @@ if (theme && theme == 'l') {
 }
 
 const updateMinHeight = () => {
-    document.querySelector('.main').style.minHeight = `${window.innerHeight-62*2-1}px`
+    try {
+        document.querySelector('.main').style.minHeight = `${window.innerHeight-62*2-1}px`
+    } catch (err_) {}
 };
 updateMinHeight();
 window.addEventListener('resize', updateMinHeight);
