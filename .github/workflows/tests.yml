@@ -29,6 +29,6 @@ jobs:
       - run: bash tests/generator.sh
         shell: bash
       - name: Generate with _just
-        uses: js-just/_just@main
+        uses: ./
         with:
           path: test

@@ -24,5 +24,5 @@
 mkdir -p test
 CONFIG=$(cat "tests/compressor.js")
 HTML=$(cat "website/index.html")
-echo "$CONFIG" > "test/just.config.js"
+echo "$CONFIG" > "just.config.js"
 echo "$HTML" > "test/index.html"
