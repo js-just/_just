@@ -167,7 +167,7 @@ const i_love_iphone = () => {
         document.querySelector('feDisplacementMap').scale.baseVal += 100;
     }
     fun_function = true;
-}
+};
 
 function search1(data, searchTerm) {
   const lowerSearchTerm = searchTerm.toLowerCase();
