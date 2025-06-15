@@ -481,6 +481,7 @@ nav.right {
             }
             span {
                 padding-left: 5px;
+                overflow: hidden;
             }
         }
         ul:after {

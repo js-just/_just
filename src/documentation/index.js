@@ -338,9 +338,17 @@ function extlink(url_) {
     return ext;
 }
 
+const charCodes = (input) => {
+    let output = '';
+    for (i = 0; i <= input.length; i++) {
+        output += input.charCodeAt(i) ? `&#${input.charCodeAt(i)};` : ''
+    }
+    return output
+}
 const MDescape = (input) => {
     return input
         .replaceAll('\\\\', `&#${'\\'.charCodeAt(0)};`)
+        .replace(/\\\[!(NOTE|TIP|IMPORTANT|WARNING|CAUTION)\]/g, (match, blockquote) => `${charCodes(`[!${blockquote}]`)}`)
         .replace(/\\(.)/g, (match, textdata) => {return `&#${textdata.charCodeAt(0)};${textdata.slice(1)}`})
         .replaceAll('\\', '');
 }
@@ -615,6 +623,14 @@ function uniqueName(input) {
     }
 }
 
+const blockquoteToCSSclass = {
+    "NOTE": cssclass.note,
+    "TIP": cssclass.ntip,
+    "IMPORTANT": cssclass.impr,
+    "WARNING": cssclass.warn,
+    "CAUTION": cssclass.caut
+}
+
 logs += `${l[0]}MARKDOWN FILES:`;
 let fileID = 0;
 markdownFiles.forEach(file => {
@@ -626,11 +642,11 @@ markdownFiles.forEach(file => {
 
     const headers = [];
     const toHTML = hbuoclpMDtoHTML(addEnd(content, '\n').replace(/> (.*?)\n\n> (.*?)\n/g, `> $1\n\n> ${_just.element('blockquote separator')}$2\n`)).replace(/<h1>(.*?)<\/h1>/g, (match, p1) => {
-        return `<h1 id="${uniqueName(p1)}">${p1}</h1>`;
+        return `<h1 id="${uniqueName(encodeURIComponent(p1))}">${p1}</h1>`;
     }).replace(/<h2>(.*?)<\/h2>/g, (match, p1) => {
-        return `<h2 id="${uniqueName(p1)}">${p1}</h2>`;
+        return `<h2 id="${uniqueName(encodeURIComponent(p1))}">${p1}</h2>`;
     }).replace(/<h3>(.*?)<\/h3>/g, (match, p1) => {
-        return `<h3 id="${uniqueName(p1)}">${p1}</h3>`;
+        return `<h3 id="${uniqueName(encodeURIComponent(p1))}">${p1}</h3>`;
     }).replace(/<(h1|h2|h3) id="([^"]+)">(.*?)<\/\1>/g, (match, p1, p2, p3) => {headers.push(p2);return`<${p1} id="${p2}">${p3}</${p1}>`});
 
     const H1 = [...toHTML.matchAll(/<h1 id="([^"]+)">(.*?)<\/h1>/g)];
@@ -693,21 +709,23 @@ markdownFiles.forEach(file => {
                         .replaceAll('</h6><br>', '</h6>')
                         .replaceAll('</ol><br>', '</ol>')
                         .replaceAll('</ul><br>', '</ul>')
-                        .replace(/<blockquote><br>((?:(?!<h[1-6][^>]*>.*?<\/h[1-6]>).)*?)<\/blockquote>/, '<blockquote><blockquote>$1</blockquote></blockquote>')
-                        .replace(/<blockquote><br>> ((?:(?!<h[1-6][^>]*>.*?<\/h[1-6]>).)*?)<\/blockquote>/, '<blockquote><blockquote><blockquote>$1</blockquote></blockquote></blockquote>')
+                        .replace(/<blockquote><br>((?:(?!<h[1-6][^>]*>.*?<\/h[1-6]>).)*?)<\/blockquote>/g, '<blockquote><blockquote>$1</blockquote></blockquote>')
+                        .replace(/<blockquote><br>> ((?:(?!<h[1-6][^>]*>.*?<\/h[1-6]>).)*?)<\/blockquote>/g, '<blockquote><blockquote><blockquote>$1</blockquote></blockquote></blockquote>')
                         .replaceAll('</blockquote><br>', '</blockquote>')
                         .replaceAll('<br><blockquote', '<blockquote')
                         .replaceAll('</blockquote><blockquote>', '<br>')
                         .replaceAll('<br><blockquote><br>', '<blockquote>')
-                        .replace(/<blockquote>> ((?:(?!<h[1-6][^>]*>.*?<\/h[1-6]>).)*?)<\/blockquote>/, '<blockquote><blockquote>$1</blockquote></blockquote>')
+                        .replace(/<blockquote>> ((?:(?!<h[1-6][^>]*>.*?<\/h[1-6]>).)*?)<\/blockquote>/g, '<blockquote><blockquote>$1</blockquote></blockquote>')
                         .replaceAll('</blockquote></blockquote><blockquote><blockquote>', '<br>')
                         .replaceAll('</blockquote><blockquote>', '<br>')
-                        .replace(/<blockquote>((?:(?!<h[1-6][^>]*>.*?<\/h[1-6]>).)*?)<br>> ((?:(?!<h[1-6][^>]*>.*?<\/h[1-6]>).)*?)<br>((?:(?!<h[1-6][^>]*>.*?<\/h[1-6]>).)*?)<\/blockquote>/, '<blockquote>$1<blockquote>$2</blockquote><br>$3</blockquote>')
+                        .replace(/<blockquote>((?:(?!<h[1-6][^>]*>.*?<\/h[1-6]>).)*?)<br>> ((?:(?!<h[1-6][^>]*>.*?<\/h[1-6]>).)*?)<br>((?:(?!<h[1-6][^>]*>.*?<\/h[1-6]>).)*?)<\/blockquote>/g, '<blockquote>$1<blockquote>$2</blockquote><br>$3</blockquote>')
                         .replaceAll('</blockquote><br>', '</blockquote>')
-                        .replace(/<\/blockquote>> ((?:(?!<h[1-6][^>]*>.*?<\/h[1-6]>).)*?)<blockquote>/, '</blockquote><blockquote>$1</blockquote><blockquote>')
+                        .replace(/<\/blockquote>> ((?:(?!<h[1-6][^>]*>.*?<\/h[1-6]>).)*?)<blockquote>/g, '</blockquote><blockquote>$1</blockquote><blockquote>')
                         .replaceAll('</blockquote><blockquote>', '<br>')
                         .replaceAll(_just.element('blockquote separator'), '</blockquote><blockquote>')
-                        .replaceAll('</blockquote><br><blockquote>', '<br>'),
+                        .replaceAll('</blockquote><br><blockquote>', '<br>')
+                        .replaceAll('<blockquote></blockquote>', '')
+                        .replace(/<blockquote>\[!(NOTE|TIP|IMPORTANT|WARNING|CAUTION)\]/g, (match, blockquote) => `<blockquote class="${blockquoteToCSSclass[blockquote]}">`),
                     '<br>'
                 ),
                 '<br>'
