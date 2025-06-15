@@ -950,4 +950,13 @@ h1, h2, h3 {
     border-bottom-right-radius: 10px;
     overflow: hidden;
     border: 1px solid var(--md);
+    a {
+        height: 19px;
+        overflow: hidden;
+    }
+    span {
+        opacity: 0.75;
+        width: 100%;
+        text-align: center;
+    }
 }

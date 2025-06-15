@@ -168,14 +168,16 @@ function search1(data, searchTerm) {
       const index = lowerValue.indexOf(lowerSearchTerm);
       
       if (index !== -1) {
-        const start = Math.max(0, index - 10);
-        const end = Math.min(value.length, index + searchTerm.length + 10);
+        const start = Math.max(0, index - 6);
+        let end = Math.min(value.length, index + searchTerm.length + 9);
         
         let snippet = value.substring(start, end);
         
         const regex = new RegExp(`(?<=\s|^|[.,!?;: \n])(${searchTerm})(?=\s|[.,!?;: \n]|$)`, 'gi');
         
         snippet = snippet.replace(regex, '<strong>$1</strong>');
+        if (start > 0) {snippet = '...'+snippet.slice(3)}
+        if (end < value.length) {snippet = snippet.trim()+'...'};
         
         return [
           key,
@@ -229,6 +231,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const sb = document.getElementById("searchbar");
     const sd = document.querySelector('.search');
     const updateSD = (toggle = false) => {
+        if (!toggle) {sd.innerHTML = ''};
         sd.style.left = `${sb.offsetLeft + sb.parentElement.offsetLeft}px`;
         sd.style.top = `${-sb.offsetTop + sb.offsetHeight}px`;
         sd.style.width = `${sb.offsetWidth - 8*2}px`;
@@ -236,7 +239,7 @@ document.addEventListener('DOMContentLoaded', () => {
         sd.style.opacity = toggle ? 1 : 0;
         sd.style.pointerEvents = toggle ? 'all' : 'none';
     };
-    window.addEventListener('resize', updateSD);
+    window.addEventListener('resize', ()=>{updateSD(false)});
 
     function searchString(str) {
         if (!str) {
@@ -260,6 +263,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const response = await fetch("/_just/search").catch((err__)=>{
                 console.warn(err__);
                 sd.innerHTML = '<span>Failed to fetch.<br>Please try again</span>';
+                return
             });
             const data = await response.json();
             const searchdata = search2(data, sv);
@@ -274,5 +278,5 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    updateSD();updateMinHeight();
+    updateSD(false);updateMinHeight();
 });
