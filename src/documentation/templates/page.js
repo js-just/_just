@@ -158,6 +158,45 @@ const updateMinHeight = () => {
 updateMinHeight();
 window.addEventListener('resize', updateMinHeight);
 
+function search1(data, searchTerm) {
+  const lowerSearchTerm = searchTerm.toLowerCase();
+
+  for (const key in data) {
+    if (data.hasOwnProperty(key)) {
+      const value = data[key];
+      const lowerValue = value.toLowerCase();
+      const index = lowerValue.indexOf(lowerSearchTerm);
+      
+      if (index !== -1) {
+        const start = Math.max(0, index - 10);
+        const end = Math.min(value.length, index + searchTerm.length + 10);
+        
+        let snippet = value.substring(start, end);
+        
+        const regex = new RegExp(`(?<=\s|^|[.,!?;: \n])(${searchTerm})(?=\s|[.,!?;: \n]|$)`, 'gi');
+        
+        snippet = snippet.replace(regex, '<strong>$1</strong>');
+        
+        return [
+          key,
+          snippet
+        ];
+      }
+    }
+  }
+  return null;
+}
+function search2(data, searchTerm) {
+    let output = [];
+    for (let i = 1; i <= 5; i++) {
+        const search1_ = search1(data, searchTerm)
+        if (search1_) {
+            data[search1_[0]] = '';
+            output.push(search1_);
+        }
+    }
+    return output;
+}
 document.addEventListener('DOMContentLoaded', () => {
     let ltb = document.getElementById('l');
     let dtb = document.getElementById('d');
@@ -215,12 +254,23 @@ document.addEventListener('DOMContentLoaded', () => {
     sb.addEventListener("input", async () => {
         const sv = sb.value;
         const st = searchString(sv);
-        sd.innerHTML = '';
+        sd.innerHTML = '<span>Loading...</span>';
         updateSD(st);
         if (st) {
-            const response = await fetch("/_just/search");
+            const response = await fetch("/_just/search").catch((err__)=>{
+                console.warn(err__);
+                sd.innerHTML = '<span>Failed to fetch.<br>Please try again</span>';
+            });
             const data = await response.json();
-            console.log(data);
+            const searchdata = search2(data, sv);
+            if (searchdata.length == 0) {
+                sd.innerHTML = '<span>Nothing found.</span>';
+            } else {
+                sd.innerHTML = '';
+                for (const [href, text] of Object.entries(searchdata)) {
+                    sd.innerHTML += `<a href="${href}" target="_self">${text}</a>`;
+                }
+            }
         }
     });
 
