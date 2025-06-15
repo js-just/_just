@@ -158,6 +158,17 @@ const updateMinHeight = () => {
 updateMinHeight();
 window.addEventListener('resize', updateMinHeight);
 
+let fun_function = false;
+const stupid_apple_users = 'url("#glass")';
+const i_love_iphone = () => {
+    document.body.style.filter = stupid_apple_users;
+    document.body.style.webkitFilter = stupid_apple_users;
+    if (fun_function) {
+        document.querySelector('feDisplacementMap').scale.baseVal += 100;
+    }
+    fun_function = true;
+}
+
 function search1(data, searchTerm) {
   const lowerSearchTerm = searchTerm.toLowerCase();
 
@@ -235,7 +246,6 @@ document.addEventListener('DOMContentLoaded', () => {
         sd.style.left = `${sb.offsetLeft + sb.parentElement.offsetLeft}px`;
         sd.style.top = `${sb.parentElement.offsetTop + sb.offsetHeight - (sb.parentElement.offsetWidth == 0 ? 15 : 0)}px`;
         sd.style.width = `${sb.offsetWidth - 8*2}px`;
-        sd.style.maxHeight = `${sb.offsetHeight*3-1}px`;
         sd.style.opacity = toggle ? 1 : 0;
         sd.style.pointerEvents = toggle ? 'all' : 'none';
     };
