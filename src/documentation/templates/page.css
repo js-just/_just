@@ -950,6 +950,4 @@ h1, h2, h3 {
     border-bottom-right-radius: 10px;
     overflow: hidden;
     border: 1px solid var(--md);
-    transition: 200ms;
-    transition-timing-function: ease-in-out;
 }

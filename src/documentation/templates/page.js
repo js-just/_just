@@ -267,8 +267,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 sd.innerHTML = '<span>Nothing found.</span>';
             } else {
                 sd.innerHTML = '';
-                for (const [href, text] of Object.entries(searchdata)) {
-                    sd.innerHTML += `<a href="${href}" target="_self">${text}</a>`;
+                for (const [id, data_] of Object.entries(searchdata)) {
+                    sd.innerHTML += `<a href="${data_[0]}" target="_self">${data_[1]}</a>`;
                 }
             }
         }
