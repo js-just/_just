@@ -451,6 +451,7 @@ nav.right {
                 position: fixed;
                 height: 32px;
                 z-index: -1;
+                transition: 300ms;
             }
             li:after {
                 right: 100%;
