@@ -159,10 +159,10 @@ updateMinHeight();
 window.addEventListener('resize', updateMinHeight);
 
 let fun_function = false;
-const stupid_apple_users = 'url("#glass")';
-const i_love_iphone = () => {
-    document.body.style.filter = stupid_apple_users;
-    document.body.style.webkitFilter = stupid_apple_users;
+const glass = 'url("#glass")';
+const i_want_liquid_glass = () => {
+    document.body.style.filter = glass;
+    document.body.style.webkitFilter = glass;
     if (fun_function) {
         document.querySelector('feDisplacementMap').scale.baseVal += 100;
     }
