@@ -363,12 +363,13 @@ const MDcode = (input) => {
         .replaceAll('*', `&#${'*'.charCodeAt(0)};`)
         .replaceAll('_', `&#${'_'.charCodeAt(0)};`)
 }
+const linkregex = /(?<=\s|^|[.,!?;:*_])\[(.*?)\]\((.*?)\)(?=\s|[.,!?;:*_]|$)/g;
 const biMDtoHTML = (input) => {
     let text = MDescape(input);
 
     text = text.replace(/```([\w]*)[\r\n]+([\S\s]*?)```/g, `<code class="${cssclass.code}">$2</code>`);
     text = text.replace(/(?<=\s|^|[.,!?;:*_])`(.*?)`(?=\s|[.,!?;:*_]|$)/g, (match, code) => {return `<code>${MDcode(code)}</code>`});
-    text = text.replace(/(?<=\s|^|[.,!?;:*_])\[(.*?)\]\((.*?)\)(?=\s|[.,!?;:*_]|$)/g, (match, text, link_) => {return link(text, link_, extlink(link_), cssid.ext)});
+    text = text.replace(linkregex, (match, text, link_) => {return link(text, link_, extlink(link_), cssid.ext)});
 
     text = text.replace(/(?<=\s|^|[.,!?;:])__\*\*\*(.*?)\*\*\*__(?=\s|[.,!?;:]|$)/g, `<em class="${cssclass.underline}"><strong>$1</strong></em>`);
     text = text.replace(/(?<=\s|^|[.,!?;:])\*\*\*__(.*?)__\*\*\*(?=\s|[.,!?;:]|$)/g, `<em class="${cssclass.underline}"><strong>$1</strong></em>`);
@@ -651,9 +652,9 @@ function toText(input) {
         input = input.replace(new RegExp(`^#{${i}}\\s+(.*?)\\s*$`, 'gm'), '$1')
     }
     return input
-        .replace(/\[!(NOTE|TIP|IMPORTANT|WARNING|CAUTION)\]/g, '$1:');
+        .replace(/\[!(NOTE|TIP|IMPORTANT|WARNING|CAUTION)\]/g, '$1:')
+        .replace(linkregex, '$1');
 }
-console.log(pathtourl);
 markdownFiles.forEach(file => {
     const content = fs.readFileSync(file, charset);
     const fileNameWithoutExt = path.basename(file, path.extname(file));
@@ -664,7 +665,6 @@ markdownFiles.forEach(file => {
     if (pathtourl[file]) {
         mdjson[pathtourl[file]] = toText(content);
     }
-    console.log(file);
 
     const headers = [];
     const toHTML = hbuoclpMDtoHTML(addEnd(content, '\n').replace(/> (.*?)\n\n> (.*?)\n/g, `> $1\n\n> ${_just.element('blockquote separator')}$2\n`)).replace(/<h1>(.*?)<\/h1>/g, (match, p1) => {
