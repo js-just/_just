@@ -138,6 +138,7 @@ const cssvar = {
     "fr": dataname[6]+randomChar(1)
 }
 addchars();
+console.log(charss);
 cssvar["md"] = dataname[7]+randomChar(1);
 cssvar["nt"] = dataname[7]+randomChar(1);
 cssvar["nb"] = dataname[7]+randomChar(1);
@@ -648,6 +649,7 @@ function toText(input) {
     }
     return input;
 }
+console.log(pathtourl);
 markdownFiles.forEach(file => {
     const content = fs.readFileSync(file, charset);
     const fileNameWithoutExt = path.basename(file, path.extname(file));
@@ -656,6 +658,7 @@ markdownFiles.forEach(file => {
     logs += `${l[1]}FILE #${fileID} "${_just.string.runnerPath(file)}":${l[2]}INPUT: ${_just.string.fileSize(fs.statSync(file).size)}`;
 
     mdjson[pathtourl[file]] = toText(content);
+    console.log(file);
 
     const headers = [];
     const toHTML = hbuoclpMDtoHTML(addEnd(content, '\n').replace(/> (.*?)\n\n> (.*?)\n/g, `> $1\n\n> ${_just.element('blockquote separator')}$2\n`)).replace(/<h1>(.*?)<\/h1>/g, (match, p1) => {
