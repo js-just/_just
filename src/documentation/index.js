@@ -25,7 +25,7 @@ SOFTWARE.
 */
 
 const _just = {};
-const [HTMLtemplate, CSStemplate, JStemplate, PATH] = process.argv.slice(2);
+const [HTMLtemplate, CSStemplate, JStemplate, PATH, repo] = process.argv.slice(2);
 let HTML = HTMLtemplate;
 let CSS = CSStemplate;
 let JS = JStemplate;
@@ -263,7 +263,7 @@ function getPageList() {
         logs += `${l[2]}TITLE (after): ${title}`;
 
         pages.push({ path: pagePath, title });
-        pathtourl[file] = pagePath;
+        pathtourl[`/home/runner/work/${repo}/${file}`] = pagePath;
     });
 
     return pages;
@@ -658,7 +658,9 @@ markdownFiles.forEach(file => {
     fileID++;
     logs += `${l[1]}FILE #${fileID} "${_just.string.runnerPath(file)}":${l[2]}INPUT: ${_just.string.fileSize(fs.statSync(file).size)}`;
 
-    mdjson[pathtourl[file]] = toText(content);
+    if (pathtourl[file]) {
+        mdjson[pathtourl[file]] = toText(content);
+    }
     console.log(file);
 
     const headers = [];
