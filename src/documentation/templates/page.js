@@ -189,7 +189,7 @@ function search1(data, searchTerm) {
 function search2(data, searchTerm) {
     let output = [];
     for (let i = 1; i <= 5; i++) {
-        const search1_ = search1(data, searchTerm)
+        const search1_ = search1(data, searchTerm);
         if (search1_) {
             data[search1_[0]] = '';
             output.push(search1_);
