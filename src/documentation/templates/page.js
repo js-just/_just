@@ -196,7 +196,7 @@ document.addEventListener('DOMContentLoaded', () => {
         sd.style.maxHeight = `${sb.offsetHeight*3-1}px`;
         sd.style.opacity = toggle ? 1 : 0;
         sd.style.pointerEvents = toggle ? 'all' : 'none';
-    }
+    };
     window.addEventListener('resize', updateSD);
 
     function searchString(str) {
@@ -211,7 +211,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return false;
         }
         return true;
-    }
+    };
     sb.addEventListener("input", async () => {
         const sv = sb.value;
         const st = searchString(sv);
@@ -222,7 +222,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const data = await response.json();
             console.log(data);
         }
-    })
+    });
 
     updateSD();updateMinHeight();
 });
