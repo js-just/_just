@@ -98,6 +98,7 @@ a, button {
 }
 button {
     text-decoration-thickness: 3px;
+    opacity: 0.75;
 }
 a, button, input {
     font-family: var(--tf);

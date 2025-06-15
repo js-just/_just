@@ -233,7 +233,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const updateSD = (toggle = false) => {
         if (!toggle) {sd.innerHTML = ''};
         sd.style.left = `${sb.offsetLeft + sb.parentElement.offsetLeft}px`;
-        sd.style.top = `${-sb.offsetTop + sb.offsetHeight}px`;
+        sd.style.top = `${sb.parentElement.offsetTop + sb.offsetHeight - (sb.parentElement.offsetWidth == 0 ? 15 : 0)}px`;
         sd.style.width = `${sb.offsetWidth - 8*2}px`;
         sd.style.maxHeight = `${sb.offsetHeight*3-1}px`;
         sd.style.opacity = toggle ? 1 : 0;
