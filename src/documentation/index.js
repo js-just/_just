@@ -227,6 +227,7 @@ function getTitleFromMd(filePath) {
     return null;
 }
 
+const pathtourl = {};
 function getPageList() {
     const files = getFiles(rootDirA);
     const pages = [];
@@ -261,6 +262,7 @@ function getPageList() {
         logs += `${l[2]}TITLE (after): ${title}`;
 
         pages.push({ path: pagePath, title });
+        pathtourl[file] = pagePath;
     });
 
     return pages;
@@ -394,6 +396,7 @@ const biMDtoHTML = (input) => {
 
     return text;
 }
+const dividerRegex = /(\n\s*[*_-]{3,}\s*\n)+/g;
 function hbuoclpMDtoHTML(text, maxBlockquoteLevel = 4) {
     for (let i = 6; i >= 1; i--) {
         const regex = new RegExp(`^#{${i}}\\s+(.*?)\\s*$`, 'gm');
@@ -432,7 +435,6 @@ function hbuoclpMDtoHTML(text, maxBlockquoteLevel = 4) {
         return `<ol>${items.map(item => `<li>${biMDtoHTML(item.trim())}</li>`).join('')}</ol>`;
     });
 
-    const dividerRegex = /(\n\s*[*_-]{3,}\s*\n)+/g;
     text = text.replace(dividerRegex, `<div class="${cssclass.line}"></div><br>`);
 
     const paragraphsRegex = /([^\n]+(?:\n(?![\*_-]{3}).*)*)/g;
@@ -633,12 +635,27 @@ const blockquoteToCSSclass = {
 
 logs += `${l[0]}MARKDOWN FILES:`;
 let fileID = 0;
+const mdjson = {}
+function toText(input) {
+    input = input.trim().replaceAll('\\', '')
+        .replace(dividerRegex, '')
+        .replaceAll('`', '')
+        .replaceAll('*', '')
+        .replaceAll('_', '')
+        .replaceAll('> ','')
+    for (let i = 6; i >= 1; i--) {
+        input = input.replace(new RegExp(`^#{${i}}\\s+(.*?)\\s*$`, 'gm'), '$1')
+    }
+    return input;
+}
 markdownFiles.forEach(file => {
     const content = fs.readFileSync(file, charset);
     const fileNameWithoutExt = path.basename(file, path.extname(file));
     const outFilePath = (ext) => path.join(path.dirname(file), `${fileNameWithoutExt}.${ext}`);
     fileID++;
     logs += `${l[1]}FILE #${fileID} "${_just.string.runnerPath(file)}":${l[2]}INPUT: ${_just.string.fileSize(fs.statSync(file).size)}`;
+
+    mdjson[pathtourl[file]] = toText(content);
 
     const headers = [];
     const toHTML = hbuoclpMDtoHTML(addEnd(content, '\n').replace(/> (.*?)\n\n> (.*?)\n/g, `> $1\n\n> ${_just.element('blockquote separator')}$2\n`)).replace(/<h1>(.*?)<\/h1>/g, (match, p1) => {
@@ -743,6 +760,7 @@ fs.writeFileSync(path.join(rootDirA !== '.' ? rootDirA : rootDirB, '_just_data',
 fs.writeFileSync(path.join(rootDirA !== '.' ? rootDirA : rootDirB, '_just', `${filename.css}.css`), CSS, template.charset);
 fs.writeFileSync(
     path.join(rootDirA !== '.' ? rootDirA : rootDirB, '_just', `${filename.js}.js`),
-    JS.replace('\'PUBLICOUTPUT\'', publicOutput),
+    JS.replace('\'PUBLICOUTPUT\'', publicOutput).replace('fetch("/_just/search")', `fetch("/_just/${dataname[9]}.json")`),
     template.charset
 );
+fs.writeFileSync(path.join(rootDirA !== '.' ? rootDirA : rootDirB, '_just', `${dataname[9]}.json`), `${mdjson}`, template.charset);
