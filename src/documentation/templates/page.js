@@ -186,5 +186,43 @@ document.addEventListener('DOMContentLoaded', () => {
     if (isIOS()) {
         document.body.classList.add('ios');
     };
-    updateMinHeight();
+
+    const sb = document.getElementById("searchbar");
+    const sd = document.querySelector('.search');
+    const updateSD = (toggle = false) => {
+        sd.style.left = `${sb.offsetLeft + sb.parentElement.offsetLeft}px`;
+        sd.style.top = `${-sb.offsetTop + sb.offsetHeight}px`;
+        sd.style.width = `${sb.offsetWidth - 8*2}px`;
+        sd.style.maxHeight = `${sb.offsetHeight*3-1}px`;
+        sd.style.opacity = toggle ? 1 : 0;
+        sd.style.pointerEvents = toggle ? 'all' : 'none';
+    }
+    window.addEventListener('resize', updateSD);
+
+    function searchString(str) {
+        if (!str) {
+            return false;
+        }
+        const trimmedStr = str.trim();
+        if (trimmedStr.length === 0) {
+            return false;
+        }
+        if(/^[!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~]+$/.test(trimmedStr)){
+            return false;
+        }
+        return true;
+    }
+    sb.addEventListener("input", async () => {
+        const sv = sb.value;
+        const st = searchString(sv);
+        sd.innerHTML = '';
+        updateSD(st);
+        if (st) {
+            const response = await fetch("/_just/search");
+            const data = await response.json();
+            console.log(data);
+        }
+    })
+
+    updateSD();updateMinHeight();
 });

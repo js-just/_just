@@ -928,3 +928,28 @@ h1, h2, h3 {
 .main a {
     color: var(--kb);
 }
+
+.search {
+    position: fixed;
+    padding-top: 6px;
+    padding-left: 7px;
+    padding-right: 7px;
+    padding-bottom: 6px;
+    translate: 0px -6px;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-content: flex-start;
+    align-items: flex-start;
+    justify-content: flex-start;
+    background-color: var(--md);
+    backdrop-filter: blur(8px) brightness(50%);
+    -webkit-backdrop-filter: blur(8px) brightness(50%);
+    z-index: -1;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+    overflow: hidden;
+    border: 1px solid var(--md);
+    transition: 200ms;
+    transition-timing-function: ease-in-out;
+}
