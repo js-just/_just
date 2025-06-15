@@ -763,4 +763,4 @@ fs.writeFileSync(
     JS.replace('\'PUBLICOUTPUT\'', publicOutput).replace('fetch("/_just/search")', `fetch("/_just/${dataname[9]}.json")`),
     template.charset
 );
-fs.writeFileSync(path.join(rootDirA !== '.' ? rootDirA : rootDirB, '_just', `${dataname[9]}.json`), `${mdjson}`, template.charset);
+fs.writeFileSync(path.join(rootDirA !== '.' ? rootDirA : rootDirB, '_just', `${dataname[9]}.json`), JSON.stringify(mdjson), template.charset);
