@@ -306,15 +306,15 @@ a#ext:hover:not(:focus):after {
     @media(max-width: 700px) {
         left: initial;
         right: 30px;
-        translate: 0;
+        translate: 0%;
     }
     @media(min-width: 1000px) {
         left: 33%;
-        translate: 0;
+        translate: 0%;
     }
     @media(min-width: 1200px) {
         left: 33%;
-        translate: 100%;
+        translate: 0%;
     }
     @media(min-width: 1600px) {
         left: 50%;
