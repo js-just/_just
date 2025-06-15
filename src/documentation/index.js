@@ -25,7 +25,7 @@ SOFTWARE.
 */
 
 const _just = {};
-const [HTMLtemplate, CSStemplate, JStemplate, PATH, repo] = process.argv.slice(2);
+const [HTMLtemplate, CSStemplate, JStemplate, PATH, repo, owner] = process.argv.slice(2);
 let HTML = HTMLtemplate;
 let CSS = CSStemplate;
 let JS = JStemplate;
@@ -229,6 +229,9 @@ function getTitleFromMd(filePath) {
 }
 
 const pathtourl = {};
+function reporepo() {
+    return _just.string.removeLast(`${repo.replace(owner+'/','')}/`.repeat(2), '/')
+}
 function getPageList() {
     const files = getFiles(rootDirA);
     const pages = [];
@@ -263,7 +266,7 @@ function getPageList() {
         logs += `${l[2]}TITLE (after): ${title}`;
 
         pages.push({ path: pagePath, title });
-        pathtourl[`/home/runner/work/${repo}/${file}`] = pagePath;
+        pathtourl[`/home/runner/work/${reporepo()}/${file}`] = pagePath;
     });
 
     return pages;
