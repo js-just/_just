@@ -647,7 +647,8 @@ function toText(input) {
     for (let i = 6; i >= 1; i--) {
         input = input.replace(new RegExp(`^#{${i}}\\s+(.*?)\\s*$`, 'gm'), '$1')
     }
-    return input;
+    return input
+        .replace(/\[!(NOTE|TIP|IMPORTANT|WARNING|CAUTION)\]/g, '$1:');
 }
 console.log(pathtourl);
 markdownFiles.forEach(file => {
