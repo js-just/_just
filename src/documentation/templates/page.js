@@ -272,7 +272,7 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 sd.innerHTML = '';
                 for (const [id, data_] of Object.entries(searchdata)) {
-                    sd.innerHTML += `<a href="${data_[0]}" target="_self">${data_[1]}</a>`;
+                    sd.innerHTML += `<a href="${data_[0]}" target="_self">${data_[1].replaceAll('/n','')}</a>`;
                 }
             }
         }
