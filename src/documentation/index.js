@@ -49,11 +49,12 @@ const path = require('path');
 const config = JSON.parse(fs.readFileSync('just.config.json', template.charset));
 const docsConfig = config.docs_config;
 
-const charss = [];
+let charss = [];
 const chars2 = ['_', '-'];
 const addchars = () => { for (let i = 65; i <= 90; i++) {
-    charss.push(String.fromCharCode(i));
-}}
+    charss.push(String.fromCharCode(i))};
+    charss = Array.from(new Set(charss));
+}
 addchars();
 for (let i = 97; i <= 122; i++) {
     charss.push(String.fromCharCode(i));
@@ -138,7 +139,6 @@ const cssvar = {
     "fr": dataname[6]+randomChar(1)
 }
 addchars();
-console.log(charss);
 cssvar["md"] = dataname[7]+randomChar(1);
 cssvar["nt"] = dataname[7]+randomChar(1);
 cssvar["nb"] = dataname[7]+randomChar(1);
