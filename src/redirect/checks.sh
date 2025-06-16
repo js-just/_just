@@ -23,6 +23,7 @@
 #!/bin/bash
 source $GITHUB_ACTION_PATH/src/modules/errmsg.sh
 source $GITHUB_ACTION_PATH/src/modules/color.sh
+
 config=$(cat just.config.json)
 
 redirect_config_=$(echo "$config" | jq -r '.redirect_config')
@@ -32,8 +33,7 @@ if ! echo "$config" | jq -e '.redirect_config' > /dev/null; then
 fi
 
 validate_redirect_config() {
-    local url=$(echo "$config" | jq -r '.redirect_config.url' > /dev/null)
-    if [[ -z "$url" ]]; then
+    if ! echo "$config" | jq -e '.redirect_config.url' > /dev/null; then
         local ERROR_MESSAGE=$(ErrorMessage "redirect/checks.sh" "0114")
         echo -e "$ERROR_MESSAGE" && exit 1
     fi
@@ -44,15 +44,16 @@ validate_paths() {
     if [[ -n "$paths" ]]; then
         local countt=0
         for path in $paths; do
-            local url=$(echo "$path" | jq -r '.url')
-            local path_=$(echo "$path" | jq -r '.path_')
-            if [[ -z "$url" ]]; then
+            if ! echo "$path" | jq -e '.url' > /dev/null; then
                 local ERROR_MESSAGE=$(customErrorMessage "Error" "0115" "Missing \"url\" in item #$countt in \"paths\" in \"redirect_config\" in \"module.exports\" at \"just.config.js\" file.")
                 echo -e "$_RED$ERROR_MESSAGE$_RESET" && exit 1
-            elif [[ -z "$path_" ]]; then
-                local ERROR_MESSAGE= $(customErrorMessage "Error" "0116" "Missing \"path_\" in item #$countt in \"paths\" in \"redirect_config\" in \"module.exports\" at \"just.config.js\" file.")
+            fi
+
+            if ! echo "$path" | jq -e '.path_' > /dev/null; then
+                local ERROR_MESSAGE=$(customErrorMessage "Error" "0116" "Missing \"path_\" in item #$countt in \"paths\" in \"redirect_config\" in \"module.exports\" at \"just.config.js\" file.")
                 echo -e "$_RED$ERROR_MESSAGE$_RESET" && exit 1
             fi
+
             countt=$((countt + 1))
         done
     fi
