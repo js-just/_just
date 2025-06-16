@@ -48,6 +48,5 @@
   "bugs": {
     "url": "https://github.com/js-just/_just/issues"
   },
-  "homepage": "https://github.com/js-just/_just#readme",
-  "type": "module"
+  "homepage": "https://github.com/js-just/_just#readme"
 }
