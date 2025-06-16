@@ -43,12 +43,20 @@ echo "$msg1"
 
 installNodejs() {
     echo "$msg2"
-    sudo apt update -qq && sudo apt install -y nodejs npm > /dev/null 2>&1
-    if [ $? -ne 0 ]; then
+    sudo apt-get remove -y nodejs npm || true
+    sudo apt-get update -qq
+    curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+    sudo apt-get install -y nodejs
+    if ! command -v node > /dev/null; then
         local ERROR_MESSAGE=$(ErrorMessage "run.sh" "0205")
         echo "$ERROR_MESSAGE"
-        sudo apt update
-        sudo apt install -y nodejs npm
+        sudo apt update -qq && sudo apt install -y nodejs npm > /dev/null 2>&1
+        if [ $? -ne 0 ]; then
+            local ERROR_MESSAGE=$(ErrorMessage "run.sh" "0205")
+            echo "$ERROR_MESSAGE"
+            sudo apt update
+            sudo apt install -y nodejs npm
+        fi
     fi
     echo "$msg3"
     node --version
