@@ -26,7 +26,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - run: bash tests/compressor.sh
+      - run: bash tests/compress.sh
         shell: bash
       - name: Compress with _just
         uses: ./
