@@ -163,7 +163,7 @@ elif [ "$TYPE" == "generator" ]; then
     mkdir -p deploy && \
     installNodejs && \
     bash $GITHUB_ACTION_PATH/src/documentation/checks.sh && \
-    node "$GITHUB_ACTION_PATH/src/documentation/index.js" "$HTML" "$CSS" "$JS" "$INPUT_PATH" "$GITHUB_REPOSITORY" "$GITHUB_REPOSITORY_OWNER" "$CUSTOMCSS" && \
+    node "$GITHUB_ACTION_PATH/src/documentation/index.cjs" "$HTML" "$CSS" "$JS" "$INPUT_PATH" "$GITHUB_REPOSITORY" "$GITHUB_REPOSITORY_OWNER" "$CUSTOMCSS" && \
     node $GITHUB_ACTION_PATH/src/compress.js "$INPUT_PATH" && \
     node "$GITHUB_ACTION_PATH/src/documentation/logs.js" "$INPUT_PATH" && \
     echo "$msg9"
