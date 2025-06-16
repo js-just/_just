@@ -32,3 +32,14 @@ jobs:
         uses: ./
         with:
           path: test
+  redirect:
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - run: bash tests/redirect.sh
+          shell: bash
+        - name: Generate with _just
+          uses: ./
+          with:
+            path: test
