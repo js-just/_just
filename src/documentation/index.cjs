@@ -787,10 +787,10 @@ const fetchjson = async (protocol) => {
 }
 if (domain) {
     try {
-        await fetchjson('http')
+        fetchjson('http')
     } catch (ee) {
         try {
-            await fetchjson('https')
+            fetchjson('https')
         } catch (e_e) {}
     }
 }
