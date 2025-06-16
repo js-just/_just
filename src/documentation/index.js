@@ -25,7 +25,7 @@ SOFTWARE.
 */
 
 const _just = {};
-const [HTMLtemplate, CSStemplate, JStemplate, PATH, repo, owner] = process.argv.slice(2);
+const [HTMLtemplate, CSStemplate, JStemplate, PATH, repo, owner, customCSS] = process.argv.slice(2);
 let HTML = HTMLtemplate;
 let CSS = CSStemplate;
 let JS = JStemplate;
@@ -33,6 +33,7 @@ _just.string = require('../modules/string.js');
 _just.element = (type, insert) => `<_just${type ? ` element="${type}"` : ''}>${insert || ''}</_just>`;
 _just.error = require('../modules/errmsg.js');
 _just.ssapi = require('../modules/ssapi.js');
+_just.customCSS = require('./customcss.js').customcss;
 
 const link = (text, link_, ext = false, extid = "ext", target = "_blank") => `<a href="${link_}" target="${target}"${ext ? ` id="${extid}"` : ''}>${text}</a>`;
 const span = (text) => `<span>${text}</span>`;
@@ -764,14 +765,22 @@ markdownFiles.forEach(file => {
     logs += `${l[2]}OUTPUT: ${_just.string.runnerPath(outFilePath('html'))} (${_just.string.fileSize(fs.statSync(outFilePath('html')).size)})`;
 });
 
+CSS = _just.customCSS(CSS, customCSS == 'false' ? undefined : customCSS);
+
 logs += linklogs; logs += buttonlogs;
 logs += `${l[0]}USED NAMES:${l[1]}"${uniqueNames_.join('", "')}"${l[0]}DATA NAMES:${l[1]}"${dataname.join('", "')}"`;
 console.log('\n\n\n\n\n'+logs);
-fs.writeFileSync(path.join(rootDirA !== '.' ? rootDirA : rootDirB, '_just_data', 'output.txt'), logs, template.charset);
-fs.writeFileSync(path.join(rootDirA !== '.' ? rootDirA : rootDirB, '_just', `${filename.css}.css`), CSS, template.charset);
+const websitepath = rootDirA !== '.' ? rootDirA : rootDirB;
+fs.writeFileSync(path.join(websitepath, '_just_data', 'output.txt'), logs, template.charset);
+fs.writeFileSync(path.join(websitepath, '_just', `${filename.css}.css`), CSS, template.charset);
 fs.writeFileSync(
-    path.join(rootDirA !== '.' ? rootDirA : rootDirB, '_just', `${filename.js}.js`),
-    JS.replace('\'PUBLICOUTPUT\'', publicOutput).replace('fetch("/_just/search")', `fetch("/_just/${dataname[9]}.json")`),
+    path.join(websitepath, '_just', `${filename.js}.js`),
+    JS.replace('\'PUBLICOUTPUT\'', publicOutput).replace('let searchurl = "/_just/search";', `let searchurl = "/_just/${dataname[9]}.json";`),
     template.charset
 );
-fs.writeFileSync(path.join(rootDirA !== '.' ? rootDirA : rootDirB, '_just', `${dataname[9]}.json`), JSON.stringify(mdjson), template.charset);
+fs.writeFileSync(path.join(websitepath, '_just', `${dataname[9]}.json`), JSON.stringify(mdjson), template.charset);
+fs.writeFileSync(path.join(websitepath, '_just', '404.json'), JSON.stringify({
+    "js": filename.js,
+    "css": filename.css,
+    "json": dataname[9]
+}), template.charset)

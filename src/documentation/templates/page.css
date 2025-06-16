@@ -933,7 +933,7 @@ h1, h2, h3 {
 
 .search {
     position: fixed;
-    padding-top: 6px;
+    padding-top: 16px;
     padding-left: 7px;
     padding-right: 7px;
     padding-bottom: 6px;
@@ -944,9 +944,10 @@ h1, h2, h3 {
     align-content: flex-start;
     align-items: flex-start;
     justify-content: flex-start;
+    gap: 10px;
     background-color: var(--md);
-    backdrop-filter: blur(4px) url("#glass-distortion") brightness(0.3);
-    -webkit-backdrop-filter: blur(4px) url("#glass-distortion") brightness(0.3);
+    backdrop-filter: blur(4px) url("#glass") brightness(0.3);
+    -webkit-backdrop-filter: blur(4px) url("#glass") brightness(0.3);
     z-index: -1;
     border-bottom-left-radius: 10px;
     border-bottom-right-radius: 10px;

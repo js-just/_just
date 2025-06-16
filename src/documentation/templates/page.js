@@ -264,18 +264,37 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         return true;
     };
+    let searchurl = "/_just/search";
     sb.addEventListener("input", async () => {
         const sv = sb.value;
         const st = searchString(sv);
         sd.innerHTML = '<span>Loading...</span>';
         updateSD(st);
+        const pta = '<br>Please try again';
         if (st) {
-            const response = await fetch("/_just/search").catch((err__)=>{
+            let response = await fetch(searchurl).catch((err__)=>{
                 console.warn(err__);
-                sd.innerHTML = '<span>Failed to fetch.<br>Please try again</span>';
+                sd.innerHTML = `<span>Failed to fetch.${pta}</span>`;
                 return
             });
-            const data = await response.json();
+            let data = await response.json().catch((err__)=>{
+                console.warn(err__);
+                sd.innerHTML = `<span>Something went wrong.${pta}</span>`;
+                return
+            });
+            if (data.json) {
+                searchurl = data.json;
+                response = await fetch(searchurl).catch((err__)=>{
+                    console.warn(err__);
+                    sd.innerHTML = `<span>Failed to fetch.${pta}</span>`;
+                    return
+                });
+                data = await response.json().catch((err__)=>{
+                    console.warn(err__);
+                    sd.innerHTML = `<span>Something went wrong.${pta}</span>`;
+                    return
+                });
+            }
             const searchdata = search2(data, sv);
             if (searchdata.length == 0) {
                 sd.innerHTML = '<span>Nothing found.</span>';

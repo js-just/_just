@@ -150,6 +150,11 @@ elif [ "$TYPE" == "generator" ]; then
     HTML=$(cat "$GITHUB_ACTION_PATH/src/documentation/templates/page.html")
     CSS=$(cat "$GITHUB_ACTION_PATH/src/documentation/templates/page.css")
     JS=$(cat "$GITHUB_ACTION_PATH/src/documentation/templates/page.js")
+    CUSTOMCSS=false
+    CUSTOMCSSPATH="just.config.css"
+    if [ -f "$CUSTOMCSSPATH" ]; then
+        CUSTOMCSS=$(cat "$CUSTOMCSSPATH")
+    fi
     if [[ -d "_just" && "$_just_d" == "no" ]]; then
         local ERROR_MESSAGE=$(ErrorMessage "important_dirs" "0121")
         echo "$ERROR_MESSAGE" && exit 1
@@ -158,7 +163,7 @@ elif [ "$TYPE" == "generator" ]; then
     mkdir -p deploy && \
     installNodejs && \
     bash $GITHUB_ACTION_PATH/src/documentation/checks.sh && \
-    node "$GITHUB_ACTION_PATH/src/documentation/index.js" "$HTML" "$CSS" "$JS" "$INPUT_PATH" "$GITHUB_REPOSITORY" "$GITHUB_REPOSITORY_OWNER" && \
+    node "$GITHUB_ACTION_PATH/src/documentation/index.js" "$HTML" "$CSS" "$JS" "$INPUT_PATH" "$GITHUB_REPOSITORY" "$GITHUB_REPOSITORY_OWNER" "$CUSTOMCSS" && \
     node $GITHUB_ACTION_PATH/src/compress.js "$INPUT_PATH" && \
     node "$GITHUB_ACTION_PATH/src/documentation/logs.js" "$INPUT_PATH" && \
     echo "$msg9"
