@@ -68,7 +68,7 @@
         },
         {
             "code": "0111",
-            "message": "Invalid value of property \"type\" in just.config.js. It must be one of: \"postprocessor\", \"redirector\", \"compressor\".",
+            "message": "Invalid value of property \"type\" in just.config.js. It must be one of: \"postprocessor\", \"redirect\", \"compress\", \"docs\".",
             "crashed": true,
             "link": ""
         },

@@ -22,10 +22,10 @@
 
 #!/bin/bash
 mkdir -p test
-CONFIG=$(cat "tests/compressor.js")
-HTML=$(cat "website/index.html")
+CONFIG=$(cat "tests/docs.js")
+MARKDOWN=$(cat "tests/docs.md")
 rm -f "just.config.js"
 rm -r "website"
 rm -r "data"
 echo "$CONFIG" > "just.config.js"
-echo "$HTML" > "test/index.html"
+echo "$MARKDOWN" > "test/index.md"

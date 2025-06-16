@@ -91,7 +91,7 @@ findAndCompressFiles(deployDir);
 EXAMPLE just.config.js FILE to minify js, css, html files in your static website:
 
 module.exports = {
-    type: "compressor"
+    type: "compress"
 }
 
 */

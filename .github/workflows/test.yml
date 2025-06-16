@@ -21,6 +21,7 @@ jobs:
           path: website
   commit:
     runs-on: ubuntu-latest
+    needs: build
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -30,7 +31,7 @@ jobs:
           source-directory: "website"
           destination-github-username: js-just
           destination-repository-name: test
-          user-email: "actions@github.com"
-          user-name: "GitHub Actions"
+          user-email: "support@juststudio.is-a.dev"
+          target-branch: main
         env:
           API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}

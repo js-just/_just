@@ -82,13 +82,13 @@ if [ -z "$TYPE" ]; then
     echo "$ERROR_MESSAGE" && exit 1
 fi
 
-if [[ "$TYPE" != "postprocessor" && "$TYPE" != "redirector" && "$TYPE" != "compressor" && "$TYPE" != "generator" ]]; then
+if [[ "$TYPE" != "postprocessor" && "$TYPE" != "redirect" && "$TYPE" != "compress" && "$TYPE" != "docs" ]]; then
     ERROR_MESSAGE=$(ErrorMessage "run.sh" "0111")
     echo "$ERROR_MESSAGE" && exit 1
 fi
 
 _just_d="no" && \
-if [[ "$TYPE" != "compressor" && ! ( "$TYPE" == "generator" && "$INPUT_PATH" != "." ) ]]; then
+if [[ "$TYPE" != "compress" && ! ( "$TYPE" == "docs" && "$INPUT_PATH" != "." ) ]]; then
     if [ -d "deploy" ]; then
         ERROR_MESSAGE=$(ErrorMessage "important_dirs" "0106")
         echo "$ERROR_MESSAGE" && exit 1
@@ -99,7 +99,7 @@ if [[ "$TYPE" != "compressor" && ! ( "$TYPE" == "generator" && "$INPUT_PATH" != 
     fi
     mkdir -p deploy
     mkdir -p _just_data
-elif [ "$TYPE" == "generator" ]; then
+elif [ "$TYPE" == "docs" ]; then
     JDD=$(echo "$INPUT_PATH/_just_data" | sed 's#//*#/#g')
     _just_dir=$(echo "$INPUT_PATH/_just" | sed 's#//*#/#g')
     if [ -d "$JDD" ]; then
@@ -135,18 +135,18 @@ if [ "$TYPE" == "postprocessor" ]; then
     node $GITHUB_ACTION_PATH/src/compress.js "deploy" && \
     bash $GITHUB_ACTION_PATH/src/postprocessor/build_map.sh && \
     echo "$msg4"
-elif [ "$TYPE" == "redirector" ]; then
+elif [ "$TYPE" == "redirect" ]; then
     mkdir -p deploy/_just
     installNodejs && \
     bash $GITHUB_ACTION_PATH/src/redirect/checks.sh && \
     node $GITHUB_ACTION_PATH/src/redirect/index.js && \
     echo "$msg5"
-elif [ "$TYPE" == "compressor" ]; then
+elif [ "$TYPE" == "compress" ]; then
     mkdir -p deploy && \
     installNodejs && \
     node $GITHUB_ACTION_PATH/src/compress.js "$INPUT_PATH" && \
     echo "$msg6"
-elif [ "$TYPE" == "generator" ]; then
+elif [ "$TYPE" == "docs" ]; then
     HTML=$(cat "$GITHUB_ACTION_PATH/src/documentation/templates/page.html")
     CSS=$(cat "$GITHUB_ACTION_PATH/src/documentation/templates/page.css")
     JS=$(cat "$GITHUB_ACTION_PATH/src/documentation/templates/page.js")
