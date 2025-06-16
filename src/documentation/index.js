@@ -33,7 +33,7 @@ _just.string = require('../modules/string.js');
 _just.element = (type, insert) => `<_just${type ? ` element="${type}"` : ''}>${insert || ''}</_just>`;
 _just.error = require('../modules/errmsg.js');
 _just.ssapi = require('../modules/ssapi.js');
-_just.customCSS = require('./customcss.js').customcss;
+_just.customCSS = require('./customcss.js');
 
 const link = (text, link_, ext = false, extid = "ext", target = "_blank") => `<a href="${link_}" target="${target}"${ext ? ` id="${extid}"` : ''}>${text}</a>`;
 const span = (text) => `<span>${text}</span>`;
@@ -765,7 +765,7 @@ markdownFiles.forEach(file => {
     logs += `${l[2]}OUTPUT: ${_just.string.runnerPath(outFilePath('html'))} (${_just.string.fileSize(fs.statSync(outFilePath('html')).size)})`;
 });
 
-CSS = _just.customCSS(CSS, customCSS == 'false' ? undefined : customCSS);
+CSS = _just.customCSS.customcss(CSS, customCSS == 'false' ? undefined : customCSS);
 
 logs += linklogs; logs += buttonlogs;
 logs += `${l[0]}USED NAMES:${l[1]}"${uniqueNames_.join('", "')}"${l[0]}DATA NAMES:${l[1]}"${dataname.join('", "')}"`;
