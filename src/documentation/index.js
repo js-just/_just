@@ -779,7 +779,7 @@ fs.writeFileSync(
     template.charset
 );
 fs.writeFileSync(path.join(websitepath, '_just', `${dataname[9]}.json`), JSON.stringify(mdjson), template.charset);
-fs.writeFileSync(path.join(websitepath, '_just', '404.json'), JSON.stringify({
+fs.writeFileSync(path.join(websitepath, '_just', 'index.json'), JSON.stringify({
     "js": filename.js,
     "css": filename.css,
     "json": dataname[9]
