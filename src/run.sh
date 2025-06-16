@@ -25,86 +25,95 @@ ERRORS_FILE="$GITHUB_ACTION_PATH/data/codes.json"
 CONFIG_FILE="just.config.js"
 CONFIG_DATA="just.config.json"
 source $GITHUB_ACTION_PATH/src/modules/errmsg.sh
+source $GITHUB_ACTION_PATH/src/modules/color.sh
 if [ "$INPUT_PATH" == ""]; then
   INPUT_PATH="."
 elif [ -z "$INPUT_PATH" ]; then
   INPUT_PATH="."
 fi
 
-VERSION=$(echo "$GITHUB_ACTION_PATH" | grep -oP '(?<=/v)[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9]+)?')
-msg1=$(_justMessage "Running Just an Ultimate Site Tool v$VERSION")
-msg2=$(_justMessage "Installing Node.js")
-msg3=$(_justMessage "Installed Node.js")
-msg4=$(_justMessage "Postprocessing completed")
-msg5=$(_justMessage "Generating completed")
-msg6=$(_justMessage "Compressing completed")
-msg9=$(_justMessage "Generating completed")
-echo "$msg1"
+VERSION=$(echo "$GITHUB_ACTION_PATH" | grep -oP '(?<=/v)[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9]+)?') || $GITHUB_SHA
+msg1=$(_justMessage "$_PURPLE Running Just an Ultimate Site Tool$_DARKGRAY v$VERSION$_RESET")
+msg2=$(_justMessage "$_BLUE Installing Node.js$_RESET")
+msg3=$(_justMessage "$_BLUE Installed Node.js$_RESET")
+msg4=$(_justMessage "$_GREEN Postprocessing completed$_RESET")
+msg5=$(_justMessage "$_GREEN Generating completed$_RESET")
+msg6=$(_justMessage "$_GREEN Compressing completed$_RESET")
+msg9=$(_justMessage "$_GREEN Generating completed$_RESET")
+echo -e "$msg1"
 
 installNodejs() {
-    echo "$msg2"
-    sudo apt-get remove -y nodejs npm || true
-    sudo apt-get update -qq
-    curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
-    sudo apt-get install -y nodejs
+    echo -e "$msg2"
+    sudo apt-get remove -y nodejs npm > /dev/null 2>&1 || true
+    sudo apt-get update -qq > /dev/null 2>&1
+    curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash - > /dev/null 2>&1
+    sudo apt-get install -y nodejs > /dev/null 2>&1
     if ! command -v node > /dev/null; then
-        local ERROR_MESSAGE=$(ErrorMessage "run.sh" "0205")
-        echo "$ERROR_MESSAGE"
-        sudo apt update -qq && sudo apt install -y nodejs npm > /dev/null 2>&1
-        if [ $? -ne 0 ]; then
-            local ERROR_MESSAGE=$(ErrorMessage "run.sh" "0205")
-            echo "$ERROR_MESSAGE"
-            sudo apt update
-            sudo apt install -y nodejs npm
+        local ERROR_MESSAGE=$(ErrorMessage "run.sh" "0207")
+        echo -e "$ERROR_MESSAGE"
+        sudo apt-get remove -y nodejs npm || true
+        sudo apt-get update -qq
+        curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+        sudo apt-get install -y nodejs
+        if ! command -v node > /dev/null; then
+            local ERROR_MESSAGE=$(ErrorMessage "run.sh" "0208")
+            echo -e "$ERROR_MESSAGE"
+            sudo apt update -qq && sudo apt install -y nodejs npm > /dev/null 2>&1
+            if [ $? -ne 0 ]; then
+                local ERROR_MESSAGE=$(ErrorMessage "run.sh" "0205")
+                echo -e "$ERROR_MESSAGE"
+                sudo apt update
+                sudo apt install -y nodejs npm
+            fi
         fi
     fi
-    echo "$msg3"
+    echo -e "$msg3"
     node --version
 }
 
 if [ -f "$CONFIG_DATA" ]; then
     ERROR_MESSAGE=$(ErrorMessage "run.sh" "0113")
-    echo "$ERROR_MESSAGE" && exit 1
+    echo -e "$ERROR_MESSAGE" && exit 1
 fi
 
 if [ ! -f "$CONFIG_FILE" ]; then
     ERROR_MESSAGE=$(ErrorMessage "run.sh" "0108")
-    echo "$ERROR_MESSAGE" && exit 1
+    echo -e "$ERROR_MESSAGE" && exit 1
 fi
 
 CONFIG_JSON=$(node -e "console.log(JSON.stringify(require('./just.config.js')));")
 if [ $? -ne 0 ]; then
     ERROR_MESSAGE=$(ErrorMessage "run.sh" "0109")
-    echo "$ERROR_MESSAGE" && exit 1
+    echo -e "$ERROR_MESSAGE" && exit 1
 fi
 echo "Parsed just.config.js module.exports: $CONFIG_JSON" # debug
 echo "$CONFIG_JSON" > "$CONFIG_DATA"
 
 if [ -z "$(echo "$CONFIG_JSON" | jq -r '.module.exports')" ]; then
     ERROR_MESSAGE=$(ErrorMessage "run.sh" "0112")
-    echo "$ERROR_MESSAGE" && exit 1
+    echo -e "$ERROR_MESSAGE" && exit 1
 fi
 
 TYPE=$(echo "$CONFIG_JSON" | jq -r '.type')
 if [ -z "$TYPE" ]; then
     ERROR_MESSAGE=$(ErrorMessage "run.sh" "0110")
-    echo "$ERROR_MESSAGE" && exit 1
+    echo -e "$ERROR_MESSAGE" && exit 1
 fi
 
 if [[ "$TYPE" != "postprocessor" && "$TYPE" != "redirect" && "$TYPE" != "compress" && "$TYPE" != "docs" ]]; then
     ERROR_MESSAGE=$(ErrorMessage "run.sh" "0111")
-    echo "$ERROR_MESSAGE" && exit 1
+    echo -e "$ERROR_MESSAGE" && exit 1
 fi
 
 _just_d="no" && \
 if [[ "$TYPE" != "compress" && ! ( "$TYPE" == "docs" && "$INPUT_PATH" != "." ) ]]; then
     if [ -d "deploy" ]; then
         ERROR_MESSAGE=$(ErrorMessage "important_dirs" "0106")
-        echo "$ERROR_MESSAGE" && exit 1
+        echo -e "$ERROR_MESSAGE" && exit 1
     fi
     if [ -d "_just_data" ]; then
         ERROR_MESSAGE=$(ErrorMessage "important_dirs" "0107")
-        echo "$ERROR_MESSAGE" && exit 1
+        echo -e "$ERROR_MESSAGE" && exit 1
     fi
     mkdir -p deploy
     mkdir -p _just_data
@@ -113,11 +122,11 @@ elif [ "$TYPE" == "docs" ]; then
     _just_dir=$(echo "$INPUT_PATH/_just" | sed 's#//*#/#g')
     if [ -d "$JDD" ]; then
         ERROR_MESSAGE=$(ErrorMessage "important_dirs" "0125")
-        echo "$ERROR_MESSAGE" && exit 1
+        echo -e "$ERROR_MESSAGE" && exit 1
     fi
     if [ -d "$_just_dir" ]; then
         ERROR_MESSAGE=$(ErrorMessage "important_dirs" "0125")
-        echo "$ERROR_MESSAGE" && exit 1
+        echo -e "$ERROR_MESSAGE" && exit 1
     fi
     mkdir -p "$JDD"
     mkdir -p "$_just_dir"
@@ -133,7 +142,7 @@ if [ "$TYPE" == "postprocessor" ]; then
             if [ "$postprocessor_checks" == "0101" ]; then 
                 ERROR_MESSAGE=$(ErrorMessage "postprocessor/checks.sh" "0101")
             fi
-            echo "$ERROR_MESSAGE" && exit 1
+            echo -e "$ERROR_MESSAGE" && exit 1
         fi
     } && \
     bash $GITHUB_ACTION_PATH/src/postprocessor/prepare_deployment.sh && \
@@ -143,18 +152,18 @@ if [ "$TYPE" == "postprocessor" ]; then
     installNodejs && \
     node $GITHUB_ACTION_PATH/src/compress.js "deploy" && \
     bash $GITHUB_ACTION_PATH/src/postprocessor/build_map.sh && \
-    echo "$msg4"
+    echo -e "$msg4"
 elif [ "$TYPE" == "redirect" ]; then
     mkdir -p deploy/_just
     installNodejs && \
     bash $GITHUB_ACTION_PATH/src/redirect/checks.sh && \
     node $GITHUB_ACTION_PATH/src/redirect/index.js && \
-    echo "$msg5"
+    echo -e "$msg5"
 elif [ "$TYPE" == "compress" ]; then
     mkdir -p deploy && \
     installNodejs && \
     node $GITHUB_ACTION_PATH/src/compress.js "$INPUT_PATH" && \
-    echo "$msg6"
+    echo -e "$msg6"
 elif [ "$TYPE" == "docs" ]; then
     HTML=$(cat "$GITHUB_ACTION_PATH/src/documentation/templates/page.html")
     CSS=$(cat "$GITHUB_ACTION_PATH/src/documentation/templates/page.css")
@@ -166,7 +175,7 @@ elif [ "$TYPE" == "docs" ]; then
     fi
     if [[ -d "_just" && "$_just_d" == "no" ]]; then
         local ERROR_MESSAGE=$(ErrorMessage "important_dirs" "0121")
-        echo "$ERROR_MESSAGE" && exit 1
+        echo -e "$ERROR_MESSAGE" && exit 1
     fi && \
     mkdir -p _just && \
     mkdir -p deploy && \
@@ -175,5 +184,5 @@ elif [ "$TYPE" == "docs" ]; then
     node "$GITHUB_ACTION_PATH/src/documentation/index.js" "$HTML" "$CSS" "$JS" "$INPUT_PATH" "$GITHUB_REPOSITORY" "$GITHUB_REPOSITORY_OWNER" "$CUSTOMCSS" && \
     node $GITHUB_ACTION_PATH/src/compress.js "$INPUT_PATH" && \
     node "$GITHUB_ACTION_PATH/src/documentation/logs.js" "$INPUT_PATH" && \
-    echo "$msg9"
+    echo -e "$msg9"
 fi

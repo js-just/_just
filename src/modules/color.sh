@@ -21,32 +21,36 @@
 # SOFTWARE.
 
 #!/bin/bash
-ERRORS_FILE="$GITHUB_ACTION_PATH/data/codes.json"
-ERROR_PREFIX="Just an Ultimate Site Tool"
-NEWLINES="\n\n\n\n"
-source $GITHUB_ACTION_PATH/src/modules/color.sh
+_RESET='\033[0m'
+_RED='\033[0;31m'
+_GREEN='\033[0;32m'
+_ORANGE='\033[0;33m'
+_BLUE='\033[0;34m'
+_PURPLE='\033[0;35m'
+_CYAN='\033[0;36m'
+_LIGHTGRAY='\033[0;37m'
+_DARKGRAY='\033[1;30m'
+_LIGHTRED='\033[1;31m'
+_LIGHTGREEN='\033[1;32m'
+_YELLOW='\033[1;33m'
+_LIGHTBLUE='\033[1;34m'
+_LIGHTPURPLE='\033[1;35m'
+_LIGHTCYAN='\033[1;36m'
+_WHITE='\033[1;37m'
 
-ErrorMessage() {
-    local ERROR_CODE=$2
-    local ERROR_MESSAGE=${3:-$(jq -r ".[\"$1\"][] | select(.code==\"$ERROR_CODE\") | .message" "$ERRORS_FILE")}
-    local ERROR_LINK=$(jq -r ".[\"$1\"][] | select(.code==\"$ERROR_CODE\") | .link" "$ERRORS_FILE")
-    local ERROR_TYPE="Error"
-    local ERROR_COLOR=$_RED
-    if [[ $ERROR_CODE == 02* ]]; then
-        ERROR_TYPE="Warning"
-        ERROR_COLOR=$_YELLOW
-    fi
-    echo -e "$NEWLINES$ERROR_COLOR$ERROR_PREFIX: $ERROR_TYPE $ERROR_CODE: $ERROR_MESSAGE $ERROR_LINK$_RESET$NEWLINES"
-}
-
-_justMessage() {
-    local MESSAGE=$1
-    echo -e "$NEWLINES$ERROR_PREFIX: INFO:$MESSAGE $NEWLINES"
-}
-
-customErrorMessage() {
-    echo -e "$NEWLINES$ERROR_PREFIX: $1 $2: $3 $NEWLINES"
-}
-
-export -f ErrorMessage
-export -f _justMessage
+export _RESET
+export _RED
+export _GREEN
+export _ORANGE
+export _BLUE
+export _PURPLE
+export _CYAN
+export _LIGHTGRAY
+export _DARKGRAY
+export _LIGHTRED
+export _LIGHTGREEN
+export _YELLOW
+export _LIGHTBLUE
+export _LIGHTPURPLE
+export _LIGHTCYAN
+export _WHITE
