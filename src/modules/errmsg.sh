@@ -22,8 +22,8 @@
 
 #!/bin/bash
 ERRORS_FILE="$GITHUB_ACTION_PATH/data/codes.json"
-ERROR_PREFIX="_just"
 source $GITHUB_ACTION_PATH/src/modules/color.sh
+ERROR_PREFIX="_just"
 
 ErrorMessage() {
     local ERROR_CODE=$2
@@ -37,16 +37,16 @@ ErrorMessage() {
         ERROR_COLOR=$_YELLOW
         ERROR_PREFIX_COLOR=$_ORANGE
     fi
-    echo -e "$_PURPLE$ERROR_PREFIX: $ERROR_PREFIX_COLOR$ERROR_TYPE $ERROR_COLOR$ERROR_CODE: $ERROR_MESSAGE $ERROR_LINK$_RESET"
+    echo -e "$_LIGHTPURPLE_BG$_DARKGRAY$ERROR_PREFIX$_RESET: $ERROR_PREFIX_COLOR$ERROR_TYPE $ERROR_COLOR$ERROR_CODE: $ERROR_MESSAGE $ERROR_LINK$_RESET"
 }
 
 _justMessage() {
     local MESSAGE=$1
-    echo -e "$_PURPLE$ERROR_PREFIX:$_CYAN INFO:$_RESET$MESSAGE"
+    echo -e "$_LIGHTPURPLE_BG$_DARKGRAY$ERROR_PREFIX$_RESET:$_CYAN INFO:$_RESET$MESSAGE"
 }
 
 customErrorMessage() {
-    echo -e "$_PURPLE$ERROR_PREFIX: $_RESET$1 $2: $3"
+    echo -e "$_LIGHTPURPLE_BG$_DARKGRAY$ERROR_PREFIX$_RESET: $_RESET$1 $2: $3"
 }
 
 export -f ErrorMessage

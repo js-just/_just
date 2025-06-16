@@ -186,3 +186,5 @@ elif [ "$TYPE" == "docs" ]; then
     node "$GITHUB_ACTION_PATH/src/documentation/logs.js" "$INPUT_PATH" && \
     echo -e "$msg9"
 fi
+
+echo "" > "website/.nojekyll"

@@ -54,3 +54,9 @@ export _LIGHTBLUE
 export _LIGHTPURPLE
 export _LIGHTCYAN
 export _WHITE
+
+_LIGHTPURPLE_BG='\033[2;45m'
+_ORANGE_BG='\033[2;41m'
+
+export _LIGHTPURPLE_BG
+export _ORANGE_BG

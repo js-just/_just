@@ -23,7 +23,7 @@ jobs:
         with:
           path: website
       - name: CNAME
-        run: echo "test.just.is-a.dev" > "website/CNAME" && echo "" > "website/.nojekyll"
+        run: echo "test.just.is-a.dev" > "website/CNAME"
         shell: bash
       - uses: actions/setup-node@v4
       - name: Commit
