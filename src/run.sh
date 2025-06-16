@@ -51,6 +51,7 @@ installNodejs() {
         sudo apt install -y nodejs npm
     fi
     echo "$msg3"
+    node --version
 }
 
 if [ -f "$CONFIG_DATA" ]; then
