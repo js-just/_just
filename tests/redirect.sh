@@ -22,7 +22,6 @@
 
 #!/bin/bash
 mkdir -p test
-CONFIG=$(cat "tests/redirect.js")
 rm -f "just.config.js"
 rm -r "website"
-echo "$CONFIG" > "just.config.js"
+cp "tests/redirect.js" "just.config.js"

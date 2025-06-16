@@ -22,9 +22,7 @@
 
 #!/bin/bash
 mkdir -p test
-CONFIG=$(cat "tests/compress.js")
-HTML=$(cat "website/index.html")
 rm -f "just.config.js"
 rm -r "website"
-echo "$CONFIG" > "just.config.js"
-echo "$HTML" > "test/index.html"
+cp "tests/compress.js" "just.config.js"
+cp "website/index.html" "test/index.html"

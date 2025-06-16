@@ -15,6 +15,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Prepare
+        run: rm -f "website/index.html" && cp "website/test.md" "website/index.md" && rm -f "website/test.md"
+        shell: bash
       - name: Generate with _just
         uses: js-just/_just@main
         with:
