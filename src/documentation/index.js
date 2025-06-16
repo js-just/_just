@@ -778,6 +778,22 @@ fs.writeFileSync(
     JS.replace('\'PUBLICOUTPUT\'', publicOutput).replace('let searchurl = "/_just/search";', `let searchurl = "/_just/${dataname[9]}.json";`),
     template.charset
 );
+const fetchjson = async (protocol) => {
+    const response1 = await fetch(`${protocol}://${domain}/_just/`);
+    const data1 = await response1.json();
+    const response2 = await fetch(`${protocol}://${domain}/_just/${data1.json}.json`);
+    const data2 = await response2.json();
+    fs.writeFileSync(path.join(websitepath, '_just', `${data1.json}.json`), JSON.stringify(data2));
+}
+if (domain) {
+    try {
+        await fetchjson('http')
+    } catch (ee) {
+        try {
+            await fetchjson('https')
+        } catch (e_e) {}
+    }
+}
 fs.writeFileSync(path.join(websitepath, '_just', `${dataname[9]}.json`), JSON.stringify(mdjson), template.charset);
 fs.writeFileSync(path.join(websitepath, '_just', 'index.json'), JSON.stringify({
     "js": filename.js,

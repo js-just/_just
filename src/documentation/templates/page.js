@@ -272,29 +272,16 @@ document.addEventListener('DOMContentLoaded', () => {
         updateSD(st);
         const pta = '<br>Please try again';
         if (st) {
-            let response = await fetch(searchurl).catch((err__)=>{
+            const response = await fetch(searchurl).catch((err__)=>{
                 console.warn(err__);
                 sd.innerHTML = `<span>Failed to fetch.${pta}</span>`;
                 return
             });
-            let data = await response.json().catch((err__)=>{
+            const data = await response.json().catch((err__)=>{
                 console.warn(err__);
                 sd.innerHTML = `<span>Something went wrong.${pta}</span>`;
                 return
             });
-            if (data.json) {
-                searchurl = data.json;
-                response = await fetch(searchurl).catch((err__)=>{
-                    console.warn(err__);
-                    sd.innerHTML = `<span>Failed to fetch.${pta}</span>`;
-                    return
-                });
-                data = await response.json().catch((err__)=>{
-                    console.warn(err__);
-                    sd.innerHTML = `<span>Something went wrong.${pta}</span>`;
-                    return
-                });
-            }
             const searchdata = search2(data, sv);
             if (searchdata.length == 0) {
                 sd.innerHTML = '<span>Nothing found.</span>';
