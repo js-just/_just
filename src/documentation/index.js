@@ -800,3 +800,4 @@ fs.writeFileSync(path.join(websitepath, '_just', 'index.json'), JSON.stringify({
     "css": filename.css,
     "json": dataname[9]
 }), template.charset)
+fs.writeFileSync(path.join(websitepath, '.', '.nojekyll'), '', template.charset)
