@@ -19,6 +19,9 @@ jobs:
         uses: js-just/_just@main
         with:
           path: website
+      - name: CNAME
+        run: echo "test.just.is-a.dev" > "website/CNAME"
+        shell: bash
       - uses: actions/setup-node@v4
       - name: Commit
         uses: cpina/github-action-push-to-another-repository@main
