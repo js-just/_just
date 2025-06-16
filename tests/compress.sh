@@ -22,7 +22,7 @@
 
 #!/bin/bash
 mkdir -p test
+cp "website/index.html" "test/index.html"
 rm -f "just.config.js"
 rm -r "website"
 cp "tests/compress.js" "just.config.js"
-cp "website/index.html" "test/index.html"
