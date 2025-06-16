@@ -22,7 +22,7 @@
 
 #!/bin/bash
 ERRORS_FILE="$GITHUB_ACTION_PATH/data/codes.json"
-ERROR_PREFIX="Just an Ultimate Site Tool"
+ERROR_PREFIX="_just"
 source $GITHUB_ACTION_PATH/src/modules/color.sh
 
 ErrorMessage() {
