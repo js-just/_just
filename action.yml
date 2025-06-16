@@ -24,7 +24,7 @@ name: '_just'
 description: 'Just an Ultimate Site Tool.'
 author: 'JustStudio.'
 branding:
-  icon: 'tool'
+  icon: 'edit-3'
   color: 'purple'
 inputs:
   path:
