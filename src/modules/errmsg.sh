@@ -23,7 +23,6 @@
 #!/bin/bash
 ERRORS_FILE="$GITHUB_ACTION_PATH/data/codes.json"
 ERROR_PREFIX="Just an Ultimate Site Tool"
-NEWLINES="\n\n\n\n"
 source $GITHUB_ACTION_PATH/src/modules/color.sh
 
 ErrorMessage() {
@@ -32,20 +31,22 @@ ErrorMessage() {
     local ERROR_LINK=$(jq -r ".[\"$1\"][] | select(.code==\"$ERROR_CODE\") | .link" "$ERRORS_FILE")
     local ERROR_TYPE="Error"
     local ERROR_COLOR=$_RED
+    local ERROR_PREFIX_COLOR=$_LIGHTRED
     if [[ $ERROR_CODE == 02* ]]; then
         ERROR_TYPE="Warning"
         ERROR_COLOR=$_YELLOW
+        ERROR_PREFIX_COLOR=$_ORANGE
     fi
-    echo -e "$NEWLINES$ERROR_COLOR$ERROR_PREFIX: $ERROR_TYPE $ERROR_CODE: $ERROR_MESSAGE $ERROR_LINK$_RESET$NEWLINES"
+    echo -e "$_PURPLE$ERROR_PREFIX: $ERROR_PREFIX_COLOR$ERROR_TYPE $ERROR_COLOR$ERROR_CODE: $ERROR_MESSAGE $ERROR_LINK$_RESET"
 }
 
 _justMessage() {
     local MESSAGE=$1
-    echo -e "$NEWLINES$ERROR_PREFIX: INFO:$MESSAGE $NEWLINES"
+    echo -e "$_PURPLE$ERROR_PREFIX:$_CYAN INFO:$_RESET$MESSAGE"
 }
 
 customErrorMessage() {
-    echo -e "$NEWLINES$ERROR_PREFIX: $1 $2: $3 $NEWLINES"
+    echo -e "$_PURPLE$ERROR_PREFIX: $_RESET$1 $2: $3"
 }
 
 export -f ErrorMessage
