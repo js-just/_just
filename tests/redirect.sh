@@ -25,5 +25,4 @@ mkdir -p test
 CONFIG=$(cat "tests/redirect.js")
 rm -f "just.config.js"
 rm -r "website"
-rm -r "data"
 echo "$CONFIG" > "just.config.js"

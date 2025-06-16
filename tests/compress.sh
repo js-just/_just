@@ -26,6 +26,5 @@ CONFIG=$(cat "tests/compress.js")
 HTML=$(cat "website/index.html")
 rm -f "just.config.js"
 rm -r "website"
-rm -r "data"
 echo "$CONFIG" > "just.config.js"
 echo "$HTML" > "test/index.html"

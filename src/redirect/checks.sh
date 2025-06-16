@@ -46,7 +46,7 @@ validate_paths() {
         for path in $paths; do
             local url=$(echo "$path" | jq -r '.url')
             local path_=$(echo "$path" | jq -r '.path_')
-            if [[ -z "$url"]]; then
+            if [[ -z "$url" ]]; then
                 local ERROR_MESSAGE=$(customErrorMessage "Error" "0115" "Missing \"url\" in item #$countt in \"paths\" in \"redirect_config\" in \"module.exports\" at \"just.config.js\" file.")
                 echo -e "$_RED$ERROR_MESSAGE$_RESET" && exit 1
             elif [[ -z "$path_" ]]; then

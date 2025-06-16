@@ -26,6 +26,5 @@ CONFIG=$(cat "tests/docs.js")
 MARKDOWN=$(cat "tests/docs.md")
 rm -f "just.config.js"
 rm -r "website"
-rm -r "data"
 echo "$CONFIG" > "just.config.js"
 echo "$MARKDOWN" > "test/index.md"
