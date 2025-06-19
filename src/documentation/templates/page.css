@@ -963,3 +963,13 @@ h1, h2, h3 {
         text-align: center;
     }
 }
+
+.line-through {
+    text-decoration: line-through;
+}
+mark {
+    background-color: var(--wt);
+    padding-left: 2px;
+    padding-right: 2px;
+    border-radius: 5px;
+}
