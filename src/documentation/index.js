@@ -35,7 +35,7 @@ _just.error = require('../modules/errmsg.js');
 _just.ssapi = require('../modules/ssapi.js');
 _just.customCSS = require('./customcss.js');
 
-const link = (text, link_, ext = false, extid = "ext", target = "_blank") => `<a href="${link_}" target="${target}"${ext ? ` id="${extid}"` : ''}>${text}</a>`;
+const link = (text, link_, ext = false, extid = "ext", target = "_blank", title_) => `<a href="${link_}" target="${target}"${ext ? ` id="${extid}"` : ''}${title_ ? ` title="${title_}"` : ''}>${text}</a>`;
 const span = (text) => `<span>${text}</span>`;
 const template = {
     "charset": "utf-8",
@@ -117,7 +117,8 @@ const cssclass = {
     "ios": dataname[4]+randomChar(1),
     "scroll": dataname[4]+randomChar(1),
     "stb": dataname[4]+randomChar(1),
-    "underline": dataname[3]
+    "underline": dataname[3],
+    "line-through": dataname[4],
 }
 const cssid = {
     "l": dataname[5]+randomChar(1),
@@ -365,41 +366,644 @@ const MDcode = (input) => {
         .replaceAll('_', `&#${'_'.charCodeAt(0)};`)
 }
 const linkregex = /(?<=\s|^|[.,!?;:*_])\[(.*?)\]\((.*?)\)(?=\s|[.,!?;:*_]|$)/g;
-const biMDtoHTML = (input) => {
+const biMDtoHTML = (input) => { // SH#TCODE WARNING!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     let text = MDescape(input);
 
     text = text.replace(/```([\w]*)[\r\n]+([\S\s]*?)```/g, `<code class="${cssclass.code}">$2</code>`);
     text = text.replace(/(?<=\s|^|[.,!?;:*_])`(.*?)`(?=\s|[.,!?;:*_]|$)/g, (match, code) => {return `<code>${MDcode(code)}</code>`});
-    text = text.replace(linkregex, (match, text, link_) => {return link(text, link_, extlink(link_), cssid.ext)});
 
+    text = text.replace(/(?<=\s|^|[.,!?;:*_])!\[(.*?)\]\((.*?) ("|')(.*?)\3\)(?=\s|[.,!?;:*_]|$)/g, (match, text, link_, q, imgtitle) => {return `<img src="${link_}" alt="${text}" title="${imgtitle}" loading="lazy">`});
+    text = text.replace(/(?<=\s|^|[.,!?;:*_])!\[(.*?)\]\((.*?)\)(?=\s|[.,!?;:*_]|$)/g, (match, text, link_) => {return `<img src="${link_}" alt="${text}" loading="lazy">`});
+
+    text = text.replace(/(?<=\s|^|[.,!?;:*_])\[(.*?)\]\((.*?) ("|')(.*?)\3\)(?=\s|[.,!?;:*_]|$)/g, (match, text, link_, q, linktitle) => {return link(text, link_, extlink(link_), cssid.ext, "_blank", linktitle)});
+    text = text.replace(linkregex, (match, text, link_) => {return link(text, link_, extlink(link_), cssid.ext)});
+    text = text.replace(/(?<=\s|^|[.,!?;:*_])<(http:\/\/|https:\/\/)(.*?)>(?=\s|[.,!?;:*_]|$)/g, (match, protocol_, link_) => {const link__=`${protocol_.trim()}${link_.trim()}`;return link(link__, link__, extlink(link__), cssid.ext)});
+    
+    text = text.replace(/(?<=\s|^|[.,!?;:*_])<(.*?)@(.*?)>(?=\s|[.,!?;:*_]|$)/g, (match, address, domain__) => {
+        try {
+            checkdomain(domain__);
+            const mail = `${address.trim()}@${domain__.trim()}`;
+            return `<a href="mailto:${mail}">${mail}</a>`;
+        } catch (_e_) {
+            return `<${address}@${domain__}>`;
+        }
+    })
+
+
+
+    text = text.replace(/(?<=\s|^|[.,!?;:])==~~__\*\*\*(.*?)\*\*\*__~~==(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])~~==__\*\*\*(.*?)\*\*\*__==~~(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])~~__==\*\*\*(.*?)\*\*\*==__~~(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])~~__\*==\*\*(.*?)\*\*==\*__~~(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])~~__\*\*==\*(.*?)\*==\*\*__~~(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])~~__\*\*\*==(.*?)==\*\*\*__~~(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])~~__\*\*\*(.*?)\*\*\*__~~(?=\s|[.,!?;:]|$)/g, `<em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em>`);
+
+    text = text.replace(/(?<=\s|^|[.,!?;:])==__~~\*\*\*(.*?)\*\*\*~~__==(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])__==~~\*\*\*(.*?)\*\*\*~~==__(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])__~~==\*\*\*(.*?)\*\*\*==~~__(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])__~~\*==\*\*(.*?)\*\*==\*~~__(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])__~~\*\*==\*(.*?)\*==\*\*~~__(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])__~~\*\*\*==(.*?)==\*\*\*~~__(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])__~~\*\*\*(.*?)\*\*\*~~__(?=\s|[.,!?;:]|$)/g, `<em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em>`);
+
+    text = text.replace(/(?<=\s|^|[.,!?;:])==__\*~~\*\*(.*?)\*\*~~\*__==(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])__==\*~~\*\*(.*?)\*\*~~\*==__(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])__\*==~~\*\*(.*?)\*\*~~==\*__(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])__\*~~==\*\*(.*?)\*\*==~~\*__(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])__\*~~\*\*==(.*?)==\*\*~~\*__(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])__\*~~\*\*(.*?)\*\*~~\*__(?=\s|[.,!?;:]|$)/g, `<em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em>`);
+
+    text = text.replace(/(?<=\s|^|[.,!?;:])==__\*\*~~\*(.*?)\*~~\*\*__==(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])__==\*\*~~\*(.*?)\*~~\*\*==__(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])__\*\*==~~\*(.*?)\*~~==\*\*__(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])__\*\*~~==\*(.*?)\*==~~\*\*__(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])__\*\*~~\*==(.*?)==\*~~\*\*__(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])__\*\*~~\*(.*?)\*~~\*\*__(?=\s|[.,!?;:]|$)/g, `<em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em>`);
+
+    text = text.replace(/(?<=\s|^|[.,!?;:])==__\*\*\*~~(.*?)~~\*\*\*__==(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])__==\*\*\*~~(.*?)~~\*\*\*==__(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])__\*==\*\*~~(.*?)~~\*\*==\*__(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])__\*\*==\*~~(.*?)~~\*==\*\*__(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])__\*\*\*==~~(.*?)~~==\*\*\*__(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])__\*\*\*~~==(.*?)==~~\*\*\*__(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])__\*\*\*~~(.*?)~~\*\*\*__(?=\s|[.,!?;:]|$)/g, `<em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em>`);
+
+    text = text.replace(/(?<=\s|^|[.,!?;:])==__\*\*\*(.*?)\*\*\*__==(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])__==\*\*\*(.*?)\*\*\*==__(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])__\*==\*\*(.*?)\*\*==\*__(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])__\*\*==\*(.*?)\*==\*\*__(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])__\*\*\*==(.*?)==\*\*\*__(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline}"><strong>$1</strong></em></mark>`);
     text = text.replace(/(?<=\s|^|[.,!?;:])__\*\*\*(.*?)\*\*\*__(?=\s|[.,!?;:]|$)/g, `<em class="${cssclass.underline}"><strong>$1</strong></em>`);
+
+
+    text = text.replace(/(?<=\s|^|[.,!?;:])==~~\*\*\*__(.*?)__\*\*\*~~==(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])~~==\*\*\*__(.*?)__\*\*\*==~~(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])~~\*==\*\*__(.*?)__\*\*==\*~~(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])~~\*\*==\*__(.*?)__\*==\*\*~~(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])~~\*\*\*==__(.*?)__==\*\*\*~~(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])~~\*\*\*__==(.*?)==__\*\*\*~~(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])~~\*\*\*__(.*?)__\*\*\*~~(?=\s|[.,!?;:]|$)/g, `<em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em>`);
+
+    text = text.replace(/(?<=\s|^|[.,!?;:])==\*~~\*\*__(.*?)__\*\*~~\*==(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*==~~\*\*__(.*?)__\*\*~~==\*(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*~~==\*\*__(.*?)__\*\*==~~\*(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*~~\*\*==__(.*?)__==\*\*~~\*(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*~~\*\*__==(.*?)==__\*\*~~\*(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*~~\*\*__(.*?)__\*\*~~\*(?=\s|[.,!?;:]|$)/g, `<em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em>`);
+
+    text = text.replace(/(?<=\s|^|[.,!?;:])==\*\*~~\*__(.*?)__\*~~\*\*==(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*\*==~~\*__(.*?)__\*~~==\*\*(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*\*~~==\*__(.*?)__\*==~~\*\*(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*\*~~\*==__(.*?)__==\*~~\*\*(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*\*~~\*__==(.*?)==__\*~~\*\*(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*\*~~\*__(.*?)__\*~~\*\*(?=\s|[.,!?;:]|$)/g, `<em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em>`);
+
+    text = text.replace(/(?<=\s|^|[.,!?;:])==\*\*\*~~__(.*?)__~~\*\*\*==(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*==\*\*~~__(.*?)__~~\*\*==\*(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*\*==\*~~__(.*?)__~~\*==\*\*(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*\*\*==~~__(.*?)__~~==\*\*\*(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*\*\*~~==__(.*?)__==~~\*\*\*(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*\*\*~~__==(.*?)==__~~\*\*\*(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*\*\*~~__(.*?)__~~\*\*\*(?=\s|[.,!?;:]|$)/g, `<em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em>`);
+
+    text = text.replace(/(?<=\s|^|[.,!?;:])==\*\*\*__~~(.*?)~~__\*\*\*==(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*==\*\*__~~(.*?)~~__\*\*==\*(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*\*==\*__~~(.*?)~~__\*==\*\*(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*\*\*==__~~(.*?)~~__==\*\*\*(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*\*\*__==~~(.*?)~~==__\*\*\*(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*\*\*__~~==(.*?)==~~__\*\*\*(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*\*\*__~~(.*?)~~__\*\*\*(?=\s|[.,!?;:]|$)/g, `<em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em>`);
+
+    text = text.replace(/(?<=\s|^|[.,!?;:])==\*\*\*__(.*?)__\*\*\*==(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*==\*\*__(.*?)__\*\*==\*(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*\*==\*__(.*?)__\*==\*\*(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*\*\*==__(.*?)__==\*\*\*(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*\*\*__==(.*?)==__\*\*\*(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline}"><strong>$1</strong></em></mark>`);
     text = text.replace(/(?<=\s|^|[.,!?;:])\*\*\*__(.*?)__\*\*\*(?=\s|[.,!?;:]|$)/g, `<em class="${cssclass.underline}"><strong>$1</strong></em>`);
+
+
+    text = text.replace(/(?<=\s|^|[.,!?;:])==~~\*\*__\*(.*?)\*__\*\*~~==(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])~~==\*\*__\*(.*?)\*__\*\*==~~(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])~~\*\*==__\*(.*?)\*__==\*\*~~(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])~~\*\*__==\*(.*?)\*==__\*\*~~(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])~~\*\*__\*==(.*?)==\*__\*\*~~(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])~~\*\*__\*(.*?)\*__\*\*~~(?=\s|[.,!?;:]|$)/g, `<em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em>`);
+
+    text = text.replace(/(?<=\s|^|[.,!?;:])==\*\*~~__\*(.*?)\*__~~\*\*==(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*\*==~~__\*(.*?)\*__~~==\*\*(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*\*~~==__\*(.*?)\*__==~~\*\*(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*\*~~__==\*(.*?)\*==__~~\*\*(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*\*~~__\*==(.*?)==\*__~~\*\*(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*\*~~__\*(.*?)\*__~~\*\*(?=\s|[.,!?;:]|$)/g, `<em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em>`);
+
+    text = text.replace(/(?<=\s|^|[.,!?;:])==\*\*__~~\*(.*?)\*~~__\*\*==(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*\*==__~~\*(.*?)\*~~__==\*\*(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*\*__==~~\*(.*?)\*~~==__\*\*(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*\*__~~==\*(.*?)\*==~~__\*\*(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*\*__~~\*==(.*?)==\*~~__\*\*(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*\*__~~\*(.*?)\*~~__\*\*(?=\s|[.,!?;:]|$)/g, `<em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em>`);
+
+    text = text.replace(/(?<=\s|^|[.,!?;:])==\*\*__\*~~(.*?)~~\*__\*\*==(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*\*==__\*~~(.*?)~~\*__==\*\*(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*\*__==\*~~(.*?)~~\*==__\*\*(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*\*__\*==~~(.*?)~~==\*__\*\*(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*\*__\*~~==(.*?)==~~\*__\*\*(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*\*__\*~~(.*?)~~\*__\*\*(?=\s|[.,!?;:]|$)/g, `<em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em>`);
+
+    text = text.replace(/(?<=\s|^|[.,!?;:])==\*\*__\*(.*?)\*__\*\*==(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*\*==__\*(.*?)\*__==\*\*(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*\*__==\*(.*?)\*==__\*\*(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*\*__\*==(.*?)==\*__\*\*(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline}"><strong>$1</strong></em></mark>`);
     text = text.replace(/(?<=\s|^|[.,!?;:])\*\*__\*(.*?)\*__\*\*(?=\s|[.,!?;:]|$)/g, `<em class="${cssclass.underline}"><strong>$1</strong></em>`);
+    
+
+    text = text.replace(/(?<=\s|^|[.,!?;:])==~~\*__\*\*(.*?)\*\*__\*~~==(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])~~==\*__\*\*(.*?)\*\*__\*==~~(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])~~\*==__\*\*(.*?)\*\*__==\*~~(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])~~\*__==\*\*(.*?)\*\*==__\*~~(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])~~\*__\*\*==(.*?)==\*\*__\*~~(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])~~\*__\*\*(.*?)\*\*__\*~~(?=\s|[.,!?;:]|$)/g, `<em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em>`);
+
+    text = text.replace(/(?<=\s|^|[.,!?;:])==\*~~__\*\*(.*?)\*\*__~~\*==(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*==~~__\*\*(.*?)\*\*__~~==\*(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*~~==__\*\*(.*?)\*\*__==~~\*(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*~~__==\*\*(.*?)\*\*==__~~\*(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*~~__\*\*==(.*?)==\*\*__~~\*(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*~~__\*\*(.*?)\*\*__~~\*(?=\s|[.,!?;:]|$)/g, `<em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em>`);
+
+    text = text.replace(/(?<=\s|^|[.,!?;:])==\*__~~\*\*(.*?)\*\*~~__\*==(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*==__~~\*\*(.*?)\*\*~~__==\*(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*__==~~\*\*(.*?)\*\*~~==__\*(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*__~~==\*\*(.*?)\*\*==~~__\*(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*__~~\*\*==(.*?)==\*\*~~__\*(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*__~~\*\*(.*?)\*\*~~__\*(?=\s|[.,!?;:]|$)/g, `<em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em>`);
+
+    text = text.replace(/(?<=\s|^|[.,!?;:])==\*__\*\*~~(.*?)~~\*\*__\*==(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*==__\*\*~~(.*?)~~\*\*__==\*(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*__==\*\*~~(.*?)~~\*\*==__\*(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*__\*\*==~~(.*?)~~==\*\*__\*(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*__\*\*~~==(.*?)==~~\*\*__\*(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*__\*\*~~(.*?)~~\*\*__\*(?=\s|[.,!?;:]|$)/g, `<em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em>`);
+
+    text = text.replace(/(?<=\s|^|[.,!?;:])==\*__\*\*(.*?)\*\*__\*==(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*==__\*\*(.*?)\*\*__==\*(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*__==\*\*(.*?)\*\*==__\*(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*__\*\*==(.*?)==\*\*__\*(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline}"><strong>$1</strong></em></mark>`);
     text = text.replace(/(?<=\s|^|[.,!?;:])\*__\*\*(.*?)\*\*__\*(?=\s|[.,!?;:]|$)/g, `<em class="${cssclass.underline}"><strong>$1</strong></em>`);
     
+
+
+    text = text.replace(/(?<=\s|^|[.,!?;:])==~~___\*\*(.*?)\*\*___~~==(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])~~==___\*\*(.*?)\*\*___==~~(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])~~_==__\*\*(.*?)\*\*__==_~~(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])~~__==_\*\*(.*?)\*\*_==__~~(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])~~___==\*\*(.*?)\*\*==___~~(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])~~___\*\*==(.*?)==\*\*___~~(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])~~___\*\*(.*?)\*\*___~~(?=\s|[.,!?;:]|$)/g, `<em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em>`);
+
+    text = text.replace(/(?<=\s|^|[.,!?;:])==_~~__\*\*(.*?)\*\*__~~_==(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])_==~~__\*\*(.*?)\*\*__~~==_(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])_~~==__\*\*(.*?)\*\*__==~~_(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])_~~__==\*\*(.*?)\*\*==__~~_(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])_~~__\*\*==(.*?)==\*\*__~~_(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])_~~__\*\*(.*?)\*\*__~~_(?=\s|[.,!?;:]|$)/g, `<em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em>`);
+
+    text = text.replace(/(?<=\s|^|[.,!?;:])==__~~_\*\*(.*?)\*\*_~~__==(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])__==~~_\*\*(.*?)\*\*_~~==__(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])__~~==_\*\*(.*?)\*\*_==~~__(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])__~~_==\*\*(.*?)\*\*==_~~__(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])__~~_\*\*==(.*?)==\*\*_~~__(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])__~~_\*\*(.*?)\*\*_~~__(?=\s|[.,!?;:]|$)/g, `<em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em>`);
+
+    text = text.replace(/(?<=\s|^|[.,!?;:])==___~~\*\*(.*?)\*\*~~___==(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])_==__~~\*\*(.*?)\*\*~~__==_(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])__==_~~\*\*(.*?)\*\*~~_==__(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])___==~~\*\*(.*?)\*\*~~==___(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])___~~==\*\*(.*?)\*\*==~~___(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])___~~\*\*==(.*?)==\*\*~~___(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])___~~\*\*(.*?)\*\*~~___(?=\s|[.,!?;:]|$)/g, `<em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em>`);
+
+    text = text.replace(/(?<=\s|^|[.,!?;:])==___\*\*~~(.*?)~~\*\*___==(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])_==__\*\*~~(.*?)~~\*\*__==_(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])__==_\*\*~~(.*?)~~\*\*_==__(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])___==\*\*~~(.*?)~~\*\*==___(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])___\*\*==~~(.*?)~~==\*\*___(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])___\*\*~~==(.*?)==~~\*\*___(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])___\*\*~~(.*?)~~\*\*___(?=\s|[.,!?;:]|$)/g, `<em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em>`);
+
+    text = text.replace(/(?<=\s|^|[.,!?;:])==___\*\*(.*?)\*\*___==(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])_==__\*\*(.*?)\*\*__==_(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])__==_\*\*(.*?)\*\*_==__(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])___==\*\*(.*?)\*\*==___(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])___\*\*==(.*?)==\*\*___(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline}"><strong>$1</strong></em></mark>`);
     text = text.replace(/(?<=\s|^|[.,!?;:])___\*\*(.*?)\*\*___(?=\s|[.,!?;:]|$)/g, `<em class="${cssclass.underline}"><strong>$1</strong></em>`);
+
+
+    text = text.replace(/(?<=\s|^|[.,!?;:])==~~\*\*___(.*?)___\*\*~~==(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])~~==\*\*___(.*?)___\*\*==~~(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])~~\*\*==___(.*?)___==\*\*~~(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])~~\*\*_==__(.*?)__==_\*\*~~(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])~~\*\*__==_(.*?)_==__\*\*~~(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])~~\*\*___==(.*?)==___\*\*~~(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])~~\*\*___(.*?)___\*\*~~(?=\s|[.,!?;:]|$)/g, `<em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em>`);
+
+    text = text.replace(/(?<=\s|^|[.,!?;:])==\*\*~~___(.*?)___~~\*\*==(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*\*==~~___(.*?)___~~==\*\*(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*\*~~==___(.*?)___==~~\*\*(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*\*~~_==__(.*?)__==_~~\*\*(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*\*~~__==_(.*?)_==__~~\*\*(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*\*~~___==(.*?)==___~~\*\*(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*\*~~___(.*?)___~~\*\*(?=\s|[.,!?;:]|$)/g, `<em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em>`);
+
+    text = text.replace(/(?<=\s|^|[.,!?;:])==\*\*_~~__(.*?)__~~_\*\*==(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*\*==_~~__(.*?)__~~_==\*\*(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*\*_==~~__(.*?)__~~==_\*\*(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*\*_~~==__(.*?)__==~~_\*\*(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*\*_~~__==(.*?)==__~~_\*\*(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*\*_~~__(.*?)__~~_\*\*(?=\s|[.,!?;:]|$)/g, `<em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em>`);
+
+    text = text.replace(/(?<=\s|^|[.,!?;:])==\*\*__~~_(.*?)_~~__\*\*==(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*\*==__~~_(.*?)_~~__==\*\*(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*\*__==~~_(.*?)_~~==__\*\*(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*\*__~~==_(.*?)_==~~__\*\*(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*\*__~~_==(.*?)==_~~__\*\*(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*\*__~~_(.*?)_~~__\*\*(?=\s|[.,!?;:]|$)/g, `<em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em>`);
+
+    text = text.replace(/(?<=\s|^|[.,!?;:])==\*\*___~~(.*?)~~___\*\*==(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*\*==___~~(.*?)~~___==\*\*(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*\*_==__~~(.*?)~~__==_\*\*(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*\*__==_~~(.*?)~~_==__\*\*(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*\*___==~~(.*?)~~==___\*\*(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*\*___~~==(.*?)==~~___\*\*(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*\*___~~(.*?)~~___\*\*(?=\s|[.,!?;:]|$)/g, `<em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em>`);
+
+    text = text.replace(/(?<=\s|^|[.,!?;:])==\*\*___(.*?)___\*\*==(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*\*==___(.*?)___==\*\*(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*\*_==__(.*?)__==_\*\*(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*\*__==_(.*?)_==__\*\*(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*\*___==(.*?)==___\*\*(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline}"><strong>$1</strong></em></mark>`);
     text = text.replace(/(?<=\s|^|[.,!?;:])\*\*___(.*?)___\*\*(?=\s|[.,!?;:]|$)/g, `<em class="${cssclass.underline}"><strong>$1</strong></em>`);
+
+
+    text = text.replace(/(?<=\s|^|[.,!?;:])==~~__\*\*_(.*?)_\*\*__~~==(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])~~==__\*\*_(.*?)_\*\*__==~~(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])~~__==\*\*_(.*?)_\*\*==__~~(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])~~__\*\*==_(.*?)_==\*\*__~~(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])~~__\*\*_==(.*?)==_\*\*__~~(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])~~__\*\*_(.*?)_\*\*__~~(?=\s|[.,!?;:]|$)/g, `<em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em>`);
+
+    text = text.replace(/(?<=\s|^|[.,!?;:])==__~~\*\*_(.*?)_\*\*~~__==(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])__==~~\*\*_(.*?)_\*\*~~==__(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])__~~==\*\*_(.*?)_\*\*==~~__(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])__~~\*\*==_(.*?)_==\*\*~~__(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])__~~\*\*_==(.*?)==_\*\*~~__(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])__~~\*\*_(.*?)_\*\*~~__(?=\s|[.,!?;:]|$)/g, `<em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em>`);
+
+    text = text.replace(/(?<=\s|^|[.,!?;:])==__\*\*~~_(.*?)_~~\*\*__==(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])__==\*\*~~_(.*?)_~~\*\*==__(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])__\*\*==~~_(.*?)_~~==\*\*__(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])__\*\*~~==_(.*?)_==~~\*\*__(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])__\*\*~~_==(.*?)==_~~\*\*__(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])__\*\*~~_(.*?)_~~\*\*__(?=\s|[.,!?;:]|$)/g, `<em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em>`);
+
+    text = text.replace(/(?<=\s|^|[.,!?;:])==__\*\*_~~(.*?)~~_\*\*__==(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])__==\*\*_~~(.*?)~~_\*\*==__(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])__\*\*==_~~(.*?)~~_==\*\*__(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])__\*\*_==~~(.*?)~~==_\*\*__(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])__\*\*_~~==(.*?)==~~_\*\*__(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])__\*\*_~~(.*?)~~_\*\*__(?=\s|[.,!?;:]|$)/g, `<em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em>`);
+
+    text = text.replace(/(?<=\s|^|[.,!?;:])==__\*\*_(.*?)_\*\*__==(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])__==\*\*_(.*?)_\*\*==__(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])__\*\*==_(.*?)_==\*\*__(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])__\*\*_==(.*?)==_\*\*__(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline}"><strong>$1</strong></em></mark>`);
     text = text.replace(/(?<=\s|^|[.,!?;:])__\*\*_(.*?)_\*\*__(?=\s|[.,!?;:]|$)/g, `<em class="${cssclass.underline}"><strong>$1</strong></em>`);
+
+
+    text = text.replace(/(?<=\s|^|[.,!?;:])==~~_\*\*__(.*?)__\*\*_~~==(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])~~==_\*\*__(.*?)__\*\*_==~~(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])~~_==\*\*__(.*?)__\*\*==_~~(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])~~_\*\*==__(.*?)__==\*\*_~~(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])~~_\*\*__==(.*?)==__\*\*_~~(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])~~_\*\*__(.*?)__\*\*_~~(?=\s|[.,!?;:]|$)/g, `<em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em>`);
+
+    text = text.replace(/(?<=\s|^|[.,!?;:])==_~~\*\*__(.*?)__\*\*~~_==(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])_==~~\*\*__(.*?)__\*\*~~==_(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])_~~==\*\*__(.*?)__\*\*==~~_(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])_~~\*\*==__(.*?)__==\*\*~~_(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])_~~\*\*__==(.*?)==__\*\*~~_(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])_~~\*\*__(.*?)__\*\*~~_(?=\s|[.,!?;:]|$)/g, `<em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em>`);
+
+    text = text.replace(/(?<=\s|^|[.,!?;:])==_\*\*~~__(.*?)__~~\*\*_==(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])_==\*\*~~__(.*?)__~~\*\*==_(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])_\*\*==~~__(.*?)__~~==\*\*_(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])_\*\*~~==__(.*?)__==~~\*\*_(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])_\*\*~~__==(.*?)==__~~\*\*_(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])_\*\*~~__(.*?)__~~\*\*_(?=\s|[.,!?;:]|$)/g, `<em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em>`);
+
+    text = text.replace(/(?<=\s|^|[.,!?;:])==_\*\*__~~(.*?)~~__\*\*_==(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])_==\*\*__~~(.*?)~~__\*\*==_(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])_\*\*==__~~(.*?)~~__==\*\*_(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])_\*\*__==~~(.*?)~~==__\*\*_(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])_\*\*__~~==(.*?)==~~__\*\*_(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])_\*\*__~~(.*?)~~__\*\*_(?=\s|[.,!?;:]|$)/g, `<em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em>`);
+
+    text = text.replace(/(?<=\s|^|[.,!?;:])==_\*\*__(.*?)__\*\*_==(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])_==\*\*__(.*?)__\*\*==_(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])_\*\*==__(.*?)__==\*\*_(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])_\*\*__==(.*?)==__\*\*_(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline}"><strong>$1</strong></em></mark>`);
     text = text.replace(/(?<=\s|^|[.,!?;:])_\*\*__(.*?)__\*\*_(?=\s|[.,!?;:]|$)/g, `<em class="${cssclass.underline}"><strong>$1</strong></em>`);
 
+
+
+    text = text.replace(/(?<=\s|^|[.,!?;:])==~~__\*\*(.*?)\*\*__~~==(?=\s|[.,!?;:]|$)/g, `<mark><strong class="${cssclass.underline} ${cssclass["line-through"]}">$1</strong></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])~~==__\*\*(.*?)\*\*__==~~(?=\s|[.,!?;:]|$)/g, `<mark><strong class="${cssclass.underline} ${cssclass["line-through"]}">$1</strong></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])~~__==\*\*(.*?)\*\*==__~~(?=\s|[.,!?;:]|$)/g, `<mark><strong class="${cssclass.underline} ${cssclass["line-through"]}">$1</strong></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])~~__\*\*==(.*?)==\*\*__~~(?=\s|[.,!?;:]|$)/g, `<mark><strong class="${cssclass.underline} ${cssclass["line-through"]}">$1</strong></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])~~__\*\*(.*?)\*\*__~~(?=\s|[.,!?;:]|$)/g, `<strong class="${cssclass.underline} ${cssclass["line-through"]}">$1</strong>`);
+
+    text = text.replace(/(?<=\s|^|[.,!?;:])==__~~\*\*(.*?)\*\*~~__==(?=\s|[.,!?;:]|$)/g, `<mark><strong class="${cssclass.underline} ${cssclass["line-through"]}">$1</strong></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])__==~~\*\*(.*?)\*\*~~==__(?=\s|[.,!?;:]|$)/g, `<mark><strong class="${cssclass.underline} ${cssclass["line-through"]}">$1</strong></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])__~~==\*\*(.*?)\*\*==~~__(?=\s|[.,!?;:]|$)/g, `<mark><strong class="${cssclass.underline} ${cssclass["line-through"]}">$1</strong></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])__~~\*\*==(.*?)==\*\*~~__(?=\s|[.,!?;:]|$)/g, `<mark><strong class="${cssclass.underline} ${cssclass["line-through"]}">$1</strong></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])__~~\*\*(.*?)\*\*~~__(?=\s|[.,!?;:]|$)/g, `<strong class="${cssclass.underline} ${cssclass["line-through"]}">$1</strong>`);
+
+    text = text.replace(/(?<=\s|^|[.,!?;:])==__\*\*~~(.*?)~~\*\*__==(?=\s|[.,!?;:]|$)/g, `<mark><strong class="${cssclass.underline} ${cssclass["line-through"]}">$1</strong></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])__==\*\*~~(.*?)~~\*\*==__(?=\s|[.,!?;:]|$)/g, `<mark><strong class="${cssclass.underline} ${cssclass["line-through"]}">$1</strong></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])__\*\*==~~(.*?)~~==\*\*__(?=\s|[.,!?;:]|$)/g, `<mark><strong class="${cssclass.underline} ${cssclass["line-through"]}">$1</strong></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])__\*\*~~==(.*?)==~~\*\*__(?=\s|[.,!?;:]|$)/g, `<mark><strong class="${cssclass.underline} ${cssclass["line-through"]}">$1</strong></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])__\*\*~~(.*?)~~\*\*__(?=\s|[.,!?;:]|$)/g, `<strong class="${cssclass.underline} ${cssclass["line-through"]}">$1</strong>`);
+
+    text = text.replace(/(?<=\s|^|[.,!?;:])==__\*\*(.*?)\*\*__==(?=\s|[.,!?;:]|$)/g, `<mark><strong class="${cssclass.underline}">$1</strong></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])__==\*\*(.*?)\*\*==__(?=\s|[.,!?;:]|$)/g, `<mark><strong class="${cssclass.underline}">$1</strong></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])__\*\*==(.*?)==\*\*__(?=\s|[.,!?;:]|$)/g, `<mark><strong class="${cssclass.underline}">$1</strong></mark>`);
     text = text.replace(/(?<=\s|^|[.,!?;:])__\*\*(.*?)\*\*__(?=\s|[.,!?;:]|$)/g, `<strong class="${cssclass.underline}">$1</strong>`);
+
+
+    text = text.replace(/(?<=\s|^|[.,!?;:])==~~\*\*__(.*?)__\*\*~~==(?=\s|[.,!?;:]|$)/g, `<mark><strong class="${cssclass.underline} ${cssclass["line-through"]}">$1</strong></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])~~==\*\*__(.*?)__\*\*==~~(?=\s|[.,!?;:]|$)/g, `<mark><strong class="${cssclass.underline} ${cssclass["line-through"]}">$1</strong></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])~~\*\*==__(.*?)__==\*\*~~(?=\s|[.,!?;:]|$)/g, `<mark><strong class="${cssclass.underline} ${cssclass["line-through"]}">$1</strong></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])~~\*\*__==(.*?)==__\*\*~~(?=\s|[.,!?;:]|$)/g, `<mark><strong class="${cssclass.underline} ${cssclass["line-through"]}">$1</strong></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])~~\*\*__(.*?)__\*\*~~(?=\s|[.,!?;:]|$)/g, `<strong class="${cssclass.underline} ${cssclass["line-through"]}">$1</strong>`);
+
+    text = text.replace(/(?<=\s|^|[.,!?;:])==\*\*~~__(.*?)__~~\*\*==(?=\s|[.,!?;:]|$)/g, `<mark><strong class="${cssclass.underline} ${cssclass["line-through"]}">$1</strong></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*\*==~~__(.*?)__~~==\*\*(?=\s|[.,!?;:]|$)/g, `<mark><strong class="${cssclass.underline} ${cssclass["line-through"]}">$1</strong></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*\*~~==__(.*?)__==~~\*\*(?=\s|[.,!?;:]|$)/g, `<mark><strong class="${cssclass.underline} ${cssclass["line-through"]}">$1</strong></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*\*~~__==(.*?)==__~~\*\*(?=\s|[.,!?;:]|$)/g, `<mark><strong class="${cssclass.underline} ${cssclass["line-through"]}">$1</strong></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*\*~~__(.*?)__~~\*\*(?=\s|[.,!?;:]|$)/g, `<strong class="${cssclass.underline} ${cssclass["line-through"]}">$1</strong>`);
+
+    text = text.replace(/(?<=\s|^|[.,!?;:])==\*\*__~~(.*?)~~__\*\*==(?=\s|[.,!?;:]|$)/g, `<mark><strong class="${cssclass.underline} ${cssclass["line-through"]}">$1</strong></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*\*==__~~(.*?)~~__==\*\*(?=\s|[.,!?;:]|$)/g, `<mark><strong class="${cssclass.underline} ${cssclass["line-through"]}">$1</strong></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*\*__==~~(.*?)~~==__\*\*(?=\s|[.,!?;:]|$)/g, `<mark><strong class="${cssclass.underline} ${cssclass["line-through"]}">$1</strong></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*\*__~~==(.*?)==~~__\*\*(?=\s|[.,!?;:]|$)/g, `<mark><strong class="${cssclass.underline} ${cssclass["line-through"]}">$1</strong></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*\*__~~(.*?)~~__\*\*(?=\s|[.,!?;:]|$)/g, `<strong class="${cssclass.underline} ${cssclass["line-through"]}">$1</strong>`);
+
+    text = text.replace(/(?<=\s|^|[.,!?;:])==\*\*__(.*?)__\*\*==(?=\s|[.,!?;:]|$)/g, `<mark><strong class="${cssclass.underline}">$1</strong></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*\*==__(.*?)__==\*\*(?=\s|[.,!?;:]|$)/g, `<mark><strong class="${cssclass.underline}">$1</strong></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*\*__==(.*?)==__\*\*(?=\s|[.,!?;:]|$)/g, `<mark><strong class="${cssclass.underline}">$1</strong></mark>`);
     text = text.replace(/(?<=\s|^|[.,!?;:])\*\*__(.*?)__\*\*(?=\s|[.,!?;:]|$)/g, `<strong class="${cssclass.underline}">$1</strong>`);
 
+
+
+    text = text.replace(/(?<=\s|^|[.,!?;:])==~~___(.*?)___~~==(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}">$1</em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])~~==___(.*?)___==~~(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}">$1</em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])~~_==__(.*?)__==_~~(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}">$1</em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])~~__==_(.*?)_==__~~(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}">$1</em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])~~___==(.*?)==___~~(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}">$1</em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])~~___(.*?)___~~(?=\s|[.,!?;:]|$)/g, `<em class="${cssclass.underline} ${cssclass["line-through"]}">$1</em>`);
+
+    text = text.replace(/(?<=\s|^|[.,!?;:])==_~~__(.*?)__~~_==(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}">$1</em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])_==~~__(.*?)__~~==_(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}">$1</em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])_~~==__(.*?)__==~~_(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}">$1</em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])_~~__==(.*?)==__~~_(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}">$1</em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])_~~__(.*?)__~~_(?=\s|[.,!?;:]|$)/g, `<em class="${cssclass.underline} ${cssclass["line-through"]}">$1</em>`);
+
+    text = text.replace(/(?<=\s|^|[.,!?;:])==__~~_(.*?)_~~__==(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}">$1</em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])__==~~_(.*?)_~~==__(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}">$1</em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])__~~==_(.*?)_==~~__(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}">$1</em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])__~~_==(.*?)==_~~__(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}">$1</em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])__~~_(.*?)_~~__(?=\s|[.,!?;:]|$)/g, `<em class="${cssclass.underline} ${cssclass["line-through"]}">$1</em>`);
+
+    text = text.replace(/(?<=\s|^|[.,!?;:])==___~~(.*?)~~___==(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}">$1</em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])_==__~~(.*?)~~__==_(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}">$1</em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])__==_~~(.*?)~~_==__(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}">$1</em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])___==~~(.*?)~~==___(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}">$1</em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])___~~==(.*?)==~~___(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}">$1</em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])___~~(.*?)~~___(?=\s|[.,!?;:]|$)/g, `<em class="${cssclass.underline} ${cssclass["line-through"]}">$1</em>`);
+
+    text = text.replace(/(?<=\s|^|[.,!?;:])==___(.*?)___==(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline}">$1</em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])_==__(.*?)__==_(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline}">$1</em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])__==_(.*?)_==__(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline}">$1</em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])___==(.*?)==___(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline}">$1</em></mark>`);
     text = text.replace(/(?<=\s|^|[.,!?;:])___(.*?)___(?=\s|[.,!?;:]|$)/g, `<em class="${cssclass.underline}">$1</em>`);
+
+
+    text = text.replace(/(?<=\s|^|[.,!?;:])==~~\*\*\*(.*?)\*\*\*~~==(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])~~==\*\*\*(.*?)\*\*\*==~~(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])~~\*==\*\*(.*?)\*\*==\*~~(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])~~\*\*==\*(.*?)\*==\*\*~~(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])~~\*\*\*==(.*?)==\*\*\*~~(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])~~\*\*\*(.*?)\*\*\*~~(?=\s|[.,!?;:]|$)/g, `<em class="${cssclass["line-through"]}"><strong>$1</strong></em>`);
+
+    text = text.replace(/(?<=\s|^|[.,!?;:])==\*~~\*\*(.*?)\*\*~~\*==(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*==~~\*\*(.*?)\*\*~~==\*(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*~~==\*\*(.*?)\*\*==~~\*(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*~~\*\*==(.*?)==\*\*~~\*(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*~~\*\*(.*?)\*\*~~\*(?=\s|[.,!?;:]|$)/g, `<em class="${cssclass["line-through"]}"><strong>$1</strong></em>`);
+
+    text = text.replace(/(?<=\s|^|[.,!?;:])==\*\*~~\*(.*?)\*~~\*\*==(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*\*==~~\*(.*?)\*~~==\*\*(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*\*~~==\*(.*?)\*==~~\*\*(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*\*~~\*==(.*?)==\*~~\*\*(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*\*~~\*(.*?)\*~~\*\*(?=\s|[.,!?;:]|$)/g, `<em class="${cssclass["line-through"]}"><strong>$1</strong></em>`);
+
+    text = text.replace(/(?<=\s|^|[.,!?;:])==\*\*\*~~(.*?)~~\*\*\*==(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*==\*\*~~(.*?)~~\*\*==\*(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*\*==\*~~(.*?)~~\*==\*\*(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*\*\*==~~(.*?)~~==\*\*\*(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*\*\*~~==(.*?)==~~\*\*\*(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*\*\*~~(.*?)~~\*\*\*(?=\s|[.,!?;:]|$)/g, `<em class="${cssclass["line-through"]}"><strong>$1</strong></em>`);
+
+    text = text.replace(/(?<=\s|^|[.,!?;:])==\*\*\*(.*?)\*\*\*==(?=\s|[.,!?;:]|$)/g, '<mark><em><strong>$1</strong></em></mark>');
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*==\*\*(.*?)\*\*==\*(?=\s|[.,!?;:]|$)/g, '<mark><em><strong>$1</strong></em></mark>');
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*\*==\*(.*?)\*==\*\*(?=\s|[.,!?;:]|$)/g, '<mark><em><strong>$1</strong></em></mark>');
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*\*\*==(.*?)==\*\*\*(?=\s|[.,!?;:]|$)/g, '<mark><em><strong>$1</strong></em></mark>');
     text = text.replace(/(?<=\s|^|[.,!?;:])\*\*\*(.*?)\*\*\*(?=\s|[.,!?;:]|$)/g, '<em><strong>$1</strong></em>');
 
+
+
+    text = text.replace(/(?<=\s|^|[.,!?;:])==~~_\*\*(.*?)\*\*_~~==(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])~~==_\*\*(.*?)\*\*_==~~(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])~~_==\*\*(.*?)\*\*==_~~(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])~~_\*\*==(.*?)==\*\*_~~(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])~~_\*\*(.*?)\*\*_~~(?=\s|[.,!?;:]|$)/g, `<em class="${cssclass["line-through"]}"><strong>$1</strong></em>`);
+
+    text = text.replace(/(?<=\s|^|[.,!?;:])==_~~\*\*(.*?)\*\*~~_==(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])_==~~\*\*(.*?)\*\*~~==_(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])_~~==\*\*(.*?)\*\*==~~_(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])_~~\*\*==(.*?)==\*\*~~_(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])_~~\*\*(.*?)\*\*~~_(?=\s|[.,!?;:]|$)/g, `<em class="${cssclass["line-through"]}"><strong>$1</strong></em>`);
+
+    text = text.replace(/(?<=\s|^|[.,!?;:])==_\*\*~~(.*?)~~\*\*_==(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])_==\*\*~~(.*?)~~\*\*==_(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])_\*\*==~~(.*?)~~==\*\*_(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])_\*\*~~==(.*?)==~~\*\*_(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])_\*\*~~(.*?)~~\*\*_(?=\s|[.,!?;:]|$)/g, `<em class="${cssclass["line-through"]}"><strong>$1</strong></em>`);
+
+    text = text.replace(/(?<=\s|^|[.,!?;:])==_\*\*(.*?)\*\*_==(?=\s|[.,!?;:]|$)/g, '<mark><em><strong>$1</strong></em></mark>');
+    text = text.replace(/(?<=\s|^|[.,!?;:])_==\*\*(.*?)\*\*==_(?=\s|[.,!?;:]|$)/g, '<mark><em><strong>$1</strong></em></mark>');
+    text = text.replace(/(?<=\s|^|[.,!?;:])_\*\*==(.*?)==\*\*_(?=\s|[.,!?;:]|$)/g, '<mark><em><strong>$1</strong></em></mark>');
     text = text.replace(/(?<=\s|^|[.,!?;:])_\*\*(.*?)\*\*_(?=\s|[.,!?;:]|$)/g, '<em><strong>$1</strong></em>');
+
+
+    text = text.replace(/(?<=\s|^|[.,!?;:])==~~\*\*_(.*?)_\*\*~~==(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])~~==\*\*_(.*?)_\*\*==~~(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])~~\*\*==_(.*?)_==\*\*~~(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])~~\*\*_==(.*?)==_\*\*~~(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])~~\*\*_(.*?)_\*\*~~(?=\s|[.,!?;:]|$)/g, `<em class="${cssclass["line-through"]}"><strong>$1</strong></em>`);
+
+    text = text.replace(/(?<=\s|^|[.,!?;:])==\*\*~~_(.*?)_~~\*\*==(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*\*==~~_(.*?)_~~==\*\*(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*\*~~==_(.*?)_==~~\*\*(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*\*~~_==(.*?)==_~~\*\*(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*\*~~_(.*?)_~~\*\*(?=\s|[.,!?;:]|$)/g, `<em class="${cssclass["line-through"]}"><strong>$1</strong></em>`);
+
+    text = text.replace(/(?<=\s|^|[.,!?;:])==\*\*_~~(.*?)~~_\*\*==(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*\*==_~~(.*?)~~_==\*\*(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*\*_==~~(.*?)~~==_\*\*(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*\*_~~==(.*?)==~~_\*\*(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*\*_~~(.*?)~~_\*\*(?=\s|[.,!?;:]|$)/g, `<em class="${cssclass["line-through"]}"><strong>$1</strong></em>`);
+
+    text = text.replace(/(?<=\s|^|[.,!?;:])==\*\*_(.*?)_\*\*==(?=\s|[.,!?;:]|$)/g, '<mark><em><strong>$1</strong></em></mark>');
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*\*==_(.*?)_==\*\*(?=\s|[.,!?;:]|$)/g, '<mark><em><strong>$1</strong></em></mark>');
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*\*_==(.*?)==_\*\*(?=\s|[.,!?;:]|$)/g, '<mark><em><strong>$1</strong></em></mark>');
     text = text.replace(/(?<=\s|^|[.,!?;:])\*\*_(.*?)_\*\*(?=\s|[.,!?;:]|$)/g, '<em><strong>$1</strong></em>');
 
+
+
+    text = text.replace(/(?<=\s|^|[.,!?;:])==~~__\*(.*?)\*__~~==(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}">$1</em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])~~==__\*(.*?)\*__==~~(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}">$1</em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])~~__==\*(.*?)\*==__~~(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}">$1</em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])~~__\*==(.*?)==\*__~~(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}">$1</em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])~~__\*(.*?)\*__~~(?=\s|[.,!?;:]|$)/g, `<em class="${cssclass.underline} ${cssclass["line-through"]}">$1</em>`);
+
+    text = text.replace(/(?<=\s|^|[.,!?;:])==__~~\*(.*?)\*~~__==(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}">$1</em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])__==~~\*(.*?)\*~~==__(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}">$1</em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])__~~==\*(.*?)\*==~~__(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}">$1</em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])__~~\*==(.*?)==\*~~__(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}">$1</em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])__~~\*(.*?)\*~~__(?=\s|[.,!?;:]|$)/g, `<em class="${cssclass.underline} ${cssclass["line-through"]}">$1</em>`);
+
+    text = text.replace(/(?<=\s|^|[.,!?;:])==__\*~~(.*?)~~\*__==(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}">$1</em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])__==\*~~(.*?)~~\*==__(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}">$1</em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])__\*==~~(.*?)~~==\*__(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}">$1</em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])__\*~~==(.*?)==~~\*__(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}">$1</em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])__\*~~(.*?)~~\*__(?=\s|[.,!?;:]|$)/g, `<em class="${cssclass.underline} ${cssclass["line-through"]}">$1</em>`);
+
+    text = text.replace(/(?<=\s|^|[.,!?;:])==__\*(.*?)\*__==(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline}">$1</em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])__==\*(.*?)\*==__(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline}">$1</em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])__\*==(.*?)==\*__(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline}">$1</em></mark>`);
     text = text.replace(/(?<=\s|^|[.,!?;:])__\*(.*?)\*__(?=\s|[.,!?;:]|$)/g, `<em class="${cssclass.underline}">$1</em>`);
+
+
+    text = text.replace(/(?<=\s|^|[.,!?;:])==~~\*__(.*?)__\*~~==(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}">$1</em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])~~==\*__(.*?)__\*==~~(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}">$1</em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])~~\*==__(.*?)__==\*~~(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}">$1</em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])~~\*__==(.*?)==__\*~~(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}">$1</em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])~~\*__(.*?)__\*~~(?=\s|[.,!?;:]|$)/g, `<em class="${cssclass.underline} ${cssclass["line-through"]}">$1</em>`);
+
+    text = text.replace(/(?<=\s|^|[.,!?;:])==\*~~__(.*?)__~~\*==(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}">$1</em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*==~~__(.*?)__~~==\*(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}">$1</em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*~~==__(.*?)__==~~\*(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}">$1</em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*~~__==(.*?)==__~~\*(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}">$1</em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*~~__(.*?)__~~\*(?=\s|[.,!?;:]|$)/g, `<em class="${cssclass.underline} ${cssclass["line-through"]}">$1</em>`);
+
+    text = text.replace(/(?<=\s|^|[.,!?;:])==\*__~~(.*?)~~__\*==(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}">$1</em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*==__~~(.*?)~~__==\*(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}">$1</em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*__==~~(.*?)~~==__\*(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}">$1</em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*__~~==(.*?)==~~__\*(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}">$1</em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*__~~(.*?)~~__\*(?=\s|[.,!?;:]|$)/g, `<em class="${cssclass.underline} ${cssclass["line-through"]}">$1</em>`);
+    
+    text = text.replace(/(?<=\s|^|[.,!?;:])==\*__(.*?)__\*==(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline}">$1</em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*==__(.*?)__==\*(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline}">$1</em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*__==(.*?)==__\*(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline}">$1</em></mark>`);
     text = text.replace(/(?<=\s|^|[.,!?;:])\*__(.*?)__\*(?=\s|[.,!?;:]|$)/g, `<em class="${cssclass.underline}">$1</em>`);
 
+
+
+    text = text.replace(/(?<=\s|^|[.,!?;:])==~~__(.*?)__~~==(?=\s|[.,!?;:]|$)/g, `<mark class="${cssclass.underline} ${cssclass["line-through"]}">$1</mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])~~==__(.*?)__==~~(?=\s|[.,!?;:]|$)/g, `<mark class="${cssclass.underline} ${cssclass["line-through"]}">$1</mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])~~__==(.*?)==__~~(?=\s|[.,!?;:]|$)/g, `<mark class="${cssclass.underline} ${cssclass["line-through"]}">$1</mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])~~__(.*?)__~~(?=\s|[.,!?;:]|$)/g, `<span class="${cssclass.underline} ${cssclass["line-through"]}">$1</span>`);
+
+    text = text.replace(/(?<=\s|^|[.,!?;:])==__~~(.*?)~~__==(?=\s|[.,!?;:]|$)/g, `<mark class="${cssclass.underline} ${cssclass["line-through"]}">$1</mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])__==~~(.*?)~~==__(?=\s|[.,!?;:]|$)/g, `<mark class="${cssclass.underline} ${cssclass["line-through"]}">$1</mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])__~~==(.*?)==~~__(?=\s|[.,!?;:]|$)/g, `<mark class="${cssclass.underline} ${cssclass["line-through"]}">$1</mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])__~~(.*?)~~__(?=\s|[.,!?;:]|$)/g, `<span class="${cssclass.underline} ${cssclass["line-through"]}">$1</span>`);
+
+    text = text.replace(/(?<=\s|^|[.,!?;:])==__(.*?)__==(?=\s|[.,!?;:]|$)/g, `<mark class="${cssclass.underline}">$1</mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])__==(.*?)==__(?=\s|[.,!?;:]|$)/g, `<mark class="${cssclass.underline}">$1</mark>`);
     text = text.replace(/(?<=\s|^|[.,!?;:])__(.*?)__(?=\s|[.,!?;:]|$)/g, `<span class="${cssclass.underline}">$1</span>`);
+    
+
+    text = text.replace(/(?<=\s|^|[.,!?;:])==~~\*\*(.*?)\*\*~~==(?=\s|[.,!?;:]|$)/g, `<mark><strong class="${cssclass["line-through"]}">$1</strong></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])~~==\*\*(.*?)\*\*==~~(?=\s|[.,!?;:]|$)/g, `<mark><strong class="${cssclass["line-through"]}">$1</strong></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])~~\*\*==(.*?)==\*\*~~(?=\s|[.,!?;:]|$)/g, `<mark><strong class="${cssclass["line-through"]}">$1</strong></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])~~\*\*(.*?)\*\*~~(?=\s|[.,!?;:]|$)/g, `<strong class="${cssclass["line-through"]}">$1</strong>`);
+
+    text = text.replace(/(?<=\s|^|[.,!?;:])==\*\*~~(.*?)~~\*\*==(?=\s|[.,!?;:]|$)/g, `<mark><strong class="${cssclass["line-through"]}">$1</strong></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*\*==~~(.*?)~~==\*\*(?=\s|[.,!?;:]|$)/g, `<mark><strong class="${cssclass["line-through"]}">$1</strong></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*\*~~==(.*?)==~~\*\*(?=\s|[.,!?;:]|$)/g, `<mark><strong class="${cssclass["line-through"]}">$1</strong></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*\*~~(.*?)~~\*\*(?=\s|[.,!?;:]|$)/g, `<strong class="${cssclass["line-through"]}">$1</strong>`);
+
+    text = text.replace(/(?<=\s|^|[.,!?;:])==\*\*(.*?)\*\*==(?=\s|[.,!?;:]|$)/g, '<mark><strong>$1</strong></mark>');
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*\*==(.*?)==\*\*(?=\s|[.,!?;:]|$)/g, '<mark><strong>$1</strong></mark>');
     text = text.replace(/(?<=\s|^|[.,!?;:])\*\*(.*?)\*\*(?=\s|[.,!?;:]|$)/g, '<strong>$1</strong>');
 
+
+
+    text = text.replace(/(?<=\s|^|[.,!?;:])==~~_(.*?)_~~==(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass["line-through"]}">$1</em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])~~==_(.*?)_==~~(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass["line-through"]}">$1</em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])~~_==(.*?)==_~~(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass["line-through"]}">$1</em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])~~_(.*?)_~~(?=\s|[.,!?;:]|$)/g, `<em class="${cssclass["line-through"]}">$1</em>`);
+
+    text = text.replace(/(?<=\s|^|[.,!?;:])==_~~(.*?)~~_==(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass["line-through"]}">$1</em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])_==~~(.*?)~~==_(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass["line-through"]}">$1</em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])_~~==(.*?)==~~_(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass["line-through"]}">$1</em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])_~~(.*?)~~_(?=\s|[.,!?;:]|$)/g, `<em class="${cssclass["line-through"]}">$1</em>`);
+
+    text = text.replace(/(?<=\s|^|[.,!?;:])==_(.*?)_==(?=\s|[.,!?;:]|$)/g, '<mark><em>$1</em></mark>');
+    text = text.replace(/(?<=\s|^|[.,!?;:])_==(.*?)==_(?=\s|[.,!?;:]|$)/g, '<mark><em>$1</em></mark>');
     text = text.replace(/(?<=\s|^|[.,!?;:])_(.*?)_(?=\s|[.,!?;:]|$)/g, '<em>$1</em>');
+
+
+    text = text.replace(/(?<=\s|^|[.,!?;:])==~~\*(.*?)\*~~==(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass["line-through"]}">$1</em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])~~==\*(.*?)\*==~~(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass["line-through"]}">$1</em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])~~\*==(.*?)==\*~~(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass["line-through"]}">$1</em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])~~\*(.*?)\*~~(?=\s|[.,!?;:]|$)/g, `<em class="${cssclass["line-through"]}">$1</em>`);
+
+    text = text.replace(/(?<=\s|^|[.,!?;:])==\*~~(.*?)~~\*==(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass["line-through"]}">$1</em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*==~~(.*?)~~==\*(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass["line-through"]}">$1</em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*~~==(.*?)==~~\*(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass["line-through"]}">$1</em></mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*~~(.*?)~~\*(?=\s|[.,!?;:]|$)/g, `<em class="${cssclass["line-through"]}">$1</em>`);
+
+    text = text.replace(/(?<=\s|^|[.,!?;:])==\*(.*?)\*==(?=\s|[.,!?;:]|$)/g, '<mark><em>$1</em></mark>');
+    text = text.replace(/(?<=\s|^|[.,!?;:])\*==(.*?)==\*(?=\s|[.,!?;:]|$)/g, '<mark><em>$1</em></mark>');
     text = text.replace(/(?<=\s|^|[.,!?;:])\*(.*?)\*(?=\s|[.,!?;:]|$)/g, '<em>$1</em>');
 
+
+
+    text = text.replace(/(?<=\s|^|[.,!?;:])~~==(.*?)==~~(?=\s|[.,!?;:]|$)/g, `<mark class="${cssclass["line-through"]}">$1</mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])==~~(.*?)~~==(?=\s|[.,!?;:]|$)/g, `<mark class="${cssclass["line-through"]}">$1</mark>`);
+
+
+    text = text.replace(/(?<=\s|^|[.,!?;:])~~(.*?)~~(?=\s|[.,!?;:]|$)/g, `<span class="${cssclass["line-through"]}">$1</span>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:])==(.*?)==(?=\s|[.,!?;:]|$)/g, `<mark>$1</mark>`);
+
+
+
+    text = text.replace(/~(.*?)~/, '<sub>$1</sub>');
+    text = text.replace(/\^(.*?)\^/, '<sup>$1</sup>');
     return text;
 }
 const dividerRegex = /(\n\s*[*_-]{3,}\s*\n)+/g;
