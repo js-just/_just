@@ -365,21 +365,21 @@ const MDcode = (input) => {
         .replaceAll('*', `&#${'*'.charCodeAt(0)};`)
         .replaceAll('_', `&#${'_'.charCodeAt(0)};`)
 }
-const linkregex = /(?<=\s|^|[.,!?;:*_])\[(.*?)\]\((.*?)\)(?=\s|[.,!?;:*_]|$)/g;
+const linkregex = /(?<=\s|^|[.,!?;:*_^~=])\[(.*?)\]\((.*?)\)(?=\s|[.,!?;:*_^~=]|$)/g;
 const biMDtoHTML = (input) => { // SH#TCODE WARNING!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     let text = MDescape(input);
 
     text = text.replace(/```([\w]*)[\r\n]+([\S\s]*?)```/g, `<code class="${cssclass.code}">$2</code>`);
-    text = text.replace(/(?<=\s|^|[.,!?;:*_])`(.*?)`(?=\s|[.,!?;:*_]|$)/g, (match, code) => {return `<code>${MDcode(code)}</code>`});
+    text = text.replace(/(?<=\s|^|[.,!?;:*_^~=])`(.*?)`(?=\s|[.,!?;:*_^~=]|$)/g, (match, code) => {return `<code>${MDcode(code)}</code>`});
 
-    text = text.replace(/(?<=\s|^|[.,!?;:*_])!\[(.*?)\]\((.*?) ("|')(.*?)\3\)(?=\s|[.,!?;:*_]|$)/g, (match, text, link_, q, imgtitle) => {return `<img src="${link_}" alt="${text}" title="${imgtitle}" loading="lazy">`});
-    text = text.replace(/(?<=\s|^|[.,!?;:*_])!\[(.*?)\]\((.*?)\)(?=\s|[.,!?;:*_]|$)/g, (match, text, link_) => {return `<img src="${link_}" alt="${text}" loading="lazy">`});
+    text = text.replace(/(?<=\s|^|[.,!?;:*_^~=])!\[(.*?)\]\((.*?) ("|')(.*?)\3\)(?=\s|[.,!?;:*_^~=]|$)/g, (match, text, link_, q, imgtitle) => {return `<img src="${link_}" alt="${text}" title="${imgtitle}" loading="lazy">`});
+    text = text.replace(/(?<=\s|^|[.,!?;:*_^~=])!\[(.*?)\]\((.*?)\)(?=\s|[.,!?;:*_^~=]|$)/g, (match, text, link_) => {return `<img src="${link_}" alt="${text}" loading="lazy">`});
 
-    text = text.replace(/(?<=\s|^|[.,!?;:*_])\[(.*?)\]\((.*?) ("|')(.*?)\3\)(?=\s|[.,!?;:*_]|$)/g, (match, text, link_, q, linktitle) => {return link(text, link_, extlink(link_), cssid.ext, "_blank", linktitle)});
+    text = text.replace(/(?<=\s|^|[.,!?;:*_^~=])\[(.*?)\]\((.*?) ("|')(.*?)\3\)(?=\s|[.,!?;:*_^~=]|$)/g, (match, text, link_, q, linktitle) => {return link(text, link_, extlink(link_), cssid.ext, "_blank", linktitle)});
     text = text.replace(linkregex, (match, text, link_) => {return link(text, link_, extlink(link_), cssid.ext)});
-    text = text.replace(/(?<=\s|^|[.,!?;:*_])<(http:\/\/|https:\/\/)(.*?)>(?=\s|[.,!?;:*_]|$)/g, (match, protocol_, link_) => {const link__=`${protocol_.trim()}${link_.trim()}`;return link(link__, link__, extlink(link__), cssid.ext)});
+    text = text.replace(/(?<=\s|^|[.,!?;:*_^~=])<(http:\/\/|https:\/\/)(.*?)>(?=\s|[.,!?;:*_^~=]|$)/g, (match, protocol_, link_) => {const link__=`${protocol_.trim()}${link_.trim()}`;return link(link__, link__, extlink(link__), cssid.ext)});
     
-    text = text.replace(/(?<=\s|^|[.,!?;:*_])<(.*?)@(.*?)>(?=\s|[.,!?;:*_]|$)/g, (match, address, domain__) => {
+    text = text.replace(/(?<=\s|^|[.,!?;:*_^~=])<(.*?)@(.*?)>(?=\s|[.,!?;:*_^~=]|$)/g, (match, address, domain__) => {
         try {
             checkdomain(domain__);
             const mail = `${address.trim()}@${domain__.trim()}`;
