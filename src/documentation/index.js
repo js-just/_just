@@ -997,8 +997,8 @@ const biMDtoHTML = (input) => { // SH#TCODE WARNING!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     text = text.replace(/(?<=\s|^|[.,!?;:])==~~(.*?)~~==(?=\s|[.,!?;:]|$)/g, `<mark class="${cssclass["line-through"]}">$1</mark>`);
 
 
-    text = text.replace(/(?<=\s|^|[.,!?;:])~~(.*?)~~(?=\s|[.,!?;:]|$)/g, `<span class="${cssclass["line-through"]}">$1</span>`);
-    text = text.replace(/(?<=\s|^|[.,!?;:])==(.*?)==(?=\s|[.,!?;:]|$)/g, `<mark>$1</mark>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:<>])~~(.*?)~~(?=\s|[.,!?;:<>]|$)/g, `<span class="${cssclass["line-through"]}">$1</span>`);
+    text = text.replace(/(?<=\s|^|[.,!?;:<>])==(.*?)==(?=\s|[.,!?;:<>]|$)/g, `<mark>$1</mark>`);
 
 
 
