@@ -973,3 +973,11 @@ mark {
     padding-right: 2px;
     border-radius: 5px;
 }
+
+.main a#ext:after {
+    position: relative !important;
+    display: inline-block;
+}
+.main img {
+    max-width: 100%;
+}

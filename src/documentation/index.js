@@ -355,6 +355,7 @@ function checklink(url_) {
             output = true;
         }
     } catch (eerr) {}
+    return output;
 }
 
 const charCodes = (input) => {
