@@ -23,7 +23,7 @@ jobs:
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Remove test page
-        run: rm -f -v website/test.md
+        run: rm -f -v website/test.md && rm -f -v website/mattcone.md
         shell: bash
       - name: Generate with _just
         uses: js-just/_just@v0.0.28
