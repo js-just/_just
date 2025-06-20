@@ -346,6 +346,16 @@ function extlink(url_) {
     }
     return ext;
 }
+function checklink(url_) {
+    let output = false;
+    try {
+        const url = new URL(url_);
+        const domain_ = url.hostname;
+        if (domain_ && checkdomain(domain_)) {
+            output = true;
+        }
+    } catch (eerr) {}
+}
 
 const charCodes = (input) => {
     let output = '';
@@ -365,6 +375,7 @@ const MDcode = (input) => {
     return input
         .replaceAll('*', `&#${'*'.charCodeAt(0)};`)
         .replaceAll('_', `&#${'_'.charCodeAt(0)};`)
+        .replace(/(http:\/\/|https:\/\/)/g, (match, protocol_) => `${charCodes(protocol_)}`)
 }
 const linkregex = /(?<=\s|^|[.,!?;:*_^~=])\[(.*?)\]\((.*?)\)(?=\s|[.,!?;:*_^~=]|$)/g;
 const MDtoHTML = (input) => {
@@ -375,6 +386,12 @@ const MDtoHTML = (input) => {
     text = text.replace(/(?<=\s|^|[.,!?;:*_^~=])!\[(.*?)\]\((.*?)\)(?=\s|[.,!?;:*_^~=]|$)/g, (match, text, link_) => {return `<img src="${link_}" alt="${text}" loading="lazy">`});
     text = text.replace(/(?<=\s|^|[.,!?;:*_^~=])\[(.*?)\]\((.*?) ("|')(.*?)\3\)(?=\s|[.,!?;:*_^~=]|$)/g, (match, text, link_, q, linktitle) => {return link(text, link_, extlink(link_), cssid.ext, "_blank", linktitle)});
     text = text.replace(linkregex, (match, text, link_) => {return link(text, link_, extlink(link_), cssid.ext)});
+    text = text.replace(/(?<=\s|^|[.,!?;:*_^~=])(http:\/\/|https:\/\/)(.*?)(?=\s|[,!;:*^~`<>]|[.?=#%&+] |$)/g, (match, protocol_, link_) => {
+        const link__ = `${protocol_.trim()}${link_.trim()}`;
+        if (checklink(link__)) {
+            return `<${link__}>`;
+        } else return `${protocol_}${link_}`;
+    })
     text = text.replace(/(?<=\s|^|[.,!?;:*_^~=])<(http:\/\/|https:\/\/)(.*?)>(?=\s|[.,!?;:*_^~=]|$)/g, (match, protocol_, link_) => {const link__=`${protocol_.trim()}${link_.trim()}`;return link(link__, link__, extlink(link__), cssid.ext)});
     text = text.replace(/(?<=\s|^|[.,!?;:*_^~=])<(.*?)@(.*?)>(?=\s|[.,!?;:*_^~=]|$)/g, (match, address, domain__) => {
         try {
