@@ -665,7 +665,10 @@ function toText(input) {
         .replace(linkregex, '$1');
 }
 markdownFiles.forEach(file => {
-    const content = fs.readFileSync(file, charset);
+    let content = fs.readFileSync(file, charset);
+    if (getTitleFromMd(file)) {
+        content = content.split('\n').slice(1).join('\n');
+    }
     const fileNameWithoutExt = path.basename(file, path.extname(file));
     const outFilePath = (ext) => path.join(path.dirname(file), `${fileNameWithoutExt}.${ext}`);
     fileID++;
