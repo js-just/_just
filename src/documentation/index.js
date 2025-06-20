@@ -106,6 +106,7 @@ const cssclass = {
     "impr": dataname[3]+randomChar(1),
     "warn": dataname[3]+randomChar(1),
     "caut": dataname[3]+randomChar(1),
+    "line-through": dataname[4],
     "line": dataname[3]+randomChar(1),
     "right": dataname[1],
     "navbar": dataname[1]+randomChar(1),
@@ -118,7 +119,6 @@ const cssclass = {
     "scroll": dataname[4]+randomChar(1),
     "stb": dataname[4]+randomChar(1),
     "underline": dataname[3],
-    "line-through": dataname[4],
 }
 const cssid = {
     "l": dataname[5]+randomChar(1),
