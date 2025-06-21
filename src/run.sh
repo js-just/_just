@@ -32,9 +32,9 @@ elif [ -z "$INPUT_PATH" ]; then
   INPUT_PATH="."
 fi
 
-VERSION=$(echo "$GITHUB_ACTION_PATH" | grep -oP '(?<=/v)[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9]+)?') || $GITHUB_SHA
-msg1=$(_justMessage "$_LIGHTPURPLE Running Just an Ultimate Site Tool$_DARKGRAY v$VERSION $_RESET")
-msg2=$(_justMessage "$_BLUE Installing Node.js$_RESET")
+VERSION=$($(echo "$GITHUB_ACTION_PATH" | grep -oP '(?<=/v)[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9]+)?') || $GITHUB_SHA)
+msg1=$(_justMessage "$_LIGHTPURPLE Running Just an Ultimate Site Tool$_RESET $VERSION")
+msg2=$(_justMessage "$_BLUE Installing Node.js$_RESET...")
 msg3=$(_justMessage "$_BLUE Installed Node.js$_RESET")
 msg4=$(_justMessage "$_GREEN Postprocessing completed$_RESET")
 msg5=$(_justMessage "$_GREEN Generating completed$_RESET")
