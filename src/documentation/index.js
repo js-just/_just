@@ -35,6 +35,7 @@ _just.error = require('../modules/errmsg.js');
 _just.ssapi = require('../modules/ssapi.js');
 _just.customCSS = require('./customcss.js');
 _just.MDtoHTML = require('./mdtohtml.js');
+_just.line = require('../modules/line.js');
 
 const link = (text, link_, ext = false, extid = "ext", target = "_blank", title_) => `<a href="${link_}" target="${target}"${ext ? ` id="${extid}"` : ''}${title_ ? ` title="${title_}"` : ''}>${text}</a>`;
 const span = (text) => `<span>${text}</span>`;
@@ -198,6 +199,7 @@ const charset = docsConfig ? docsConfig.charset || template.charset : template.c
 const l = ['\n\n','\n    ','\n        '];
 const date = new Date();
 let logs = `${date} (${date.getTime()})${l[0]}_JUST FILES:${l[1]}CSS: ${filename.css}${l[1]}JS: ${filename.js}`;
+let errorlogs = `${l[0]}CAUGHT ERRORS:`;
 
 const rootDirA = PATH || '.';
 const extensions = ['.md', '.mdx', '.html'];
@@ -340,7 +342,9 @@ function extlink(url_) {
         if (domain && domain_ && domain_ === domain) {
             ext = false;
         }
-    } catch (eerr) {}
+    } catch (eerr) {
+        errorlogs += `${l[1]}AT LINE ${_just.line.line() || '-1'}: ${eerr}`;
+    }
     if (url_ && url_.startsWith('/')) {
         ext = false;
     }
@@ -354,7 +358,9 @@ function checklink(url_) {
         if (domain_ && checkdomain(domain_)) {
             output = true;
         }
-    } catch (eerr) {}
+    } catch (eerr) {
+        errorlogs += `${l[1]}AT LINE ${_just.line.line() || '-1'}: ${eerr}`;
+    }
     return output;
 }
 
@@ -381,32 +387,38 @@ const MDcode = (input) => {
 const linkregex = /(?<=\s|^|[.,!?;:*_^~=])\[(.*?)\]\((.*?)\)(?=\s|[.,!?;:*_^~=]|$)/g;
 const MDtoHTML = (input) => {
     let text = MDescape(input);
-    text = text.replace(/```([\w]*)[\r\n]+([\S\s]*?)```/g, `<code class="${cssclass.code}">$2</code>`);
-    text = text.replace(/(?<=\s|^|[.,!?;:*_^~=])`(.*?)`(?=\s|[.,!?;:*_^~=]|$)/g, (match, code) => {return `<code>${MDcode(code)}</code>`});
-    text = text.replace(/(?<=\s|^|[.,!?;:*_^~=])!\[(.*?)\]\((.*?) ("|')(.*?)\3\)(?=\s|[.,!?;:*_^~=]|$)/g, (match, text, link_, q, imgtitle) => {return `<img src="${link_}" alt="${text}" title="${imgtitle}" loading="lazy">`});
-    text = text.replace(/(?<=\s|^|[.,!?;:*_^~=])!\[(.*?)\]\((.*?)\)(?=\s|[.,!?;:*_^~=]|$)/g, (match, text, link_) => {return `<img src="${link_}" alt="${text}" loading="lazy">`});
-    text = text.replace(/(?<=\s|^|[.,!?;:*_^~=])\[(.*?)\]\((.*?) ("|')(.*?)\3\)(?=\s|[.,!?;:*_^~=]|$)/g, (match, text, link_, q, linktitle) => {return link(text, link_, extlink(link_), cssid.ext, "_blank", linktitle)});
-    text = text.replace(linkregex, (match, text, link_) => {return link(text, link_, extlink(link_), cssid.ext)});
-    text = text.replace(/(?<=\s|^|[.,!?;:*_^~=])(http:\/\/|https:\/\/)(.*?)(?=\s|[,!;:*^~`<>]|[.?=#%&+] |$)/g, (match, protocol_, link_) => {
-        const link__ = `${protocol_.trim()}${link_.trim()}`;
-        if (checklink(link__)) {
-            return `<${link__}>`;
-        } else return `${protocol_}${link_}`;
-    })
-    text = text.replace(/(?<=\s|^|[.,!?;:*_^~=])<(http:\/\/|https:\/\/)(.*?)>(?=\s|[.,!?;:*_^~=]|$)/g, (match, protocol_, link_) => {const link__=`${protocol_.trim()}${link_.trim()}`;return link(link__, link__, extlink(link__), cssid.ext)});
-    text = text.replace(/(?<=\s|^|[.,!?;:*_^~=])<(.*?)@(.*?)>(?=\s|[.,!?;:*_^~=]|$)/g, (match, address, domain__) => {
-        try {
-            checkdomain(domain__);
-            const mail = `${address.trim()}@${domain__.trim()}`;
-            return `<a href="mailto:${mail}">${mail}</a>`;
-        } catch (_e_) {
-            return `<${address}@${domain__}>`;
-        }
-    })
-    text = _just.MDtoHTML.MDtoHTML(text, cssclass);
-    text = text.replace(/~(.*?)~/, '<sub>$1</sub>');
-    text = text.replace(/\^(.*?)\^/, '<sup>$1</sup>');
-    return text;
+    text = text.replace(/```([\w]*)[\r\n]+([\S\s]*?)```/g, `<code class="${cssclass.code}">$2</code>`)
+               .replace(/(?<=\s|^|[.,!?;:*_^~=])`(.*?)`(?=\s|[.,!?;:*_^~=]|$)/g, (match, code) => {return `<code>${MDcode(code)}</code>`})
+               .replace(/(?<=\s|^|[.,!?;:*_^~=])!\[(.*?)\]\((.*?) ("|')(.*?)\3\)(?=\s|[.,!?;:*_^~=]|$)/g, (match, text, link_, q, imgtitle) => {return `<img src="${link_}" alt="${text}" title="${imgtitle}" loading="lazy">`})
+               .replace(/(?<=\s|^|[.,!?;:*_^~=])!\[(.*?)\]\((.*?)\)(?=\s|[.,!?;:*_^~=]|$)/g, (match, text, link_) => {return `<img src="${link_}" alt="${text}" loading="lazy">`})
+               .replace(/(?<=\s|^|[.,!?;:*_^~=])\[(.*?)\]\((.*?) ("|')(.*?)\3\)(?=\s|[.,!?;:*_^~=]|$)/g, (match, text, link_, q, linktitle) => {return link(text, link_, extlink(link_), cssid.ext, "_blank", linktitle)})
+               .replace(linkregex, (match, text, link_) => {return link(text, link_, extlink(link_), cssid.ext)})
+               .replace(/(?<=\s|^|[.,!?;:*_^~=])(http:\/\/|https:\/\/)(.*?)(?=\s|[,!;:*^~`<>]|[.?=#%&+] |$)/g, (match, protocol_, link_) => {
+                    const link__ = `${protocol_.trim()}${link_.trim()}`;
+                    if (checklink(link__)) {
+                        try {
+                            const linkurl = new URL(link__);
+                            if (linkurl.hostname.includes('xn--')) {
+                                return link(link__, linkurl.href, extlink(linkurl.href), cssid.ext);
+                            }
+                        } catch (e__) {
+                            errorlogs += `${l[1]}AT LINE ${_just.line.line() || '-1'}: ${e__}`;
+                        }
+                        return `<${link__}>`;
+                    } else return `${protocol_}${link_}`;
+                })
+               .replace(/(?<=\s|^|[.,!?;:*_^~=])<(http:\/\/|https:\/\/)(.*?)>(?=\s|[.,!?;:*_^~=]|$)/g, (match, protocol_, link_) => {const link__=`${protocol_.trim()}${link_.trim()}`;return link(link__, link__, extlink(link__), cssid.ext)})
+               .replace(/(?<=\s|^|[.,!?;:*_^~=])<(.*?)@(.*?)>(?=\s|[.,!?;:*_^~=]|$)/g, (match, address, domain__) => {
+                    try {
+                        checkdomain(domain__);
+                        const mail = `${address.trim()}@${domain__.trim()}`;
+                        return `<a href="mailto:${mail}">${mail}</a>`;
+                    } catch (_e_) {
+                        errorlogs += `${l[1]}AT LINE ${_just.line.line() || '-1'}: ${_e_}`;
+                        return `<${address}@${domain__}>`;
+                    }
+                });
+    return _just.MDtoHTML.MDtoHTML(text, cssclass).replace(/~(.*?)~/, '<sub>$1</sub>').replace(/\^(.*?)\^/, '<sup>$1</sup>');
 }
 const dividerRegex = /(\n\s*[*_-]{3,}\s*\n)+/g;
 function hbuoclpMDtoHTML(text, maxBlockquoteLevel = 4) {
@@ -593,6 +605,7 @@ const csstouniquenames = (cssclassorcssid) => Object.entries(cssclassorcssid).fo
 });
 csstouniquenames(cssclass);
 csstouniquenames(cssid);
+let htmlnavrunid = 0;
 const htmlnav = (type = 0) => {
     let output = '';
     let addcss = '';
@@ -601,20 +614,22 @@ const htmlnav = (type = 0) => {
     pageid++;
     for (const [idk, linkdata] of Object.entries(type == 0 ? links : type == 1 ? buttons : undefined)) {
         let ext = extlink(linkdata[1]);
-        linklogs += type == 0 ? `${l[1]}#${bid}:${l[2]}NAME:${linkdata[0]}${l[2]}FILTERED NAME:${filterText(linkdata[0])}${l[2]}HREF:${linkdata[1]}${l[2]}TARGET:${linkdata[2]}` : '';
-        buttonlogs += type == 1 ? `${l[1]}#${bid}:${l[2]}NAME:${linkdata[0]}${l[2]}FILTERED NAME:${filterText(linkdata[0])}${l[2]}LINK:${linkdata[1]}${l[2]}TARGET:${linkdata[2]}${l[2]}ID:${dataname[0]}${bid}` : '';
+        linklogs += type == 0 && htmlnavrunid == 0 ? `${l[1]}#${bid+1}:${l[2]}NAME: ${linkdata[0]}${l[2]}FILTERED NAME: ${filterText(linkdata[0])}${l[2]}HREF: ${linkdata[1]}${l[2]}TARGET: ${linkdata[2]}` : '';
+        buttonlogs += type == 1&& htmlnavrunid == 0? `${l[1]}#${bid+1}:${l[2]}NAME: ${linkdata[0]}${l[2]}FILTERED NAME: ${filterText(linkdata[0])}${l[2]}LINK: ${linkdata[1]}${l[2]}TARGET: ${linkdata[2]}${l[2]}ID: ${dataname[0]}${bid}` : '';
         output += type == 0 ? `<a${linkdata[1] ? ` href="${linkdata[1]}"` : ''}${linkdata[1] ? ` target="${linkdata[2] ? linkdata[2] : ext ? '_blank' : '_self'}"` : ''}${ext ? ` id="${cssid.ext}"` : ''}>${filterText(linkdata[0])}</a>` : type == 1 ? `<button id="${dataname[0]}${bid}">${filterText(linkdata[0])}</button>` : '';
         JS = pageid == 1 && type == 1 && linkdata[1] ? _just.string.removeLast(JS, '});') + `\ndocument.getElementById('${dataname[0]}${bid}').addEventListener("click",()=>{const link=document.createElement('a');link.href='${linkdata[1]}';link.target='${linkdata[2] ? linkdata[2] : ext ? '_blank' : '_self'}';link.classList.add('${dataname[0]}${bid}');document.body.appendChild(link);link.click();document.body.removeChild(link);});` + '\n});' : JS;
         addcss += pageid == 1 && type == 1 && linkdata[1] ? `.${dataname[0]}${bid},` : '';
-        if (type == 1 && linkdata[1]) {
+        if (type == 1 && linkdata[1] && htmlnavrunid == 0) {
             uniqueNames[`${dataname[0]}${bid}`] = 1;
             uniqueNames_.push(`${dataname[0]}${bid}`);
         }
         bid++;
     }
     CSS += addcss != '' ? `\n${_just.string.removeLast(addcss, ',')}{display:none}` : '';
+    htmlnavrunid++;
     return output;
 }
+htmlnav();htmlnav(1);
 /*
     "links": [
         ["name", "link", "target"],
@@ -780,7 +795,6 @@ logs += linklogs; logs += buttonlogs;
 logs += `${l[0]}USED NAMES:${l[1]}"${uniqueNames_.join('", "')}"${l[0]}DATA NAMES:${l[1]}"${dataname.join('", "')}"`;
 console.log('\n\n\n\n\n'+logs);
 const websitepath = rootDirA !== '.' ? rootDirA : rootDirB;
-fs.writeFileSync(path.join(websitepath, '_just_data', 'output.txt'), logs, template.charset);
 fs.writeFileSync(path.join(websitepath, '_just', `${filename.css}.css`), CSS, template.charset);
 fs.writeFileSync(
     path.join(websitepath, '_just', `${filename.js}.js`),
@@ -798,15 +812,19 @@ if (domain) {
     try {
         fetchjson('http')
     } catch (ee) {
+        errorlogs += `${l[1]}AT LINE ${_just.line.line() || '-1'}: ${ee}`;
         try {
             fetchjson('https')
-        } catch (e_e) {}
+        } catch (e_e) {
+            errorlogs += `${l[1]}AT LINE ${_just.line.line() || '-1'}: ${e_e}`;
+        }
     }
 }
+fs.writeFileSync(path.join(websitepath, '_just_data', 'output.txt'), logs + errorlogs, template.charset);
 fs.writeFileSync(path.join(websitepath, '_just', `${dataname[9]}.json`), JSON.stringify(mdjson), template.charset);
 fs.writeFileSync(path.join(websitepath, '_just', 'index.json'), JSON.stringify({
     "js": filename.js,
     "css": filename.css,
     "json": dataname[9]
-}), template.charset)
-fs.writeFileSync(path.join(websitepath, '.', '.nojekyll'), '', template.charset)
+}), template.charset);
+fs.writeFileSync(path.join(websitepath, '.', '.nojekyll'), '', template.charset);
