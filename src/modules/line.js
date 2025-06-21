@@ -27,3 +27,9 @@ SOFTWARE.
 exports.line = function() {
     return new Error().stack.match(/(?:.*:){1}([^:]+):[^:]*$/)[1];
 }
+exports.err = function(str = '') {
+    if (str.startsWith('Error:')) {
+        str = str.replace('Error:', '')
+    }
+    return str.replace(/\n{2,50}/g, '').replaceAll('\n', ' ')
+}

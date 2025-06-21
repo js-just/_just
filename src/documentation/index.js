@@ -343,7 +343,7 @@ function extlink(url_) {
             ext = false;
         }
     } catch (eerr) {
-        errorlogs += `${l[1]}AT LINE ${_just.line.line() || '-1'}: ${eerr}`;
+        errorlogs += `${l[1]}AT LINE ${_just.line.line() || '-1'}: ${_just.line.err(eerr)}`;
     }
     if (url_ && url_.startsWith('/')) {
         ext = false;
@@ -359,7 +359,7 @@ function checklink(url_) {
             output = true;
         }
     } catch (eerr) {
-        errorlogs += `${l[1]}AT LINE ${_just.line.line() || '-1'}: ${eerr}`;
+        errorlogs += `${l[1]}AT LINE ${_just.line.line() || '-1'}: ${_just.line.err(eerr)}`;
     }
     return output;
 }
@@ -402,7 +402,7 @@ const MDtoHTML = (input) => {
                                 return link(link__, linkurl.href, extlink(linkurl.href), cssid.ext);
                             }
                         } catch (e__) {
-                            errorlogs += `${l[1]}AT LINE ${_just.line.line() || '-1'}: ${e__}`;
+                            errorlogs += `${l[1]}AT LINE ${_just.line.line() || '-1'}: ${_just.line.err(e__)}`;
                         }
                         return `<${link__}>`;
                     } else return `${protocol_}${link_}`;
@@ -414,7 +414,7 @@ const MDtoHTML = (input) => {
                         const mail = `${address.trim()}@${domain__.trim()}`;
                         return `<a href="mailto:${mail}">${mail}</a>`;
                     } catch (_e_) {
-                        errorlogs += `${l[1]}AT LINE ${_just.line.line() || '-1'}: ${_e_}`;
+                        errorlogs += `${l[1]}AT LINE ${_just.line.line() || '-1'}: ${_just.line.err(_e_)}`;
                         return `<${address}@${domain__}>`;
                     }
                 });
@@ -812,14 +812,15 @@ if (domain) {
     try {
         fetchjson('http')
     } catch (ee) {
-        errorlogs += `${l[1]}AT LINE ${_just.line.line() || '-1'}: ${ee}`;
+        errorlogs += `${l[1]}AT LINE ${_just.line.line() || '-1'}: ${_just.line.err(ee)}`;
         try {
             fetchjson('https')
         } catch (e_e) {
-            errorlogs += `${l[1]}AT LINE ${_just.line.line() || '-1'}: ${e_e}`;
+            errorlogs += `${l[1]}AT LINE ${_just.line.line() || '-1'}: ${_just.line.err(e_e)}`;
         }
     }
 }
+console.log(errorlogs);
 fs.writeFileSync(path.join(websitepath, '_just_data', 'output.txt'), logs + errorlogs, template.charset);
 fs.writeFileSync(path.join(websitepath, '_just', `${dataname[9]}.json`), JSON.stringify(mdjson), template.charset);
 fs.writeFileSync(path.join(websitepath, '_just', 'index.json'), JSON.stringify({
