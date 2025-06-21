@@ -185,7 +185,7 @@ elif [ "$TYPE" == "docs" ]; then
     INDEXJS1=$(cat "$INDEXJS0") && \
     INDEXJS2="let [text] = process.argv.slice(2);text = text.split('\n');for (let i = 0; i < text.length; i++) {text[i] = text[i].replaceAll('(__REPLACE_LINE__)',`(\${i+1})`)};console.log(text.join('\n'))" && \
     echo "$INDEXJS2" > "$INDEXJS0" && \
-    INDEXJS3=$(node -e "$INDEXJS0" "$INDEXJS1") && \
+    INDEXJS3=$(node "$INDEXJS0" "$INDEXJS1") && \
     echo "$INDEXJS3" > "$INDEXJS0" && \
     node "$INDEXJS0" "$HTML" "$CSS" "$JS" "$INPUT_PATH" "$GITHUB_REPOSITORY" "$GITHUB_REPOSITORY_OWNER" "$CUSTOMCSS" && \
     node $GITHUB_ACTION_PATH/src/compress.js "$INPUT_PATH" && \
