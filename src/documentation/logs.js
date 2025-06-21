@@ -79,6 +79,6 @@ findMarkdownFiles(rootDirB).forEach(file => {
     }
 });
 
-console.log('\n\n\n\n\n'+newlogs);
+console.log(newlogs);
 logsstr += newlogs;
 fs.writeFileSync(path.join(rootDirA !== '.' ? rootDirA : rootDirB, '_just_data', 'output.txt'), logsstr, charset);

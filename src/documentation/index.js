@@ -579,7 +579,7 @@ OGTITLE (HTML): ${ogtitl}${l[2]}DESCRIPTION: ${description}${l[2]}DESCRIPTION (H
 OGDESCRIPTION (HTML): ${ogdesc}${l[2]}VIEWPORT: ${viewport}${l[2]}TWITTER CARD: ${twitter}${l[2]}KEYWORDS: ${metaKeywords}${l[2]}\
 KEYWORDS (HTML): ${keywords}${l[2]}LANG: ${lang}${l[2]}LANG (HTML): ${htmlLang}${l[2]}GOOGLE ANALYTICS: ${googleAnalytics}${l[2]}\
 GOOGLE SITE VERIFICATION: ${googleVerification}${l[2]}YANDEX SITE VERIFICATION: ${yandexVerification}${l[2]}LOGO: ${logoPath}${l[2]}\
-LOGO (HTML): ${logo}${l[2]}FOOTER: ${footer}${l[2]}HTML: ${htmlhead()}`
+LOGO (HTML): ${logo}${l[2]}FOOTER: ${footer}${l[2]}HTML: ${htmlhead().replaceAll('\n', '').trim()}`
 
 const filterText = (text) => text
     .replaceAll('_', `&#${'_'.charCodeAt(0)};`)

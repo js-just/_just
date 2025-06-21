@@ -67,8 +67,8 @@ installNodejs() {
             fi
         fi
     fi
-    echo -e "$msg3"
-    node --version
+    NODEVERSION=$(node --version)
+    echo -e "$msg3 $NODEVERSION"
 }
 
 if [ -f "$CONFIG_DATA" ]; then
