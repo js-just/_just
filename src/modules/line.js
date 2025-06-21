@@ -25,15 +25,5 @@ SOFTWARE.
 */
 
 exports.line = function() {
-    const err = new Error();
-    const stackLines = err.stack.split('\n');
-
-    const callerLine = stackLines[2];
-
-    const match = callerLine.match(/:(\d+):\d+$?$/);
-    if (match) {
-        return parseInt(match[1], 10);
-    } else {
-        return null;
-    }
+    return new Error().stack.match(/(?:.*:){1}([^:]+):[^:]*$/)[1];
 }
