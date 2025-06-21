@@ -184,6 +184,7 @@ elif [ "$TYPE" == "docs" ]; then
     INDEXJS0="$GITHUB_ACTION_PATH/src/documentation/index.js"
     INDEXJS1=$(cat "$INDEXJS0") && \
     INDEXJS2="let [text] = process.argv.slice(2);text = text.split('\n');for (let i = 0; i < text.length; i++) {text[i] = text[i].replaceAll('(__REPLACE_LINE__)',`(\${i+1})`)};console.log(text.join('\n'))" && \
+    echo "$INDEXJS2" && \
     echo "$INDEXJS2" > "$INDEXJS0" && \
     INDEXJS3=$(node "$INDEXJS0" "$INDEXJS1") && \
     echo "$INDEXJS3" > "$INDEXJS0" && \
