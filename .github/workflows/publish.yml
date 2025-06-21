@@ -22,7 +22,7 @@ jobs:
         uses: actions/checkout@v4
       - name: Setup Pages
         uses: actions/configure-pages@v5
-      - name: Remove test page
+      - name: Remove test pages
         run: rm -f -v website/test.md && rm -f -v website/mattcone.md
         shell: bash
       - name: Generate with _just
