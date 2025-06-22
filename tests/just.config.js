@@ -9,6 +9,7 @@ module.exports = {
         ],
         buttons: [
             ["a button", "https://just.is-a.dev/", "_blank"],
-        ]
+        ],
+        mbl: 5
     }
 }
