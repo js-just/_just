@@ -702,7 +702,7 @@ markdownFiles.forEach(file => {
     }
 
     const headers = [];
-    const toHTML = hbuoclpMDtoHTML(addEnd(content, '\n').replace(/> (.*?)\n\n> (.*?)\n/g, `> $1\n\n> ${_just.element('blockquote separator')}$2\n`)).replace(/<h1>(.*?)<\/h1>/g, (match, p1) => {
+    const toHTML = hbuoclpMDtoHTML(addEnd(content, '\n').replace(/> (.*?)\n\n> (.*?)\n/g, `> $1\n\n> ${_just.element('blockquote separator')}$2\n`).replaceAll('\n>\n> ', '\n> ')).replace(/<h1>(.*?)<\/h1>/g, (match, p1) => {
         return `<h1 id="${uniqueName(encodeURIComponent(p1))}">${p1}</h1>`;
     }).replace(/<h2>(.*?)<\/h2>/g, (match, p1) => {
         return `<h2 id="${uniqueName(encodeURIComponent(p1))}">${p1}</h2>`;
