@@ -342,7 +342,8 @@ function getTLD(hostname) {
 }
 const checkTLD = async (domain) => {
     const inputTLD = getTLD(domain);
-    if (await psl()[1].includes(inputTLD)) {
+    const PSL = await psl();
+    if (PSL[1].includes(inputTLD)) {
         return domain
     } else {
         throw new Error(_just.error.errormessage('0126', `"${inputTLD}" is not a TLD. (${domain})`))
