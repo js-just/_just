@@ -45,6 +45,12 @@
             "message": "( UNSTABLE CONFIG )",
             "crashed": false,
             "link": ""
+        },
+        {
+            "code": "0126",
+            "message": "Your domain is required to be in PSL.",
+            "crashed": true,
+            "link": ""
         }
     ],
     "index.sh": [
