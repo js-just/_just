@@ -326,6 +326,28 @@ function generateListItems(PageList) {
     return listItemsHtml;
 }
 
+
+const psl = async () => {
+    const responce = await fetch('https://publicsuffix.org/list/public_suffix_list.dat');
+    let dat_ = await responce.text();
+    dat_ = dat_.replace(/(?<=^|\n)\/\/(.*?)\n/g, '\n').replace(/\n(\n{0,})\n/g, '\n').trim().split('\n').filter(d => (!d.startsWith('!') && !d.startsWith('*.')))
+    return [dat_.filter(d => /\./.test(d)), dat_.filter(d => !/\./.test(d))] // domains, TLDs
+}
+function getTLD(hostname) {
+  const parts = hostname.split('.');
+  if (parts.length < 2) {
+    return null;
+  }
+  return parts[parts.length - 1];
+}
+async function checkTLD(domain) {
+    const inputTLD = getTLD(domain)
+    if (await psl()[1].includes(inputTLD)) {
+        return domain
+    } else {
+        throw new Error(_just.error.errormessage('0126', `"${inputTLD}" is not a TLD. (${domain})`))
+    }
+}
 const domainregex = /^(?=.{1,253}$)(?:(?:[_a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)\.)+[a-zA-Z]{2,63}$/; // regex made by @wdhdev - https://github.com/wdhdev ( commit: https://github.com/is-a-dev/register/commit/6339f26bef0d9dbf56737ffddaca7794cf35bd24#diff-80b3110840a7eedb8cc2c29ead4fe4c98f157738ff3dcf22f05f3094ad6ca9bbR6 )
 function checkdomain(input) {
     if (input && domainregex.test(input)) {
@@ -336,7 +358,7 @@ function checkdomain(input) {
         throw new Error(_just.error.errormessage('0122', `"${input}" is not a domain name.`));
     }
 }
-const domain = docsConfig ? checkdomain(docsConfig.domain) || undefined : undefined;
+const domain = docsConfig ? await checkTLD(checkdomain(docsConfig.domain)) || undefined : undefined;
 if (domain && domain.endsWith('.is-a.dev')) {
     _just.ssapi["is-a.dev"](domain);
 }

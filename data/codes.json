@@ -48,7 +48,7 @@
         },
         {
             "code": "0126",
-            "message": "Your domain is required to be in PSL.",
+            "message": "( UNKNOWN TLD )",
             "crashed": true,
             "link": ""
         }
