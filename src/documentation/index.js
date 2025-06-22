@@ -340,7 +340,7 @@ function getTLD(hostname) {
   }
   return parts[parts.length - 1];
 }
-async function checkTLD(domain) {
+const checkTLD = async (domain) => {
     const inputTLD = getTLD(domain)
     if (await psl()[1].includes(inputTLD)) {
         return domain
