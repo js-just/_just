@@ -340,13 +340,9 @@ function getTLD(hostname) {
   }
   return parts[parts.length - 1];
 }
-const checkTLD = (domain) => {
+const checkTLD = async (domain) => {
     const inputTLD = getTLD(domain);
-    const TLDs = psl()[1];
-    const timer = setInterval(()=>{console.log('Waiting for PSL...')}, 1000);
-    while (!TLDs) {}
-    clearInterval(timer);
-    if (TLDs.includes(inputTLD)) {
+    if (await psl()[1].includes(inputTLD)) {
         return domain
     } else {
         throw new Error(_just.error.errormessage('0126', `"${inputTLD}" is not a TLD. (${domain})`))
@@ -362,517 +358,519 @@ function checkdomain(input) {
         throw new Error(_just.error.errormessage('0122', `"${input}" is not a domain name.`));
     }
 }
-const domain = docsConfig ? checkTLD(checkdomain(docsConfig.domain)) || undefined : undefined;
-if (domain && domain.endsWith('.is-a.dev')) {
-    _just.ssapi["is-a.dev"](domain);
-}
-function extlink(url_) {
-    let ext = true;
-    try {
-        const url = new URL(url_);
-        const domain_ = url.hostname;
-        if (domain && domain_ && domain_ === domain) {
+const domain = docsConfig ? checkdomain(docsConfig.domain) || undefined : undefined;
+checkTLD(domain).then(() => {
+    if (domain && domain.endsWith('.is-a.dev')) {
+        _just.ssapi["is-a.dev"](domain);
+    }
+    function extlink(url_) {
+        let ext = true;
+        try {
+            const url = new URL(url_);
+            const domain_ = url.hostname;
+            if (domain && domain_ && domain_ === domain) {
+                ext = false;
+            }
+        } catch (eerr) {
+            errorlogs += `${l[1]}AT LINE ${_just.line.line() || '-1'} (__REPLACE_LINE__): ${_just.line.err(eerr)}`;
+        }
+        if (url_ && url_.startsWith('/')) {
             ext = false;
         }
-    } catch (eerr) {
-        errorlogs += `${l[1]}AT LINE ${_just.line.line() || '-1'} (__REPLACE_LINE__): ${_just.line.err(eerr)}`;
+        return ext;
     }
-    if (url_ && url_.startsWith('/')) {
-        ext = false;
-    }
-    return ext;
-}
-function checklink(url_) {
-    let output = false;
-    try {
-        const url = new URL(url_);
-        const domain_ = url.hostname;
-        if (domain_ && checkdomain(domain_)) {
-            output = true;
-        }
-    } catch (eerr) {
-        errorlogs += `${l[1]}AT LINE ${_just.line.line() || '-1'} (__REPLACE_LINE__): ${_just.line.err(eerr)}`;
-    }
-    return output;
-}
-
-const charCodes = (input) => {
-    let output = '';
-    for (i = 0; i <= input.length; i++) {
-        output += input.charCodeAt(i) ? `&#${input.charCodeAt(i)};` : ''
-    }
-    return output
-}
-const MDescape = (input) => {
-    return input
-        .replaceAll('\\\\', `&#${'\\'.charCodeAt(0)};`)
-        .replace(/\\\[!(NOTE|TIP|IMPORTANT|WARNING|CAUTION)\]/g, (match, blockquote) => `${charCodes(`[!${blockquote}]`)}`)
-        .replace(/\\(.)/g, (match, textdata) => {return `&#${textdata.charCodeAt(0)};${textdata.slice(1)}`})
-        .replaceAll('\\', '');
-}
-const MDcode = (input) => {
-    return input
-        .replaceAll('*', `&#${'*'.charCodeAt(0)};`)
-        .replaceAll('_', `&#${'_'.charCodeAt(0)};`)
-        .replace(/(http:\/\/|https:\/\/)/g, (match, protocol_) => `${charCodes(protocol_)}`)
-}
-const linkregex = /(?<=\s|^|[.,!?;:*_^~=])\[(.*?)\]\((.*?)\)(?=\s|[.,!?;:*_^~=]|$)/g;
-const MDtoHTML = (input) => {
-    let text = MDescape(input);
-    text = text.replace(/```([\w]*)[\r\n]+([\S\s]*?)```/g, `<code class="${cssclass.code}">$2</code>`)
-               .replace(/(?<=\s|^|[.,!?;:*_^~=])`(.*?)`(?=\s|[.,!?;:*_^~=]|$)/g, (match, code) => {return `<code>${MDcode(code)}</code>`})
-               .replace(/(?<=\s|^|[.,!?;:*_^~=])!\[(.*?)\]\((.*?) ("|')(.*?)\3\)(?=\s|[.,!?;:*_^~=]|$)/g, (match, text, link_, q, imgtitle) => {return `<img src="${link_}" alt="${text}" title="${imgtitle}" loading="lazy">`})
-               .replace(/(?<=\s|^|[.,!?;:*_^~=])!\[(.*?)\]\((.*?)\)(?=\s|[.,!?;:*_^~=]|$)/g, (match, text, link_) => {return `<img src="${link_}" alt="${text}" loading="lazy">`})
-               .replace(/(?<=\s|^|[.,!?;:*_^~=])\[(.*?)\]\((.*?) ("|')(.*?)\3\)(?=\s|[.,!?;:*_^~=]|$)/g, (match, text, link_, q, linktitle) => {return link(text, link_, extlink(link_), cssid.ext, "_blank", linktitle)})
-               .replace(linkregex, (match, text, link_) => {return link(text, link_, extlink(link_), cssid.ext)})
-               .replace(/(?<=\s|^|[.,!?;:*_^~=])(http:\/\/|https:\/\/)(.*?)(?=\s|[,!;:*^~`<>]|[.?=#%&+] |$)/g, (match, protocol_, link_) => {
-                    const link__ = `${protocol_.trim()}${link_.trim()}`;
-                    if (checklink(link__)) {
-                        try {
-                            const linkurl = new URL(link__);
-                            if (linkurl.hostname.includes('xn--')) {
-                                return link(link__, linkurl.href, extlink(linkurl.href), cssid.ext);
-                            }
-                        } catch (e__) {
-                            errorlogs += `${l[1]}AT LINE ${_just.line.line() || '-1'} (__REPLACE_LINE__): ${_just.line.err(e__)}`;
-                        }
-                        return `<${link__}>`;
-                    } else return `${protocol_}${link_}`;
-                })
-               .replace(/(?<=\s|^|[.,!?;:*_^~=])<(http:\/\/|https:\/\/)(.*?)>(?=\s|[.,!?;:*_^~=]|$)/g, (match, protocol_, link_) => {const link__=`${protocol_.trim()}${link_.trim()}`;return link(link__, link__, extlink(link__), cssid.ext)})
-               .replace(/(?<=\s|^|[.,!?;:*_^~=])<(.*?)@(.*?)>(?=\s|[.,!?;:*_^~=]|$)/g, (match, address, domain__) => {
-                    try {
-                        checkdomain(domain__);
-                        const mail = `${address.trim()}@${domain__.trim()}`;
-                        return `<a href="mailto:${mail}">${mail}</a>`;
-                    } catch (_e_) {
-                        errorlogs += `${l[1]}AT LINE ${_just.line.line() || '-1'} (__REPLACE_LINE__): ${_just.line.err(_e_)}`;
-                        return `<${address}@${domain__}>`;
-                    }
-                });
-    return _just.MDtoHTML.MDtoHTML(text, cssclass).replace(/~(.*?)~/g, '<sub>$1</sub>').replace(/\^(.*?)\^/g, '<sup>$1</sup>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\*(.*?)\*/g, '<em>$1</em>');
-}
-const dividerRegex = /(\n\s*[*_-]{3,}\s*\n)+/g;
-function hbuoclpMDtoHTML(text, maxBlockquoteLevel = mbl) {
-    for (let i = 6; i >= 1; i--) {
-        const regex = new RegExp(`^#{${i}}\\s+(.*?)\\s*$`, 'gm');
-        text = text.replace(regex, MDtoHTML(`<h${i}>$1</h${i}>`));
-    }
-
-    function processBlockquotes(inputText, level) {
-        const regex = new RegExp(`^(>\\s+){${level}}(.*?)\\s*$`, 'gm');
-        return MDtoHTML(inputText.replace(regex, (match, p1, p2) => {
-            const innerBlockquote = processBlockquotes(p2.trim(), level + 1);
-            const classAttr = (num) =>
-                p2.startsWith('[!NOTE]') ? num ? 7 : ` class="${cssclass.note}"` :
-                p2.startsWith('[!TIP]') ? num ? 6 : ` class="${cssclass.ntip}"` :
-                p2.startsWith('[!IMPORTANT]') ? num ? 12 : ` class="${cssclass.impr}"` :
-                p2.startsWith('[!WARNING]') ? num ? 10 : ` class="${cssclass.warn}"` :
-                p2.startsWith('[!CAUTION]') ? num ? 10 : ` class="${cssclass.caut}"` :
-                num ? undefined : '';
-            return `<blockquote${classAttr()}>${(level > 1 ? '<br>' : '')}${classAttr(true) ? innerBlockquote.trim().slice(classAttr(true)).trim() : innerBlockquote}</blockquote>`;
-        }));
-    }
-
-    for (let i = 1; i <= maxBlockquoteLevel; i++) {
-        text = processBlockquotes(text, i);
-    }
-
-    const ulRegex = /^(?:-\s+|\*\s+|\+\s+)(.*?)(?:\n(?:-\s+|\*\s+|\+\s+)(.*?))*$/gm;
-    const olRegex = /^(?:\d+\.\s+)(.*?)(?:\n(?:\d+\.\s+)(.*?))*$/gm;
-
-    text = text.replace(ulRegex, (match) => {
-        const items = match.split('\n').map(item => item.replace(/^- \s*/, '').replace(/^\* \s*/, '').replace(/^\+ \s*/, ''));
-        return `<ul>${items.map(item => `<li>${MDtoHTML(item.trim())}</li>`).join('')}</ul>`;
-    });
-
-    text = text.replace(olRegex, (match) => {
-        const items = match.split('\n').map(item => item.replace(/^\d+\.\s*/, ''));
-        return `<ol>${items.map(item => `<li>${MDtoHTML(item.trim())}</li>`).join('')}</ol>`;
-    });
-
-    text = text.replace(dividerRegex, `<div class="${cssclass.line}"></div><br>`);
-
-    const paragraphsRegex = /([^\n]+(?:\n(?![\*_-]{3}).*)*)/g;
-    
-    let resultTextArray = [];
-    
-    let match;
-    
-    while ((match = paragraphsRegex.exec(text)) !== null) {
-        let paragraphContent = match[0].trim();
-        
-        if (paragraphContent) {
-            resultTextArray.push(`<p>${MDtoHTML(paragraphContent)}</p>`);
-        }
-        
-        text = text.slice(match.index + match[0].length);
-        
-        if (/^\n\s*$/.test(text)) {
-            resultTextArray.push('<p></p>');
-            break;
-        }
-        
-        if (/^[*_]{3}/.test(text)) {
-            break;
-        }
-        
-        if (text.length > 0) {
-            resultTextArray.push(`<p>${MDtoHTML(text.trim())}</p>`);
-            break;
-        }
-        
-        paragraphsRegex.lastIndex -= match[0].length;
-        
-    }
-
-    return resultTextArray.join('');
-}
-
-function findMarkdownFiles(dir) {
-    let results = [];
-    const list = fs.readdirSync(dir);
-    list.forEach(file => {
-        file = path.join(dir, file);
-        const stat = fs.statSync(file);
-        if (stat && stat.isDirectory()) {
-            results = results.concat(findMarkdownFiles(file));
-        } else if (file.endsWith('.md') || file.endsWith('.mdx')) {
-            results.push(file);
-        }
-    });
-    return results;
-}
-
-const rootDirB = process.cwd();
-const markdownFiles = findMarkdownFiles(rootDirB);
-
-const title = docsConfig ? docsConfig.title || template.title : template.title;
-const metatitle = docsConfig ? docsConfig.metatitle || title : title;
-const ogtitle = docsConfig && docsConfig.og ? docsConfig.og.title || metatitle : metatitle;
-const description = docsConfig ? docsConfig.description || undefined : undefined;
-const ogdescription = docsConfig && docsConfig.og ? docsConfig.og.description || description : description;
-const viewport = docsConfig ? docsConfig.viewport || template.viewport : template.viewport;
-const twitter = docsConfig && docsConfig.twitter ? docsConfig.twitter.card || template.twitter : template.twitter;
-const metaKeywords = docsConfig ? docsConfig.keywords || undefined : undefined;
-const lang = docsConfig ? docsConfig.htmlLang || template.lang : template.lang;
-const yandexVerification = docsConfig ? docsConfig.yandex || undefined : undefined;
-const googleAnalytics = docsConfig ? docsConfig.googleAnalytics || undefined : undefined;
-const googleVerification = docsConfig ? docsConfig.google || undefined : undefined;
-const logoPath = docsConfig ? docsConfig.logo || undefined : undefined;
-const footer = docsConfig ? docsConfig.footer || template.footer : template.footer;
-const publicOutput = config.OutputLinkInConsole || false;
-
-const links = docsConfig ? docsConfig.links || [] : [];
-const buttons = docsConfig ? docsConfig.buttons || [] : [];
-
-const insertHTMLinHead = docsConfig ? docsConfig.insertInHTMLHead || '' : '';
-
-const keywords = metaKeywords ? `<meta name="keywords" content="${metaKeywords}"/>` : '';
-const desc = description ? `<meta name="description" content="${description}"/>` : '';
-const ogdesc = ogdescription ? `<meta property="og:description" content="${ogdescription}"/>` : '';
-const ogtitl = ogtitle ? `<meta property="og:title" content="${ogtitle}"/>` : '';
-const logo = logoPath ? `<img src="${logoPath}" width="35px" height="auto" alt="Logo">` : '';
-const name = docsConfig && docsConfig.title ? span(title) : logoPath ? '' : span(title);
-const htmlLang = lang ? ` lang="${`${lang}`.toLowerCase()}"` : '';
-const htmlhead = () => {
-    let output = `
-    ${keywords}
-    ${desc}
-    ${ogtitl}
-    ${ogdesc}
-    <meta property="og:type" content="website"/>`;
-    if (twitter) {
-        output += `<meta property="twitter:card" content="${twitter}"/>`
-    }
-    if (yandexVerification) {
-        output += `\n<meta name="yandex-verification" content="${yandexVerification}"/>`;
-    }
-    if (googleVerification) {
-        output += `\n<meta name="google-site-verification" content="${googleVerification}" />`;
-    }
-    if (googleAnalytics) {
-        output += `\n<script async src="https://www.googletagmanager.com/gtag/js?id=${googleAnalytics}"></script>
-                    <script>
-                        window.dataLayer = window.dataLayer || [];
-                        function gtag() {
-                            dataLayer.push(arguments);
-                        }
-                        gtag('js', new Date());
-                        gtag('config', '${googleAnalytics}');
-                    </script>`
-    }
-    return output;
-}
-
-const configlogs = `${l[0]}DOMAIN: ${domain}${l[0]}CONFIG TO HTML:${l[1]}DOCSCONFIG:${l[2]}\
-TITLE: ${title}${l[2]}TITLE (HTML): ${name}${l[2]}METATITLE: ${metatitle}${l[2]}OGTITLE: ${ogtitle}${l[2]}\
-OGTITLE (HTML): ${ogtitl}${l[2]}DESCRIPTION: ${description}${l[2]}DESCRIPTION (HTML): ${desc}${l[2]}OGDESCRIPTION: ${ogdescription}${l[2]}\
-OGDESCRIPTION (HTML): ${ogdesc}${l[2]}VIEWPORT: ${viewport}${l[2]}TWITTER CARD: ${twitter}${l[2]}KEYWORDS: ${metaKeywords}${l[2]}\
-KEYWORDS (HTML): ${keywords}${l[2]}LANG: ${lang}${l[2]}LANG (HTML): ${htmlLang}${l[2]}GOOGLE ANALYTICS: ${googleAnalytics}${l[2]}\
-GOOGLE SITE VERIFICATION: ${googleVerification}${l[2]}YANDEX SITE VERIFICATION: ${yandexVerification}${l[2]}LOGO: ${logoPath}${l[2]}\
-LOGO (HTML): ${logo}${l[2]}FOOTER: ${footer}${l[2]}HTML: ${htmlhead().replaceAll('\n', '').trim()}`
-
-const filterText = (text) => text
-    .replaceAll('_', `&#${'_'.charCodeAt(0)};`)
-    .replaceAll('<script', `&#${'<'.charCodeAt(0)};script`)
-    .replaceAll('</script>', `&#${'<'.charCodeAt(0)};&#${'/'.charCodeAt(0)};script&#${'>'.charCodeAt(0)};`)
-    .replaceAll('<style', `&#${'<'.charCodeAt(0)};style`)
-    .replaceAll('</style>', `&#${'<'.charCodeAt(0)};&#${'/'.charCodeAt(0)};style&#${'>'.charCodeAt(0)};`)
-    .replaceAll('<link', `&#${'<'.charCodeAt(0)};link`)
-    .replaceAll('</link>', `&#${'<'.charCodeAt(0)};&#${'/'.charCodeAt(0)};link&#${'>'.charCodeAt(0)};`);
-const addEnd = (text, end) => {
-    if (!text.endsWith(end)) {
-        text += end
-    }
-    return text
-}
-
-let linklogs = `${l[0]}LINKS:`;
-let buttonlogs = `${l[0]}BUTTONS:`;
-let uniqueNames = {};
-let uniqueNames_= [dataname[0].slice(0,-1)];
-uniqueNames[dataname[0].slice(0,-1)] = 1;
-for (i = 0; i <= dataname.length; i++) {
-    uniqueNames[dataname[i]] = 1;
-    uniqueNames_.push(dataname[i]);
-}
-const csstouniquenames = (cssclassorcssid) => Object.entries(cssclassorcssid).forEach(([key, dataname_]) => {
-    if (!uniqueNames_.includes(dataname_)) {
-        uniqueNames[dataname_] = 1;
-        uniqueNames_.push(dataname_);
-    }
-});
-csstouniquenames(cssclass);
-csstouniquenames(cssid);
-let htmlnavrunid = 0;
-const htmlnav = (type = 0) => {
-    let output = '';
-    let addcss = '';
-    let bid = 0;
-    let pageid = 0;
-    pageid++;
-    for (const [idk, linkdata] of Object.entries(type == 0 ? links : type == 1 ? buttons : undefined)) {
-        let ext = extlink(linkdata[1]);
-        linklogs += type == 0 && htmlnavrunid <= 1 ? `${l[1]}#${bid+1}:${l[2]}NAME: ${linkdata[0]}${l[2]}FILTERED NAME: ${filterText(linkdata[0])}${l[2]}HREF: ${linkdata[1]}${l[2]}TARGET: ${linkdata[2]}${l[2]}EXTERNAL: ${ext ? 'YES' : 'NO'}` : '';
-        buttonlogs += type == 1&& htmlnavrunid <= 1? `${l[1]}#${bid+1}:${l[2]}NAME: ${linkdata[0]}${l[2]}FILTERED NAME: ${filterText(linkdata[0])}${l[2]}LINK: ${linkdata[1]}${l[2]}TARGET: ${linkdata[2]}${l[2]}EXTERNAL: ${ext ? 'YES' : 'NO'}${l[2]}ID: ${dataname[0]}${bid}` : '';
-        output += type == 0 ? `<a${linkdata[1] ? ` href="${linkdata[1]}"` : ''}${linkdata[1] ? ` target="${linkdata[2] ? linkdata[2] : ext ? '_blank' : '_self'}"` : ''}${ext ? ` id="${cssid.ext}"` : ''}>${filterText(linkdata[0])}</a>` : type == 1 ? `<button id="${dataname[0]}${bid}">${filterText(linkdata[0])}</button>` : '';
-        JS = pageid == 1 && type == 1 && linkdata[1] ? _just.string.removeLast(JS, '});') + `\ndocument.getElementById('${dataname[0]}${bid}').addEventListener("click",()=>{const link=document.createElement('a');link.href='${linkdata[1]}';link.target='${linkdata[2] ? linkdata[2] : ext ? '_blank' : '_self'}';link.classList.add('${dataname[0]}${bid}');document.body.appendChild(link);link.click();document.body.removeChild(link);});` + '\n});' : JS;
-        addcss += pageid == 1 && type == 1 && linkdata[1] ? `.${dataname[0]}${bid},` : '';
-        if (type == 1 && linkdata[1] && htmlnavrunid <= 1) {
-            uniqueNames[`${dataname[0]}${bid}`] = 1;
-            uniqueNames_.push(`${dataname[0]}${bid}`);
-        }
-        bid++;
-    }
-    CSS += addcss != '' ? `\n${_just.string.removeLast(addcss, ',')}{display:none}` : '';
-    htmlnavrunid++;
-    return output;
-}
-htmlnav();htmlnav(1);
-/*
-    "links": [
-        ["name", "link", "target"],
-        ["link2", "https://just.is-a.dev/"]
-    ]
-
-    "buttons": [
-        ["name", "link", "target"],
-        ["button2", "https://just.is-a.dev/"]
-    ]
-*/
-
-function uniqueName(input) {
-    if (!uniqueNames[input]) {
-        uniqueNames[input] = 1;
-        uniqueNames_.push(input);
-        return input;
-    } else {
-        uniqueNames[input]++;
-        uniqueNames_.push(input + uniqueNames[input]);
-        return input + uniqueNames[input];
-    }
-}
-
-const blockquoteToCSSclass = {
-    "NOTE": cssclass.note,
-    "TIP": cssclass.ntip,
-    "IMPORTANT": cssclass.impr,
-    "WARNING": cssclass.warn,
-    "CAUTION": cssclass.caut
-}
-
-logs += `${l[0]}MARKDOWN FILES:`;
-let fileID = 0;
-const mdjson = {}
-function toText(input) {
-    input = input.trim().replaceAll('\\', '')
-        .replace(dividerRegex, '')
-        .replaceAll('`', '')
-        .replaceAll('*', '')
-        .replaceAll('_', '')
-        .replaceAll('> ','')
-    for (let i = 6; i >= 1; i--) {
-        input = input.replace(new RegExp(`^#{${i}}\\s+(.*?)\\s*$`, 'gm'), '$1')
-    }
-    return input
-        .replace(/\[!(NOTE|TIP|IMPORTANT|WARNING|CAUTION)\]/g, '$1:')
-        .replace(linkregex, '$1');
-}
-markdownFiles.forEach(file => {
-    let content = fs.readFileSync(file, charset);
-    if (getTitleFromMd(file)) {
-        content = content.split('\n').slice(1).join('\n');
-    }
-    const fileNameWithoutExt = path.basename(file, path.extname(file));
-    const outFilePath = (ext) => path.join(path.dirname(file), `${fileNameWithoutExt}.${ext}`);
-    fileID++;
-    logs += `${l[1]}FILE #${fileID} "${_just.string.runnerPath(file)}":${l[2]}INPUT: ${_just.string.fileSize(fs.statSync(file).size)}`;
-
-    if (pathtourl[file]) {
-        mdjson[pathtourl[file]] = toText(content);
-    }
-
-    const headers = [];
-    const toHTML = hbuoclpMDtoHTML(
-        addEnd(content, '\n')
-            .replace(/> (.*?)\n\n> (.*?)\n/g, `> $1\n\n> ${_just.element('blockquote separator')}$2\n`)
-            .replaceAll('\n>\n> ', '\n> ')
-            .replace(new RegExp(`(?<=^|\n)([>|> ]{2,${mbl}}) `, 'g'), (match, bqs) => `\n${bqs.replaceAll(' ', '').split('').join(' ').trim()} `)
-    ).replace(/<h1>(.*?)<\/h1>/g, (match, p1) => {
-        return `<h1 id="${uniqueName(encodeURIComponent(p1))}">${p1}</h1>`;
-    }).replace(/<h2>(.*?)<\/h2>/g, (match, p1) => {
-        return `<h2 id="${uniqueName(encodeURIComponent(p1))}">${p1}</h2>`;
-    }).replace(/<h3>(.*?)<\/h3>/g, (match, p1) => {
-        return `<h3 id="${uniqueName(encodeURIComponent(p1))}">${p1}</h3>`;
-    }).replace(/<(h1|h2|h3) id="([^"]+)">(.*?)<\/\1>/g, (match, p1, p2, p3) => {headers.push(p2);return`<${p1} id="${p2}">${p3}</${p1}>`});
-
-    const H1 = [...toHTML.matchAll(/<h1 id="([^"]+)">(.*?)<\/h1>/g)];
-    const HT = [...toHTML.matchAll(/<(h2|h3) id="([^"]+)">(.*?)<\/\1>/g)];
-
-    const h1 = H1.map(match => [match[2], match[1]]);
-    const hT = HT.map(match => [match[3], match[2]]);
-
-    const headermap = new Map(headers.map((id, index) => [id, index]));
-    const contents = [
-        ...h1.map(item => ([ ...item, false ])),
-        ...hT.map(item => ([ ...item, true ]))
-    ];
-    contents.sort((a, b) => {
-        const indexA = headermap.get(a[1]) ?? Infinity;
-        const indexB = headermap.get(b[1]) ?? Infinity;
-        return indexA - indexB;
-    });
-    let pageHeaders = '';
-    for (const [idk, headerdata] of Object.entries(contents)) {
-        pageHeaders += `<li${ headerdata[2] ? ' class="secondary"' : '' }>
-                            <a href="#${headerdata[1]}">
-                                ${span(headerdata[0])}
-                            </a>
-                        </li>`;
-    }
-
-    const pages = generateListItems(addFolderToPageList(pageList));
-    let outHTML = HTML
-        .replace('<html>', `<html${htmlLang}>`)
-        .replace('REPLACE_CSS', filename.css)
-        .replace('REPLACE_JS', filename.js)
-        .replace('REPLACE_CHARSET', charset)
-        .replace('REPLACE_VIEWPORT', viewport)
-        .replace('REPLACE_TITLE', metatitle)
-        .replace('REPLACE_DATA', htmlhead())
-        .replace('REPLACE_CUSTOM', insertHTMLinHead)
-        .replace('REPLACE_LOGO', logo)
-        .replace('REPLACE_NAME', filterText(name))
-        .replace('REPLACE_PAGES', filterText(pages))
-        .replace('REPLACE_CONTENTS', filterText(pageHeaders))
-        .replace('REPLACE_FOOTER', filterText(footer))
-        .replace('REPLACE_LINKS', htmlnav())
-        .replace('REPLACE_BUTTONS', htmlnav(1));
-    
-    fs.writeFileSync(outFilePath('txt'), toHTML, charset);
-    fs.writeFileSync(
-        outFilePath('html'),
-        outHTML.replace(
-            'REPLACE_CONTENT',
-            _just.string.removeLast(
-                addEnd(
-                    toHTML
-                        .replaceAll('\n', '<br>')
-                        .replaceAll('</h1><br>', '</h1>')
-                        .replaceAll('</h2><br>', '</h2>')
-                        .replaceAll('</h3><br>', '</h3>')
-                        .replaceAll('</h4><br>', '</h4>')
-                        .replaceAll('</h5><br>', '</h5>')
-                        .replaceAll('</h6><br>', '</h6>')
-                        .replaceAll('</ol><br>', '</ol>')
-                        .replaceAll('</ul><br>', '</ul>')
-                        .replace(/<blockquote><br>((?:(?!<h[1-6][^>]*>.*?<\/h[1-6]>).)*?)<\/blockquote>/g, '<blockquote><blockquote>$1</blockquote></blockquote>')
-                        .replace(/<blockquote><br>> ((?:(?!<h[1-6][^>]*>.*?<\/h[1-6]>).)*?)<\/blockquote>/g, '<blockquote><blockquote><blockquote>$1</blockquote></blockquote></blockquote>')
-                        .replaceAll('</blockquote><br>', '</blockquote>')
-                        .replaceAll('<br><blockquote', '<blockquote')
-                        .replaceAll('</blockquote><blockquote>', '<br>')
-                        .replaceAll('<br><blockquote><br>', '<blockquote>')
-                        .replace(/<blockquote>> ((?:(?!<h[1-6][^>]*>.*?<\/h[1-6]>).)*?)<\/blockquote>/g, '<blockquote><blockquote>$1</blockquote></blockquote>')
-                        .replaceAll('</blockquote></blockquote><blockquote><blockquote>', '<br>')
-                        .replaceAll('</blockquote><blockquote>', '<br>')
-                        .replace(/<blockquote>((?:(?!<h[1-6][^>]*>.*?<\/h[1-6]>).)*?)<br>> ((?:(?!<h[1-6][^>]*>.*?<\/h[1-6]>).)*?)<br>((?:(?!<h[1-6][^>]*>.*?<\/h[1-6]>).)*?)<\/blockquote>/g, '<blockquote>$1<blockquote>$2</blockquote><br>$3</blockquote>')
-                        .replaceAll('</blockquote><br>', '</blockquote>')
-                        .replace(/<\/blockquote>> ((?:(?!<h[1-6][^>]*>.*?<\/h[1-6]>).)*?)<blockquote>/g, '</blockquote><blockquote>$1</blockquote><blockquote>')
-                        .replaceAll('</blockquote><blockquote>', '<br>')
-                        .replaceAll(_just.element('blockquote separator'), '</blockquote><blockquote>')
-                        .replaceAll('</blockquote><br><blockquote>', '<br>')
-                        .replaceAll('<blockquote></blockquote>', '')
-                        .replace(/<blockquote>\[!(NOTE|TIP|IMPORTANT|WARNING|CAUTION)\]/g, (match, blockquote) => `<blockquote class="${blockquoteToCSSclass[blockquote]}">`),
-                    '<br>'
-                ),
-                '<br>'
-            ).replace(/<blockquote>((?:(?!<h[1-6][^>]*>.*?<\/h[1-6]>).)*?)<br><br><blockquote>/, '<blockquote>$1<blockquote>')
-             .replaceAll('</blockquote><br><blockquote>', '<br>')
-             .replace(/<br><blockquote><blockquote>((?:(?!<h[1-6][^>]*>.*?<\/h[1-6]>).)*?)<\/blockquote><\/blockquote>/g, '<blockquote>$1</blockquote>'),
-        ),
-        charset
-    );
-    logs += `${l[2]}OUTPUT: ${_just.string.runnerPath(outFilePath('html'))} (${_just.string.fileSize(fs.statSync(outFilePath('html')).size)})`;
-});
-
-CSS = _just.customCSS.customcss(CSS, customCSS == 'false' ? undefined : customCSS);
-
-logs += linklogs; logs += buttonlogs;
-logs += `${l[0]}USED NAMES:${l[1]}"${uniqueNames_.join('", "')}"${l[0]}DATA NAMES:${l[1]}"${dataname.join('", "')}"`;
-console.log(logs);
-const websitepath = rootDirA !== '.' ? rootDirA : rootDirB;
-fs.writeFileSync(path.join(websitepath, '_just', `${filename.css}.css`), CSS, template.charset);
-fs.writeFileSync(
-    path.join(websitepath, '_just', `${filename.js}.js`),
-    JS.replace('\'PUBLICOUTPUT\'', publicOutput).replace('let searchurl = "/_just/search";', `let searchurl = "/_just/${dataname[9]}.json";`),
-    template.charset
-);
-const fetchjson = async (protocol) => {
-    const response1 = await fetch(`${protocol}://${domain}/_just/`);
-    const data1 = await response1.json();
-    const response2 = await fetch(`${protocol}://${domain}/_just/${data1.json}.json`);
-    const data2 = await response2.json();
-    fs.writeFileSync(path.join(websitepath, '_just', `${data1.json}.json`), JSON.stringify(data2));
-}
-if (domain) {
-    try {
-        fetchjson('http')
-    } catch (ee) {
-        errorlogs += `${l[1]}AT LINE ${_just.line.line() || '-1'} (__REPLACE_LINE__): ${_just.line.err(ee)}`;
+    function checklink(url_) {
+        let output = false;
         try {
-            fetchjson('https')
-        } catch (e_e) {
-            errorlogs += `${l[1]}AT LINE ${_just.line.line() || '-1'} (__REPLACE_LINE__): ${_just.line.err(e_e)}`;
+            const url = new URL(url_);
+            const domain_ = url.hostname;
+            if (domain_ && checkdomain(domain_)) {
+                output = true;
+            }
+        } catch (eerr) {
+            errorlogs += `${l[1]}AT LINE ${_just.line.line() || '-1'} (__REPLACE_LINE__): ${_just.line.err(eerr)}`;
+        }
+        return output;
+    }
+
+    const charCodes = (input) => {
+        let output = '';
+        for (i = 0; i <= input.length; i++) {
+            output += input.charCodeAt(i) ? `&#${input.charCodeAt(i)};` : ''
+        }
+        return output
+    }
+    const MDescape = (input) => {
+        return input
+            .replaceAll('\\\\', `&#${'\\'.charCodeAt(0)};`)
+            .replace(/\\\[!(NOTE|TIP|IMPORTANT|WARNING|CAUTION)\]/g, (match, blockquote) => `${charCodes(`[!${blockquote}]`)}`)
+            .replace(/\\(.)/g, (match, textdata) => {return `&#${textdata.charCodeAt(0)};${textdata.slice(1)}`})
+            .replaceAll('\\', '');
+    }
+    const MDcode = (input) => {
+        return input
+            .replaceAll('*', `&#${'*'.charCodeAt(0)};`)
+            .replaceAll('_', `&#${'_'.charCodeAt(0)};`)
+            .replace(/(http:\/\/|https:\/\/)/g, (match, protocol_) => `${charCodes(protocol_)}`)
+    }
+    const linkregex = /(?<=\s|^|[.,!?;:*_^~=])\[(.*?)\]\((.*?)\)(?=\s|[.,!?;:*_^~=]|$)/g;
+    const MDtoHTML = (input) => {
+        let text = MDescape(input);
+        text = text.replace(/```([\w]*)[\r\n]+([\S\s]*?)```/g, `<code class="${cssclass.code}">$2</code>`)
+                .replace(/(?<=\s|^|[.,!?;:*_^~=])`(.*?)`(?=\s|[.,!?;:*_^~=]|$)/g, (match, code) => {return `<code>${MDcode(code)}</code>`})
+                .replace(/(?<=\s|^|[.,!?;:*_^~=])!\[(.*?)\]\((.*?) ("|')(.*?)\3\)(?=\s|[.,!?;:*_^~=]|$)/g, (match, text, link_, q, imgtitle) => {return `<img src="${link_}" alt="${text}" title="${imgtitle}" loading="lazy">`})
+                .replace(/(?<=\s|^|[.,!?;:*_^~=])!\[(.*?)\]\((.*?)\)(?=\s|[.,!?;:*_^~=]|$)/g, (match, text, link_) => {return `<img src="${link_}" alt="${text}" loading="lazy">`})
+                .replace(/(?<=\s|^|[.,!?;:*_^~=])\[(.*?)\]\((.*?) ("|')(.*?)\3\)(?=\s|[.,!?;:*_^~=]|$)/g, (match, text, link_, q, linktitle) => {return link(text, link_, extlink(link_), cssid.ext, "_blank", linktitle)})
+                .replace(linkregex, (match, text, link_) => {return link(text, link_, extlink(link_), cssid.ext)})
+                .replace(/(?<=\s|^|[.,!?;:*_^~=])(http:\/\/|https:\/\/)(.*?)(?=\s|[,!;:*^~`<>]|[.?=#%&+] |$)/g, (match, protocol_, link_) => {
+                        const link__ = `${protocol_.trim()}${link_.trim()}`;
+                        if (checklink(link__)) {
+                            try {
+                                const linkurl = new URL(link__);
+                                if (linkurl.hostname.includes('xn--')) {
+                                    return link(link__, linkurl.href, extlink(linkurl.href), cssid.ext);
+                                }
+                            } catch (e__) {
+                                errorlogs += `${l[1]}AT LINE ${_just.line.line() || '-1'} (__REPLACE_LINE__): ${_just.line.err(e__)}`;
+                            }
+                            return `<${link__}>`;
+                        } else return `${protocol_}${link_}`;
+                    })
+                .replace(/(?<=\s|^|[.,!?;:*_^~=])<(http:\/\/|https:\/\/)(.*?)>(?=\s|[.,!?;:*_^~=]|$)/g, (match, protocol_, link_) => {const link__=`${protocol_.trim()}${link_.trim()}`;return link(link__, link__, extlink(link__), cssid.ext)})
+                .replace(/(?<=\s|^|[.,!?;:*_^~=])<(.*?)@(.*?)>(?=\s|[.,!?;:*_^~=]|$)/g, (match, address, domain__) => {
+                        try {
+                            checkdomain(domain__);
+                            const mail = `${address.trim()}@${domain__.trim()}`;
+                            return `<a href="mailto:${mail}">${mail}</a>`;
+                        } catch (_e_) {
+                            errorlogs += `${l[1]}AT LINE ${_just.line.line() || '-1'} (__REPLACE_LINE__): ${_just.line.err(_e_)}`;
+                            return `<${address}@${domain__}>`;
+                        }
+                    });
+        return _just.MDtoHTML.MDtoHTML(text, cssclass).replace(/~(.*?)~/g, '<sub>$1</sub>').replace(/\^(.*?)\^/g, '<sup>$1</sup>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\*(.*?)\*/g, '<em>$1</em>');
+    }
+    const dividerRegex = /(\n\s*[*_-]{3,}\s*\n)+/g;
+    function hbuoclpMDtoHTML(text, maxBlockquoteLevel = mbl) {
+        for (let i = 6; i >= 1; i--) {
+            const regex = new RegExp(`^#{${i}}\\s+(.*?)\\s*$`, 'gm');
+            text = text.replace(regex, MDtoHTML(`<h${i}>$1</h${i}>`));
+        }
+
+        function processBlockquotes(inputText, level) {
+            const regex = new RegExp(`^(>\\s+){${level}}(.*?)\\s*$`, 'gm');
+            return MDtoHTML(inputText.replace(regex, (match, p1, p2) => {
+                const innerBlockquote = processBlockquotes(p2.trim(), level + 1);
+                const classAttr = (num) =>
+                    p2.startsWith('[!NOTE]') ? num ? 7 : ` class="${cssclass.note}"` :
+                    p2.startsWith('[!TIP]') ? num ? 6 : ` class="${cssclass.ntip}"` :
+                    p2.startsWith('[!IMPORTANT]') ? num ? 12 : ` class="${cssclass.impr}"` :
+                    p2.startsWith('[!WARNING]') ? num ? 10 : ` class="${cssclass.warn}"` :
+                    p2.startsWith('[!CAUTION]') ? num ? 10 : ` class="${cssclass.caut}"` :
+                    num ? undefined : '';
+                return `<blockquote${classAttr()}>${(level > 1 ? '<br>' : '')}${classAttr(true) ? innerBlockquote.trim().slice(classAttr(true)).trim() : innerBlockquote}</blockquote>`;
+            }));
+        }
+
+        for (let i = 1; i <= maxBlockquoteLevel; i++) {
+            text = processBlockquotes(text, i);
+        }
+
+        const ulRegex = /^(?:-\s+|\*\s+|\+\s+)(.*?)(?:\n(?:-\s+|\*\s+|\+\s+)(.*?))*$/gm;
+        const olRegex = /^(?:\d+\.\s+)(.*?)(?:\n(?:\d+\.\s+)(.*?))*$/gm;
+
+        text = text.replace(ulRegex, (match) => {
+            const items = match.split('\n').map(item => item.replace(/^- \s*/, '').replace(/^\* \s*/, '').replace(/^\+ \s*/, ''));
+            return `<ul>${items.map(item => `<li>${MDtoHTML(item.trim())}</li>`).join('')}</ul>`;
+        });
+
+        text = text.replace(olRegex, (match) => {
+            const items = match.split('\n').map(item => item.replace(/^\d+\.\s*/, ''));
+            return `<ol>${items.map(item => `<li>${MDtoHTML(item.trim())}</li>`).join('')}</ol>`;
+        });
+
+        text = text.replace(dividerRegex, `<div class="${cssclass.line}"></div><br>`);
+
+        const paragraphsRegex = /([^\n]+(?:\n(?![\*_-]{3}).*)*)/g;
+        
+        let resultTextArray = [];
+        
+        let match;
+        
+        while ((match = paragraphsRegex.exec(text)) !== null) {
+            let paragraphContent = match[0].trim();
+            
+            if (paragraphContent) {
+                resultTextArray.push(`<p>${MDtoHTML(paragraphContent)}</p>`);
+            }
+            
+            text = text.slice(match.index + match[0].length);
+            
+            if (/^\n\s*$/.test(text)) {
+                resultTextArray.push('<p></p>');
+                break;
+            }
+            
+            if (/^[*_]{3}/.test(text)) {
+                break;
+            }
+            
+            if (text.length > 0) {
+                resultTextArray.push(`<p>${MDtoHTML(text.trim())}</p>`);
+                break;
+            }
+            
+            paragraphsRegex.lastIndex -= match[0].length;
+            
+        }
+
+        return resultTextArray.join('');
+    }
+
+    function findMarkdownFiles(dir) {
+        let results = [];
+        const list = fs.readdirSync(dir);
+        list.forEach(file => {
+            file = path.join(dir, file);
+            const stat = fs.statSync(file);
+            if (stat && stat.isDirectory()) {
+                results = results.concat(findMarkdownFiles(file));
+            } else if (file.endsWith('.md') || file.endsWith('.mdx')) {
+                results.push(file);
+            }
+        });
+        return results;
+    }
+
+    const rootDirB = process.cwd();
+    const markdownFiles = findMarkdownFiles(rootDirB);
+
+    const title = docsConfig ? docsConfig.title || template.title : template.title;
+    const metatitle = docsConfig ? docsConfig.metatitle || title : title;
+    const ogtitle = docsConfig && docsConfig.og ? docsConfig.og.title || metatitle : metatitle;
+    const description = docsConfig ? docsConfig.description || undefined : undefined;
+    const ogdescription = docsConfig && docsConfig.og ? docsConfig.og.description || description : description;
+    const viewport = docsConfig ? docsConfig.viewport || template.viewport : template.viewport;
+    const twitter = docsConfig && docsConfig.twitter ? docsConfig.twitter.card || template.twitter : template.twitter;
+    const metaKeywords = docsConfig ? docsConfig.keywords || undefined : undefined;
+    const lang = docsConfig ? docsConfig.htmlLang || template.lang : template.lang;
+    const yandexVerification = docsConfig ? docsConfig.yandex || undefined : undefined;
+    const googleAnalytics = docsConfig ? docsConfig.googleAnalytics || undefined : undefined;
+    const googleVerification = docsConfig ? docsConfig.google || undefined : undefined;
+    const logoPath = docsConfig ? docsConfig.logo || undefined : undefined;
+    const footer = docsConfig ? docsConfig.footer || template.footer : template.footer;
+    const publicOutput = config.OutputLinkInConsole || false;
+
+    const links = docsConfig ? docsConfig.links || [] : [];
+    const buttons = docsConfig ? docsConfig.buttons || [] : [];
+
+    const insertHTMLinHead = docsConfig ? docsConfig.insertInHTMLHead || '' : '';
+
+    const keywords = metaKeywords ? `<meta name="keywords" content="${metaKeywords}"/>` : '';
+    const desc = description ? `<meta name="description" content="${description}"/>` : '';
+    const ogdesc = ogdescription ? `<meta property="og:description" content="${ogdescription}"/>` : '';
+    const ogtitl = ogtitle ? `<meta property="og:title" content="${ogtitle}"/>` : '';
+    const logo = logoPath ? `<img src="${logoPath}" width="35px" height="auto" alt="Logo">` : '';
+    const name = docsConfig && docsConfig.title ? span(title) : logoPath ? '' : span(title);
+    const htmlLang = lang ? ` lang="${`${lang}`.toLowerCase()}"` : '';
+    const htmlhead = () => {
+        let output = `
+        ${keywords}
+        ${desc}
+        ${ogtitl}
+        ${ogdesc}
+        <meta property="og:type" content="website"/>`;
+        if (twitter) {
+            output += `<meta property="twitter:card" content="${twitter}"/>`
+        }
+        if (yandexVerification) {
+            output += `\n<meta name="yandex-verification" content="${yandexVerification}"/>`;
+        }
+        if (googleVerification) {
+            output += `\n<meta name="google-site-verification" content="${googleVerification}" />`;
+        }
+        if (googleAnalytics) {
+            output += `\n<script async src="https://www.googletagmanager.com/gtag/js?id=${googleAnalytics}"></script>
+                        <script>
+                            window.dataLayer = window.dataLayer || [];
+                            function gtag() {
+                                dataLayer.push(arguments);
+                            }
+                            gtag('js', new Date());
+                            gtag('config', '${googleAnalytics}');
+                        </script>`
+        }
+        return output;
+    }
+
+    const configlogs = `${l[0]}DOMAIN: ${domain}${l[0]}CONFIG TO HTML:${l[1]}DOCSCONFIG:${l[2]}\
+    TITLE: ${title}${l[2]}TITLE (HTML): ${name}${l[2]}METATITLE: ${metatitle}${l[2]}OGTITLE: ${ogtitle}${l[2]}\
+    OGTITLE (HTML): ${ogtitl}${l[2]}DESCRIPTION: ${description}${l[2]}DESCRIPTION (HTML): ${desc}${l[2]}OGDESCRIPTION: ${ogdescription}${l[2]}\
+    OGDESCRIPTION (HTML): ${ogdesc}${l[2]}VIEWPORT: ${viewport}${l[2]}TWITTER CARD: ${twitter}${l[2]}KEYWORDS: ${metaKeywords}${l[2]}\
+    KEYWORDS (HTML): ${keywords}${l[2]}LANG: ${lang}${l[2]}LANG (HTML): ${htmlLang}${l[2]}GOOGLE ANALYTICS: ${googleAnalytics}${l[2]}\
+    GOOGLE SITE VERIFICATION: ${googleVerification}${l[2]}YANDEX SITE VERIFICATION: ${yandexVerification}${l[2]}LOGO: ${logoPath}${l[2]}\
+    LOGO (HTML): ${logo}${l[2]}FOOTER: ${footer}${l[2]}HTML: ${htmlhead().replaceAll('\n', '').trim()}`
+
+    const filterText = (text) => text
+        .replaceAll('_', `&#${'_'.charCodeAt(0)};`)
+        .replaceAll('<script', `&#${'<'.charCodeAt(0)};script`)
+        .replaceAll('</script>', `&#${'<'.charCodeAt(0)};&#${'/'.charCodeAt(0)};script&#${'>'.charCodeAt(0)};`)
+        .replaceAll('<style', `&#${'<'.charCodeAt(0)};style`)
+        .replaceAll('</style>', `&#${'<'.charCodeAt(0)};&#${'/'.charCodeAt(0)};style&#${'>'.charCodeAt(0)};`)
+        .replaceAll('<link', `&#${'<'.charCodeAt(0)};link`)
+        .replaceAll('</link>', `&#${'<'.charCodeAt(0)};&#${'/'.charCodeAt(0)};link&#${'>'.charCodeAt(0)};`);
+    const addEnd = (text, end) => {
+        if (!text.endsWith(end)) {
+            text += end
+        }
+        return text
+    }
+
+    let linklogs = `${l[0]}LINKS:`;
+    let buttonlogs = `${l[0]}BUTTONS:`;
+    let uniqueNames = {};
+    let uniqueNames_= [dataname[0].slice(0,-1)];
+    uniqueNames[dataname[0].slice(0,-1)] = 1;
+    for (i = 0; i <= dataname.length; i++) {
+        uniqueNames[dataname[i]] = 1;
+        uniqueNames_.push(dataname[i]);
+    }
+    const csstouniquenames = (cssclassorcssid) => Object.entries(cssclassorcssid).forEach(([key, dataname_]) => {
+        if (!uniqueNames_.includes(dataname_)) {
+            uniqueNames[dataname_] = 1;
+            uniqueNames_.push(dataname_);
+        }
+    });
+    csstouniquenames(cssclass);
+    csstouniquenames(cssid);
+    let htmlnavrunid = 0;
+    const htmlnav = (type = 0) => {
+        let output = '';
+        let addcss = '';
+        let bid = 0;
+        let pageid = 0;
+        pageid++;
+        for (const [idk, linkdata] of Object.entries(type == 0 ? links : type == 1 ? buttons : undefined)) {
+            let ext = extlink(linkdata[1]);
+            linklogs += type == 0 && htmlnavrunid <= 1 ? `${l[1]}#${bid+1}:${l[2]}NAME: ${linkdata[0]}${l[2]}FILTERED NAME: ${filterText(linkdata[0])}${l[2]}HREF: ${linkdata[1]}${l[2]}TARGET: ${linkdata[2]}${l[2]}EXTERNAL: ${ext ? 'YES' : 'NO'}` : '';
+            buttonlogs += type == 1&& htmlnavrunid <= 1? `${l[1]}#${bid+1}:${l[2]}NAME: ${linkdata[0]}${l[2]}FILTERED NAME: ${filterText(linkdata[0])}${l[2]}LINK: ${linkdata[1]}${l[2]}TARGET: ${linkdata[2]}${l[2]}EXTERNAL: ${ext ? 'YES' : 'NO'}${l[2]}ID: ${dataname[0]}${bid}` : '';
+            output += type == 0 ? `<a${linkdata[1] ? ` href="${linkdata[1]}"` : ''}${linkdata[1] ? ` target="${linkdata[2] ? linkdata[2] : ext ? '_blank' : '_self'}"` : ''}${ext ? ` id="${cssid.ext}"` : ''}>${filterText(linkdata[0])}</a>` : type == 1 ? `<button id="${dataname[0]}${bid}">${filterText(linkdata[0])}</button>` : '';
+            JS = pageid == 1 && type == 1 && linkdata[1] ? _just.string.removeLast(JS, '});') + `\ndocument.getElementById('${dataname[0]}${bid}').addEventListener("click",()=>{const link=document.createElement('a');link.href='${linkdata[1]}';link.target='${linkdata[2] ? linkdata[2] : ext ? '_blank' : '_self'}';link.classList.add('${dataname[0]}${bid}');document.body.appendChild(link);link.click();document.body.removeChild(link);});` + '\n});' : JS;
+            addcss += pageid == 1 && type == 1 && linkdata[1] ? `.${dataname[0]}${bid},` : '';
+            if (type == 1 && linkdata[1] && htmlnavrunid <= 1) {
+                uniqueNames[`${dataname[0]}${bid}`] = 1;
+                uniqueNames_.push(`${dataname[0]}${bid}`);
+            }
+            bid++;
+        }
+        CSS += addcss != '' ? `\n${_just.string.removeLast(addcss, ',')}{display:none}` : '';
+        htmlnavrunid++;
+        return output;
+    }
+    htmlnav();htmlnav(1);
+    /*
+        "links": [
+            ["name", "link", "target"],
+            ["link2", "https://just.is-a.dev/"]
+        ]
+
+        "buttons": [
+            ["name", "link", "target"],
+            ["button2", "https://just.is-a.dev/"]
+        ]
+    */
+
+    function uniqueName(input) {
+        if (!uniqueNames[input]) {
+            uniqueNames[input] = 1;
+            uniqueNames_.push(input);
+            return input;
+        } else {
+            uniqueNames[input]++;
+            uniqueNames_.push(input + uniqueNames[input]);
+            return input + uniqueNames[input];
         }
     }
-}
-console.log(errorlogs + configlogs);
-fs.writeFileSync(path.join(websitepath, '_just_data', 'output.txt'), logs + errorlogs + configlogs, template.charset);
-fs.writeFileSync(path.join(websitepath, '_just', `${dataname[9]}.json`), JSON.stringify(mdjson), template.charset);
-fs.writeFileSync(path.join(websitepath, '_just', 'index.json'), JSON.stringify({
-    "js": filename.js,
-    "css": filename.css,
-    "json": dataname[9]
-}), template.charset);
-fs.writeFileSync(path.join(websitepath, '.', '.nojekyll'), '', template.charset);
+
+    const blockquoteToCSSclass = {
+        "NOTE": cssclass.note,
+        "TIP": cssclass.ntip,
+        "IMPORTANT": cssclass.impr,
+        "WARNING": cssclass.warn,
+        "CAUTION": cssclass.caut
+    }
+
+    logs += `${l[0]}MARKDOWN FILES:`;
+    let fileID = 0;
+    const mdjson = {}
+    function toText(input) {
+        input = input.trim().replaceAll('\\', '')
+            .replace(dividerRegex, '')
+            .replaceAll('`', '')
+            .replaceAll('*', '')
+            .replaceAll('_', '')
+            .replaceAll('> ','')
+        for (let i = 6; i >= 1; i--) {
+            input = input.replace(new RegExp(`^#{${i}}\\s+(.*?)\\s*$`, 'gm'), '$1')
+        }
+        return input
+            .replace(/\[!(NOTE|TIP|IMPORTANT|WARNING|CAUTION)\]/g, '$1:')
+            .replace(linkregex, '$1');
+    }
+    markdownFiles.forEach(file => {
+        let content = fs.readFileSync(file, charset);
+        if (getTitleFromMd(file)) {
+            content = content.split('\n').slice(1).join('\n');
+        }
+        const fileNameWithoutExt = path.basename(file, path.extname(file));
+        const outFilePath = (ext) => path.join(path.dirname(file), `${fileNameWithoutExt}.${ext}`);
+        fileID++;
+        logs += `${l[1]}FILE #${fileID} "${_just.string.runnerPath(file)}":${l[2]}INPUT: ${_just.string.fileSize(fs.statSync(file).size)}`;
+
+        if (pathtourl[file]) {
+            mdjson[pathtourl[file]] = toText(content);
+        }
+
+        const headers = [];
+        const toHTML = hbuoclpMDtoHTML(
+            addEnd(content, '\n')
+                .replace(/> (.*?)\n\n> (.*?)\n/g, `> $1\n\n> ${_just.element('blockquote separator')}$2\n`)
+                .replaceAll('\n>\n> ', '\n> ')
+                .replace(new RegExp(`(?<=^|\n)([>|> ]{2,${mbl}}) `, 'g'), (match, bqs) => `\n${bqs.replaceAll(' ', '').split('').join(' ').trim()} `)
+        ).replace(/<h1>(.*?)<\/h1>/g, (match, p1) => {
+            return `<h1 id="${uniqueName(encodeURIComponent(p1))}">${p1}</h1>`;
+        }).replace(/<h2>(.*?)<\/h2>/g, (match, p1) => {
+            return `<h2 id="${uniqueName(encodeURIComponent(p1))}">${p1}</h2>`;
+        }).replace(/<h3>(.*?)<\/h3>/g, (match, p1) => {
+            return `<h3 id="${uniqueName(encodeURIComponent(p1))}">${p1}</h3>`;
+        }).replace(/<(h1|h2|h3) id="([^"]+)">(.*?)<\/\1>/g, (match, p1, p2, p3) => {headers.push(p2);return`<${p1} id="${p2}">${p3}</${p1}>`});
+
+        const H1 = [...toHTML.matchAll(/<h1 id="([^"]+)">(.*?)<\/h1>/g)];
+        const HT = [...toHTML.matchAll(/<(h2|h3) id="([^"]+)">(.*?)<\/\1>/g)];
+
+        const h1 = H1.map(match => [match[2], match[1]]);
+        const hT = HT.map(match => [match[3], match[2]]);
+
+        const headermap = new Map(headers.map((id, index) => [id, index]));
+        const contents = [
+            ...h1.map(item => ([ ...item, false ])),
+            ...hT.map(item => ([ ...item, true ]))
+        ];
+        contents.sort((a, b) => {
+            const indexA = headermap.get(a[1]) ?? Infinity;
+            const indexB = headermap.get(b[1]) ?? Infinity;
+            return indexA - indexB;
+        });
+        let pageHeaders = '';
+        for (const [idk, headerdata] of Object.entries(contents)) {
+            pageHeaders += `<li${ headerdata[2] ? ' class="secondary"' : '' }>
+                                <a href="#${headerdata[1]}">
+                                    ${span(headerdata[0])}
+                                </a>
+                            </li>`;
+        }
+
+        const pages = generateListItems(addFolderToPageList(pageList));
+        let outHTML = HTML
+            .replace('<html>', `<html${htmlLang}>`)
+            .replace('REPLACE_CSS', filename.css)
+            .replace('REPLACE_JS', filename.js)
+            .replace('REPLACE_CHARSET', charset)
+            .replace('REPLACE_VIEWPORT', viewport)
+            .replace('REPLACE_TITLE', metatitle)
+            .replace('REPLACE_DATA', htmlhead())
+            .replace('REPLACE_CUSTOM', insertHTMLinHead)
+            .replace('REPLACE_LOGO', logo)
+            .replace('REPLACE_NAME', filterText(name))
+            .replace('REPLACE_PAGES', filterText(pages))
+            .replace('REPLACE_CONTENTS', filterText(pageHeaders))
+            .replace('REPLACE_FOOTER', filterText(footer))
+            .replace('REPLACE_LINKS', htmlnav())
+            .replace('REPLACE_BUTTONS', htmlnav(1));
+        
+        fs.writeFileSync(outFilePath('txt'), toHTML, charset);
+        fs.writeFileSync(
+            outFilePath('html'),
+            outHTML.replace(
+                'REPLACE_CONTENT',
+                _just.string.removeLast(
+                    addEnd(
+                        toHTML
+                            .replaceAll('\n', '<br>')
+                            .replaceAll('</h1><br>', '</h1>')
+                            .replaceAll('</h2><br>', '</h2>')
+                            .replaceAll('</h3><br>', '</h3>')
+                            .replaceAll('</h4><br>', '</h4>')
+                            .replaceAll('</h5><br>', '</h5>')
+                            .replaceAll('</h6><br>', '</h6>')
+                            .replaceAll('</ol><br>', '</ol>')
+                            .replaceAll('</ul><br>', '</ul>')
+                            .replace(/<blockquote><br>((?:(?!<h[1-6][^>]*>.*?<\/h[1-6]>).)*?)<\/blockquote>/g, '<blockquote><blockquote>$1</blockquote></blockquote>')
+                            .replace(/<blockquote><br>> ((?:(?!<h[1-6][^>]*>.*?<\/h[1-6]>).)*?)<\/blockquote>/g, '<blockquote><blockquote><blockquote>$1</blockquote></blockquote></blockquote>')
+                            .replaceAll('</blockquote><br>', '</blockquote>')
+                            .replaceAll('<br><blockquote', '<blockquote')
+                            .replaceAll('</blockquote><blockquote>', '<br>')
+                            .replaceAll('<br><blockquote><br>', '<blockquote>')
+                            .replace(/<blockquote>> ((?:(?!<h[1-6][^>]*>.*?<\/h[1-6]>).)*?)<\/blockquote>/g, '<blockquote><blockquote>$1</blockquote></blockquote>')
+                            .replaceAll('</blockquote></blockquote><blockquote><blockquote>', '<br>')
+                            .replaceAll('</blockquote><blockquote>', '<br>')
+                            .replace(/<blockquote>((?:(?!<h[1-6][^>]*>.*?<\/h[1-6]>).)*?)<br>> ((?:(?!<h[1-6][^>]*>.*?<\/h[1-6]>).)*?)<br>((?:(?!<h[1-6][^>]*>.*?<\/h[1-6]>).)*?)<\/blockquote>/g, '<blockquote>$1<blockquote>$2</blockquote><br>$3</blockquote>')
+                            .replaceAll('</blockquote><br>', '</blockquote>')
+                            .replace(/<\/blockquote>> ((?:(?!<h[1-6][^>]*>.*?<\/h[1-6]>).)*?)<blockquote>/g, '</blockquote><blockquote>$1</blockquote><blockquote>')
+                            .replaceAll('</blockquote><blockquote>', '<br>')
+                            .replaceAll(_just.element('blockquote separator'), '</blockquote><blockquote>')
+                            .replaceAll('</blockquote><br><blockquote>', '<br>')
+                            .replaceAll('<blockquote></blockquote>', '')
+                            .replace(/<blockquote>\[!(NOTE|TIP|IMPORTANT|WARNING|CAUTION)\]/g, (match, blockquote) => `<blockquote class="${blockquoteToCSSclass[blockquote]}">`),
+                        '<br>'
+                    ),
+                    '<br>'
+                ).replace(/<blockquote>((?:(?!<h[1-6][^>]*>.*?<\/h[1-6]>).)*?)<br><br><blockquote>/, '<blockquote>$1<blockquote>')
+                .replaceAll('</blockquote><br><blockquote>', '<br>')
+                .replace(/<br><blockquote><blockquote>((?:(?!<h[1-6][^>]*>.*?<\/h[1-6]>).)*?)<\/blockquote><\/blockquote>/g, '<blockquote>$1</blockquote>'),
+            ),
+            charset
+        );
+        logs += `${l[2]}OUTPUT: ${_just.string.runnerPath(outFilePath('html'))} (${_just.string.fileSize(fs.statSync(outFilePath('html')).size)})`;
+    });
+
+    CSS = _just.customCSS.customcss(CSS, customCSS == 'false' ? undefined : customCSS);
+
+    logs += linklogs; logs += buttonlogs;
+    logs += `${l[0]}USED NAMES:${l[1]}"${uniqueNames_.join('", "')}"${l[0]}DATA NAMES:${l[1]}"${dataname.join('", "')}"`;
+    console.log(logs);
+    const websitepath = rootDirA !== '.' ? rootDirA : rootDirB;
+    fs.writeFileSync(path.join(websitepath, '_just', `${filename.css}.css`), CSS, template.charset);
+    fs.writeFileSync(
+        path.join(websitepath, '_just', `${filename.js}.js`),
+        JS.replace('\'PUBLICOUTPUT\'', publicOutput).replace('let searchurl = "/_just/search";', `let searchurl = "/_just/${dataname[9]}.json";`),
+        template.charset
+    );
+    const fetchjson = async (protocol) => {
+        const response1 = await fetch(`${protocol}://${domain}/_just/`);
+        const data1 = await response1.json();
+        const response2 = await fetch(`${protocol}://${domain}/_just/${data1.json}.json`);
+        const data2 = await response2.json();
+        fs.writeFileSync(path.join(websitepath, '_just', `${data1.json}.json`), JSON.stringify(data2));
+    }
+    if (domain) {
+        try {
+            fetchjson('http')
+        } catch (ee) {
+            errorlogs += `${l[1]}AT LINE ${_just.line.line() || '-1'} (__REPLACE_LINE__): ${_just.line.err(ee)}`;
+            try {
+                fetchjson('https')
+            } catch (e_e) {
+                errorlogs += `${l[1]}AT LINE ${_just.line.line() || '-1'} (__REPLACE_LINE__): ${_just.line.err(e_e)}`;
+            }
+        }
+    }
+    console.log(errorlogs + configlogs);
+    fs.writeFileSync(path.join(websitepath, '_just_data', 'output.txt'), logs + errorlogs + configlogs, template.charset);
+    fs.writeFileSync(path.join(websitepath, '_just', `${dataname[9]}.json`), JSON.stringify(mdjson), template.charset);
+    fs.writeFileSync(path.join(websitepath, '_just', 'index.json'), JSON.stringify({
+        "js": filename.js,
+        "css": filename.css,
+        "json": dataname[9]
+    }), template.charset);
+    fs.writeFileSync(path.join(websitepath, '.', '.nojekyll'), '', template.charset);
+});
