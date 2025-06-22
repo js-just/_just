@@ -54,7 +54,7 @@ const docsConfig = config.docs_config;
 
 const configmbl = docsConfig ? docsConfig.mbl || undefined : undefined;
 if (configmbl && (configmbl > 4 || configmbl < 1)) {
-    _just.error.errormessage('0209', `Unstable config: mbl: [0m${configmbl}`, 'Warning').then((errormsg)=>{console.warn(errormsg)});
+    _just.error.errormessage('0209', `Unstable config: mbl: ${configmbl}`, 'Warning').then((errormsg)=>{console.warn(errormsg)});
 }
 const mbl = configmbl ? configmbl : 4;
 
@@ -346,7 +346,7 @@ const checkTLD = async (domain) => {
     if (PSL[1].includes(inputTLD)) {
         return domain
     } else {
-        _just.error.errormessage('0126', `"[0m"${inputTLD}"[0;31m" is not a TLD. (${domain})`).then((errmsg)=>{throw new Error(errmsg)});
+        _just.error.errormessage('0126', `"${inputTLD}" is not a TLD. (${domain})`).then((errmsg)=>{throw new Error(errmsg)});
     }
 }
 const domainregex = /^(?=.{1,253}$)(?:(?:[_a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)\.)+[a-zA-Z]{2,63}$/; // regex made by @wdhdev - https://github.com/wdhdev ( commit: https://github.com/is-a-dev/register/commit/6339f26bef0d9dbf56737ffddaca7794cf35bd24#diff-80b3110840a7eedb8cc2c29ead4fe4c98f157738ff3dcf22f05f3094ad6ca9bbR6 )
@@ -356,7 +356,7 @@ function checkdomain(input) {
     } else if (!input) {
         return undefined;
     } else {
-        _just.error.errormessage('0122', `"[0m"${input}"[0;31m" is not a domain name.`).then((errmsg)=>{throw new Error(errmsg)});
+        _just.error.errormessage('0122', `"${input}" is not a domain name.`).then((errmsg)=>{throw new Error(errmsg)});
     }
 }
 const domain = docsConfig ? checkdomain(docsConfig.domain) || undefined : undefined;
