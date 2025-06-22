@@ -24,6 +24,9 @@ SOFTWARE.
 
 */
 
+const { exec } = require('child_process');
 exports.errormessage = function (code, message, type = 'Error') {
-    return `\n\n\n\n\n Just an Ultimate Site Tool: ${type} ${code}: ${message}`;
+    return exec(`source $GITHUB_ACTION_PATH/src/modules/errmsg.sh && echo -e $(customErrorMessage "${type}" "${code}" "${message}")`, (erro, stdout, stderr) => {
+        return erro ? stderr : stdout;
+    });
 }

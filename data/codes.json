@@ -39,6 +39,14 @@
             "link": ""
         }
     ],
+    "global": [
+        {
+            "code": "0209",
+            "message": "( UNSTABLE CONFIG )",
+            "crashed": false,
+            "link": ""
+        }
+    ],
     "index.sh": [
         {
             "code": "0204",

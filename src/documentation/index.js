@@ -52,6 +52,12 @@ const path = require('path');
 const config = JSON.parse(fs.readFileSync('just.config.json', template.charset));
 const docsConfig = config.docs_config;
 
+const configmbl = docsConfig ? docsConfig.mbl || undefined : undefined;
+if (configmbl && (configmbl > 4 || configmbl < 1)) {
+    console.warn(_just.error.errormessage('0209', `Unstable config: mbl: ${configmbl}`, 'Warning'))
+}
+const mbl = configmbl ? configmbl : 4;
+
 let charss = [];
 const chars2 = ['_', '-'];
 const addchars = () => { for (let i = 65; i <= 90; i++) {
@@ -421,7 +427,7 @@ const MDtoHTML = (input) => {
     return _just.MDtoHTML.MDtoHTML(text, cssclass).replace(/~(.*?)~/, '<sub>$1</sub>').replace(/\^(.*?)\^/, '<sup>$1</sup>');
 }
 const dividerRegex = /(\n\s*[*_-]{3,}\s*\n)+/g;
-function hbuoclpMDtoHTML(text, maxBlockquoteLevel = 4) {
+function hbuoclpMDtoHTML(text, maxBlockquoteLevel = mbl) {
     for (let i = 6; i >= 1; i--) {
         const regex = new RegExp(`^#{${i}}\\s+(.*?)\\s*$`, 'gm');
         text = text.replace(regex, MDtoHTML(`<h${i}>$1</h${i}>`));
@@ -702,7 +708,12 @@ markdownFiles.forEach(file => {
     }
 
     const headers = [];
-    const toHTML = hbuoclpMDtoHTML(addEnd(content, '\n').replace(/> (.*?)\n\n> (.*?)\n/g, `> $1\n\n> ${_just.element('blockquote separator')}$2\n`).replaceAll('\n>\n> ', '\n> ')).replace(/<h1>(.*?)<\/h1>/g, (match, p1) => {
+    const toHTML = hbuoclpMDtoHTML(
+        addEnd(content, '\n')
+            .replace(/> (.*?)\n\n> (.*?)\n/g, `> $1\n\n> ${_just.element('blockquote separator')}$2\n`)
+            .replaceAll('\n>\n> ', '\n> ')
+            .replace(new RegExp(`(?<=^|\n)([>|> ]{2,${mbl}}) `, 'g'), (match, bqs) => `\n${bqs.replaceAll(' ', '').split('').join(' ').trim()} `)
+    ).replace(/<h1>(.*?)<\/h1>/g, (match, p1) => {
         return `<h1 id="${uniqueName(encodeURIComponent(p1))}">${p1}</h1>`;
     }).replace(/<h2>(.*?)<\/h2>/g, (match, p1) => {
         return `<h2 id="${uniqueName(encodeURIComponent(p1))}">${p1}</h2>`;
