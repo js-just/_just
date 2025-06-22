@@ -45,10 +45,10 @@ exports["is-a.dev"] = async function (domain, attempt = 0) {
         if (attempt < 5) {
             await exports["is-a.dev"](domain, attempt);
         } else {
-            console.log(_just.error.errormessage('0206', `Failed to fetch "${apis["is-a.dev"]}": ${error}`, 'Warning'));
+            _just.error.errormessage('0206', `Failed to fetch "${apis["is-a.dev"]}": ${error}`, 'Warning').then((errmsg)=>{console.warn(errmsg)});
         }
     }
     if (success && !exist) {
-        throw new Error(_just.error.errormessage('0123', `Subdomain "${_just.string.removeLast(domain, '.is-a.dev')}" on is-a.dev is not registered.`))
+        _just.error.errormessage('0123', `Subdomain "${_just.string.removeLast(domain, '.is-a.dev')}" on is-a.dev is not registered.`).then((errmsg)=>{throw new Error(errmsg)});
     }
 }
