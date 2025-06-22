@@ -424,7 +424,7 @@ const MDtoHTML = (input) => {
                         return `<${address}@${domain__}>`;
                     }
                 });
-    return _just.MDtoHTML.MDtoHTML(text, cssclass).replace(/~(.*?)~/, '<sub>$1</sub>').replace(/\^(.*?)\^/, '<sup>$1</sup>');
+    return _just.MDtoHTML.MDtoHTML(text, cssclass).replace(/~(.*?)~/g, '<sub>$1</sub>').replace(/\^(.*?)\^/g, '<sup>$1</sup>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\*(.*?)\*/g, '<em>$1</em>');
 }
 const dividerRegex = /(\n\s*[*_-]{3,}\s*\n)+/g;
 function hbuoclpMDtoHTML(text, maxBlockquoteLevel = mbl) {
@@ -802,6 +802,8 @@ markdownFiles.forEach(file => {
                 ),
                 '<br>'
             ).replace(/<blockquote>((?:(?!<h[1-6][^>]*>.*?<\/h[1-6]>).)*?)<br><br><blockquote>/, '<blockquote>$1<blockquote>')
+             .replaceAll('</blockquote><br><blockquote>', '<br>')
+             .replace(/<br><blockquote><blockquote>((?:(?!<h[1-6][^>]*>.*?<\/h[1-6]>).)*?)<\/blockquote><\/blockquote>/g, '<blockquote>$1</blockquote>'),
         ),
         charset
     );
