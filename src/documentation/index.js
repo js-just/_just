@@ -340,13 +340,8 @@ function getTLD(hostname) {
   }
   return parts[parts.length - 1];
 }
-const checkTLD = (domain) => {
-    const inputTLD = getTLD(domain);
-    const TLDs = psl()[1];
-    const timer = setInterval(()=>{console.log('Waiting for PSL...')}, 1000);
-    while (!TLDs) {}
-    clearInterval(timer);
-    if (TLDs.includes(inputTLD)) {
+const checkTLD = async (domain) => {
+    if (await psl()[1].includes(inputTLD)) {
         return domain
     } else {
         throw new Error(_just.error.errormessage('0126', `"${inputTLD}" is not a TLD. (${domain})`))
@@ -362,16 +357,16 @@ function checkdomain(input) {
         throw new Error(_just.error.errormessage('0122', `"${input}" is not a domain name.`));
     }
 }
-const domain = docsConfig ? checkTLD(checkdomain(docsConfig.domain)) || undefined : undefined;
-if (domain && domain.endsWith('.is-a.dev')) {
-    _just.ssapi["is-a.dev"](domain);
+const domain = async () => docsConfig ? await checkTLD(checkdomain(docsConfig.domain)) || undefined : undefined;
+if (domain() && domain().endsWith('.is-a.dev')) {
+    _just.ssapi["is-a.dev"](domain());
 }
 function extlink(url_) {
     let ext = true;
     try {
         const url = new URL(url_);
         const domain_ = url.hostname;
-        if (domain && domain_ && domain_ === domain) {
+        if (domain() && domain_ && domain_ === domain()) {
             ext = false;
         }
     } catch (eerr) {
@@ -605,7 +600,7 @@ const htmlhead = () => {
     return output;
 }
 
-const configlogs = `${l[0]}DOMAIN: ${domain}${l[0]}CONFIG TO HTML:${l[1]}DOCSCONFIG:${l[2]}\
+const configlogs = `${l[0]}DOMAIN: ${domain()}${l[0]}CONFIG TO HTML:${l[1]}DOCSCONFIG:${l[2]}\
 TITLE: ${title}${l[2]}TITLE (HTML): ${name}${l[2]}METATITLE: ${metatitle}${l[2]}OGTITLE: ${ogtitle}${l[2]}\
 OGTITLE (HTML): ${ogtitl}${l[2]}DESCRIPTION: ${description}${l[2]}DESCRIPTION (HTML): ${desc}${l[2]}OGDESCRIPTION: ${ogdescription}${l[2]}\
 OGDESCRIPTION (HTML): ${ogdesc}${l[2]}VIEWPORT: ${viewport}${l[2]}TWITTER CARD: ${twitter}${l[2]}KEYWORDS: ${metaKeywords}${l[2]}\
@@ -849,13 +844,13 @@ fs.writeFileSync(
     template.charset
 );
 const fetchjson = async (protocol) => {
-    const response1 = await fetch(`${protocol}://${domain}/_just/`);
+    const response1 = await fetch(`${protocol}://${domain()}/_just/`);
     const data1 = await response1.json();
-    const response2 = await fetch(`${protocol}://${domain}/_just/${data1.json}.json`);
+    const response2 = await fetch(`${protocol}://${domain()}/_just/${data1.json}.json`);
     const data2 = await response2.json();
     fs.writeFileSync(path.join(websitepath, '_just', `${data1.json}.json`), JSON.stringify(data2));
 }
-if (domain) {
+if (domain()) {
     try {
         fetchjson('http')
     } catch (ee) {
