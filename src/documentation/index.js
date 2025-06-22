@@ -340,9 +340,13 @@ function getTLD(hostname) {
   }
   return parts[parts.length - 1];
 }
-const checkTLD = async (domain) => {
+const checkTLD = (domain) => {
     const inputTLD = getTLD(domain);
-    if (await psl()[1].includes(inputTLD)) {
+    const TLDs = psl()[1];
+    const timer = setInterval(()=>{console.log('Waiting for PSL...')}, 1000);
+    while (!TLDs) {}
+    clearInterval(timer);
+    if (TLDs.includes(inputTLD)) {
         return domain
     } else {
         throw new Error(_just.error.errormessage('0126', `"${inputTLD}" is not a TLD. (${domain})`))
@@ -358,14 +362,7 @@ function checkdomain(input) {
         throw new Error(_just.error.errormessage('0122', `"${input}" is not a domain name.`));
     }
 }
-const domain = docsConfig ? new Promise(async function(resolve, reject) {
-    try {
-        const checktld = await checkTLD(checkdomain(docsConfig.domain));
-        resolve(checktld);
-    } catch (err) {
-        reject(err);
-    }
-}) || undefined : undefined;
+const domain = docsConfig ? checkTLD(checkdomain(docsConfig.domain)) || undefined : undefined;
 if (domain && domain.endsWith('.is-a.dev')) {
     _just.ssapi["is-a.dev"](domain);
 }
