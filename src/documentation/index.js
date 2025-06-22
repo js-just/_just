@@ -355,7 +355,7 @@ function checkdomain(input) {
         return input;
     } else if (!input) {
         return undefined;
-    } else {
+    } else {console.log(_just.error.errormessage('0122', `"${input}" is not a domain name.`));
         throw new Error(_just.error.errormessage('0122', `"${input}" is not a domain name.`));
     }
 }
