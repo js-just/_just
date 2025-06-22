@@ -25,6 +25,8 @@ SOFTWARE.
 */
 
 const _just = {};
+const { exec } = require('child_process');
+exec('npm install --save tldjs --tldjs-update-rules');
 const [HTMLtemplate, CSStemplate, JStemplate, PATH, repo, owner, customCSS] = process.argv.slice(2);
 let HTML = HTMLtemplate;
 let CSS = CSStemplate;
