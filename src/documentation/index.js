@@ -345,7 +345,7 @@ const checkTLD = async (domain) => {
     const PSL = await psl();
     if (PSL[1].includes(inputTLD)) {
         return domain
-    } else {
+    } else {console.log(_just.error.errormessage('0122', `"${input}" is not a domain name.`));
         throw new Error(_just.error.errormessage('0126', `"${inputTLD}" is not a TLD. (${domain})`))
     }
 }
@@ -355,7 +355,7 @@ function checkdomain(input) {
         return input;
     } else if (!input) {
         return undefined;
-    } else {console.log(_just.error.errormessage('0122', `"${input}" is not a domain name.`));
+    } else {
         throw new Error(_just.error.errormessage('0122', `"${input}" is not a domain name.`));
     }
 }
