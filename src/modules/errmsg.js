@@ -27,7 +27,7 @@ SOFTWARE.
 const { exec } = require('child_process');
 exports.errormessage = function (code, message, type = 'Error') {
     return new Promise((resolve, reject) => {
-        exec(`bash -c 'source $GITHUB_ACTION_PATH/src/modules/errmsg.sh && echo "$(customErrorMessage "${type}" "${code}" "${message}")" > "_just_data/e.txt" && echo -e $(customErrorMessage "${type}" "${code}" "${message}")'`, (error, stdout, stderr) => {
+        exec(`bash -c 'source $GITHUB_ACTION_PATH/src/modules/errmsg.sh && mkdir _just_data && echo "$(customErrorMessage "${type}" "${code}" "${message}")" > "_just_data/e.txt" && echo -e $(customErrorMessage "${type}" "${code}" "${message}")'`, (error, stdout, stderr) => {
         if (error) {
             reject(stderr);
         } else {
