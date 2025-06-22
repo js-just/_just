@@ -54,7 +54,7 @@ const docsConfig = config.docs_config;
 
 const configmbl = docsConfig ? docsConfig.mbl || undefined : undefined;
 if (configmbl && (configmbl > 4 || configmbl < 1)) {
-    _just.error.errormessage('0209', `Unstable config: mbl: ${configmbl}`, 'Warning').then((errormsg)=>{console.warn(errormsg)});
+    console.warn(`${_just.error.prefix}[0;33mWarning 0209[0m: [0;33mUnstable config: mbl: [0m${configmbl}`);
 }
 const mbl = configmbl ? configmbl : 4;
 

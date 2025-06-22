@@ -37,3 +37,4 @@ exports.errormessage = function (code, message, type = 'Error') {
         });
     });
 };
+exports.prefix = '[2;45m[1;30m_just[0m: ';

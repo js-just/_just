@@ -45,7 +45,7 @@ exports["is-a.dev"] = async function (domain, attempt = 0) {
         if (attempt < 5) {
             await exports["is-a.dev"](domain, attempt);
         } else {
-            _just.error.errormessage('0206', `Failed to fetch "${apis["is-a.dev"]}": ${error}`, 'Warning').then((errmsg)=>{console.warn(errmsg)});
+            console.warn(`${_just.error.prefix}[0;33mWarning 0206[0m: [0;33mFailed to fetch "[0m${apis["is-a.dev"]}[0;33m": [0m${error}`);
         }
     }
     if (success && !exist) {
