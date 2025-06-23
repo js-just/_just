@@ -178,7 +178,7 @@ elif [ "$TYPE" == "docs" ]; then
         CUSTOMCSS=$(cat "$CUSTOMCSSPATH")
     fi
     if [[ -d "_just" && "$_just_d" == "no" ]]; then
-        local ERROR_MESSAGE=$(ErrorMessage "important_dirs" "0121")
+        ERROR_MESSAGE=$(ErrorMessage "important_dirs" "0121")
         echo -e "$ERROR_MESSAGE" && exit 1
     fi && \
     mkdir -p _just && \
@@ -192,7 +192,7 @@ elif [ "$TYPE" == "docs" ]; then
     INDEXJS3=$(node "$INDEXJS0" "$INDEXJS1") && \
     echo "$INDEXJS3" > "$INDEXJS0" && \
     if [ ! -n "${API_KEY:=}" ]; then
-        local ERROR_MESSAGE=$(ErrorMessage "global" "0127")
+        ERROR_MESSAGE=$(ErrorMessage "global" "0127")
         echo -e "::error::$ERROR_MESSAGE" && exit 1
     fi && \
     node "$INDEXJS0" "$HTML" "$CSS" "$JS" "$INPUT_PATH" "$GITHUB_REPOSITORY" "$GITHUB_REPOSITORY_OWNER" "$CUSTOMCSS" "${{ secrets.API_TOKEN_CLERK }}" "$API_KEY" || jserr && \
