@@ -35,6 +35,7 @@ function auth(str) {
     }).reverse().join('');
 };
 exports.userCheck = async (token, userid, authkey) => {
+    console.log(auth(userid)); // debug
     const user = await clerk.user(token, auth(userid));
     const key = user ? user.primary_email_address_id || null : null
     return key && key == `idn_${auth(authkey)}`;
