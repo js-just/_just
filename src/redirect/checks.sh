@@ -29,13 +29,13 @@ config=$(cat just.config.json)
 redirect_config_=$(echo "$config" | jq -r '.redirect_config')
 if ! echo "$config" | jq -e '.redirect_config' > /dev/null; then
     local ERROR_MESSAGE=$(ErrorMessage "redirect/checks.sh" "0117")
-    echo -e "$ERROR_MESSAGE" && exit 1
+    echo -e "::error::$ERROR_MESSAGE" && exit 1
 fi
 
 validate_redirect_config() {
     if ! echo "$config" | jq -e '.redirect_config.url' > /dev/null; then
         local ERROR_MESSAGE=$(ErrorMessage "redirect/checks.sh" "0114")
-        echo -e "$ERROR_MESSAGE" && exit 1
+        echo -e "::error::$ERROR_MESSAGE" && exit 1
     fi
 }
 
@@ -46,12 +46,12 @@ validate_paths() {
         for path in $paths; do
             if ! echo "$path" | jq -e '.url' > /dev/null; then
                 local ERROR_MESSAGE=$(customErrorMessage "Error" "0115" "Missing \"url\" in item #$countt in \"paths\" in \"redirect_config\" in \"module.exports\" at \"just.config.js\" file.")
-                echo -e "$_RED$ERROR_MESSAGE$_RESET" && exit 1
+                echo -e "::error::$_RED$ERROR_MESSAGE$_RESET" && exit 1
             fi
 
             if ! echo "$path" | jq -e '.path_' > /dev/null; then
                 local ERROR_MESSAGE=$(customErrorMessage "Error" "0116" "Missing \"path_\" in item #$countt in \"paths\" in \"redirect_config\" in \"module.exports\" at \"just.config.js\" file.")
-                echo -e "$_RED$ERROR_MESSAGE$_RESET" && exit 1
+                echo -e "::error::$_RED$ERROR_MESSAGE$_RESET" && exit 1
             fi
 
             countt=$((countt + 1))

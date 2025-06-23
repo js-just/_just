@@ -25,17 +25,17 @@
 source $GITHUB_ACTION_PATH/src/modules/errmsg.sh
 if [ -d "deploy/_just" ]; then
   local ERROR_MESSAGE=$(ErrorMessage "postprocessor/modify_deployment.sh" "0103")
-  echo -e "$ERROR_MESSAGE" && exit 1
+  echo -e "::error::$ERROR_MESSAGE" && exit 1
 fi
 mkdir -p deploy/_just/
 
 if [ -d "_just/dangerously-insert-files/_just" ]; then
   local ERROR_MESSAGE=$(ErrorMessage "postprocessor/modify_deployment.sh" "0104")
-  echo -e "$ERROR_MESSAGE" && exit 1
+  echo -e "::error::$ERROR_MESSAGE" && exit 1
 fi
 if [ -d "_just/dangerously-insert-files/_next" ]; then
   local ERROR_MESSAGE=$(ErrorMessage "postprocessor/modify_deployment.sh" "0105")
-  echo -e "$ERROR_MESSAGE" && exit 1
+  echo -e "::error::$ERROR_MESSAGE" && exit 1
 fi
 
 echo -e "\n----------------\n\n_just Chunks:\n"

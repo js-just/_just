@@ -43,3 +43,5 @@ jobs:
         uses: ./
         with:
           path: test
+        env:
+          API_KEY: ${{ secrets.API_KEY }}

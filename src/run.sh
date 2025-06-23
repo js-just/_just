@@ -61,7 +61,7 @@ installNodejs() {
             sudo apt update -qq && sudo apt install -y nodejs npm > /dev/null 2>&1
             if [ $? -ne 0 ]; then
                 local ERROR_MESSAGE=$(ErrorMessage "run.sh" "0205")
-                echo -e "$ERROR_MESSAGE"
+                echo -e "::error::$ERROR_MESSAGE"
                 sudo apt update
                 sudo apt install -y nodejs npm
             fi
@@ -73,47 +73,47 @@ installNodejs() {
 
 if [ -f "$CONFIG_DATA" ]; then
     ERROR_MESSAGE=$(ErrorMessage "run.sh" "0113")
-    echo -e "$ERROR_MESSAGE" && exit 1
+    echo -e "::error::$ERROR_MESSAGE" && exit 1
 fi
 
 if [ ! -f "$CONFIG_FILE" ]; then
     ERROR_MESSAGE=$(ErrorMessage "run.sh" "0108")
-    echo -e "$ERROR_MESSAGE" && exit 1
+    echo -e "::error::$ERROR_MESSAGE" && exit 1
 fi
 
 CONFIG_JSON=$(node -e "console.log(JSON.stringify(require('./just.config.js')));")
 if [ $? -ne 0 ]; then
     ERROR_MESSAGE=$(ErrorMessage "run.sh" "0109")
-    echo -e "$ERROR_MESSAGE" && exit 1
+    echo -e "::error::$ERROR_MESSAGE" && exit 1
 fi
 echo "Parsed just.config.js module.exports: $CONFIG_JSON" # debug
 echo "$CONFIG_JSON" > "$CONFIG_DATA"
 
 if [ -z "$(echo "$CONFIG_JSON" | jq -r '.module.exports')" ]; then
     ERROR_MESSAGE=$(ErrorMessage "run.sh" "0112")
-    echo -e "$ERROR_MESSAGE" && exit 1
+    echo -e "::error::$ERROR_MESSAGE" && exit 1
 fi
 
 TYPE=$(echo "$CONFIG_JSON" | jq -r '.type')
 if [ -z "$TYPE" ]; then
     ERROR_MESSAGE=$(ErrorMessage "run.sh" "0110")
-    echo -e "$ERROR_MESSAGE" && exit 1
+    echo -e "::error::$ERROR_MESSAGE" && exit 1
 fi
 
 if [[ "$TYPE" != "postprocessor" && "$TYPE" != "redirect" && "$TYPE" != "compress" && "$TYPE" != "docs" ]]; then
     ERROR_MESSAGE=$(ErrorMessage "run.sh" "0111")
-    echo -e "$ERROR_MESSAGE" && exit 1
+    echo -e "::error::$ERROR_MESSAGE" && exit 1
 fi
 
 _just_d="no" && \
 if [[ "$TYPE" != "compress" && ! ( "$TYPE" == "docs" && "$INPUT_PATH" != "." ) ]]; then
     if [ -d "deploy" ]; then
         ERROR_MESSAGE=$(ErrorMessage "important_dirs" "0106")
-        echo -e "$ERROR_MESSAGE" && exit 1
+        echo -e "::error::$ERROR_MESSAGE" && exit 1
     fi
     if [ -d "_just_data" ]; then
         ERROR_MESSAGE=$(ErrorMessage "important_dirs" "0107")
-        echo -e "$ERROR_MESSAGE" && exit 1
+        echo -e "::error::$ERROR_MESSAGE" && exit 1
     fi
     mkdir -p deploy
     mkdir -p _just_data
@@ -122,11 +122,11 @@ elif [ "$TYPE" == "docs" ]; then
     _just_dir=$(echo "$INPUT_PATH/_just" | sed 's#//*#/#g')
     if [ -d "$JDD" ]; then
         ERROR_MESSAGE=$(ErrorMessage "important_dirs" "0125")
-        echo -e "$ERROR_MESSAGE" && exit 1
+        echo -e "::error::$ERROR_MESSAGE" && exit 1
     fi
     if [ -d "$_just_dir" ]; then
         ERROR_MESSAGE=$(ErrorMessage "important_dirs" "0125")
-        echo -e "$ERROR_MESSAGE" && exit 1
+        echo -e "::error::$ERROR_MESSAGE" && exit 1
     fi
     mkdir -p "$JDD"
     mkdir -p "$_just_dir"
@@ -146,7 +146,7 @@ if [ "$TYPE" == "postprocessor" ]; then
             if [ "$postprocessor_checks" == "0101" ]; then 
                 ERROR_MESSAGE=$(ErrorMessage "postprocessor/checks.sh" "0101")
             fi
-            echo -e "$ERROR_MESSAGE" && exit 1
+            echo -e "::error::$ERROR_MESSAGE" && exit 1
         fi
     } && \
     bash $GITHUB_ACTION_PATH/src/postprocessor/prepare_deployment.sh && \
@@ -179,7 +179,7 @@ elif [ "$TYPE" == "docs" ]; then
     fi
     if [[ -d "_just" && "$_just_d" == "no" ]]; then
         ERROR_MESSAGE=$(ErrorMessage "important_dirs" "0121")
-        echo -e "$ERROR_MESSAGE" && exit 1
+        echo -e "::error::$ERROR_MESSAGE" && exit 1
     fi && \
     mkdir -p _just && \
     mkdir -p deploy && \
