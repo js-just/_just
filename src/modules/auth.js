@@ -40,7 +40,7 @@ exports.userCheck = async (token, userid, authkey) => {
     const user = await clerk.user(token, auth(userid));
     const key = user ? user.primary_email_address_id || null : null
     if (user.errors) {
-        _just.error.errormessage('0128', `Failed to fetch user. (${user.errors[0].message})`).then((errmsg)=>{throw new Error(errmsg)});
+        _just.error.errormessage('0128', `Failed to fetch user. (Clerk error: ${user.errors[0].message})`).then((errmsg)=>{throw new Error(errmsg)});
     }
     return key && key == `idn_${auth(authkey)}`;
 };
