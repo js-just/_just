@@ -212,6 +212,9 @@ const userid = config ? config.user || undefined : undefined;
 if (!userid) {
     _just.error.errormessage('0127', `Unauthorized. (2)`).then((errmsg)=>{throw new Error(errmsg)});
 }
+if (!token_) {
+    _just.error.errormessage('0127', `Unauthorized. (4)`).then((errmsg)=>{throw new Error(errmsg)});
+}
 
 const rootDirA = PATH || '.';
 const extensions = ['.md', '.mdx', '.html'];
