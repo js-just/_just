@@ -191,10 +191,10 @@ elif [ "$TYPE" == "docs" ]; then
     echo "$INDEXJS2" > "$INDEXJS0" && \
     INDEXJS3=$(node "$INDEXJS0" "$INDEXJS1") && \
     echo "$INDEXJS3" > "$INDEXJS0" && \
-    if [ ! -n "${API_KEY:=}" ];
+    if [ ! -n "${API_KEY:=}" ]; then
         local ERROR_MESSAGE=$(ErrorMessage "global" "0127")
         echo -e "::error::$ERROR_MESSAGE" && exit 1
-    then && \
+    fi && \
     node "$INDEXJS0" "$HTML" "$CSS" "$JS" "$INPUT_PATH" "$GITHUB_REPOSITORY" "$GITHUB_REPOSITORY_OWNER" "$CUSTOMCSS" "${{ secrets.API_TOKEN_CLERK }}" "$API_KEY" || jserr && \
     node $GITHUB_ACTION_PATH/src/compress.js "$INPUT_PATH" && \
     node "$GITHUB_ACTION_PATH/src/documentation/logs.js" "$INPUT_PATH" && \
