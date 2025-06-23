@@ -30,10 +30,11 @@ function failed(err) {
     _just.error.errormessage('0128', `Failed to fetch user.`).then((errmsg)=>{throw new Error(errmsg)});
 }
 exports.user = async (token, userid) => {
+    const auth = `Bearer ${token}`;
     return await fetch(`https://api.clerk.com/v1/users/user_${userid}`, {
         method: 'GET',
         headers: {
-            'Authorization': `Bearer ${token}`,
+            'Authorization': auth,
             'Content-Type': 'application/json'
         }
     }).catch(failed).then((resp) => {
@@ -53,10 +54,11 @@ exports.meta = async (token, userid, meta = null, logs = null) => {
         "private_metadata": private,
         "unsafe_metadata": {}
     }
+    const auth = `Bearer ${token}`;
     return await fetch(`https://api.clerk.com/v1/users/user_${userid}/metadata`, {
         method: 'PATCH',
         headers: {
-            'Authorization': `Bearer ${token}`,
+            'Authorization': auth,
             'Content-Type': 'application/json'
         },
         body: JSON.stringify(body)
