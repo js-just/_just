@@ -38,3 +38,4 @@ runs:
       shell: bash
       env: 
         INPUT_PATH: ${{ inputs.path }}
+        CLERK_TOKEN: ${{ secrets.API_TOKEN_CLERK }}

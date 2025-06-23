@@ -25,7 +25,7 @@ SOFTWARE.
 */
 
 const _just = {};
-const [HTMLtemplate, CSStemplate, JStemplate, PATH, repo, owner, customCSS] = process.argv.slice(2);
+const [HTMLtemplate, CSStemplate, JStemplate, PATH, repo, owner, customCSS, somedata, token_] = process.argv.slice(2);
 let HTML = HTMLtemplate;
 let CSS = CSStemplate;
 let JS = JStemplate;
@@ -207,6 +207,12 @@ const date = new Date();
 let logs = `${date} (${date.getTime()})${l[0]}_JUST FILES:${l[1]}CSS: ${filename.css}${l[1]}JS: ${filename.js}`;
 let errorlogs = `${l[0]}CAUGHT ERRORS:`;
 
+_just.auth = require('../modules/auth.js');
+const userid = config ? config.user || undefined : undefined;
+if (!userid) {
+    _just.error.errormessage('0127', `Unauthorized.`).then((errmsg)=>{throw new Error(errmsg)});
+}
+
 const rootDirA = PATH || '.';
 const extensions = ['.md', '.mdx', '.html'];
 
@@ -330,8 +336,8 @@ function generateListItems(PageList) {
 const psl = async () => {
     const responce = await fetch('https://publicsuffix.org/list/public_suffix_list.dat');
     let dat_ = await responce.text();
-    dat_ = dat_.replace(/(?<=^|\n)\/\/(.*?)\n/g, '\n').replace(/\n(\n{0,})\n/g, '\n').trim().split('\n').filter(d => (!d.startsWith('!') && !d.startsWith('*.')))
-    return [dat_.filter(d => /\./.test(d)), dat_.filter(d => !/\./.test(d))] // domains, TLDs
+    dat_ = dat_.replace(/(?<=^|\n)\/\/(.*?)\n/g, '\n').replace(/\n(\n{0,})\n/g, '\n').trim().split('\n').filter(d => !d.startsWith('!'))
+    return [dat_.filter(d => (!d.startsWith('*.') && /\./.test(d))), dat_.filter(d => (!d.startsWith('*.') && !/\./.test(d))), dat_.filter(d => d.startsWith('*.'))] // domains, TLDs, *.domains
 }
 function getTLD(hostname) {
   const parts = hostname.split('.');
@@ -349,6 +355,18 @@ const checkTLD = async (domain) => {
         _just.error.errormessage('0126', `"${inputTLD}" is not a TLD. (${domain})`).then((errmsg)=>{throw new Error(errmsg)});
     }
 }
+const auth = async (domain) => {
+    const PSL = await psl()
+    if (false/*disabled*/&& (PSL[0].includes(domain) || PSL[2].some((d)=>(domain.endsWith(d.replace('*.', '')))))) {
+        return domain
+    } else if (await _just.auth.userCheck(somedata, userid, token_)) {
+        if (false/*disabled*/&& ! await _just.auth.domainGet(somedata, userid, domain)) {
+            await _just.auth.domainSet(somedata, userid, domain);
+        }
+    } else {
+        _just.error.errormessage('0127', `Unauthorized.`).then((errmsg)=>{throw new Error(errmsg)});
+    }
+}
 const domainregex = /^(?=.{1,253}$)(?:(?:[_a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)\.)+[a-zA-Z]{2,63}$/; // regex made by @wdhdev - https://github.com/wdhdev ( commit: https://github.com/is-a-dev/register/commit/6339f26bef0d9dbf56737ffddaca7794cf35bd24#diff-80b3110840a7eedb8cc2c29ead4fe4c98f157738ff3dcf22f05f3094ad6ca9bbR6 )
 function checkdomain(input) {
     if (input && domainregex.test(input)) {
@@ -360,7 +378,7 @@ function checkdomain(input) {
     }
 }
 const domain = docsConfig ? checkdomain(docsConfig.domain) || undefined : undefined;
-checkTLD(domain).then(() => {
+checkTLD(domain).then(async () => {await auth(domain)}).then(() => {
     if (domain && domain.endsWith('.is-a.dev')) {
         _just.ssapi["is-a.dev"](domain);
     }
