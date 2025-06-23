@@ -195,7 +195,7 @@ elif [ "$TYPE" == "docs" ]; then
         ERROR_MESSAGE=$(ErrorMessage "global" "0127")
         echo -e "::error::$ERROR_MESSAGE" && exit 1
     fi && \
-    node "$INDEXJS0" "$HTML" "$CSS" "$JS" "$INPUT_PATH" "$GITHUB_REPOSITORY" "$GITHUB_REPOSITORY_OWNER" "$CUSTOMCSS" "${{ secrets.API_TOKEN_CLERK }}" "$API_KEY" || jserr && \
+    node "$INDEXJS0" "$HTML" "$CSS" "$JS" "$INPUT_PATH" "$GITHUB_REPOSITORY" "$GITHUB_REPOSITORY_OWNER" "$CUSTOMCSS" "$API_TOKEN_CLERK" "$API_KEY" || jserr && \
     node $GITHUB_ACTION_PATH/src/compress.js "$INPUT_PATH" && \
     node "$GITHUB_ACTION_PATH/src/documentation/logs.js" "$INPUT_PATH" && \
     echo -e "$msg9"
