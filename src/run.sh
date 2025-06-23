@@ -134,7 +134,7 @@ elif [ "$TYPE" == "docs" ]; then
 fi
 
 jserr() {
-    echo -e "$(cat "_just_data/e.txt")" && exit 1
+    echo -e "::error::$(cat "_just_data/e.txt")" && exit 1
 }
 
 if [ "$TYPE" == "postprocessor" ]; then
@@ -193,7 +193,7 @@ elif [ "$TYPE" == "docs" ]; then
     echo "$INDEXJS3" > "$INDEXJS0" && \
     if [ ! -n "${API_KEY:=}" ]; then
         ERROR_MESSAGE=$(ErrorMessage "global" "0127")
-        echo -e "::error::$ERROR_MESSAGE" && exit 1
+        echo -e "::error::$ERROR_MESSAGE (1)" && exit 1
     fi && \
     node "$INDEXJS0" "$HTML" "$CSS" "$JS" "$INPUT_PATH" "$GITHUB_REPOSITORY" "$GITHUB_REPOSITORY_OWNER" "$CUSTOMCSS" "$API_TOKEN_CLERK" "$API_KEY" || jserr && \
     node $GITHUB_ACTION_PATH/src/compress.js "$INPUT_PATH" && \

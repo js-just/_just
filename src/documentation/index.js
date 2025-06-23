@@ -210,7 +210,7 @@ let errorlogs = `${l[0]}CAUGHT ERRORS:`;
 _just.auth = require('../modules/auth.js');
 const userid = config ? config.user || undefined : undefined;
 if (!userid) {
-    _just.error.errormessage('0127', `Unauthorized.`).then((errmsg)=>{throw new Error(errmsg)});
+    _just.error.errormessage('0127', `Unauthorized. (2)`).then((errmsg)=>{throw new Error(errmsg)});
 }
 
 const rootDirA = PATH || '.';
@@ -364,7 +364,7 @@ const auth = async (domain) => {
             await _just.auth.domainSet(somedata, userid, domain);
         }
     } else {
-        _just.error.errormessage('0127', `Unauthorized.`).then((errmsg)=>{throw new Error(errmsg)});
+        _just.error.errormessage('0127', `Unauthorized. (3)`).then((errmsg)=>{throw new Error(errmsg)});
     }
 }
 const domainregex = /^(?=.{1,253}$)(?:(?:[_a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)\.)+[a-zA-Z]{2,63}$/; // regex made by @wdhdev - https://github.com/wdhdev ( commit: https://github.com/is-a-dev/register/commit/6339f26bef0d9dbf56737ffddaca7794cf35bd24#diff-80b3110840a7eedb8cc2c29ead4fe4c98f157738ff3dcf22f05f3094ad6ca9bbR6 )
