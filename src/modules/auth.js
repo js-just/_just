@@ -24,6 +24,8 @@ SOFTWARE.
 
 */
 
+const _just = {};
+_just.error = require('./errmsg.js');
 const clerk = require('./clerk.js');
 function auth(str) {
     return str.split('').map(char => {
@@ -37,8 +39,9 @@ function auth(str) {
 exports.userCheck = async (token, userid, authkey) => {
     const user = await clerk.user(token, auth(userid));
     const key = user ? user.primary_email_address_id || null : null
-    console.log(user); // debug
-    console.log(key); // debug
+    if (user.errors) {
+        _just.error.errormessage('0128', `Failed to fetch user. (${user.errors[0].message})`).then((errmsg)=>{throw new Error(errmsg)});
+    }
     return key && key == `idn_${auth(authkey)}`;
 };
 exports.domainGet = async (token, userid, domain) => {

@@ -27,7 +27,7 @@ SOFTWARE.
 const _just = {}
 _just.error = require('./errmsg.js');
 function failed(err) {
-    _just.error.errormessage('0128', `Failed to fetch user`).then((errmsg)=>{throw new Error(errmsg)});
+    _just.error.errormessage('0128', `Failed to fetch user.`).then((errmsg)=>{throw new Error(errmsg)});
 }
 exports.user = async (token, userid) => {
     return await fetch(`https://api.clerk.com/v1/users/user_${userid}`, {
