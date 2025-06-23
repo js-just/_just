@@ -31,6 +31,7 @@ function failed(err) {
 }
 exports.user = async (token, userid) => {
     const auth = `Bearer ${token}`;
+    console.log(auth) // debug
     return await fetch(`https://api.clerk.com/v1/users/user_${userid}`, {
         method: 'GET',
         headers: {
