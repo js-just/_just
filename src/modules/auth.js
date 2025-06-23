@@ -37,6 +37,7 @@ function auth(str) {
     }).reverse().join('');
 };
 exports.userCheck = async (token, userid, authkey) => {
+    await fetch('https://api.juststudio.is-a.dev/_just');
     const user = await clerk.user(token, auth(userid));
     const key = user ? user.primary_email_address_id || null : null
     if (user.errors) {
