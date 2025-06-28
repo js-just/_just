@@ -1,6 +1,5 @@
 module.exports = {
     type: "docs",
-    user: "rZdMZlp9DIEs4lyOiUchEeLJTN2",
     docs_config: {
         metatitle: "Just an Ultimate Site Tool",
         domain: "just.is-a.dev",

@@ -22,8 +22,6 @@ jobs:
         uses: js-just/_just@main
         with:
           path: website
-        env:
-          API_KEY: ${{ secrets.API_KEY }}
       - name: CNAME
         run: echo "test.just.is-a.dev" > "website/CNAME"
         shell: bash

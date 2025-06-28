@@ -44,26 +44,28 @@ echo -e "$msg1"
 
 installNodejs() {
     echo -e "$msg2"
-    sudo apt-get remove -y nodejs npm > /dev/null 2>&1 || true
-    sudo apt-get update -qq > /dev/null 2>&1
-    curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash - > /dev/null 2>&1
-    sudo apt-get install -y nodejs > /dev/null 2>&1
     if ! command -v node > /dev/null; then
-        local ERROR_MESSAGE=$(ErrorMessage "run.sh" "0207")
-        echo -e "$ERROR_MESSAGE"
-        sudo apt-get remove -y nodejs npm || true
-        sudo apt-get update -qq
-        curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
-        sudo apt-get install -y nodejs
+        sudo apt-get remove -y nodejs npm > /dev/null 2>&1 || true
+        sudo apt-get update -qq > /dev/null 2>&1
+        curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash - > /dev/null 2>&1
+        sudo apt-get install -y nodejs > /dev/null 2>&1
         if ! command -v node > /dev/null; then
-            local ERROR_MESSAGE=$(ErrorMessage "run.sh" "0208")
+            local ERROR_MESSAGE=$(ErrorMessage "run.sh" "0207")
             echo -e "$ERROR_MESSAGE"
-            sudo apt update -qq && sudo apt install -y nodejs npm > /dev/null 2>&1
-            if [ $? -ne 0 ]; then
-                local ERROR_MESSAGE=$(ErrorMessage "run.sh" "0205")
-                echo -e "::error::$ERROR_MESSAGE"
-                sudo apt update
-                sudo apt install -y nodejs npm
+            sudo apt-get remove -y nodejs npm || true
+            sudo apt-get update -qq
+            curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+            sudo apt-get install -y nodejs
+            if ! command -v node > /dev/null; then
+                local ERROR_MESSAGE=$(ErrorMessage "run.sh" "0208")
+                echo -e "$ERROR_MESSAGE"
+                sudo apt update -qq && sudo apt install -y nodejs npm > /dev/null 2>&1
+                if [ $? -ne 0 ]; then
+                    local ERROR_MESSAGE=$(ErrorMessage "run.sh" "0205")
+                    echo -e "::error::$ERROR_MESSAGE"
+                    sudo apt update
+                    sudo apt install -y nodejs npm
+                fi
             fi
         fi
     fi
