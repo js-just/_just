@@ -748,7 +748,7 @@ checkTLD(domain).then(tldvalid => {
         const H1 = [...toHTML.matchAll(/<(h1|h2) id="([^"]+)">(.*?)<\/\1>/g)];
         const HT = [...toHTML.matchAll(/<(h3|h4) id="([^"]+)">(.*?)<\/\1>/g)];
 
-        const h1 = H1.map(match => [match[2], match[1]]);
+        const h1 = H1.map(match => [match[3], match[2]]);
         const hT = HT.map(match => [match[3], match[2]]);
 
         const headermap = new Map(headers.map((id, index) => [id, index]));

@@ -38,7 +38,7 @@ Some code here
 #### h4
 ##### h5
 ###### h6
-> [!IMPORTANT] Only h1, h2 and h3 will be included in the "On this page" content list and will have their own unique IDs for shortlinks.
+> [!IMPORTANT] Only h1, h2, h3 and h4 will be included in the "On this page" content list and will have their own unique IDs for shortlinks.
 
 # Escape test
 Not a line:
