@@ -358,7 +358,7 @@ function checkdomain(input, throwerror) {
     } else if (throwerror) {
         _just.error.errormessage('0122', `"${input}" is not a domain name.`).then((errmsg)=>{throw new Error(errmsg)});
     } else {
-        _just.error.errormessage('0122', `"${input}" is not a domain name.`).then((errmsg)=>errorlogs+=`${l[1]}AT LINE ${_just.line.line() || '-1'} (__REPLACE_LINE__): ${_just.line.err(errmsg)}`);
+        _just.error.errormessage('0122', `"${input}" is not a domain name.`).catch().then((errmsg)=>errorlogs+=`${l[1]}AT LINE ${_just.line.line() || '-1'} (__REPLACE_LINE__): ${_just.line.err(errmsg)}`);
     }
 }
 const domain = docsConfig ? checkdomain(docsConfig.domain, true) || undefined : undefined;

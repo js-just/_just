@@ -29,7 +29,7 @@ const { exec } = require('child_process');
  * @param {string} code
  * @param {string} message
  * @param {string} type
- * @returns {string}
+ * @returns {Promise<string>}
  */
 exports.errormessage = function (code, message, type = 'Error') {
     const de = 'Debug: Error ';
