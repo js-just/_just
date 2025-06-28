@@ -33,6 +33,9 @@ elif [ -z "$INPUT_PATH" ]; then
 fi
 
 VERSION=$(echo "$GITHUB_ACTION_PATH" | grep -oP '(?<=/v)[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9]+)?' || echo "$GITHUB_SHA")
+if [[ "$VERSION" != "$GITHUB_SHA" && "$VERSION" != v* ]]; then
+  VERSION="v$VERSION"
+fi
 msg1=$(_justMessage "$_BLUE Running$_LIGHTPURPLE Just an Ultimate Site Tool$_RESET $VERSION")
 msg2=$(_justMessage "$_BLUE Installing Node.js$_RESET...")
 msg3=$(_justMessage "$_BLUE Installed Node.js$_RESET")
@@ -44,6 +47,8 @@ echo -e "$msg1"
 
 installNodejs() {
     echo -e "$msg2"
+    chmod +x "$GITHUB_ACTION_PATH/src/time.py" # use python to get current time in ms cuz yes
+    local TIME1=$(python3 "$GITHUB_ACTION_PATH/src/time.py")
     if ! command -v node > /dev/null; then
         sudo apt-get remove -y nodejs npm > /dev/null 2>&1 || true
         sudo apt-get update -qq > /dev/null 2>&1
@@ -69,8 +74,11 @@ installNodejs() {
             fi
         fi
     fi
+    local TIME2=$(python3 "$GITHUB_ACTION_PATH/src/time.py")
     NODEVERSION=$(node --version)
-    echo -e "$msg3 $NODEVERSION"
+    NODESECONDS=$(node "$GITHUB_ACTION_PATH/src/time.js" "$TIME1" "$TIME2") # use js to get nodejs installing duration cuz yes
+    MSSTRINGIDK="ms"
+    echo -e "$msg3 $NODEVERSION ($NODESECONDS$MSSTRINGIDK)"
 }
 
 if [ -f "$CONFIG_DATA" ]; then
