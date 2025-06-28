@@ -143,7 +143,7 @@ elif [ "$TYPE" == "docs" ]; then
 fi
 
 jserr() {
-    echo -e "::error::$(cat "_just_error")" && exit 1
+    echo -e "::error::$(cat "_just_data/e.txt")" && exit 1
 }
 
 if [ "$TYPE" == "postprocessor" ]; then
