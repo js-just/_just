@@ -49,7 +49,7 @@ installNodejs() {
     echo -e "$msg2"
     chmod +x "$GITHUB_ACTION_PATH/src/time.py" # use python to get current time in ms cuz yes
     local TIME1=$(python3 "$GITHUB_ACTION_PATH/src/time.py")
-    if ! command -v node > /dev/null; then
+    # if ! command -v node > /dev/null; then
         sudo apt-get remove -y nodejs npm > /dev/null 2>&1 || true
         sudo apt-get update -qq > /dev/null 2>&1
         curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash - > /dev/null 2>&1
@@ -73,7 +73,7 @@ installNodejs() {
                 fi
             fi
         fi
-    fi
+    # fi
     local TIME2=$(python3 "$GITHUB_ACTION_PATH/src/time.py")
     NODEVERSION=$(node --version)
     NODESECONDS=$(node "$GITHUB_ACTION_PATH/src/time.js" "$TIME1" "$TIME2") # use js to get nodejs installing duration cuz yes
