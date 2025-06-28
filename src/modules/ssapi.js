@@ -35,7 +35,7 @@ const warn_ = (d, e) => {
 
 /**
  * @param {string} domain 
- * @param {number} attempt 
+ * @param {number} attempt
  */
 exports["is-a.dev"] = async function (domain, attempt = 0) {
     attempt++;
@@ -62,6 +62,6 @@ exports["is-a.dev"] = async function (domain, attempt = 0) {
         }
     }
     if (success && !exist) {
-        _just.error.errormessage('0123', `Subdomain "${_just.string.removeLast(domain, '.is-a.dev')}" on is-a.dev is not registered.`).then((errmsg)=>{throw new Error(errmsg)});
+        _just.error.errormessage('0123', `Subdomain "${_just.string.removeLast(domain, '.is-a.dev')}" is not registered on "is-a.dev".`).then((errmsg)=>{throw new Error(errmsg)});
     }
 }
