@@ -49,12 +49,14 @@ installNodejs() {
     echo -e "$msg2"
     chmod +x "$GITHUB_ACTION_PATH/src/time.py" # use python to get current time in ms cuz yes
     local TIME1=$(python3 "$GITHUB_ACTION_PATH/src/time.py")
-    # if ! command -v node > /dev/null; then
+    if ! command -v node > /dev/null; then # attempt 0: nodejs installed before running _just
+        # attempt 1: install via curl
         sudo apt-get remove -y nodejs npm > /dev/null 2>&1 || true
         sudo apt-get update -qq > /dev/null 2>&1
         curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash - > /dev/null 2>&1
         sudo apt-get install -y nodejs > /dev/null 2>&1
         if ! command -v node > /dev/null; then
+            # attempt 2: install via curl with logs
             local ERROR_MESSAGE=$(ErrorMessage "run.sh" "0207")
             echo -e "$ERROR_MESSAGE"
             sudo apt-get remove -y nodejs npm || true
@@ -62,10 +64,12 @@ installNodejs() {
             curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
             sudo apt-get install -y nodejs
             if ! command -v node > /dev/null; then
+                # attempt 3: install via sudo apt install
                 local ERROR_MESSAGE=$(ErrorMessage "run.sh" "0208")
                 echo -e "$ERROR_MESSAGE"
                 sudo apt update -qq && sudo apt install -y nodejs npm > /dev/null 2>&1
                 if [ $? -ne 0 ]; then
+                    # attempt 4: install via sudo apt install with logs
                     local ERROR_MESSAGE=$(ErrorMessage "run.sh" "0205")
                     echo -e "::error::$ERROR_MESSAGE"
                     sudo apt update
@@ -73,7 +77,7 @@ installNodejs() {
                 fi
             fi
         fi
-    # fi
+    fi
     local TIME2=$(python3 "$GITHUB_ACTION_PATH/src/time.py")
     NODEVERSION=$(node --version)
     NODESECONDS=$(node "$GITHUB_ACTION_PATH/src/time.js" "$TIME1" "$TIME2") # use js to get nodejs installing duration cuz yes
