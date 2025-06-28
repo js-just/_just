@@ -30,6 +30,10 @@ _just.string = require('./string.js');
 const apis = {};
 apis["is-a.dev"] = 'https://raw.is-a.dev/v2.json';
 
+/**
+ * @param {string} domain 
+ * @param {number} attempt 
+ */
 exports["is-a.dev"] = async function (domain, attempt = 0) {
     attempt++;
     let success = false;

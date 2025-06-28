@@ -24,6 +24,11 @@ SOFTWARE.
 
 */
 
+/**
+ * @param {string} text 
+ * @param {Array} cssclass
+ * @returns {string}
+ */
 exports.MDtoHTML = function (text, cssclass) {
     text = text.replace(/(?<=\s|^|[.,!?;:])==~~__\*\*\*(.*?)\*\*\*__~~==(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);
     text = text.replace(/(?<=\s|^|[.,!?;:])~~==__\*\*\*(.*?)\*\*\*__==~~(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass.underline} ${cssclass["line-through"]}"><strong>$1</strong></em></mark>`);

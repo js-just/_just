@@ -27,6 +27,10 @@ SOFTWARE.
 exports.line = function() {
     return new Error().stack.match(/(?:.*:){1}([^:]+):[^:]*$/)[1];
 }
+/**
+ * @param {string} str 
+ * @returns {string}
+ */
 exports.err = function(str) {
     str = `${str}`;
     if (str.startsWith('Error:')) {

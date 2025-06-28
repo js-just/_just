@@ -24,6 +24,11 @@ SOFTWARE.
 
 */
 
+/**
+ * @param {string} input 
+ * @param {string} removeThis 
+ * @returns {string}
+ */
 exports.removeLast = function (input, removeThis) {
     return `${input}`
         .split('').reverse().join('')
@@ -33,6 +38,10 @@ exports.removeLast = function (input, removeThis) {
         .split('').reverse().join('');
 }
 
+/**
+ * @param {number} bytes 
+ * @returns {string}
+ */
 exports.fileSize =  function (bytes) {
     if (bytes <= 1024) {
         return `${bytes}B`;

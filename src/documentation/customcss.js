@@ -26,6 +26,11 @@ SOFTWARE.
 
 const baseregex = /(@_just base)/g;
 const baseregex2= /(@_just base;)/g;
+/**
+ * @param {string} CSS 
+ * @param {string} CUSTOM 
+ * @returns {string}
+ */
 exports.customcss = function (CSS, CUSTOM) {
     if (!CUSTOM) {
         return CSS
