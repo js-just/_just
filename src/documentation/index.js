@@ -358,7 +358,7 @@ function checkdomain(input, throwerror) {
     } else if (throwerror) {
         _just.error.errormessage('0122', `"${input}" is not a domain name.`).then((errmsg)=>{throw new Error(errmsg)});
     } else {
-        _just.error.errormessage('0122', `"${input}" is not a domain name.`).catch().then((errmsg)=>errorlogs+=`${l[1]}AT LINE ${_just.line.line() || '-1'} (__REPLACE_LINE__): ${_just.line.err(errmsg)}`);
+        return false;
     }
 }
 const domain = docsConfig ? checkdomain(docsConfig.domain, true) || undefined : undefined;
@@ -444,15 +444,10 @@ checkTLD(domain).then(tldvalid => {
                     })
                 .replace(/(?<=\s|^|[.,!?;:*_^~=])<(http:\/\/|https:\/\/)(.*?)>(?=\s|[.,!?;:*_^~=]|$)/g, (match, protocol_, link_) => {const link__=`${protocol_.trim()}${link_.trim()}`;return link(link__, link__, extlink(link__), cssid.ext)})
                 .replace(/(?<=\s|^|[.,!?;:*_^~=])<(.*?)@(.*?)>(?=\s|[.,!?;:*_^~=]|$)/g, (match, address, domain__) => {
-                        try {
-                            checkdomain(domain__, false);
+                        if (checkdomain(domain__, false)) {
                             const mail = `${address.trim()}@${domain__.trim()}`;
                             return `<a href="mailto:${mail}">${mail}</a>`;
-                        } catch (_e_) {
-                            caughterrors.push(_e_);
-                            errorlogs += `${l[1]}AT LINE ${_just.line.line() || '-1'} (__REPLACE_LINE__): ${_just.line.err(_e_)}`;
-                            return `<${address}@${domain__}>`;
-                        }
+                        } else return `<${address}@${domain__}>`;
                     });
         return _just.MDtoHTML.MDtoHTML(text, cssclass).replace(/~(.*?)~/g, '<sub>$1</sub>').replace(/\^(.*?)\^/g, '<sup>$1</sup>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\*(.*?)\*/g, '<em>$1</em>');
     }
