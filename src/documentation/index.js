@@ -359,7 +359,8 @@ function checkdomain(input) {
         _just.error.errormessage('0122', `"${input}" is not a domain name.`).then((errmsg)=>{throw new Error(errmsg)});
     }
 }
-const domain = docsConfig ? checkdomain(docsConfig.domain) || undefined : undefined;
+const domain = docsConfig ? docsConfig.domain || undefined : undefined;
+domain ? checkdomain(domain) : undefined;
 checkTLD(domain).then(tldvalid => {
     if (domain && domain.endsWith('.is-a.dev')) {
         _just.ssapi["is-a.dev"](domain);

@@ -77,8 +77,7 @@ installNodejs() {
     local TIME2=$(python3 "$GITHUB_ACTION_PATH/src/time.py")
     NODEVERSION=$(node --version)
     NODESECONDS=$(node "$GITHUB_ACTION_PATH/src/time.js" "$TIME1" "$TIME2") # use js to get nodejs installing duration cuz yes
-    MSSTRINGIDK="ms"
-    echo -e "$msg3 $NODEVERSION ($NODESECONDS$MSSTRINGIDK)"
+    echo -e "$msg3 $NODEVERSION ($NODESECONDS)"
 }
 
 if [ -f "$CONFIG_DATA" ]; then
