@@ -136,7 +136,7 @@ elif [ "$TYPE" == "docs" ]; then
 fi
 
 jserr() {
-    echo -e "::error::$(cat "_just_data/e.txt")" && exit 1
+    echo -e "::error::$(cat "_just_error")" && exit 1
 }
 
 if [ "$TYPE" == "postprocessor" ]; then
@@ -160,7 +160,7 @@ if [ "$TYPE" == "postprocessor" ]; then
     bash $GITHUB_ACTION_PATH/src/postprocessor/build_map.sh && \
     echo -e "$msg4"
 elif [ "$TYPE" == "redirect" ]; then
-    mkdir -p deploy/_just
+    mkdir -p deploy/_just && \
     installNodejs && \
     bash $GITHUB_ACTION_PATH/src/redirect/checks.sh && \
     node $GITHUB_ACTION_PATH/src/redirect/index.js && \
@@ -171,16 +171,20 @@ elif [ "$TYPE" == "compress" ]; then
     node $GITHUB_ACTION_PATH/src/compress.js "$INPUT_PATH" && \
     echo -e "$msg6"
 elif [ "$TYPE" == "docs" ]; then
-    HTML=$(cat "$GITHUB_ACTION_PATH/src/documentation/templates/page.html")
-    CSS=$(cat "$GITHUB_ACTION_PATH/src/documentation/templates/page.css")
-    JS=$(cat "$GITHUB_ACTION_PATH/src/documentation/templates/page.js")
-    CUSTOMCSS=false
-    CUSTOMCSSPATH="just.config.css"
+    HTML=$(cat "$GITHUB_ACTION_PATH/src/documentation/templates/page.html") && \
+    CSS=$(cat "$GITHUB_ACTION_PATH/src/documentation/templates/page.css") && \
+    JS=$(cat "$GITHUB_ACTION_PATH/src/documentation/templates/page.js") && \
+    CUSTOMCSS=false && \
+    CUSTOMCSSPATH="just.config.css" && \
     if [ -f "$CUSTOMCSSPATH" ]; then
         CUSTOMCSS=$(cat "$CUSTOMCSSPATH")
-    fi
+    fi && \
     if [[ -d "_just" && "$_just_d" == "no" ]]; then
         ERROR_MESSAGE=$(ErrorMessage "important_dirs" "0121")
+        echo -e "::error::$ERROR_MESSAGE" && exit 1
+    fi && \
+    if [ -f "_just_error" ]; then 
+        ERROR_MESSAGE=$(ErrorMessage "run.sh" "0127")
         echo -e "::error::$ERROR_MESSAGE" && exit 1
     fi && \
     mkdir -p _just && \
