@@ -741,16 +741,12 @@ checkTLD(domain).then(tldvalid => {
                 .replace(/> (.*?)\n\n> (.*?)\n/g, `> $1\n\n> ${_just.element('blockquote separator')}$2\n`)
                 .replaceAll('\n>\n> ', '\n> ')
                 .replace(new RegExp(`(?<=^|\n)([>|> ]{2,${mbl}}) `, 'g'), (match, bqs) => `\n${bqs.replaceAll(' ', '').split('').join(' ').trim()} `)
-        ).replace(/<h1>(.*?)<\/h1>/g, (match, p1) => {
-            return `<h1 id="${uniqueName(encodeURIComponent(p1))}">${p1}</h1>`;
-        }).replace(/<h2>(.*?)<\/h2>/g, (match, p1) => {
-            return `<h2 id="${uniqueName(encodeURIComponent(p1))}">${p1}</h2>`;
-        }).replace(/<h3>(.*?)<\/h3>/g, (match, p1) => {
-            return `<h3 id="${uniqueName(encodeURIComponent(p1))}">${p1}</h3>`;
-        }).replace(/<(h1|h2|h3) id="([^"]+)">(.*?)<\/\1>/g, (match, p1, p2, p3) => {headers.push(p2);return`<${p1} id="${p2}">${p3}</${p1}>`});
+        ).replace(/<(h1|h2|h3|h4)>(.*?)<\/\1>/g, (match, p1, p2) => {
+            return `<${p1} id="${uniqueName(encodeURIComponent(p2))}">${p2}</${p1}>`;
+        }).replace(/<(h1|h2|h3|h4) id="([^"]+)">(.*?)<\/\1>/g, (match, p1, p2, p3) => {headers.push(p2);return`<${p1} id="${p2}">${p3}</${p1}>`});
 
-        const H1 = [...toHTML.matchAll(/<h1 id="([^"]+)">(.*?)<\/h1>/g)];
-        const HT = [...toHTML.matchAll(/<(h2|h3) id="([^"]+)">(.*?)<\/\1>/g)];
+        const H1 = [...toHTML.matchAll(/<(h1|h2) id="([^"]+)">(.*?)<\/\1>/g)];
+        const HT = [...toHTML.matchAll(/<(h3|h4) id="([^"]+)">(.*?)<\/\1>/g)];
 
         const h1 = H1.map(match => [match[2], match[1]]);
         const hT = HT.map(match => [match[3], match[2]]);
