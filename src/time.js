@@ -33,7 +33,7 @@ function time(ms) {
     } else if (ms < 1000) {
         return `${ms}ms`;
     } else if (s_ > 60) {
-        return `${Math.ceil(s_/100)/10}m`
+        return `${Math.ceil(s_/60*100)/100}m`;
     } else {
         return `${Math.ceil(ms/100)/10}s`;
     }
