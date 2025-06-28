@@ -30,8 +30,12 @@ exports.errormessage = function (code, message, type = 'Error') {
     return new Promise((resolve, reject) => {
         exec(`bash -c 'source $GITHUB_ACTION_PATH/src/modules/errmsg.sh && echo "$(customErrorMessage "${type}" "${code}" "${message}")" > "_just_error" && echo -e $(customErrorMessage "${type}" "${code}" "${message}")'`, (error, stdout, stderr) => {
         if (error) {
-            exec(`bash -c 'source $GITHUB_ACTION_PATH/src/modules/errmsg.sh && echo -e $(customErrorMessage "${type}" "${code}" "${message}")' && exit 1`, (error, stdout, stderr)=>{});
-            reject(stderr);
+            exec(`bash -c 'source $GITHUB_ACTION_PATH/src/modules/errmsg.sh && echo -e $(customErrorMessage "${type}" "${code}" "${message}")'`, (error2, stdout2, stderr2)=> {
+                if (error2) {
+                    reject(`Error 1: ${stderr}, Error 2: ${stderr2}`);
+                }
+                resolve(stdout);
+            });
         } else {
             resolve(stdout);
         }
