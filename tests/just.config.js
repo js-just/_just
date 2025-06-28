@@ -2,7 +2,7 @@ module.exports = {
     type: "docs",
     docs_config: {
         metatitle: "Just an Ultimate Site Tool",
-        domain: "fakesubdomain.is-a.dev",
+        domain: "test.just.is-a.dev",
         links: [
             ["a link", "https://juststudio.is-a.dev/", "_blank"],
             ["another link", "https://justdeveloper.is-a.dev/", "_blank"]
