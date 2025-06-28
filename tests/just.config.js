@@ -1,9 +1,8 @@
 module.exports = {
     type: "docs",
-    user: "rZdMZlp9DIEs4lyOiUchEeLJTN2",
     docs_config: {
         metatitle: "Just an Ultimate Site Tool",
-        domain: "test.just.is-a.dev",
+        domain: "test.just.is-a.dev)И?(УЦ?К",
         links: [
             ["a link", "https://juststudio.is-a.dev/", "_blank"],
             ["another link", "https://justdeveloper.is-a.dev/", "_blank"]
