@@ -51,3 +51,4 @@ customErrorMessage() {
 
 export -f ErrorMessage
 export -f _justMessage
+export -f customErrorMessage
