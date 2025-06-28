@@ -29,6 +29,9 @@ _just.error = require('./errmsg.js');
 _just.string = require('./string.js');
 const apis = {};
 apis["is-a.dev"] = 'https://raw.is-a.dev/v2.json';
+const warn_ = (d, e) => {
+    console.warn(`${_just.error.prefix}[0;33mWarning 0206[0m: [0;33mFailed to fetch "[0m${apis[d]}[0;33m": [0m${e}`);
+}
 
 /**
  * @param {string} domain 
@@ -39,7 +42,13 @@ exports["is-a.dev"] = async function (domain, attempt = 0) {
     let success = false;
     let exist = false;
     try {
-        const response = await fetch(apis["is-a.dev"]);
+        const response = await fetch(apis["is-a.dev"]).catch(async(error)=>{
+            if (attempt < 5) {
+                await exports["is-a.dev"](domain, attempt);
+            } else {
+                warn_("is-a.dev", error)
+            }
+        });
         const data = (await response.json()).filter(d => !d.reserved);
         
         const domains = data.map((item, index) => {return item.domain});
@@ -49,7 +58,7 @@ exports["is-a.dev"] = async function (domain, attempt = 0) {
         if (attempt < 5) {
             await exports["is-a.dev"](domain, attempt);
         } else {
-            console.warn(`${_just.error.prefix}[0;33mWarning 0206[0m: [0;33mFailed to fetch "[0m${apis["is-a.dev"]}[0;33m": [0m${error}`);
+            warn_("is-a.dev", error)
         }
     }
     if (success && !exist) {
