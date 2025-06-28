@@ -361,6 +361,7 @@ function checkdomain(input) {
 }
 const domain = docsConfig ? docsConfig.domain || undefined : undefined;
 domain ? checkdomain(domain) : undefined;
+const caughterrors = [];
 checkTLD(domain).then(tldvalid => {
     if (domain && domain.endsWith('.is-a.dev')) {
         _just.ssapi["is-a.dev"](domain);
@@ -374,6 +375,7 @@ checkTLD(domain).then(tldvalid => {
                 ext = false;
             }
         } catch (eerr) {
+            caughterrors.push(eerr);
             errorlogs += `${l[1]}AT LINE ${_just.line.line() || '-1'} (__REPLACE_LINE__): ${_just.line.err(eerr)}`;
         }
         if (url_ && url_.startsWith('/')) {
@@ -390,6 +392,7 @@ checkTLD(domain).then(tldvalid => {
                 output = true;
             }
         } catch (eerr) {
+            caughterrors.push(eerr);
             errorlogs += `${l[1]}AT LINE ${_just.line.line() || '-1'} (__REPLACE_LINE__): ${_just.line.err(eerr)}`;
         }
         return output;
@@ -426,22 +429,18 @@ checkTLD(domain).then(tldvalid => {
                 .replace(linkregex, (match, text, link_) => {return link(text, link_, extlink(link_), cssid.ext)})
                 .replace(/(?<=\s|^|[.,!?;:*_^~=])(http:\/\/|https:\/\/)(.*?)(?=\s|[,!;:*^~`<>]|[.?=#%&+] |$)/g, (match, protocol_, link_) => {
                         const link__ = `${protocol_.trim()}${link_.trim()}`;
-                        try { 
-                            if (checklink(link__)) {
-                                try {
-                                    const linkurl = new URL(link__);
-                                    if (linkurl.hostname.includes('xn--')) {
-                                        return link(link__, linkurl.href, extlink(linkurl.href), cssid.ext);
-                                    }
-                                } catch (e__) {
-                                    errorlogs += `${l[1]}AT LINE ${_just.line.line() || '-1'} (__REPLACE_LINE__): ${_just.line.err(e__)}`;
+                        if (checklink(link__)) {
+                            try {
+                                const linkurl = new URL(link__);
+                                if (linkurl.hostname.includes('xn--')) {
+                                    return link(link__, linkurl.href, extlink(linkurl.href), cssid.ext);
                                 }
-                                return `<${link__}>`;
-                            } else return `${protocol_}${link_}`
-                        } catch (eueue) {
-                            errorlogs += `${l[1]}AT LINE ${_just.line.line() || '-1'} (__REPLACE_LINE__): ${_just.line.err(eueue)}`;
-                        };
-                        return `${protocol_}${link_}`
+                            } catch (e__) {
+                                caughterrors.push(e__);
+                                errorlogs += `${l[1]}AT LINE ${_just.line.line() || '-1'} (__REPLACE_LINE__): ${_just.line.err(e__)}`;
+                            }
+                            return `<${link__}>`;
+                        } else return `${protocol_}${link_}`;
                     })
                 .replace(/(?<=\s|^|[.,!?;:*_^~=])<(http:\/\/|https:\/\/)(.*?)>(?=\s|[.,!?;:*_^~=]|$)/g, (match, protocol_, link_) => {const link__=`${protocol_.trim()}${link_.trim()}`;return link(link__, link__, extlink(link__), cssid.ext)})
                 .replace(/(?<=\s|^|[.,!?;:*_^~=])<(.*?)@(.*?)>(?=\s|[.,!?;:*_^~=]|$)/g, (match, address, domain__) => {
@@ -450,6 +449,7 @@ checkTLD(domain).then(tldvalid => {
                             const mail = `${address.trim()}@${domain__.trim()}`;
                             return `<a href="mailto:${mail}">${mail}</a>`;
                         } catch (_e_) {
+                            caughterrors.push(_e_);
                             errorlogs += `${l[1]}AT LINE ${_just.line.line() || '-1'} (__REPLACE_LINE__): ${_just.line.err(_e_)}`;
                             return `<${address}@${domain__}>`;
                         }
@@ -863,10 +863,12 @@ checkTLD(domain).then(tldvalid => {
         try {
             fetchjson('http')
         } catch (ee) {
+            caughterrors.push(ee);
             errorlogs += `${l[1]}AT LINE ${_just.line.line() || '-1'} (__REPLACE_LINE__): ${_just.line.err(ee)}`;
             try {
                 fetchjson('https')
             } catch (e_e) {
+                caughterrors.push(e_e);
                 errorlogs += `${l[1]}AT LINE ${_just.line.line() || '-1'} (__REPLACE_LINE__): ${_just.line.err(e_e)}`;
             }
         }
@@ -880,4 +882,8 @@ checkTLD(domain).then(tldvalid => {
         "json": dataname[9]
     }), template.charset);
     fs.writeFileSync(path.join(websitepath, '.', '.nojekyll'), '', template.charset);
-}, tldinvalid => {});
+}, tldinvalid => {}).catch((erroo) => {
+    if (!caughterrors.includes(erroo)) {
+        throw new Error(erroo);
+    }
+});
