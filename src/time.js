@@ -25,12 +25,15 @@ SOFTWARE.
 */
 
 const [time1, time2] = process.argv.slice(2);
-const diff = Math.ceil(Math.ceil(parseInt(time1, 10)) - Math.ceil(parseInt(time2, 10)));
+const diff = Math.ceil(Math.ceil(parseInt(time2, 10)) - Math.ceil(parseInt(time1, 10)));
 function time(ms) {
+    const s_ = Math.ceil(ms/1000);
     if (ms < 0) {
         return "0ms";
     } else if (ms < 1000) {
         return `${ms}ms`;
+    } else if (s_ > 60) {
+        return `${Math.ceil(s_/100)/10}m`
     } else {
         return `${Math.ceil(ms/100)/10}s`;
     }
