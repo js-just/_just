@@ -426,17 +426,22 @@ checkTLD(domain).then(tldvalid => {
                 .replace(linkregex, (match, text, link_) => {return link(text, link_, extlink(link_), cssid.ext)})
                 .replace(/(?<=\s|^|[.,!?;:*_^~=])(http:\/\/|https:\/\/)(.*?)(?=\s|[,!;:*^~`<>]|[.?=#%&+] |$)/g, (match, protocol_, link_) => {
                         const link__ = `${protocol_.trim()}${link_.trim()}`;
-                        if (checklink(link__)) {
-                            try {
-                                const linkurl = new URL(link__);
-                                if (linkurl.hostname.includes('xn--')) {
-                                    return link(link__, linkurl.href, extlink(linkurl.href), cssid.ext);
+                        try { 
+                            if (checklink(link__)) {
+                                try {
+                                    const linkurl = new URL(link__);
+                                    if (linkurl.hostname.includes('xn--')) {
+                                        return link(link__, linkurl.href, extlink(linkurl.href), cssid.ext);
+                                    }
+                                } catch (e__) {
+                                    errorlogs += `${l[1]}AT LINE ${_just.line.line() || '-1'} (__REPLACE_LINE__): ${_just.line.err(e__)}`;
                                 }
-                            } catch (e__) {
-                                errorlogs += `${l[1]}AT LINE ${_just.line.line() || '-1'} (__REPLACE_LINE__): ${_just.line.err(e__)}`;
-                            }
-                            return `<${link__}>`;
-                        } else return `${protocol_}${link_}`;
+                                return `<${link__}>`;
+                            } else return `${protocol_}${link_}`
+                        } catch (eueue) {
+                            errorlogs += `${l[1]}AT LINE ${_just.line.line() || '-1'} (__REPLACE_LINE__): ${_just.line.err(eueue)}`;
+                        };
+                        return `${protocol_}${link_}`
                     })
                 .replace(/(?<=\s|^|[.,!?;:*_^~=])<(http:\/\/|https:\/\/)(.*?)>(?=\s|[.,!?;:*_^~=]|$)/g, (match, protocol_, link_) => {const link__=`${protocol_.trim()}${link_.trim()}`;return link(link__, link__, extlink(link__), cssid.ext)})
                 .replace(/(?<=\s|^|[.,!?;:*_^~=])<(.*?)@(.*?)>(?=\s|[.,!?;:*_^~=]|$)/g, (match, address, domain__) => {
