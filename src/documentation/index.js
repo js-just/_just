@@ -441,7 +441,7 @@ checkTLD(domain).then(tldvalid => {
         text = text.replace(/```([\w]*)\s*[\r\n]+([\s\S]*?)```/g, (match, lang_, code_) => {
                         const filter_ = (inpt) => inpt.replace(/\n( {1,})/g, (match, spaces) => {
                             return `\n${'&nbsp;'.repeat(spaces.length)}`;
-                        })
+                        }).replaceAll('\n\n', '\n');
                         const highlightcode = lang_ && lang_ != '';
                         if (highlightcode && !supportedlangs.includes(lang_) && !langaliases[lang_]) {
                             const warningg = `${_just.error.prefix}[0;33mWarning 0209[0m: [0;33mUnsuppotred language: hljs: [0m${lang_}`;
@@ -884,13 +884,13 @@ checkTLD(domain).then(tldvalid => {
     });
 
     CSS = _just.customCSS.customcss(CSS, customCSS == 'false' ? undefined : customCSS, CSSHIGHLIGHT);
-
     for (const [pathh, htmlcontent] of Object.entries(htmlfiles)) {
         const updated = _just.customCSS.highlightclasses(CSSHIGHLIGHTtemplate, CSS, htmlcontent, dataname[8]);
         CSS = updated[0];
         fs.writeFileSync(pathh, updated[1], charset);
         logs += `${l[2]}OUTPUT: ${_just.string.runnerPath(pathh)} (${_just.string.fileSize(fs.statSync(pathh).size)})`;
     }
+    CSS = CSS.replace(new RegExp(`.${dataname[8]}3ibute`, 'g'), `.${dataname[8]}14`);
 
     logs += linklogs; logs += buttonlogs;
     logs += `${l[0]}USED NAMES:${l[1]}"${uniqueNames_.join('", "')}"${l[0]}DATA NAMES:${l[1]}"${dataname.join('", "')}"`;
