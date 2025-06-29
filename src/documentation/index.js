@@ -442,6 +442,7 @@ checkTLD(domain).then(tldvalid => {
                             errorlogs += `${l[1]}AT LINE ${_just.line.line() || '-1'} (__REPLACE_LINE__): ${_just.line.err(warningg)}`;
                             console.warn(warningg);
                         }
+                        console.log(`Debug: Code language: ${lang_}`);
                         return `<code class="${cssclass.code}">${
                             highlightcode && supportedlangs.includes(lang_) ? filter_(hljs.highlight(code_, {language: lang_}).value) : filter_(code_)
                         }</code>`;
