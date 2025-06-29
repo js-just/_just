@@ -17,5 +17,6 @@
     "webassembly": "wasm",
     "py": "python",
     "rb": "ruby",
-    "rs": "rust"
+    "rs": "rust",
+    "html": "xml"
 }
