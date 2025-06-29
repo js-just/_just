@@ -432,7 +432,7 @@ checkTLD(domain).then(tldvalid => {
                         const code__ = code_.replace(/\n( {1,})/, (match, spaces) => {
                             return `\n${'&nbsp;'.repeat(spaces.length)}`;
                         })
-                        return `<code class="${cssclass.code}">${lang_ && lang_ != '' ? hljs.highlight(lang_, code__) : code__}</code>`;
+                        return `<code class="${cssclass.code}">${lang_ && lang_ != '' ? hljs.highlight(lang_, code__).value : code__}</code>`;
                     })
                 .replace(/(?<=\s|^|[.,!?;:*_^~=])`(.*?)`(?=\s|[.,!?;:*_^~=]|$)/g, (match, code) => {return `<code>${MDcode(code)}</code>`})
                 .replace(/(?<=\s|^|[.,!?;:*_^~=])!\[(.*?)\]\((.*?) ("|')(.*?)\3\)(?=\s|[.,!?;:*_^~=]|$)/g, (match, text, link_, q, imgtitle) => {return `<img src="${link_}" alt="${text}" title="${imgtitle}" loading="lazy">`})
