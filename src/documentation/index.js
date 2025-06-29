@@ -757,9 +757,6 @@ checkTLD(domain).then(tldvalid => {
         supportedlangs.forEach(lang => {
             outputt += `${lang}|`;
         });
-        langaliases.forEach(lang => {
-            outputt += `${lang}|`;
-        })
         return _just.string.removeLast(outputt, '|');
     }
     markdownFiles.forEach(file => {
