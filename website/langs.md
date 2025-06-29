@@ -35,6 +35,22 @@ span {
 .hw {
     border: 1px solid #6e3bf3;
 }
+#abc {
+    -webkit-filter: blur(8em);
+}
+div:before {
+    content: 'hello';
+}
+:root {
+    --color: #ffffff;
+    @media(max-width: 5px) {
+        --color: #000000;
+    }
+}
+::-webkit-scrollbar {
+    width: 7px;
+    height: 7px
+}
 ```
 ```sh
 #!/bin/bash

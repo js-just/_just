@@ -25,10 +25,11 @@ SOFTWARE.
 */
 
 const _just = {};
-const [HTMLtemplate, CSStemplate, JStemplate, PATH, repo, owner, customCSS, hljslangs, langs__] = process.argv.slice(2);
+const [HTMLtemplate, CSStemplate, JStemplate, PATH, repo, owner, customCSS, hljslangs, langs__, CSSHIGHLIGHTtemplate] = process.argv.slice(2);
 let HTML = HTMLtemplate;
 let CSS = CSStemplate;
 let JS = JStemplate;
+let CSSHIGHLIGHT = CSSHIGHLIGHTtemplate;
 _just.string = require('../modules/string.js');
 /**
  * @param {string} type 
@@ -878,7 +879,7 @@ checkTLD(domain).then(tldvalid => {
         logs += `${l[2]}OUTPUT: ${_just.string.runnerPath(outFilePath('html'))} (${_just.string.fileSize(fs.statSync(outFilePath('html')).size)})`;
     });
 
-    CSS = _just.customCSS.customcss(CSS, customCSS == 'false' ? undefined : customCSS);
+    CSS = _just.customCSS.customcss(CSS, customCSS == 'false' ? undefined : customCSS, CSSHIGHLIGHT);
 
     logs += linklogs; logs += buttonlogs;
     logs += `${l[0]}USED NAMES:${l[1]}"${uniqueNames_.join('", "')}"${l[0]}DATA NAMES:${l[1]}"${dataname.join('", "')}"`;

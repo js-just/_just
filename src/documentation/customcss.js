@@ -26,17 +26,22 @@ SOFTWARE.
 
 const baseregex = /(@_just base)/g;
 const baseregex2= /(@_just base;)/g;
+const coderegex = /(@_just highlight)/g;
+const coderegex2= /(@_just highlight;)/g;
 /**
  * @param {string} CSS 
- * @param {string} CUSTOM 
+ * @param {string} CUSTOM
+ * @param {string} CODE 
  * @returns {string}
  */
-exports.customcss = function (CSS, CUSTOM) {
+exports.customcss = function (CSS, CUSTOM, CODE) {
     if (!CUSTOM) {
-        return CSS
+        return CSS + CODE
     }
     CUSTOM = CUSTOM
         .replace(baseregex2,CSS)
         .replace(baseregex, CSS)
+        .replace(coderegex2,CODE)
+        .replace(coderegex, CODE)
     return CUSTOM
 }

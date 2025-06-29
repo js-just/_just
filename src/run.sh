@@ -185,6 +185,7 @@ elif [ "$TYPE" == "docs" ]; then
     HTML=$(cat "$GITHUB_ACTION_PATH/src/documentation/templates/page.html") && \
     CSS=$(cat "$GITHUB_ACTION_PATH/src/documentation/templates/page.css") && \
     JS=$(cat "$GITHUB_ACTION_PATH/src/documentation/templates/page.js") && \
+    HIGHLIGHTCSS=$(cat "$GITHUB_ACTION_PATH/src/documentation/templates/highlight.css") && \
     CUSTOMCSS=false && \
     CUSTOMCSSPATH="just.config.css" && \
     if [ -f "$CUSTOMCSSPATH" ]; then
@@ -210,7 +211,7 @@ elif [ "$TYPE" == "docs" ]; then
     echo "$INDEXJS3" > "$INDEXJS0" && \
     HLJSLANGS=$(cat "$GITHUB_ACTION_PATH/data/hljslangs.json") && \
     LANGS=$(cat "$GITHUB_ACTION_PATH/data/langs.json") && \
-    node "$INDEXJS0" "$HTML" "$CSS" "$JS" "$INPUT_PATH" "$GITHUB_REPOSITORY" "$GITHUB_REPOSITORY_OWNER" "$CUSTOMCSS" "$HLJSLANGS" "$LANGS" || jserr && \
+    node "$INDEXJS0" "$HTML" "$CSS" "$JS" "$INPUT_PATH" "$GITHUB_REPOSITORY" "$GITHUB_REPOSITORY_OWNER" "$CUSTOMCSS" "$HLJSLANGS" "$LANGS" "$HIGHLIGHTCSS" || jserr && \
     node $GITHUB_ACTION_PATH/src/compress.js "$INPUT_PATH" && \
     node "$GITHUB_ACTION_PATH/src/documentation/logs.js" "$INPUT_PATH" && \
     echo -e "$msg9"
