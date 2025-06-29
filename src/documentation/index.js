@@ -434,7 +434,6 @@ checkTLD(domain).then(tldvalid => {
                             return `\n${'&nbsp;'.repeat(spaces.length)}`;
                         })
                         const supportedlangs = JSON.parse(hljslangs);
-                        lang_ = lang_ && lang_ != '' && !supportedlangs.includes(lang_) ? hljs.getLanguage(lang_) || undefined : undefined;
                         const highlightcode = lang_ && lang_ != '';
                         if (highlightcode && !supportedlangs.includes(lang_)) {
                             const warningg = `${_just.error.prefix}[0;33mWarning 0209[0m: [0;33mUnsuppotred language: hljs: [0m${lang_}`;
