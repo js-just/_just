@@ -24,8 +24,6 @@ SOFTWARE.
 
 */
 
-const { css } = require("./highlight");
-
 const baseregex = /(@_just base)/g;
 const baseregex2= /(@_just base;)/g;
 const coderegex = /(@_just highlight)/g;
@@ -71,7 +69,7 @@ exports.highlightclasses = function (TEMPLATE, CSS, HTML, DATANAME8) {
         classid++;
     });
     for (const [class_, hlclass] of Object.entries(savedclasses)) {
-        CSS = CSS.replaceAll(`.${class_}`, `.${hlclass}`);
+        CSS = CSS.replace(new RegExp(`.${class_}(?= |.|,)`, 'g'), `.${hlclass}`);
         const regex = new RegExp(
             `<([a-zA-Z0-9]+)([^>]*)\\sclass="([^"]*\\b${class_}\\b[^"]*)"([^>]*)>([\\s\\S]*?)</\\1>`,
             'gm'
@@ -82,7 +80,7 @@ exports.highlightclasses = function (TEMPLATE, CSS, HTML, DATANAME8) {
                 classes_.push(hlclass);
             }
             const newClassAttr = classes_.join(' ');
-            return `<${tagName}${beforeClassAttrs} class="${newClassAttr}"${afterClassAttrs}>${innerContent}</${tagName}>`;
+            return `<${tagName}${beforeClassAttrs} class="${newClassAttr.replace(/(?<=\s|^| )hljs(.*?) (?=|$)/, '')}"${afterClassAttrs}>${innerContent}</${tagName}>`;
         });
         //HTML = HTML.replace(new RegExp(`<(.*?) class="(.*?)${class_}(.*?)">(.*?)</\\1>`, 'gm'), `<$1 class="$2${hlclass}$3">$4</$1>`);
     }

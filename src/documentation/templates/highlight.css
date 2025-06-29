@@ -4,7 +4,7 @@
 .hljs-meta, .hljs-variable.language_ {
     color: #d0d1ff;
 }
-.hljs-meta.prompt_ {
+.hljs-meta.prompt_, .hljs-selector-id {
     color: #29d3a9;
 }
 .hljs-comment {
