@@ -448,8 +448,9 @@ checkTLD(domain).then(tldvalid => {
                             lang_ = langaliases[lang_]
                         }
                         console.log(`Debug: Code language: ${lang_}`);
+                        const output_ = filter_(hljs.highlight(code_, {language: lang_}).value);
                         return `<code class="${cssclass.code}">${
-                            highlightcode && supportedlangs.includes(lang_) ? `<code>${lang_}</code>${filter_(hljs.highlight(code_, {language: lang_}).value)}` : filter_(code_)
+                            highlightcode && supportedlangs.includes(lang_) ? `<code>${lang_}</code>${lang_ == 'markdown' ? MDcode(output_) : output_}` : filter_(code_)
                         }</code>`;
                     })
                 .replace(/(?<=\s|^|[.,!?;:*_^~=])`(.*?)`(?=\s|[.,!?;:*_^~=]|$)/g, (match, code) => {return `<code>${MDcode(code)}</code>`})
