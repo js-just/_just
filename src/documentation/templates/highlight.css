@@ -19,7 +19,7 @@
 .hljs-string {
     color: #afffaf;
 }
-.hljs-literal {
+.hljs-literal, .hljs-selector-pseudo {
     color: #faadf9;
 }
 .hljs-built_in, .hljs-attribute {
