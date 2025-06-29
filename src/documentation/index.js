@@ -30,6 +30,11 @@ let HTML = HTMLtemplate;
 let CSS = CSStemplate;
 let JS = JStemplate;
 _just.string = require('../modules/string.js');
+/**
+ * @param {string} type 
+ * @param {string} insert 
+ * @returns {string}
+ */
 _just.element = (type, insert) => `<_just${type ? ` element="${type}"` : ''}>${insert || ''}</_just>`;
 _just.error = require('../modules/errmsg.js');
 _just.ssapi = require('../modules/ssapi.js');
@@ -463,6 +468,7 @@ checkTLD(domain).then(tldvalid => {
             const regex = new RegExp(`^#{${i}}\\s+(.*?)\\s*$`, 'gm');
             text = text.replace(regex, MDtoHTML(`<h${i}>$1</h${i}>`));
         }
+        text = text.replace(/(?<=\s|^)(.*?)\n={3,}(?=\s|\n|$)/, MDtoHTML(`${_just.element(dataname[5])}<h1>$1</h1>`)).replace(/(?<=\s|^)(.*?)\n-{3,}(?=\s|\n|$)/, MDtoHTML(`${_just.element(dataname[6])}<h2>$1</h2>`));
 
         function processBlockquotes(inputText, level) {
             const regex = new RegExp(`^(>\\s+){${level}}(.*?)\\s*$`, 'gm');
@@ -739,7 +745,7 @@ checkTLD(domain).then(tldvalid => {
         const headers = [];
         const toHTML = hbuoclpMDtoHTML(
             addEnd(content, '\n')
-                .replace(/> (.*?)\n\n> (.*?)\n/g, `> $1\n\n> ${_just.element('blockquote separator')}$2\n`)
+                .replace(/> (.*?)\n\n> (.*?)\n/g, `> $1\n\n> ${_just.element(dataname[7])}$2\n`)
                 .replaceAll('\n>\n> ', '\n> ')
                 .replace(new RegExp(`(?<=^|\n)([>|> ]{2,${mbl}}) `, 'g'), (match, bqs) => `\n${bqs.replaceAll(' ', '').split('').join(' ').trim()} `)
         ).replace(/<(h1|h2|h3|h4)>(.*?)<\/\1>/g, (match, p1, p2) => {
@@ -819,7 +825,7 @@ checkTLD(domain).then(tldvalid => {
                             .replaceAll('</blockquote><br>', '</blockquote>')
                             .replace(/<\/blockquote>> ((?:(?!<h[1-6][^>]*>.*?<\/h[1-6]>).)*?)<blockquote>/g, '</blockquote><blockquote>$1</blockquote><blockquote>')
                             .replaceAll('</blockquote><blockquote>', '<br>')
-                            .replaceAll(_just.element('blockquote separator'), '</blockquote><blockquote>')
+                            .replaceAll(_just.element(dataname[7]), '</blockquote><blockquote>')
                             .replaceAll('</blockquote><br><blockquote>', '<br>')
                             .replaceAll('<blockquote></blockquote>', '')
                             .replace(/<blockquote>\[!(NOTE|TIP|IMPORTANT|WARNING|CAUTION)\]/g, (match, blockquote) => `<blockquote class="${blockquoteToCSSclass[blockquote]}">`),
@@ -828,7 +834,9 @@ checkTLD(domain).then(tldvalid => {
                     '<br>'
                 ).replace(/<blockquote>((?:(?!<h[1-6][^>]*>.*?<\/h[1-6]>).)*?)<br><br><blockquote>/, '<blockquote>$1<blockquote>')
                 .replaceAll('</blockquote><br><blockquote>', '<br>')
-                .replace(/<br><blockquote><blockquote>((?:(?!<h[1-6][^>]*>.*?<\/h[1-6]>).)*?)<\/blockquote><\/blockquote>/g, '<blockquote>$1</blockquote>'),
+                .replace(/<br><blockquote><blockquote>((?:(?!<h[1-6][^>]*>.*?<\/h[1-6]>).)*?)<\/blockquote><\/blockquote>/g, '<blockquote>$1</blockquote>')
+                .replaceAll(`${_just.element(dataname[5])}<h1 id=`, `<h1 class="${dataname[5]}" id=`)
+                .replaceAll(`${_just.element(dataname[6])}<h2 id=`, `<h2 class="${dataname[6]}" id=`),
             ),
             charset
         );
