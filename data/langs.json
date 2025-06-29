@@ -12,7 +12,6 @@
     "text": "plaintext",
     "sass": "scss",
     "sh": "shell",
-    "bash": "shell",
     "ts": "typescript",
     "webassembly": "wasm",
     "py": "python",

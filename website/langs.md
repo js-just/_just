@@ -52,7 +52,7 @@ div:before {
     height: 7px
 }
 ```
-```bash
+```sh
 #!/bin/bash
 echo "Hello World!"
 ```

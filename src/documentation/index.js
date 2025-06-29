@@ -451,6 +451,9 @@ checkTLD(domain).then(tldvalid => {
                         if (highlightcode && !supportedlangs.includes(lang_) && langaliases[lang_]) {
                             lang_ = langaliases[lang_]
                         }
+                        if (lang_ == 'shell' && code_.startsWith('#!/bin/bash')) {
+                            lang_ = 'bash'
+                        }
                         console.log(`Debug: Code language: ${lang_}`);
                         const hljshighlight = highlightcode && supportedlangs.includes(lang_)
                         const output_ = hljshighlight ? filter_(hljs.highlight(code_, {language: lang_}).value) : undefined;
