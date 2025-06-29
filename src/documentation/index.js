@@ -41,6 +41,7 @@ _just.ssapi = require('../modules/ssapi.js');
 _just.customCSS = require('./customcss.js');
 _just.MDtoHTML = require('./mdtohtml.js');
 _just.line = require('../modules/line.js');
+const hljs = require('../third-party/highlight.min.js');
 
 const link = (text, link_, ext = false, extid = "ext", target = "_blank", title_) => `<a href="${link_}" target="${target}"${ext ? ` id="${extid}"` : ''}${title_ ? ` title="${title_}"` : ''}>${text}</a>`;
 const span = (text) => `<span>${text}</span>`;
@@ -427,8 +428,10 @@ checkTLD(domain).then(tldvalid => {
     let taskid = 0;
     const MDtoHTML = (input) => {
         let text = MDescape(input);
-        text = text.replace(/```([\w]*)\s*[\r\n]+([\s\S]*?)```/g, (match, a, b) => {
-                        return`<code class="${cssclass.code}">${b}</code>`
+        text = text.replace(/```([\w]*)\s*[\r\n]+([\s\S]*?)```/g, (match, lang_, code_) => {
+                        return `<code class="${cssclass.code}">${hljs.highlight(code_.replace(/\n( {1,})/, (match, spaces) => {
+                            return `\n${'&nbsp;'.repeat(spaces.length)}`;
+                        }), {lang_})}</code>`;
                     })
                 .replace(/(?<=\s|^|[.,!?;:*_^~=])`(.*?)`(?=\s|[.,!?;:*_^~=]|$)/g, (match, code) => {return `<code>${MDcode(code)}</code>`})
                 .replace(/(?<=\s|^|[.,!?;:*_^~=])!\[(.*?)\]\((.*?) ("|')(.*?)\3\)(?=\s|[.,!?;:*_^~=]|$)/g, (match, text, link_, q, imgtitle) => {return `<img src="${link_}" alt="${text}" title="${imgtitle}" loading="lazy">`})
