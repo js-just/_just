@@ -625,6 +625,8 @@ code {
     padding-left: 5px;
     padding-right: 5px;
     border-radius: 5px;
+}
+code, code span {
     font-family: monospace;
 }
 .line {
@@ -660,6 +662,22 @@ code {
     width: calc(100% - 10px);
     padding: 5px;
     line-height: 18px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+.code:has(code) {
+    margin-top: 28px;
+    border-top-left-radius: 0px;
+    code {
+        position: relative;
+        display: block;
+        translate: -5px -23px;
+        margin-bottom: -20px;
+        width: fit-content;
+        border-bottom-left-radius: 0px;
+        border-bottom-right-radius: 0px;
+        pointer-events: none;
+    }
 }
 .note, .ntip, .impr, .warn, .caut {
     border-top-right-radius: 10px;
