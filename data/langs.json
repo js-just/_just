@@ -18,5 +18,6 @@
     "py": "python",
     "rb": "ruby",
     "rs": "rust",
-    "html": "xml"
+    "html": "xml",
+    "php-fpm": "pf"
 }
