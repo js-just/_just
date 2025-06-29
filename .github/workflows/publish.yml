@@ -3,6 +3,9 @@ name: Website
 on:
   push:
     branches: ["main"]
+    paths:
+    - "website/*"
+    - ".github/workflows/publish.yml"
   workflow_dispatch:
 
 permissions:
@@ -23,7 +26,7 @@ jobs:
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Remove test pages
-        run: rm -f -v website/test.md && rm -f -v website/mattcone.md
+        run: rm -f -v website/test.md && rm -f -v website/mattcone.md && rm -f -v website/langs.md
         shell: bash
       - name: Generate with _just
         uses: js-just/_just@v0.0.28
