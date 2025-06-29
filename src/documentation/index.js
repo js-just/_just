@@ -25,7 +25,7 @@ SOFTWARE.
 */
 
 const _just = {};
-const [HTMLtemplate, CSStemplate, JStemplate, PATH, repo, owner, customCSS, somedata, token_] = process.argv.slice(2);
+const [HTMLtemplate, CSStemplate, JStemplate, PATH, repo, owner, customCSS, hljslangs] = process.argv.slice(2);
 let HTML = HTMLtemplate;
 let CSS = CSStemplate;
 let JS = JStemplate;
@@ -60,7 +60,8 @@ const docsConfig = config.docs_config;
 
 const configmbl = docsConfig ? docsConfig.mbl || undefined : undefined;
 if (configmbl && (configmbl > 4 || configmbl < 1)) {
-    console.warn(`${_just.error.prefix}[0;33mWarning 0209[0m: [0;33mUnstable config: mbl: [0m${configmbl}`);
+    const warningg = `${_just.error.prefix}[0;33mWarning 0209[0m: [0;33mUnstable config: mbl: [0m${configmbl}`;
+    console.warn(warningg);
 }
 const mbl = configmbl ? configmbl : 4;
 
@@ -432,7 +433,17 @@ checkTLD(domain).then(tldvalid => {
                         const code__ = code_.replace(/\n( {1,})/g, (match, spaces) => {
                             return `\n${'&nbsp;'.repeat(spaces.length)}`;
                         })
-                        return `<code class="${cssclass.code}">${lang_ && lang_ != '' ? hljs.highlight(lang_, code__.replaceAll('&nbsp;', ' ')).value : code__}</code>`;
+                        const supportedlangs = JSON.parse(hljslangs);
+                        const highlightcode = lang_ && lang_ != '';
+                        if (highlightcode && !supportedlangs.includes(lang_)) {
+                            const warningg = `${_just.error.prefix}[0;33mWarning 0209[0m: [0;33mUnsuppotred language: hljs: [0m${lang_}`;
+                            caughterrors.push(warningg);
+                            errorlogs += `${l[1]}AT LINE ${_just.line.line() || '-1'} (__REPLACE_LINE__): ${_just.line.err(warningg)}`;
+                            console.warn(warningg);
+                        }
+                        return `<code class="${cssclass.code}">${
+                            highlightcode && supportedlangs.includes(lang_) ? hljs.highlight(lang_, code__.replaceAll('&nbsp;', ' ')).value : code__
+                        }</code>`;
                     })
                 .replace(/(?<=\s|^|[.,!?;:*_^~=])`(.*?)`(?=\s|[.,!?;:*_^~=]|$)/g, (match, code) => {return `<code>${MDcode(code)}</code>`})
                 .replace(/(?<=\s|^|[.,!?;:*_^~=])!\[(.*?)\]\((.*?) ("|')(.*?)\3\)(?=\s|[.,!?;:*_^~=]|$)/g, (match, text, link_, q, imgtitle) => {return `<img src="${link_}" alt="${text}" title="${imgtitle}" loading="lazy">`})
