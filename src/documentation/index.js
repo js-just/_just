@@ -59,6 +59,7 @@ const template = {
 }
 const fs = require('fs');
 const path = require('path');
+const { css } = require('./highlight.js');
 const config = JSON.parse(fs.readFileSync('just.config.json', template.charset));
 const docsConfig = config.docs_config;
 
@@ -763,6 +764,7 @@ checkTLD(domain).then(tldvalid => {
         });
         return _just.string.removeLast(outputt, '|');
     }
+    const htmlfiles = {};
     markdownFiles.forEach(file => {
         let content = fs.readFileSync(file, charset);
         if (getTitleFromMd(file)) {
@@ -831,9 +833,7 @@ checkTLD(domain).then(tldvalid => {
             .replace('REPLACE_BUTTONS', htmlnav(1));
         
         fs.writeFileSync(outFilePath('txt'), toHTML, charset);
-        fs.writeFileSync(
-            outFilePath('html'),
-            outHTML.replace(
+        htmlfiles[outFilePath('html')] = outHTML.replace(
                 'REPLACE_CONTENT',
                 _just.string.removeLast(
                     addEnd(
@@ -873,13 +873,17 @@ checkTLD(domain).then(tldvalid => {
                 //.replaceAll(`${_just.element(dataname[5])}<h1 id=`, `<h1 class="${dataname[5]}" id=`)
                 //.replaceAll(`${_just.element(dataname[6])}<h2 id=`, `<h2 class="${dataname[6]}" id=`)
                 .replace(new RegExp(`(?<=<code class="${cssclass.code}"><code>(${getlangs()})</code>)(.*?)(?=</code>)`, 'g'), (match, lng, cde) => cde.replace(/<br><br>/g, '<br>')),
-            ),
-            charset
-        );
+            )
         logs += `${l[2]}OUTPUT: ${_just.string.runnerPath(outFilePath('html'))} (${_just.string.fileSize(fs.statSync(outFilePath('html')).size)})`;
     });
 
     CSS = _just.customCSS.customcss(CSS, customCSS == 'false' ? undefined : customCSS, CSSHIGHLIGHT);
+
+    for (const [pathh, htmlcontent] of Object.entries(htmlfiles)) {
+        const updated = _just.customCSS.highlightclasses(CSSHIGHLIGHTtemplate, CSS, htmlcontent, dataname[8]);
+        CSS = updated[0];
+        fs.writeFileSync(pathh, updated[1], charset);
+    }
 
     logs += linklogs; logs += buttonlogs;
     logs += `${l[0]}USED NAMES:${l[1]}"${uniqueNames_.join('", "')}"${l[0]}DATA NAMES:${l[1]}"${dataname.join('", "')}"`;
