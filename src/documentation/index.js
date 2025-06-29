@@ -636,6 +636,10 @@ checkTLD(domain).then(tldvalid => {
         uniqueNames[dataname[i]] = 1;
         uniqueNames_.push(dataname[i]);
     }
+    uniqueNames[`${dataname[10]}`] = taskid + 1;
+    for (i = 0; i <= taskid; i++) {
+        uniqueNames_.push(`${dataname[10]}${i}`);
+    }
     const csstouniquenames = (cssclassorcssid) => Object.entries(cssclassorcssid).forEach(([key, dataname_]) => {
         if (!uniqueNames_.includes(dataname_)) {
             uniqueNames[dataname_] = 1;
@@ -664,7 +668,7 @@ checkTLD(domain).then(tldvalid => {
             }
             bid++;
         }
-        CSS += addcss != '' ? `\n${_just.string.removeLast(addcss, ',')}{display:none}` : '';
+        CSS += addcss != '' && htmlnavrunid <= 1 ? `\n${_just.string.removeLast(addcss, ',')}{display:none}` : '';
         htmlnavrunid++;
         return output;
     }
