@@ -65,7 +65,7 @@ exports.highlightclasses = function (TEMPLATE, CSS, HTML, DATANAME8) {
     while ((match = classRegex.exec(TEMPLATE)) !== null) {
         classes.push(match[1]);
     }
-    const uniqueClasses = Array.from(new Set(classes)).filter(c => !savedclasses[c]);
+    const uniqueClasses = Array.from(new Set(classes)).sort((a,b) => a.length - b.length).filter(c => !savedclasses[c]);
     uniqueClasses.forEach(class_ => {
         savedclasses[class_] = `${DATANAME8}${classid}`
         classid++;
