@@ -51,6 +51,7 @@ exports.customcss = function (CSS, CUSTOM, CODE, USECODE = true) {
 const savedclasses = {};
 let language_class;
 let prompt_class;
+let function_class;
 let classid = 0;
 /**
  * @param {string} TEMPLATE 
@@ -70,6 +71,7 @@ exports.highlightclasses = function (TEMPLATE, CSS, HTML, DATANAME8) {
         savedclasses[class_] = `${DATANAME8}${classid++}`;
         if (class_ == "language_") {language_class = savedclasses[class_]}
         else if (class_ == "prompt_") {prompt_class= savedclasses[class_]}
+        else if (class_=="function_"){function_class=savedclasses[class_]}
     });
     for (const [class_, hlclass] of Object.entries(savedclasses)) {
         CSS = CSS.replace(new RegExp(`.${class_}(?= |.|,)`, 'g'), `.${hlclass}`);
@@ -83,7 +85,7 @@ exports.highlightclasses = function (TEMPLATE, CSS, HTML, DATANAME8) {
                 classes_.push(hlclass);
             }
             const newClassAttr = classes_.join(' ');
-            return `<${tagName}${beforeClassAttrs} class="${newClassAttr.replace(/(?<=\s|^| )hljs(.*?) (?=|$)/, '').replace("language_", language_class).replace("prompt_", prompt_class)}"${afterClassAttrs}>${innerContent}</${tagName}>`;
+            return `<${tagName}${beforeClassAttrs} class="${newClassAttr.replace(/(?<=\s|^| )hljs(.*?) (?=|$)/, '').replace("language_", language_class).replace("prompt_", prompt_class).replace("function_", function_class)}"${afterClassAttrs}>${innerContent}</${tagName}>`;
         });
         //HTML = HTML.replace(new RegExp(`<(.*?) class="(.*?)${class_}(.*?)">(.*?)</\\1>`, 'gm'), `<$1 class="$2${hlclass}$3">$4</$1>`);
     }
