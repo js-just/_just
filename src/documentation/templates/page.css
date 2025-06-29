@@ -981,3 +981,10 @@ mark {
 .main img {
     max-width: 100%;
 }
+
+input[type="checkbox"] {
+    pointer-events: none;
+    accent-color: var(--kb) !important;
+    height: auto;
+    display: inline;
+}

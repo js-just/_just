@@ -452,7 +452,7 @@ checkTLD(domain).then(tldvalid => {
                 .replace(/(?<=\s|^)([-+*])\s\[( {0,}x {0,}| {0,}X {0,}| {1,})\]\s(.*?)(?=\s|\n|$)/g, (match, prefix, type_, text_) => {
                     const isChecked = type_.trim().toLowerCase() === 'x';
                     const checkedAttr = isChecked ? ' checked' : '';
-                    return `<input type="checkbox" disabled${checkedAttr}> ${text_.trim()}`;
+                    return `<input type="checkbox" ${checkedAttr}> ${text_.trim()}`;
                 });
         return _just.MDtoHTML.MDtoHTML(text, cssclass).replace(/~(.*?)~/g, '<sub>$1</sub>').replace(/\^(.*?)\^/g, '<sup>$1</sup>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\*(.*?)\*/g, '<em>$1</em>');
     }
