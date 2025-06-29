@@ -479,7 +479,7 @@ checkTLD(domain).then(tldvalid => {
 
         const ulRegex = /^(?:-\s+|\*\s+|\+\s+)(.*?)(?:\n(?:-\s+|\*\s+|\+\s+)(.*?))*$/gm;
         const olRegex = /^(?:\d+\.\s+)(.*?)(?:\n(?:\d+\.\s+)(.*?))*$/gm;
-        const taskListRegex = /(^|\n)\s*[-+*]\s+$$ *[xX ]* *$$\s+(.*)/g;
+        const taskListRegex = /(^|\n)\s*[-+*]\s+$$ *[xX ]* *$$\s+(.*)/gm;
         
         text = text.replace(taskListRegex, (match, prefix, content) => {
             const checkboxMatch = match.match(/$$ *([xX ])* *$$/);
