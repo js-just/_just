@@ -431,7 +431,7 @@ checkTLD(domain).then(tldvalid => {
         text = text.replace(/```([\w]*)\s*[\r\n]+([\s\S]*?)```/g, (match, lang_, code_) => {
                         return `<code class="${cssclass.code}">${hljs.highlight(code_.replace(/\n( {1,})/, (match, spaces) => {
                             return `\n${'&nbsp;'.repeat(spaces.length)}`;
-                        }), {lang_})}</code>`;
+                        }), lang_)}</code>`;
                     })
                 .replace(/(?<=\s|^|[.,!?;:*_^~=])`(.*?)`(?=\s|[.,!?;:*_^~=]|$)/g, (match, code) => {return `<code>${MDcode(code)}</code>`})
                 .replace(/(?<=\s|^|[.,!?;:*_^~=])!\[(.*?)\]\((.*?) ("|')(.*?)\3\)(?=\s|[.,!?;:*_^~=]|$)/g, (match, text, link_, q, imgtitle) => {return `<img src="${link_}" alt="${text}" title="${imgtitle}" loading="lazy">`})
