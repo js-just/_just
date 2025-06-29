@@ -1007,3 +1007,15 @@ input[type="checkbox"] {
     height: auto;
     display: inline;
 }
+
+.code:has(code) span:has(div) {
+    padding-left: 15px;
+}
+.code:has(code) span div {
+    display: inline;
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    translate: -12.5px 3.5px;;
+    border-radius: 50%;
+}

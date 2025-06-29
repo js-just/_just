@@ -32,6 +32,6 @@ SOFTWARE.
 exports.css = function(csscode, numclass = 'hljs-number') {
     const hexcolor = /^#([0-9A-F]{3}|[0-9A-F]{6})$/i;
     return csscode.replace(new RegExp(`<span class="${numclass}">(.*?)</span>`, 'g'), (match, num) => {
-        return hexcolor.test(num) ? `<span class="${numclass}" style="outline:1px solid ${num};outline-offset:0px;">${num}</span>` : `<span class="${numclass}">${num}</span>`;
+        return hexcolor.test(num) ? `<span class="${numclass}"><div style="background:${num}"></div>${num}</span>` : `<span class="${numclass}">${num}</span>`;
     });
 }
