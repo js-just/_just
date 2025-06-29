@@ -628,6 +628,7 @@ code {
 }
 code, code span {
     font-family: monospace;
+    cursor: text;
 }
 .line {
     width: 100%;
