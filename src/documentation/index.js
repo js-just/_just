@@ -479,15 +479,7 @@ checkTLD(domain).then(tldvalid => {
 
         const ulRegex = /^(?:-\s+|\*\s+|\+\s+)(.*?)(?:\n(?:-\s+|\*\s+|\+\s+)(.*?))*$/gm;
         const olRegex = /^(?:\d+\.\s+)(.*?)(?:\n(?:\d+\.\s+)(.*?))*$/gm;
-        const taskListRegex = /(^|\n)\s*[-+*]\s+$$ *[xX ]* *$$\s+(.*)/gm;
-        
-        text = text.replace(taskListRegex, (match, prefix, content) => {
-            const checkboxMatch = match.match(/$$ *([xX ])* *$$/);
-            const isChecked = checkboxMatch && /[xX]/.test(checkboxMatch[0]);
-            const checkedAttr = isChecked ? 'checked' : '';
-            const indent = prefix || '';
-            return `${indent}<li><input type="checkbox" ${checkedAttr} disabled> ${MDtoHTML(content.trim())}</li>`;
-        });
+
         text = text.replace(ulRegex, (match) => {
             const items = match.split('\n').map(item => item.replace(/^- \s*/, '').replace(/^\* \s*/, '').replace(/^\+ \s*/, ''));
             return `<ul>${items.map(item => `<li>${MDtoHTML(item.trim())}</li>`).join('')}</ul>`;
@@ -612,13 +604,7 @@ checkTLD(domain).then(tldvalid => {
         return output;
     }
 
-    const configlogs = `${l[0]}DOMAIN: ${domain}${l[0]}CONFIG TO HTML:${l[1]}DOCSCONFIG:${l[2]}\
-    TITLE: ${title}${l[2]}TITLE (HTML): ${name}${l[2]}METATITLE: ${metatitle}${l[2]}OGTITLE: ${ogtitle}${l[2]}\
-    OGTITLE (HTML): ${ogtitl}${l[2]}DESCRIPTION: ${description}${l[2]}DESCRIPTION (HTML): ${desc}${l[2]}OGDESCRIPTION: ${ogdescription}${l[2]}\
-    OGDESCRIPTION (HTML): ${ogdesc}${l[2]}VIEWPORT: ${viewport}${l[2]}TWITTER CARD: ${twitter}${l[2]}KEYWORDS: ${metaKeywords}${l[2]}\
-    KEYWORDS (HTML): ${keywords}${l[2]}LANG: ${lang}${l[2]}LANG (HTML): ${htmlLang}${l[2]}GOOGLE ANALYTICS: ${googleAnalytics}${l[2]}\
-    GOOGLE SITE VERIFICATION: ${googleVerification}${l[2]}YANDEX SITE VERIFICATION: ${yandexVerification}${l[2]}LOGO: ${logoPath}${l[2]}\
-    LOGO (HTML): ${logo}${l[2]}FOOTER: ${footer}${l[2]}HTML: ${htmlhead().replaceAll('\n', '').trim()}`
+    const configlogs = `${l[0]}DOMAIN: ${domain}${l[0]}CONFIG TO HTML:${l[1]}DOCSCONFIG:${l[2]}TITLE: ${title}${l[2]}TITLE (HTML): ${name}${l[2]}METATITLE: ${metatitle}${l[2]}OGTITLE: ${ogtitle}${l[2]}OGTITLE (HTML): ${ogtitl}${l[2]}DESCRIPTION: ${description}${l[2]}DESCRIPTION (HTML): ${desc}${l[2]}OGDESCRIPTION: ${ogdescription}${l[2]}OGDESCRIPTION (HTML): ${ogdesc}${l[2]}VIEWPORT: ${viewport}${l[2]}TWITTER CARD: ${twitter}${l[2]}KEYWORDS: ${metaKeywords}${l[2]}KEYWORDS (HTML): ${keywords}${l[2]}LANG: ${lang}${l[2]}LANG (HTML): ${htmlLang}${l[2]}GOOGLE ANALYTICS: ${googleAnalytics}${l[2]}GOOGLE SITE VERIFICATION: ${googleVerification}${l[2]}YANDEX SITE VERIFICATION: ${yandexVerification}${l[2]}LOGO: ${logoPath}${l[2]}LOGO (HTML): ${logo}${l[2]}FOOTER: ${footer}${l[2]}HTML: ${htmlhead().replaceAll('\n', '').trim().replace(/ {2,}/g, ' ')}`
 
     const filterText = (text) => text
         .replaceAll('_', `&#${'_'.charCodeAt(0)};`)
