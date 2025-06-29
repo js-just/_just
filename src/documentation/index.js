@@ -25,7 +25,7 @@ SOFTWARE.
 */
 
 const _just = {};
-const [HTMLtemplate, CSStemplate, JStemplate, PATH, repo, owner, customCSS, hljslangs] = process.argv.slice(2);
+const [HTMLtemplate, CSStemplate, JStemplate, PATH, repo, owner, customCSS, hljslangs, langs__] = process.argv.slice(2);
 let HTML = HTMLtemplate;
 let CSS = CSStemplate;
 let JS = JStemplate;
@@ -43,6 +43,7 @@ _just.MDtoHTML = require('./mdtohtml.js');
 _just.line = require('../modules/line.js');
 const hljs = require('../third-party/highlight.min.js');
 const supportedlangs = JSON.parse(hljslangs);
+const langaliases = JSON.parse(langs__);
 
 const link = (text, link_, ext = false, extid = "ext", target = "_blank", title_) => `<a href="${link_}" target="${target}"${ext ? ` id="${extid}"` : ''}${title_ ? ` title="${title_}"` : ''}>${text}</a>`;
 const span = (text) => `<span>${text}</span>`;
@@ -438,10 +439,13 @@ checkTLD(domain).then(tldvalid => {
                             return `\n${'&nbsp;'.repeat(spaces.length)}`;
                         })
                         const highlightcode = lang_ && lang_ != '';
-                        if (highlightcode && !supportedlangs.includes(lang_)) {
+                        if (highlightcode && !supportedlangs.includes(lang_) && !langaliases[lang_]) {
                             const warningg = `${_just.error.prefix}[0;33mWarning 0209[0m: [0;33mUnsuppotred language: hljs: [0m${lang_}`;
                             errorlogs += `${l[1]}AT LINE ${_just.line.line() || '-1'} (__REPLACE_LINE__): ${_just.line.err(warningg)}`;
                             console.warn(warningg);
+                        }
+                        if (highlightcode && !supportedlangs.includes(lang_) && langaliases[lang_]) {
+                            lang_ = langaliases[lang_]
                         }
                         console.log(`Debug: Code language: ${lang_}`);
                         return `<code class="${cssclass.code}">${
@@ -753,6 +757,9 @@ checkTLD(domain).then(tldvalid => {
         supportedlangs.forEach(lang => {
             outputt += `${lang}|`;
         });
+        langaliases.forEach(lang => {
+            outputt += `${lang}|`;
+        })
         return _just.string.removeLast(outputt, '|');
     }
     markdownFiles.forEach(file => {

@@ -1,0 +1,21 @@
+{
+    "arm": "armasm",
+    "avr": "avrasm",
+    "mips": "mipsasm",
+    "x86": "x86asm",
+    "c++": "cpp",
+    "c#": "csharp",
+    "js": "javascript",
+    "md": "markdown",
+    "objc": "objectivec",
+    "objective-c": "objectivec",
+    "text": "plaintext",
+    "sass": "scss",
+    "sh": "shell",
+    "bash": "shell",
+    "ts": "typescript",
+    "webassembly": "wasm",
+    "py": "python",
+    "rb": "ruby",
+    "rs": "rust"
+}
