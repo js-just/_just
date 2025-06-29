@@ -211,7 +211,8 @@ elif [ "$TYPE" == "docs" ]; then
     echo "$INDEXJS3" > "$INDEXJS0" && \
     HLJSLANGS=$(cat "$GITHUB_ACTION_PATH/data/hljslangs.json") && \
     LANGS=$(cat "$GITHUB_ACTION_PATH/data/langs.json") && \
-    node "$INDEXJS0" "$HTML" "$CSS" "$JS" "$INPUT_PATH" "$GITHUB_REPOSITORY" "$GITHUB_REPOSITORY_OWNER" "$CUSTOMCSS" "$HLJSLANGS" "$LANGS" "$HIGHLIGHTCSS" || jserr && \
+    LANGSTEXT=$(cat "$GITHUB_ACTION_PATH/data/langstext.json") && \
+    node "$INDEXJS0" "$HTML" "$CSS" "$JS" "$INPUT_PATH" "$GITHUB_REPOSITORY" "$GITHUB_REPOSITORY_OWNER" "$CUSTOMCSS" "$HLJSLANGS" "$LANGS" "$HIGHLIGHTCSS" "$LANGSTEXT" || jserr && \
     node $GITHUB_ACTION_PATH/src/compress.js "$INPUT_PATH" && \
     node "$GITHUB_ACTION_PATH/src/documentation/logs.js" "$INPUT_PATH" && \
     echo -e "$msg9"

@@ -25,7 +25,7 @@ SOFTWARE.
 */
 
 const _just = {};
-const [HTMLtemplate, CSStemplate, JStemplate, PATH, repo, owner, customCSS, hljslangs, langs__, CSSHIGHLIGHTtemplate] = process.argv.slice(2);
+const [HTMLtemplate, CSStemplate, JStemplate, PATH, repo, owner, customCSS, hljslangs, langs__, CSSHIGHLIGHTtemplate, langstext_] = process.argv.slice(2);
 let HTML = HTMLtemplate;
 let CSS = CSStemplate;
 let JS = JStemplate;
@@ -45,6 +45,7 @@ _just.line = require('../modules/line.js');
 const hljs = require('../third-party/highlight.min.js');
 const supportedlangs = JSON.parse(hljslangs);
 const langaliases = JSON.parse(langs__);
+const langstext = JSON.parse(langstext_);
 _just.highlight = require('./highlight.js');
 
 const link = (text, link_, ext = false, extid = "ext", target = "_blank", title_) => `<a href="${link_}" target="${target}"${ext ? ` id="${extid}"` : ''}${title_ ? ` title="${title_}"` : ''}>${text}</a>`;
@@ -454,7 +455,7 @@ checkTLD(domain).then(tldvalid => {
                         const hljshighlight = highlightcode && supportedlangs.includes(lang_)
                         const output_ = hljshighlight ? filter_(hljs.highlight(code_, {language: lang_}).value) : undefined;
                         return `<code class="${cssclass.code}">${
-                            hljshighlight ? `<code>${lang_}</code>${lang_ == 'css' ? _just.highlight.css(output_) : output_}` : filter_(code_)
+                            hljshighlight ? `<code>${langstext[lang_]}</code>${lang_ == 'css' ? _just.highlight.css(output_) : output_}` : filter_(code_)
                         }</code>`;
                     })
                 .replace(/(?<=\s|^|[.,!?;:*_^~=])`(.*?)`(?=\s|[.,!?;:*_^~=]|$)/g, (match, code) => {return `<code>${MDcode(code)}</code>`})
