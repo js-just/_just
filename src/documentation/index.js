@@ -42,6 +42,7 @@ _just.customCSS = require('./customcss.js');
 _just.MDtoHTML = require('./mdtohtml.js');
 _just.line = require('../modules/line.js');
 const hljs = require('../third-party/highlight.min.js');
+const supportedlangs = JSON.parse(hljslangs);
 
 const link = (text, link_, ext = false, extid = "ext", target = "_blank", title_) => `<a href="${link_}" target="${target}"${ext ? ` id="${extid}"` : ''}${title_ ? ` title="${title_}"` : ''}>${text}</a>`;
 const span = (text) => `<span>${text}</span>`;
@@ -420,9 +421,12 @@ checkTLD(domain).then(tldvalid => {
             .replaceAll('\\', '');
     }
     const MDcode = (input) => {
+        const specialChars = ['*', '_', '#', '-', '=', '~', '.', ':', '^', '|', '<', '>', '[', ']', '(', ')'];
+        specialChars.forEach(char => {
+            const code = `&#${char.charCodeAt(0)};`;
+            input = input.replaceAll(char, code);
+        });
         return input
-            .replaceAll('*', `&#${'*'.charCodeAt(0)};`)
-            .replaceAll('_', `&#${'_'.charCodeAt(0)};`)
             .replace(/(http:\/\/|https:\/\/)/g, (match, protocol_) => `${charCodes(protocol_)}`)
     }
     const linkregex = /(?<=\s|^|[.,!?;:*_^~=])\[(.*?)\]\((.*?)\)(?=\s|[.,!?;:*_^~=]|$)/g;
@@ -433,7 +437,6 @@ checkTLD(domain).then(tldvalid => {
                         const filter_ = (inpt) => inpt.replace(/\n( {1,})/g, (match, spaces) => {
                             return `\n${'&nbsp;'.repeat(spaces.length)}`;
                         })
-                        const supportedlangs = JSON.parse(hljslangs);
                         const highlightcode = lang_ && lang_ != '';
                         if (highlightcode && !supportedlangs.includes(lang_)) {
                             const warningg = `${_just.error.prefix}[0;33mWarning 0209[0m: [0;33mUnsuppotred language: hljs: [0m${lang_}`;
@@ -745,6 +748,13 @@ checkTLD(domain).then(tldvalid => {
             .replace(/\[!(NOTE|TIP|IMPORTANT|WARNING|CAUTION)\]/g, '$1:')
             .replace(linkregex, '$1');
     }
+    function getlangs() {
+        let outputt = '';
+        supportedlangs.forEach(lang => {
+            outputt += `${lang}|`;
+        });
+        return _just.string.removeLast(outputt, '|');
+    }
     markdownFiles.forEach(file => {
         let content = fs.readFileSync(file, charset);
         if (getTitleFromMd(file)) {
@@ -851,9 +861,10 @@ checkTLD(domain).then(tldvalid => {
                     '<br>'
                 ).replace(/<blockquote>((?:(?!<h[1-6][^>]*>.*?<\/h[1-6]>).)*?)<br><br><blockquote>/, '<blockquote>$1<blockquote>')
                 .replaceAll('</blockquote><br><blockquote>', '<br>')
-                .replace(/<br><blockquote><blockquote>((?:(?!<h[1-6][^>]*>.*?<\/h[1-6]>).)*?)<\/blockquote><\/blockquote>/g, '<blockquote>$1</blockquote>'),
+                .replace(/<br><blockquote><blockquote>((?:(?!<h[1-6][^>]*>.*?<\/h[1-6]>).)*?)<\/blockquote><\/blockquote>/g, '<blockquote>$1</blockquote>')
                 //.replaceAll(`${_just.element(dataname[5])}<h1 id=`, `<h1 class="${dataname[5]}" id=`)
-                //.replaceAll(`${_just.element(dataname[6])}<h2 id=`, `<h2 class="${dataname[6]}" id=`),
+                //.replaceAll(`${_just.element(dataname[6])}<h2 id=`, `<h2 class="${dataname[6]}" id=`)
+                .replace(new RegExp(`(?<=<code class="${cssclass.code}"><code>(${getlangs()})</code>)(.*?)(?=</code>)`, 'g'), (match, code) => code.replace(/<br><br>/g, '<br>')),
             ),
             charset
         );
