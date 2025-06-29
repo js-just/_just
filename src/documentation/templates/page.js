@@ -24,7 +24,7 @@ window.addEventListener('scroll', () => {
 
     localStorage.setItem('s' + page_, document.documentElement.scrollTop);
 
-    const elements = document.querySelectorAll(`${main_} h1, ${main_} h2, ${main_} h3`);
+    const elements = document.querySelectorAll(`${main_} h1, ${main_} h2, ${main_} h3, ${main_} h4`);
     let headerIndex = -1;
     let headers;
     let lastindex = undefined;
@@ -47,7 +47,7 @@ window.addEventListener('scroll', () => {
     const { scrollHeight, scrollTop, clientHeight } = document.documentElement;
     if (scrollTop + clientHeight >= scrollHeight) {
         document.body.classList.add('stb');
-        headerIndex = headers + 1;
+        headerIndex = headers;
     } else {
         document.body.classList.remove('stb');
     }
