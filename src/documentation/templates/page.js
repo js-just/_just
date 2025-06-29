@@ -14,9 +14,11 @@ if (publicOutput) {
 }
 
 window.addEventListener('scroll', () => {
+    let headerIndex_=false;
     if (document.body.scrollTop > 150 || document.documentElement.scrollTop > 150) {
         document.querySelector(".navbar").classList.add("scroll");
     } else {
+        headerIndex_ = true;
         document.querySelector(".navbar").classList.remove("scroll");
     }
 
@@ -45,12 +47,12 @@ window.addEventListener('scroll', () => {
     const { scrollHeight, scrollTop, clientHeight } = document.documentElement;
     if (scrollTop + clientHeight >= scrollHeight) {
         document.body.classList.add('stb');
-        headerIndex = headers;
+        headerIndex = headers + 1;
     } else {
         document.body.classList.remove('stb');
     }
 
-    document.body.style.setProperty('--hc', headerIndex >= 0 ? headerIndex : 0);
+    document.body.style.setProperty('--hc', headerIndex_ ? 0 : headerIndex >= 0 ? headerIndex : 0);
 });
 
 if (scrll) {
