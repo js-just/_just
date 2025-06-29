@@ -427,7 +427,7 @@ checkTLD(domain).then(tldvalid => {
     let taskid = 0;
     const MDtoHTML = (input) => {
         let text = MDescape(input);
-        text = text.replace(/```([\w]*)[\r\n]+([\S\s]*?)```/g, `<code class="${cssclass.code}">$2</code>`)
+        text = text.replace(/*/```([\w]*)[\r\n]+([\S\s]*?)```/g*//```(.*?)```/g, `<code class="${cssclass.code}">$2</code>`)
                 .replace(/(?<=\s|^|[.,!?;:*_^~=])`(.*?)`(?=\s|[.,!?;:*_^~=]|$)/g, (match, code) => {return `<code>${MDcode(code)}</code>`})
                 .replace(/(?<=\s|^|[.,!?;:*_^~=])!\[(.*?)\]\((.*?) ("|')(.*?)\3\)(?=\s|[.,!?;:*_^~=]|$)/g, (match, text, link_, q, imgtitle) => {return `<img src="${link_}" alt="${text}" title="${imgtitle}" loading="lazy">`})
                 .replace(/(?<=\s|^|[.,!?;:*_^~=])!\[(.*?)\]\((.*?)\)(?=\s|[.,!?;:*_^~=]|$)/g, (match, text, link_) => {return `<img src="${link_}" alt="${text}" loading="lazy">`})
