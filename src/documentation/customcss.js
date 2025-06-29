@@ -65,14 +65,26 @@ exports.highlightclasses = function (TEMPLATE, CSS, HTML, DATANAME8) {
     while ((match = classRegex.exec(TEMPLATE)) !== null) {
         classes.push(match[1]);
     }
-    const uniqueClasses = Array.from(new Set(classes)).sort((a,b) => a.length - b.length).filter(c => !savedclasses[c]);
+    const uniqueClasses = Array.from(new Set(classes.sort((a,b) => a.length - b.length))).filter(c => !savedclasses[c]).sort((a,b) => a.length - b.length);
     uniqueClasses.forEach(class_ => {
         savedclasses[class_] = `${DATANAME8}${classid}`
         classid++;
     });
     for (const [class_, hlclass] of Object.entries(savedclasses)) {
         CSS = CSS.replaceAll(`.${class_}`, `.${hlclass}`);
-        HTML = HTML.replace(new RegExp(`<(.*?) class="(.*?)${class_}(.*?)">(.*?)</\\1>`, 'gm'), `<$1 class="$2${hlclass}$3">$4</$1>`);
+        const regex = new RegExp(
+            `<([a-zA-Z0-9]+)([^>]*)\\sclass="([^"]*\\b${class_}\\b[^"]*)"([^>]*)>([\\s\\S]*?)</\\1>`,
+            'gm'
+        );
+        HTML = HTML.replace(regex, (match, tagName, beforeClassAttrs, classAttrValue, afterClassAttrs, innerContent) => {
+            const classes_ = classAttrValue.split(' ');
+            if (!classes_.includes(hlclass)) {
+                classes_.push(hlclass);
+            }
+            const newClassAttr = classes_.join(' ');
+            return `<${tagName}${beforeClassAttrs} class="${newClassAttr}"${afterClassAttrs}>${innerContent}</${tagName}>`;
+        });
+        //HTML = HTML.replace(new RegExp(`<(.*?) class="(.*?)${class_}(.*?)">(.*?)</\\1>`, 'gm'), `<$1 class="$2${hlclass}$3">$4</$1>`);
     }
     return [CSS, HTML];
 }
