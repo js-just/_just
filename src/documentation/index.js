@@ -430,10 +430,11 @@ checkTLD(domain).then(tldvalid => {
     const MDtoHTML = (input) => {
         let text = MDescape(input);
         text = text.replace(/```([\w]*)\s*[\r\n]+([\s\S]*?)```/g, (match, lang_, code_) => {
-                        const code__ = code_.replace(/\n( {1,})/g, (match, spaces) => {
+                        const filter_ = (inpt) => inpt.replace(/\n( {1,})/g, (match, spaces) => {
                             return `\n${'&nbsp;'.repeat(spaces.length)}`;
                         })
                         const supportedlangs = JSON.parse(hljslangs);
+                        lang_ = lang_ && lang_ != '' && !supportedlangs.includes(lang_) ? hljs.getLanguage(lang_) || undefined : undefined;
                         const highlightcode = lang_ && lang_ != '';
                         if (highlightcode && !supportedlangs.includes(lang_)) {
                             const warningg = `${_just.error.prefix}[0;33mWarning 0209[0m: [0;33mUnsuppotred language: hljs: [0m${lang_}`;
@@ -442,7 +443,7 @@ checkTLD(domain).then(tldvalid => {
                             console.warn(warningg);
                         }
                         return `<code class="${cssclass.code}">${
-                            highlightcode && supportedlangs.includes(lang_) ? hljs.highlight(lang_, code__.replaceAll('&nbsp;', ' ')).value : code__
+                            highlightcode && supportedlangs.includes(lang_) ? filter_(hljs.highlight(code_, {"language": lang_}).value) : filter_(code_)
                         }</code>`;
                     })
                 .replace(/(?<=\s|^|[.,!?;:*_^~=])`(.*?)`(?=\s|[.,!?;:*_^~=]|$)/g, (match, code) => {return `<code>${MDcode(code)}</code>`})
