@@ -72,7 +72,7 @@ exports.highlightclasses = function (TEMPLATE, CSS, HTML, DATANAME8) {
     });
     for (const [class_, hlclass] of Object.entries(savedclasses)) {
         CSS = CSS.replaceAll(`.${class_}`, `.${hlclass}`);
-        HTML = HTML.replace(new RegExp(`<(.*?) class="(.*?)${class_}(.*?)">(.*?)</\\1>`, 'g'), `<$1 class="$2${hlclass}$3">$4</$1>`);
+        HTML = HTML.replace(new RegExp(`<(.*?) class="(.*?)${class_}(.*?)">(.*?)</\\1>`, 'gm'), `<$1 class="$2${hlclass}$3">$4</$1>`);
     }
     return [CSS, HTML];
 }
