@@ -98,7 +98,7 @@ const getnsettheme = () => {
 };
 const checkTheme = () => localStorage.getItem('t');
 const autotheme = () => {
-    function setColorScheme(scheme) {
+    const setColorScheme = (scheme) => {
         switch(scheme){
             case 'dark':
                 if (checkTheme() == 'a') {
@@ -118,7 +118,7 @@ const autotheme = () => {
         }
     }
 
-    function getPreferredColorScheme() {
+    const getPreferredColorScheme = () => {
         if (window.matchMedia) {
             if(window.matchMedia('(prefers-color-scheme: dark)').matches){
                 return 'dark';
@@ -129,7 +129,7 @@ const autotheme = () => {
         return 'light';
     }
 
-    function updateColorScheme(){
+    const updateColorScheme=()=>{
         setColorScheme(getPreferredColorScheme());
     }
 
@@ -171,26 +171,26 @@ const i_want_liquid_glass = () => {
     fun_function = true;
 };
 
-function search1(data, searchTerm) {
+const search1 = (data, searchTerm) => {
   const lowerSearchTerm = searchTerm.toLowerCase();
 
   for (const key in data) {
     if (data.hasOwnProperty(key)) {
-      const value = data[key];
-      const lowerValue = value.toLowerCase();
+      const value_ = data[key];
+      const lowerValue = value_.toLowerCase();
       const index = lowerValue.indexOf(lowerSearchTerm);
       
       if (index !== -1) {
         const start = Math.max(0, index - 6);
-        let end = Math.min(value.length, index + searchTerm.length + 9);
+        let end = Math.min(value_.length, index + searchTerm.length + 9);
         
-        let snippet = value.substring(start, end);
+        let snippet = value_.substring(start, end);
         
         const regex = new RegExp(`(?<=\s|^|[.,!?;: \n])(${searchTerm})(?=\s|[.,!?;: \n]|$)`, 'gi');
         
         snippet = snippet.replace(regex, '<strong>$1</strong>');
         if (start > 0) {snippet = '...'+snippet.slice(3)}
-        if (end < value.length) {snippet = snippet.trim()+'...'};
+        if (end < value_.length) {snippet = snippet.trim()+'...'};
         
         return [
           key,
@@ -201,7 +201,7 @@ function search1(data, searchTerm) {
   }
   return null;
 }
-function search2(data, searchTerm) {
+const search2 = (data, searchTerm) => {
     let output = [];
     for (let i = 1; i <= 5; i++) {
         const search1_ = search1(data, searchTerm);
@@ -211,10 +211,6 @@ function search2(data, searchTerm) {
         }
     }
     return output;
-}
-
-if (navigator.userAgent.toLowerCase().includes('firefox')) {
-    document.body.classList.add('firefox');
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -245,6 +241,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if (isIOS()) {
         document.body.classList.add('ios');
     };
+    if (navigator.userAgent.toLowerCase().includes('firefox')) {
+        document.body.classList.add('firefox');
+    };
 
     const sb = document.getElementById("searchbar");
     const sd = document.querySelector('.search');
@@ -258,7 +257,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     window.addEventListener('resize', ()=>{updateSD(false)});
 
-    function searchString(str) {
+    const searchString = (str) => {
         if (!str) {
             return false;
         }
