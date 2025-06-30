@@ -151,6 +151,7 @@ const cssclass = {
     "firefox": dataname2[0],
     "search": dataname2[1],
     "debug": dataname2[2],
+    "error": dataname2[4],
 }
 const cssid = {
     "l": dataname[5]+randomChar(1),
@@ -158,7 +159,8 @@ const cssid = {
     "a": dataname[5]+randomChar(1),
     "main": dataname[5]+randomChar(1),
     "ext": dataname[5]+randomChar(1),
-    "searchbar": dataname2[3]
+    "searchbar": dataname2[3],
+    "edata": dataname2[5],
 }
 const cssvar = {
     "bg": dataname[6]+randomChar(1),
@@ -926,11 +928,11 @@ checkTLD(domain).then(tldvalid => {
     const JSdata = _just.js.get(JS);
     fs.writeFileSync(
         path.join(websitepath, '_just', `${filename.js}.js`),
-        _just.js.set(
+        "try{"+_just.js.set(
             JS.replace('\'PUBLICOUTPUT\'', publicOutput).replace('let searchurl = "/_just/search";', `let searchurl = "/_just/${dataname[9]}.json";`), 
             JSdata.names, 
             dataname2.reverse().slice(0, JSdata.total)
-        ),
+        )+`}catch(e_){document.body.classList.add('${cssclass.error}');document.documentElement.style.setProperty('--${cssid.edata}', \`'\${e_}'\`)}`,
         template.charset
     );
 

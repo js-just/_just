@@ -1030,3 +1030,39 @@ input[type="checkbox"] {
     background: #3c3c3c;
     color: #ffffff;
 }
+
+.error:before {
+    content: 'Uh oh!';
+    font-size: 2em;
+    position: fixed;
+    top: 50%;
+    translate: 0 calc(-100% - 6px);
+    width: 50%;
+    text-align: center;
+    border-bottom: 1px solid white;
+    white-space: nowrap;
+}
+.error:after {
+    content: 'Something went wrong.';
+    position: fixed;
+    top: 50%;
+}
+html:has(.error):before {
+    content: '_just';
+    font-size: 13px;
+    position: fixed;
+    bottom: 5px;
+    left: 5px;
+}
+html:has(.error):after {
+    content: var(--edata);
+    position: fixed;
+    top: calc(50% + 24px);
+    width: 100%;
+    text-align: center;
+    font-size: 12px;
+    opacity: 0.5;
+}
+.error * {
+    display: none !important;
+}
