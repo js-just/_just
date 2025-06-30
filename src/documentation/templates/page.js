@@ -212,6 +212,11 @@ function search2(data, searchTerm) {
     }
     return output;
 }
+
+if (navigator.userAgent.toLowerCase().includes('firefox')) {
+    document.body.classList.add('firefox');
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     let ltb = document.getElementById('l');
     let dtb = document.getElementById('d');

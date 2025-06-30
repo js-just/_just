@@ -141,6 +141,10 @@ input:placeholder-shown {
     color: var(--md);
     opacity: 0.9;
 }
+::placeholder { /* Fix Firefox */
+  color: #838383;
+  opacity: 1;
+}
 
 @keyframes line {
     0%, 0.1% {
@@ -982,6 +986,9 @@ h1, h2, h3 {
         text-align: center;
     }
 }
+.firefox .search {
+    backdrop-filter: blur(4px) brightness(0.3) !important;
+}
 
 .line-through {
     text-decoration: line-through;
@@ -1018,4 +1025,8 @@ input[type="checkbox"] {
     height: 10px;
     translate: -12.5px 3.5px;;
     border-radius: 50%;
+}
+.code, .code code, .code * {
+    background: #3c3c3c;
+    color: #ffffff;
 }

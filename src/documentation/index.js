@@ -47,6 +47,8 @@ const supportedlangs = JSON.parse(hljslangs);
 const langaliases = JSON.parse(langs__);
 const langstext = JSON.parse(langstext_);
 _just.highlight = require('./highlight.js');
+_just.number = require('../modules/number.js');
+_just.js = require('./js.js');
 
 const link = (text, link_, ext = false, extid = "ext", target = "_blank", title_) => `<a href="${link_}" target="${target}"${ext ? ` id="${extid}"` : ''}${title_ ? ` title="${title_}"` : ''}>${text}</a>`;
 const span = (text) => `<span>${text}</span>`;
@@ -112,6 +114,12 @@ HTML = HTML.replace('--hc:', `--${dataname[0].slice(0,-1)}:`);
 CSS = CSS.replaceAll('var(--hc)', `var(--${dataname[0].slice(0,-1)})`);
 JS = JS.replace('\'--hc\'', `'--${dataname[0].slice(0,-1)}'`);
 
+const dataname2 = [];
+const dataname2limit = 3843;
+for (let i = 1; i <= dataname2limit; i++) {
+    dataname2.push(dataname[9] + _just.number.convertbase(i.toString(10), 10, 62, _just.string.shuffleString(_just.number.convertbasedigits.slice(0,-2)) + '+/'));
+}
+
 addchars();
 for (let i = 48; i <= 57; i++) {
     charss.push(String.fromCharCode(i));
@@ -140,13 +148,17 @@ const cssclass = {
     "scroll": dataname[4]+randomChar(1),
     "stb": dataname[4]+randomChar(1),
     "underline": dataname[3],
+    "firefox": dataname2[0],
+    "search": dataname2[1],
+    "debug": dataname2[2],
 }
 const cssid = {
     "l": dataname[5]+randomChar(1),
     "d": dataname[5]+randomChar(1),
     "a": dataname[5]+randomChar(1),
     "main": dataname[5]+randomChar(1),
-    "ext": dataname[5]+randomChar(1)
+    "ext": dataname[5]+randomChar(1),
+    "searchbar": dataname2[3]
 }
 const cssvar = {
     "bg": dataname[6]+randomChar(1),
@@ -196,7 +208,9 @@ HTML = HTML
     .replace('<div id="main">', `<div id="${cssid.main}">`)
     .replace('<button id="l"', `<button id="${cssid.l}"`)
     .replace('<button id="d"', `<button id="${cssid.d}"`)
-    .replace('<button id="a"', `<button id="${cssid.a}"`);
+    .replace('<button id="a"', `<button id="${cssid.a}"`)
+    .replace('<div class="search"></div>', `<div class="${cssclass.search}"></div>`)
+    .replace(' id="searchbar">', ` id="${cssid.searchbar}">`);
 JS = JS
     .replace('html > body > main > div#main > article.main', `html > body > main > div#${cssid.main} > article.${cssclass.main}`)
     .replace('\'.main\'', `'.${cssclass.main}'`)
@@ -211,7 +225,10 @@ JS = JS
     .replaceAll(".remove('a')", `.remove('${cssclass.a}')`)
     .replaceAll("Id('l')", `Id('${cssid.l}')`)
     .replaceAll("Id('d')", `Id('${cssid.d}')`)
-    .replaceAll("Id('a')", `Id('${cssid.a}')`);
+    .replaceAll("Id('a')", `Id('${cssid.a}')`)
+    .replace("add('firefox')", `add('${cssclass.firefox}')`)
+    .replace("querySelector('.search')", `querySelector('.${cssclass.search}')`)
+    .replace('.getElementById("searchbar")', `.getElementById("${cssid.searchbar}")`);
 
 const charset = docsConfig ? docsConfig.charset || template.charset : template.charset;
 
@@ -425,10 +442,10 @@ checkTLD(domain).then(tldvalid => {
             .replace(/\\(.)/g, (match, textdata) => {return `&#${textdata.charCodeAt(0)};${textdata.slice(1)}`})
             .replaceAll('\\', '');
     }
-    const MDcode = (input) => {
-        const specialChars = ['*', '_', '#', '-', '=', '~', '.', ':', '^', '|', '<', '>', '[', ']', '(', ')'];
+    const MDcode = (input, mode) => {
+        const specialChars = ['*', '_', '#', '-', '=', '~', '.', ':', '^', '|', '<', '>', '[', ']', '(', ')', '\'', '"'];
         specialChars.forEach(char => {
-            const code = `&#${char.charCodeAt(0)};`;
+            const code = mode ? '' : `&#${char.charCodeAt(0)};`;
             input = input.replaceAll(char, code);
         });
         return input
@@ -491,7 +508,7 @@ checkTLD(domain).then(tldvalid => {
                 .replace(/(?<=\s|^)([-+*])\s\[( {0,}x {0,}| {0,}X {0,}| {1,})\]\s(.*?)(?=\s|\n|$)/g, (match, prefix, type_, text_) => {
                     const isChecked = type_.trim().toLowerCase() === 'x';
                     const checkedAttr = isChecked ? ' checked' : '';
-                    return `<input type="checkbox" id="${dataname[10]}${taskid++}" ${checkedAttr}> ${text_.trim()}`;
+                    return `<input type="checkbox" id="${dataname[10]}${taskid++}" ${checkedAttr} title="${MDcode(text_.trim(), true)}"> ${text_.trim()}`;
                 });
         return _just.MDtoHTML.MDtoHTML(text, cssclass).replace(/~(.*?)~/g, '<sub>$1</sub>').replace(/\^(.*?)\^/g, '<sup>$1</sup>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\*(.*?)\*/g, '<em>$1</em>');
     }
@@ -675,6 +692,10 @@ checkTLD(domain).then(tldvalid => {
         uniqueNames[dataname[i]] = 1;
         uniqueNames_.push(dataname[i]);
     }
+    for (let i = 1; i <= dataname2limit; i++) {
+        uniqueNames[dataname2[i-1]] = 1;
+        uniqueNames_.push(dataname2[i-1]);
+    }
     for (i = 0; i <= taskid; i++) {
         uniqueNames[`${dataname[10]}${i}`] = 1;
         uniqueNames_.push(`${dataname[10]}${i}`);
@@ -685,6 +706,7 @@ checkTLD(domain).then(tldvalid => {
         uniqueNames[`${dataname[8]}`] = i;
         uniqueNames_.push(`${dataname[8]}${i}`);
     }
+    
     const csstouniquenames = (cssclassorcssid) => Object.entries(cssclassorcssid).forEach(([key, dataname_]) => {
         if (!uniqueNames_.includes(dataname_)) {
             uniqueNames[dataname_] = 1;
@@ -704,7 +726,7 @@ checkTLD(domain).then(tldvalid => {
             let ext = extlink(linkdata[1]);
             linklogs += type == 0 && htmlnavrunid <= 1 ? `${l[1]}#${bid+1}:${l[2]}NAME: ${linkdata[0]}${l[2]}FILTERED NAME: ${filterText(linkdata[0])}${l[2]}HREF: ${linkdata[1]}${l[2]}TARGET: ${linkdata[2]}${l[2]}EXTERNAL: ${ext ? 'YES' : 'NO'}` : '';
             buttonlogs += type == 1&& htmlnavrunid <= 1? `${l[1]}#${bid+1}:${l[2]}NAME: ${linkdata[0]}${l[2]}FILTERED NAME: ${filterText(linkdata[0])}${l[2]}LINK: ${linkdata[1]}${l[2]}TARGET: ${linkdata[2]}${l[2]}EXTERNAL: ${ext ? 'YES' : 'NO'}${l[2]}ID: ${dataname[0]}${bid}` : '';
-            output += type == 0 ? `<a${linkdata[1] ? ` href="${linkdata[1]}"` : ''}${linkdata[1] ? ` target="${linkdata[2] ? linkdata[2] : ext ? '_blank' : '_self'}"` : ''}${ext ? ` id="${cssid.ext}"` : ''}>${filterText(linkdata[0])}</a>` : type == 1 ? `<button id="${dataname[0]}${bid}">${filterText(linkdata[0])}</button>` : '';
+            output += type == 0 ? `<a${linkdata[1] ? ` href="${linkdata[1]}"` : ''}${linkdata[1] ? ` target="${linkdata[2] ? linkdata[2] : ext ? '_blank' : '_self'}"` : ''}${ext ? ` id="${cssid.ext}"` : ''}>${filterText(linkdata[0])}</a>` : type == 1 ? `<button id="${dataname[0]}${bid}" type="button" title="${MDcode(filterText(linkdata[0]), false)}">${filterText(linkdata[0])}</button>` : '';
             JS = pageid == 1 && type == 1 && linkdata[1] && htmlnavrunid <= 1 ? _just.string.removeLast(JS, '});') + `\ndocument.getElementById('${dataname[0]}${bid}').addEventListener("click",()=>{const link=document.createElement('a');link.href='${linkdata[1]}';link.target='${linkdata[2] ? linkdata[2] : ext ? '_blank' : '_self'}';link.classList.add('${dataname[0]}${bid}');document.body.appendChild(link);link.click();document.body.removeChild(link);});` + '\n});' : JS;
             addcss += pageid == 1 && type == 1 && linkdata[1] ? `.${dataname[0]}${bid},` : '';
             if (type == 1 && linkdata[1] && htmlnavrunid <= 1) {
@@ -900,11 +922,19 @@ checkTLD(domain).then(tldvalid => {
     console.log(logs);
     const websitepath = rootDirA !== '.' ? rootDirA : rootDirB;
     fs.writeFileSync(path.join(websitepath, '_just', `${filename.css}.css`), CSS, template.charset);
+
+    const JSdata = _just.js.get(JS);
     fs.writeFileSync(
         path.join(websitepath, '_just', `${filename.js}.js`),
-        JS.replace('\'PUBLICOUTPUT\'', publicOutput).replace('let searchurl = "/_just/search";', `let searchurl = "/_just/${dataname[9]}.json";`),
+        _just.js.set(
+            JS.replace('\'PUBLICOUTPUT\'', publicOutput).replace('let searchurl = "/_just/search";', `let searchurl = "/_just/${dataname[9]}.json";`), 
+            JSdata.names, 
+            dataname2.reverse().slice(0, JSdata.total)
+        ),
         template.charset
     );
+
+
     const fetchjson = async (protocol) => {
         const response1 = await fetch(`${protocol}://${domain}/_just/`);
         const data1 = await response1.json();
