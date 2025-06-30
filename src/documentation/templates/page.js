@@ -4,14 +4,14 @@ const theme = localStorage.getItem('t');
 const main_ = 'html > body > main > div#main > article.main';
 const isIOS=()=>{
     return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-}
+};
 
 const publicOutput = 'PUBLICOUTPUT';
 console.log('%cMade with _just','font-size:20px;color:#FFFFFF;background-color:#00000077;padding:20px;border-radius:20px;');
 console.log('%chttps://just.is-a.dev/','font-size:10px;color:#FFFFFF;background-color:#00000077;padding:0px 40px;border-radius:20px;');
 if (publicOutput) {
     console.log(`_just output: ${window.location.protocol}//${window.location.hostname}/_just_data/output.txt`)
-}
+};
 
 window.addEventListener('scroll', () => {
     let headerIndex_=false;
@@ -20,7 +20,7 @@ window.addEventListener('scroll', () => {
     } else {
         headerIndex_ = true;
         document.querySelector(".navbar").classList.remove("scroll");
-    }
+    };
 
     localStorage.setItem('s' + page_, document.documentElement.scrollTop);
 
@@ -50,7 +50,7 @@ window.addEventListener('scroll', () => {
         headerIndex = headers;
     } else {
         document.body.classList.remove('stb');
-    }
+    };
 
     document.body.style.setProperty('--hc', headerIndex_ ? 0 : headerIndex >= 0 ? headerIndex : 0);
 });

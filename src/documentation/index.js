@@ -25,7 +25,7 @@ SOFTWARE.
 */
 
 const _just = {};
-const [HTMLtemplate, CSStemplate, JStemplate, PATH, repo, owner, customCSS, hljslangs, langs__, CSSHIGHLIGHTtemplate, langstext_] = process.argv.slice(2);
+const [HTMLtemplate, CSStemplate, JStemplate, PATH, repo, owner, customCSS, hljslangs, langs__, CSSHIGHLIGHTtemplate, langstext_, vrsn] = process.argv.slice(2);
 let HTML = HTMLtemplate;
 let CSS = CSStemplate;
 let JS = JStemplate;
@@ -49,6 +49,7 @@ const langstext = JSON.parse(langstext_);
 _just.highlight = require('./highlight.js');
 _just.number = require('../modules/number.js');
 _just.js = require('./js.js');
+_just.version = vrsn;
 
 const link = (text, link_, ext = false, extid = "ext", target = "_blank", title_) => `<a href="${link_}" target="${target}"${ext ? ` id="${extid}"` : ''}${title_ ? ` title="${title_}"` : ''}>${text}</a>`;
 const span = (text) => `<span>${text}</span>`;
@@ -160,7 +161,6 @@ const cssid = {
     "main": dataname[5]+randomChar(1),
     "ext": dataname[5]+randomChar(1),
     "searchbar": dataname2[3],
-    "edata": dataname2[5],
 }
 const cssvar = {
     "bg": dataname[6]+randomChar(1),
@@ -173,7 +173,8 @@ const cssvar = {
     "mp": dataname[6]+randomChar(1),
     "mn": dataname[6]+randomChar(1),
     "nh": dataname[6]+randomChar(1),
-    "fr": dataname[6]+randomChar(1)
+    "fr": dataname[6]+randomChar(1),
+    "edata": dataname2[5],
 }
 addchars();
 cssvar["md"] = dataname[7]+randomChar(1);
@@ -236,7 +237,7 @@ const charset = docsConfig ? docsConfig.charset || template.charset : template.c
 
 const l = ['\n\n','\n    ','\n        '];
 const date = new Date();
-let logs = `${date} (${date.getTime()})${l[0]}_JUST FILES:${l[1]}CSS: ${filename.css}${l[1]}JS: ${filename.js}`;
+let logs = `_just ${_just.version} - ${date} (${date.getTime()})${l[0]}_JUST FILES:${l[1]}CSS: ${filename.css}${l[1]}JS: ${filename.js}`;
 let errorlogs = `${l[0]}CAUGHT ERRORS:`;
 
 const rootDirA = PATH || '.';
@@ -917,7 +918,7 @@ checkTLD(domain).then(tldvalid => {
         fs.writeFileSync(pathh, updated[1], charset);
         logs += `${l[2]}OUTPUT: ${_just.string.runnerPath(pathh)} (${_just.string.fileSize(fs.statSync(pathh).size)})`;
     }
-    CSS = CSS.replace(new RegExp(`.${dataname[8]}3ibute`, 'g'), `.${dataname[8]}14`);
+    CSS = CSS.replace(new RegExp(`.${dataname[8]}3ibute`, 'g'), `.${dataname[8]}14`).replace("content: '_just';", `content: '_just ${_just.version}';`);
 
     logs += linklogs; logs += buttonlogs;
     logs += `${l[0]}USED NAMES:${l[1]}"${uniqueNames_.join('", "')}"${l[0]}DATA NAMES:${l[1]}"${dataname.join('", "')}"`;
@@ -928,11 +929,11 @@ checkTLD(domain).then(tldvalid => {
     const JSdata = _just.js.get(JS);
     fs.writeFileSync(
         path.join(websitepath, '_just', `${filename.js}.js`),
-        "try{throw new Error('aa')"+_just.js.set(
+        "try{"+_just.js.set(
             JS.replace('\'PUBLICOUTPUT\'', publicOutput).replace('let searchurl = "/_just/search";', `let searchurl = "/_just/${dataname[9]}.json";`), 
             JSdata.names, 
             dataname2.reverse().slice(0, JSdata.total)
-        )+`}catch(e_){document.body.classList.add('${cssclass.error}');document.documentElement.style.setProperty('--${cssid.edata}', \`'\${e_}'\`)}`,
+        )+`}catch(e_){document.body.classList.add('${cssclass.error}');document.documentElement.style.setProperty('--${cssvar.edata}', \`'\${e_}'\`)}`,
         template.charset
     );
 
