@@ -214,7 +214,8 @@ HTML = HTML
     .replace('<button id="a"', `<button id="${cssid.a}"`)
     .replace('<div class="search"></div>', `<div class="${cssclass.search}"></div>`)
     .replace(' id="searchbar">', ` id="${cssid.searchbar}">`);
-JS = JS
+const jstrimmedstrvar = _just.number.convertbase(Math.floor(Math.random()*1000).toString(), 10, 62)
+JS = JS.replaceAll('trimmedStr', jstrimmedstrvar)
     .replace('html > body > main > div#main > article.main', `html > body > main > div#${cssid.main} > article.${cssclass.main}`)
     .replace('\'.main\'', `'.${cssclass.main}'`)
     .replaceAll('".navbar"', `".${cssclass.navbar}"`)
@@ -689,8 +690,9 @@ checkTLD(domain).then(tldvalid => {
     let linklogs = `${l[0]}LINKS:`;
     let buttonlogs = `${l[0]}BUTTONS:`;
     let uniqueNames = {};
-    let uniqueNames_= [dataname[0].slice(0,-1)];
+    let uniqueNames_= [dataname[0].slice(0,-1), jstrimmedstrvar];
     uniqueNames[dataname[0].slice(0,-1)] = 1;
+    uniqueNames[jstrimmedstrvar] = 1;
     for (i = 0; i <= dataname.length; i++) {
         uniqueNames[dataname[i]] = 1;
         uniqueNames_.push(dataname[i]);
@@ -931,8 +933,8 @@ checkTLD(domain).then(tldvalid => {
         path.join(websitepath, '_just', `${filename.js}.js`),
         "try{"+_just.js.set(
             JS.replace('\'PUBLICOUTPUT\'', publicOutput).replace('let searchurl = "/_just/search";', `let searchurl = "/_just/${dataname[9]}.json";`), 
-            JSdata.names, 
-            dataname2.reverse().slice(0, JSdata.total)
+            JSdata.names.filter(n => !n === jstrimmedstrvar), 
+            dataname2.reverse().slice(0, JSdata.total-1)
         )+`}catch(e_){document.body.classList.add('${cssclass.error}');document.documentElement.style.setProperty('--${cssvar.edata}', \`'\${e_}'\`)}`,
         template.charset
     );
