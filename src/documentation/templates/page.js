@@ -62,10 +62,10 @@ if (scrll) {
 let swipe;
 const handleSwipeLeft=()=>{
     document.body.classList.remove('navleft');
-}
+};
 const handleSwipeRight=()=>{
     document.body.classList.add('navleft');
-}
+};
 document.addEventListener('touchstart', function(event) {
     swipe = [event.touches[0].clientX, event.touches[0].clientY];
 }, false);
@@ -260,7 +260,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const searchString = (str) => {
         if (!str) {
             return false;
-        }
+        };
         const trimmedStr = str.trim();
         if (trimmedStr.length === 0) {
             return false;
