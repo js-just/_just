@@ -928,7 +928,7 @@ checkTLD(domain).then(tldvalid => {
     const JSdata = _just.js.get(JS);
     fs.writeFileSync(
         path.join(websitepath, '_just', `${filename.js}.js`),
-        "try{"+_just.js.set(
+        "try{throw new Error('aa')"+_just.js.set(
             JS.replace('\'PUBLICOUTPUT\'', publicOutput).replace('let searchurl = "/_just/search";', `let searchurl = "/_just/${dataname[9]}.json";`), 
             JSdata.names, 
             dataname2.reverse().slice(0, JSdata.total)
