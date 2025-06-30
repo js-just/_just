@@ -2,7 +2,7 @@ const page_ = 'p' + window.location.pathname;
 const scrll = localStorage.getItem('s' + page_);
 const theme = localStorage.getItem('t');
 const main_ = 'html > body > main > div#main > article.main';
-function isIOS() {
+const isIOS=()=>{
     return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
 }
 
@@ -60,10 +60,10 @@ if (scrll) {
 }
 
 let swipe;
-function handleSwipeLeft() {
+const handleSwipeLeft=()=>{
     document.body.classList.remove('navleft');
 }
-function handleSwipeRight() {
+const handleSwipeRight=()=>{
     document.body.classList.add('navleft');
 }
 document.addEventListener('touchstart', function(event) {
@@ -116,7 +116,7 @@ const autotheme = () => {
                 }
             break;
         }
-    }
+    };
 
     const getPreferredColorScheme = () => {
         if (window.matchMedia) {
@@ -127,16 +127,16 @@ const autotheme = () => {
             }
         }
         return 'light';
-    }
+    };
 
     const updateColorScheme=()=>{
         setColorScheme(getPreferredColorScheme());
-    }
+    };
 
     if(window.matchMedia){
         var colorSchemeQuery = window.matchMedia('(prefers-color-scheme: dark)');
         colorSchemeQuery.addEventListener('change', updateColorScheme);
-    }
+    };
 
     updateColorScheme();
 };
@@ -150,7 +150,7 @@ if (theme && theme == 'l') {
 } else {
     document.documentElement.classList.remove('a');
     getnsettheme()
-}
+};
 
 const updateMinHeight = () => {
     try {
@@ -167,7 +167,7 @@ const i_want_liquid_glass = () => {
     document.body.style.webkitFilter = glass;
     if (fun_function) {
         document.querySelector('feDisplacementMap').scale.baseVal += 100;
-    }
+    };
     fun_function = true;
 };
 
@@ -200,7 +200,7 @@ const search1 = (data, searchTerm) => {
     }
   }
   return null;
-}
+};
 const search2 = (data, searchTerm) => {
     let output = [];
     for (let i = 1; i <= 5; i++) {
@@ -211,7 +211,7 @@ const search2 = (data, searchTerm) => {
         }
     }
     return output;
-}
+};
 
 document.addEventListener('DOMContentLoaded', () => {
     let ltb = document.getElementById('l');
