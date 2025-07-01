@@ -63,7 +63,6 @@ const template = {
 }
 const fs = require('fs');
 const path = require('path');
-const { css } = require('./highlight.js');
 const config = JSON.parse(fs.readFileSync('just.config.json', template.charset));
 const docsConfig = config.docs_config;
 
@@ -215,7 +214,7 @@ HTML = HTML
     .replace('<div class="search"></div>', `<div class="${cssclass.search}"></div>`)
     .replace(' id="searchbar">', ` id="${cssid.searchbar}">`);
 const jstrimmedstrvarbasestr = _just.number.convertbasedigits.replace(/[1-9\/+]/g, '');
-const jstrimmedstrvar = _just.number.convertbase(Math.floor(Math.random()*1000).toString(), 10, jstrimmedstrvarbasestr.length, jstrimmedstrvarbasestr)
+const jstrimmedstrvar = _just.number.convertbase(Math.floor(Math.random()*1000).toString(10), 10, jstrimmedstrvarbasestr.length, jstrimmedstrvarbasestr)
 JS = JS.replaceAll('trimmedStr', jstrimmedstrvar)
     .replace('html > body > main > div#main > article.main', `html > body > main > div#${cssid.main} > article.${cssclass.main}`)
     .replace('\'.main\'', `'.${cssclass.main}'`)
