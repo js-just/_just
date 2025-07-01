@@ -24,6 +24,9 @@ SOFTWARE.
 
 */
 
+const _just = {};
+_just.number = require('../modules/number.js');
+
 /**
  * @param {string} code 
  * @returns {{total: number, names: string[]}}
@@ -56,12 +59,13 @@ exports.get = function(code) {
  * @param {string} code 
  * @param {string[]} oldNames 
  * @param {string[]} newNames 
+ * @param {string} jstrimmedstrvarbasestr
  * @returns {string}
  */
-exports.set = function(code, oldNames, newNames) {
+exports.set = function(code, oldNames, newNames, jstrimmedstrvarbasestr) {
     const nameMap = {};
     for (let i = 0; i < oldNames.length; i++) {
-        nameMap[oldNames[i]] = newNames[i];
+        nameMap[oldNames[i]] = newNames[i] || '_just-'+_just.number.convertbase(i, 10, jstrimmedstrvarbasestr.length, jstrimmedstrvarbasestr);
     }
 
     const lines = code.split('\n');
@@ -106,4 +110,112 @@ exports.set = function(code, oldNames, newNames) {
     });
 
     return processedLines.join('\n');
+}
+
+/**
+ * http://jsfuck.com
+ * @param {string} code
+ * @returns {string}
+ */
+exports.fuck = function(code) {
+    const SIMPLE = {
+        'false':'![]',
+        'true':'!![]',
+    };
+    const MAPPING = {
+        'a':'(false+"")[1]',
+        'b':'([]["entries"]()+"")[2]',
+        'c':'([]["at"]+"")[3]',
+        'd':'(undefined+"")[2]',
+        'e':'(true+"")[3]',
+        'f':'(false+"")[0]',
+        'g':'(false+[0]+String)[20]',
+        'h':'(+(101))["to"+String["name"]](21)[1]',
+        'i':'([false]+undefined)[10]',
+        'j':'([]["entries"]()+"")[3]',
+        'k':'(+(20))["to"+String["name"]](21)',
+        'l':'(false+"")[2]',
+        'm':'(Number+"")[11]',
+        'n':'(undefined+"")[1]',
+        'o':'(true+[]["at"])[10]',
+        'p':'(+(211))["to"+String["name"]](31)[1]',
+        'q':'("")["fontcolor"]([0]+false+")[20]',
+        'r':'(true+"")[1]',
+        's':'(false+"")[3]',
+        't':'(true+"")[0]',
+        'u':'(undefined+"")[0]',
+        'v':'(+(31))["to"+String["name"]](32)',
+        'w':'(+(32))["to"+String["name"]](33)',
+        'x':'(+(101))["to"+String["name"]](34)[1]',
+        'y':'(NaN+[Infinity])[10]',
+        'z':'(+(35))["to"+String["name"]](36)',
+
+        'A':'(NaN+[]["entries"]())[11]',
+        'B':'(+[]+Boolean)[10]',
+        'C':'Function("return escape")()(("")["italics"]())[2]',
+        'D':'Function("return escape")()([]["at"])["at"]("-1")',
+        'E':'(RegExp+"")[12]',
+        'F':'(+[]+Function)[10]',
+        'G':'(false+Function("return Date")()())[30]',
+        'H':null,
+        'I':'(Infinity+"")[0]',
+        'J':null,
+        'K':null,
+        'L':null,
+        'M':'(true+Function("return Date")()())[30]',
+        'N':'(NaN+"")[0]',
+        'O':null,
+        'P':null,
+        'Q':null,
+        'R':'(+[]+RegExp)[10]',
+        'S':'(+[]+String)[10]',
+        'T':'(NaN+Function("return Date")()())[30]',
+        'U':null,
+        'V':null,
+        'W':null,
+        'X':null,
+        'Y':null,
+        'Z':null,
+
+        ' ':'(NaN+[]["at"])[11]',
+        '!':null,
+        '"':'("")["fontcolor"]()[12]',
+        '#':null,
+        '$':null,
+        '%':'Function("return escape")()([]["at"])[22]',
+        '&':'("")["fontcolor"](")[13]',
+        '\'':null,
+        '(':'([]["at"]+"")[11]',
+        ')':'(""+[]["at"])[12]',
+        '*':null,
+        '+':'(+(+!+[]+(!+[]+[])[!+[]+!+[]+!+[]]+[+!+[]]+[+[]]+[+[]])+[])[2]',
+        ',':'[[]]["concat"]([[]])+""',
+        '-':'(+(.+[0000001])+"")[2]',
+        '.':'(+(+!+[]+[+!+[]]+(!![]+[])[!+[]+!+[]+!+[]]+[!+[]+!+[]]+[+[]])+[])[+!+[]]',
+        '/':'(false+[0])["italics"]()[10]',
+        ':':'(RegExp()+"")[3]',
+        ';':'("")["fontcolor"](NaN+")[21]',
+        '<':'("")["italics"]()[0]',
+        '=':'("")["fontcolor"]()[11]',
+        '>':'("")["italics"]()[2]',
+        '?':'(RegExp()+"")[2]',
+        '@':null,
+        '[':'([]["entries"]()+"")[0]',
+        '\\':'(RegExp("/")+"")[1]',
+        ']':'([]["entries"]()+"")[22]',
+        '^':null,
+        '_':null,
+        '`':null,
+        '{':'([0]+false+[]["at"])[20]',
+        '|':null,
+        '}':'([]["at"]+"")["at"]("-1")',
+        '~':null
+    };
+    return code
+        .replaceAll(' = true;', `=${SIMPLE.true};`)
+        .replace('return true;', `return${SIMPLE.true};`)
+        .replaceAll('false',SIMPLE.false)
+        .replace(" = 'p' + ", ` = ${MAPPING['p']} + `)
+        .replaceAll("('s' + ", `(${MAPPING['s'].replace('false',SIMPLE.false)} + `)
+        .replaceAll("'t'", MAPPING['t'].replace('true',SIMPLE.true))
 }

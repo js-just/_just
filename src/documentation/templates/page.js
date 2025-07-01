@@ -199,7 +199,7 @@ const search1 = (data, searchTerm) => {
       }
     }
   }
-  return null;
+  return(null);
 };
 const search2 = (data, searchTerm) => {
     let output = [];

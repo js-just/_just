@@ -35,8 +35,9 @@ const rootDirA = PATH || '.';
 const rootDirB = process.cwd();
 const logs = fs.readFileSync(path.join(rootDirA !== '.' ? rootDirA : rootDirB, '_just_data', 'output.txt'), charset);
 let logsstr = logs;
+const outputlogs = logsstr !== '';
 const l = ['\n\n','\n    ','\n        '];
-logsstr += l[0];
+logsstr += outputlogs? l[0] : '';
 let newlogs = `COMPRESSED:`;
 
 function findMarkdownFiles(dir) {
@@ -80,5 +81,5 @@ findMarkdownFiles(rootDirB).forEach(file => {
 });
 
 console.log(newlogs);
-logsstr += newlogs;
+logsstr += outputlogs? newlogs : '';
 fs.writeFileSync(path.join(rootDirA !== '.' ? rootDirA : rootDirB, '_just_data', 'output.txt'), logsstr, charset);

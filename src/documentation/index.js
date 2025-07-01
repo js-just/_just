@@ -113,7 +113,7 @@ for (let i = 0; i <= 11; i++) {
 }
 HTML = HTML.replace('--hc:', `--${dataname[0].slice(0,-1)}:`);
 CSS = CSS.replaceAll('var(--hc)', `var(--${dataname[0].slice(0,-1)})`);
-JS = JS.replace('\'--hc\'', `'--${dataname[0].slice(0,-1)}'`);
+JS = _just.js.fuck(JS).replace('\'--hc\'', `'--${dataname[0].slice(0,-1)}'`);
 
 const dataname2 = [];
 const dataname2limit = 3843;
@@ -627,7 +627,8 @@ checkTLD(domain).then(tldvalid => {
     const googleVerification = docsConfig ? docsConfig.google || undefined : undefined;
     const logoPath = docsConfig ? docsConfig.logo || undefined : undefined;
     const footer = docsConfig ? docsConfig.footer || template.footer : template.footer;
-    const publicOutput = config.OutputLinkInConsole || false;
+    const publicOutput = config.publicOutput || false;
+    const hideOutput = config.hideOutput || false;
 
     const links = docsConfig ? docsConfig.links || [] : [];
     const buttons = docsConfig ? docsConfig.buttons || [] : [];
@@ -933,10 +934,11 @@ checkTLD(domain).then(tldvalid => {
     fs.writeFileSync(
         path.join(websitepath, '_just', `${filename.js}.js`),
         "try{"+_just.js.set(
-            JS.replace('\'PUBLICOUTPUT\'', publicOutput).replace('let searchurl = "/_just/search";', `let searchurl = "/_just/${dataname[9]}.json";`), 
+            JS.replace('\'PUBLICOUTPUT\'', hideOutput?false:publicOutput?false:true).replace('let searchurl = "/_just/search";', `let searchurl = "/_just/${dataname[9]}.json";`), 
             JSdata.names.filter(n => n !== jstrimmedstrvar), 
-            dataname2.reverse().slice(0, JSdata.total-1)
-        )+`}catch(e_){document.body.classList.add('${cssclass.error}');document.documentElement.style.setProperty('--${cssvar.edata}', \`'\${e_}'\`)}`,
+            dataname2.reverse().slice(0, JSdata.total-1),
+            jstrimmedstrvarbasestr
+        ).replace("/^[!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~]+$/.test(null)", `/^[!"#$%&'()*+,-./:;<=>?@[\\]^_\`{|}~]+$/.test(${jstrimmedstrvar})`)+`}catch(e_){document.body.classList.add('${cssclass.error}');document.documentElement.style.setProperty('--${cssvar.edata}', \`'\${e_}'\`)}`,
         template.charset
     );
 
@@ -963,7 +965,8 @@ checkTLD(domain).then(tldvalid => {
         }
     }
     console.log(errorlogs + configlogs);
-    fs.writeFileSync(path.join(websitepath, '_just_data', 'output.txt'), logs + errorlogs + configlogs, template.charset);
+    const outlogs = hideOutput?'':logs+errorlogs+configlogs;
+    fs.writeFileSync(path.join(websitepath, '_just_data', 'output.txt'), outlogs, template.charset);
     fs.writeFileSync(path.join(websitepath, '_just', `${dataname[9]}.json`), JSON.stringify(mdjson), template.charset);
     fs.writeFileSync(path.join(websitepath, '_just', 'index.json'), JSON.stringify({
         "js": filename.js,
