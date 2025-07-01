@@ -265,7 +265,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (trimmedStr.length === 0) {
             return false;
         }
-        if(/^[!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~]+$/.test( trimmedStr )){
+        if(/^[!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~]+$/.test(trimmedStr)){
             return false;
         }
         return true;
