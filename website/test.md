@@ -1,8 +1,8 @@
 # This is a test page
 Generated using [Just an Ultimate Site Tool](https://just.is-a.dev/).
 
-Some **bold**, *italic*, ***important***, __underlined__, ~~idk~~, ~sub~, ^super^, ==marked==, __***very important***__, __==***extreme important***==__, ~~***not important***~~ text.
-Some `code`; **`bold`**, *`italic`*, ***`important`***, __`underlined`__, ~~`idk`~~, ~`sub`~, ^`super`^, ==`marked`==, __***`very important`***__, __==***`extreme important`***==__, ~~***`not important`***~~ code.
+Some **bold**, *italic*, ***important***, __underlined__, ~~strikethrough~~, ~sub~, ^super^, ==marked==, __***very important***__, __==***extreme important***==__, ~~***not important***~~ text.
+Some `code`; **`bold`**, *`italic`*, ***`important`***, __`underlined`__, ~~`strikethrough`~~, ~`sub`~, ^`super`^, ==`marked`==, __***`very important`***__, __==***`extreme important`***==__, ~~***`not important`***~~ code.
 
 1. List
 2. (with numbers)

@@ -214,7 +214,8 @@ HTML = HTML
     .replace('<button id="a"', `<button id="${cssid.a}"`)
     .replace('<div class="search"></div>', `<div class="${cssclass.search}"></div>`)
     .replace(' id="searchbar">', ` id="${cssid.searchbar}">`);
-const jstrimmedstrvar = _just.number.convertbase(Math.floor(Math.random()*1000).toString(), 10, 62)
+const jstrimmedstrvarbasestr = _just.number.convertbasedigits.replace(/[1-9\/+]/g, '');
+const jstrimmedstrvar = _just.number.convertbase(Math.floor(Math.random()*1000).toString(), 10, jstrimmedstrvarbasestr.length, jstrimmedstrvarbasestr)
 JS = JS.replaceAll('trimmedStr', jstrimmedstrvar)
     .replace('html > body > main > div#main > article.main', `html > body > main > div#${cssid.main} > article.${cssclass.main}`)
     .replace('\'.main\'', `'.${cssclass.main}'`)
@@ -923,7 +924,7 @@ checkTLD(domain).then(tldvalid => {
     CSS = CSS.replace(new RegExp(`.${dataname[8]}3ibute`, 'g'), `.${dataname[8]}14`).replace("content: '_just';", `content: '_just ${_just.version}';`);
 
     logs += linklogs; logs += buttonlogs;
-    logs += `${l[0]}USED NAMES:${l[1]}"${uniqueNames_.join('", "')}"${l[0]}DATA NAMES:${l[1]}"${dataname.join('", "')}"`;
+    logs += `${l[0]}USED NAMES:${l[1]}"${uniqueNames_.join('", "')}"${l[0]}DATA NAMES:${l[1]}"${dataname.join('", "')}"${l[0]}OTHER:${l[1]}JSTRIMMEDVAR:${l[2]}NAME: "${jstrimmedstrvar}"${l[2]}CUSTOM BASE: ${jstrimmedstrvarbasestr.length}${l[2]}CUSTOM BASE STRING: "${jstrimmedstrvarbasestr}"`;
     console.log(logs);
     const websitepath = rootDirA !== '.' ? rootDirA : rootDirB;
     fs.writeFileSync(path.join(websitepath, '_just', `${filename.css}.css`), CSS, template.charset);
