@@ -65,7 +65,7 @@ exports.get = function(code) {
 exports.set = function(code, oldNames, newNames, jstrimmedstrvarbasestr) {
     const nameMap = {};
     for (let i = 0; i < oldNames.length; i++) {
-        nameMap[oldNames[i]] = newNames[i] || '_just-'+_just.number.convertbase(i.toString(), 10, jstrimmedstrvarbasestr.length, jstrimmedstrvarbasestr);
+        nameMap[oldNames[i]] = newNames[i] || '_just_'+_just.number.convertbase(i.toString(10), 10, jstrimmedstrvarbasestr.length, jstrimmedstrvarbasestr);
     }
 
     const lines = code.split('\n');
