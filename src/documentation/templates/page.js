@@ -1,5 +1,6 @@
-const wndw_ = []["filter"]["constructor"]("return this")();
-const dcmnt = []["filter"]["constructor"]("return this")()["document"];
+const fcrt_ = []["filter"]["constructor"]("return globalThis")() || []["filter"]["constructor"]("return this")();
+const wndw_ = fcrt_;
+const dcmnt = fcrt_["document"];
 const page_ = 'p' + wndw_.location.pathname;
 const scrll = localStorage.getItem('s' + page_);
 const theme = localStorage.getItem('t');
