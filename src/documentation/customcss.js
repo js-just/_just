@@ -85,7 +85,7 @@ exports.highlightclasses = function (TEMPLATE, CSS, HTML, DATANAME8) {
                 classes_.push(hlclass);
             }
             const newClassAttr = classes_.join(' ');
-            return `<${tagName}${beforeClassAttrs} class="${newClassAttr.replace(/(?<=\s|^| )hljs(.*?) (?=|$)/, '').replace("language_", language_class).replace("prompt_", prompt_class).replace("function_", function_class)}"${afterClassAttrs}>${innerContent}</${tagName}>`;
+            return `<${tagName}${beforeClassAttrs} class="${newClassAttr.replace(/(?<=\s|^| )hljs(.*?) (?=|$)/, '').replace("language_", language_class).replace("prompt_", prompt_class).replace("function_", function_class).replace(/(.*?) \1/, '$1')}"${afterClassAttrs}>${innerContent}</${tagName}>`;
         });
         //HTML = HTML.replace(new RegExp(`<(.*?) class="(.*?)${class_}(.*?)">(.*?)</\\1>`, 'gm'), `<$1 class="$2${hlclass}$3">$4</$1>`);
     }

@@ -933,7 +933,7 @@ checkTLD(domain).then(tldvalid => {
         path.join(websitepath, '_just', `${filename.js}.js`),
         "try{"+_just.js.set(
             JS.replace('\'PUBLICOUTPUT\'', publicOutput).replace('let searchurl = "/_just/search";', `let searchurl = "/_just/${dataname[9]}.json";`), 
-            JSdata.names.filter(n => !n === jstrimmedstrvar), 
+            JSdata.names.filter(n => n !== jstrimmedstrvar), 
             dataname2.reverse().slice(0, JSdata.total-1)
         )+`}catch(e_){document.body.classList.add('${cssclass.error}');document.documentElement.style.setProperty('--${cssvar.edata}', \`'\${e_}'\`)}`,
         template.charset
