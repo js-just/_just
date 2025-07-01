@@ -65,7 +65,8 @@ exports.get = function(code) {
 exports.set = function(code, oldNames, newNames, jstrimmedstrvarbasestr) {
     const nameMap = {};
     for (let i = 0; i < oldNames.length; i++) {
-        nameMap[oldNames[i]] = newNames[i] || '_just_'+_just.number.convertbase(i.toString(10), 10, jstrimmedstrvarbasestr.length, jstrimmedstrvarbasestr);
+        const name_ = _just.number.convertbase(i.toString(10), 10, jstrimmedstrvarbasestr.length, jstrimmedstrvarbasestr) || i.toString(36);
+        nameMap[oldNames[i]] = newNames[i] || '_just_'+name_;
     }
 
     const lines = code.split('\n');
@@ -77,7 +78,9 @@ exports.set = function(code, oldNames, newNames, jstrimmedstrvarbasestr) {
         for (let i = 0; i < line.length; i++) {
             const char = line[i];
 
-            if (!inString && (char === '"' || char === "'" || char === '`')) {
+            if (!inString && (char === '"' || char === "'" || char === '`' || (
+                char === '(' && line[i-1] === 'n' && line[i-2] === 'r' && line[i-3] === 'u' && line[i-4] === 't' && line[i-5] === 'e' && line[i-6] === 'r' // fix replacing null in return(null)
+            ))) {
                 inString = true;
                 stringChar = char;
                 resultLine += char;
