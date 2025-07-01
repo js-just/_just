@@ -81,7 +81,7 @@ exports.set = function(code, oldNames, newNames, jstrimmedstrvarbasestr) {
                 inString = true;
                 stringChar = char;
                 resultLine += char;
-            } else if (inString && char === stringChar && line[i - 1] !== '\\') {
+            } else if (inString && ((char === stringChar && line[i - 1] !== '\\') || (char === '{' && line[i-1] === '$' && line[i-2] === '`'))) {
                 inString = false;
                 resultLine += char;
             } else if (!inString) {
