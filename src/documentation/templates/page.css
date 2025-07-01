@@ -499,6 +499,7 @@ nav.right {
             left: 0%;
             background-color: var(--bg);
             translate: -1px;
+            transition: 300ms;
         }
         .slider {
             position: fixed;
