@@ -78,15 +78,16 @@ exports.set = function(code, oldNames, newNames, jstrimmedstrvarbasestr) {
         for (let i = 0; i < line.length; i++) {
             const char = line[i];
 
-            if (!inString && (char === '"' || char === "'" || char === '`' || (
-                char === '(' && line[i-1] === 'n' && line[i-2] === 'r' && line[i-3] === 'u' && line[i-4] === 't' && line[i-5] === 'e' && line[i-6] === 'r' // fix replacing null in return(null)
-            ))) {
+            if (!inString && (char === '"' || char === "'" || char === '`' || 
+                (char === '(' && line[i-1] === 'n' && line[i-2] === 'r' && line[i-3] === 'u' && line[i-4] === 't' && line[i-5] === 'e' && line[i-6] === 'r') || // fix replacing null in return(null)
+                (char === '}' && line.includes('`') && line.includes('$') && line.includes('{'))
+            )) {
                 inString = true;
                 stringChar = char;
                 resultLine += char;
             } else if (
                 inString && ((char === stringChar && line[i - 1] !== '\\') ||
-                (char === '{' && line[i-1] === '$' && line[i-2] === '`') || // `${not a string}`
+                (char === '{' && line[i-1] === '$' && line.includes('`')) || // `${not a string}`
                 (char === '(' && line[i-1] === 't' && line[i-2] === 's' && line[i-3] === 'e' && line[i-4] === 't' && line[i-5] === '.' && line[i-6] === '/') // regex.test(not a string)
             )) {
                 inString = false;
