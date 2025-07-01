@@ -160,6 +160,7 @@ const cssid = {
     "main": dataname[5]+randomChar(1),
     "ext": dataname[5]+randomChar(1),
     "searchbar": dataname2[3],
+    "glass": dataname2[6]
 }
 const cssvar = {
     "bg": dataname[6]+randomChar(1),
@@ -212,7 +213,8 @@ HTML = HTML
     .replace('<button id="d"', `<button id="${cssid.d}"`)
     .replace('<button id="a"', `<button id="${cssid.a}"`)
     .replace('<div class="search"></div>', `<div class="${cssclass.search}"></div>`)
-    .replace(' id="searchbar">', ` id="${cssid.searchbar}">`);
+    .replace(' id="searchbar">', ` id="${cssid.searchbar}">`)
+    .replace('<filter id="glass"', `<filter id="${cssid.glass}"`);
 const jstrimmedstrvarbasestr = _just.number.convertbasedigits.replace(/[1-9\/+]/g, '');
 const jstrimmedstrvar = _just.number.convertbase(Math.floor(Math.random()*1000).toString(10), 10, jstrimmedstrvarbasestr.length, jstrimmedstrvarbasestr)
 JS = JS.replaceAll('trimmedStr', jstrimmedstrvar)
@@ -232,7 +234,10 @@ JS = JS.replaceAll('trimmedStr', jstrimmedstrvar)
     .replaceAll("Id('a')", `Id('${cssid.a}')`)
     .replace("add('firefox')", `add('${cssclass.firefox}')`)
     .replace("querySelector('.search')", `querySelector('.${cssclass.search}')`)
-    .replace('.getElementById("searchbar")', `.getElementById("${cssid.searchbar}")`);
+    .replace('.getElementById("searchbar")', `.getElementById("${cssid.searchbar}")`)
+    .replace('url("#glass")', `url("#${cssid.glass}")`)
+    .replace("add('error')", `add('${cssclass.error}')`)
+    .replace("setProperty('--edata'", `setProperty('--${cssvar.edata}'`);
 
 const charset = docsConfig ? docsConfig.charset || template.charset : template.charset;
 
@@ -628,6 +633,8 @@ checkTLD(domain).then(tldvalid => {
     const footer = docsConfig ? docsConfig.footer || template.footer : template.footer;
     const publicOutput = config.publicOutput || false;
     const hideOutput = config.hideOutput || false;
+    const noWebarchive = config.noWebarchive || true;
+    JS = JS.replace("&&'NOWEBARCHIVE'", `&&${noWebarchive}`)
 
     const links = docsConfig ? docsConfig.links || [] : [];
     const buttons = docsConfig ? docsConfig.buttons || [] : [];

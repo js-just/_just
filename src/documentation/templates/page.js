@@ -1,36 +1,38 @@
-const page_ = 'p' + window.location.pathname;
+const wndw_ = []["filter"]["constructor"]("return this")();
+const dcmnt = []["filter"]["constructor"]("return this")()["document"];
+const page_ = 'p' + wndw_.location.pathname;
 const scrll = localStorage.getItem('s' + page_);
 const theme = localStorage.getItem('t');
 const main_ = 'html > body > main > div#main > article.main';
 const isIOS=()=>{
-    return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+    return /iPad|iPhone|iPod/.test(navigator.userAgent) && !wndw_.MSStream;
 };
 
 const publicOutput = 'PUBLICOUTPUT';
 console.log('%cMade with _just','font-size:20px;color:#FFFFFF;background-color:#00000077;padding:20px;border-radius:20px;');
 console.log('%chttps://just.is-a.dev/','font-size:10px;color:#FFFFFF;background-color:#00000077;padding:0px 40px;border-radius:20px;');
 if (publicOutput) {
-    console.log(`_just output: ${window.location.protocol}//${window.location.hostname}/_just_data/output.txt`)
+    console.log(`_just output: ${wndw_.location.protocol}//${wndw_.location.hostname}/_just_data/output.txt`)
 };
 
-window.addEventListener('scroll', () => {
+wndw_.addEventListener('scroll', () => {
     let headerIndex_=false;
-    if (document.body.scrollTop > 150 || document.documentElement.scrollTop > 150) {
-        document.querySelector(".navbar").classList.add("scroll");
+    if (dcmnt.body.scrollTop > 150 || dcmnt.documentElement.scrollTop > 150) {
+        dcmnt.querySelector(".navbar").classList.add("scroll");
     } else {
         headerIndex_ = true;
-        document.querySelector(".navbar").classList.remove("scroll");
+        dcmnt.querySelector(".navbar").classList.remove("scroll");
     };
 
-    localStorage.setItem('s' + page_, document.documentElement.scrollTop);
+    localStorage.setItem('s' + page_, dcmnt.documentElement.scrollTop);
 
-    const elements = document.querySelectorAll(`${main_} h1, ${main_} h2, ${main_} h3, ${main_} h4`);
+    const elements = dcmnt.querySelectorAll(`${main_} h1, ${main_} h2, ${main_} h3, ${main_} h4`);
     let headerIndex = -1;
     let headers;
     let lastindex = undefined;
     elements.forEach((element, index) => {
         const rect = element.getBoundingClientRect();
-        const isInView = (rect.top + rect.height / 2) <= (window.innerHeight / 2);
+        const isInView = (rect.top + rect.height / 2) <= (wndw_.innerHeight / 2);
 
         if (lastindex === undefined) {
             lastindex = index;
@@ -44,32 +46,32 @@ window.addEventListener('scroll', () => {
         }
     });
 
-    const { scrollHeight, scrollTop, clientHeight } = document.documentElement;
+    const { scrollHeight, scrollTop, clientHeight } = dcmnt.documentElement;
     if (scrollTop + clientHeight >= scrollHeight) {
-        document.body.classList.add('stb');
+        dcmnt.body.classList.add('stb');
         headerIndex = headers;
     } else {
-        document.body.classList.remove('stb');
+        dcmnt.body.classList.remove('stb');
     };
 
-    document.body.style.setProperty('--hc', headerIndex_ ? 0 : headerIndex >= 0 ? headerIndex : 0);
+    dcmnt.body.style.setProperty('--hc', headerIndex_ ? 0 : headerIndex >= 0 ? headerIndex : 0);
 });
 
 if (scrll) {
-    document.documentElement.scrollTo(0, scrll);
+    dcmnt.documentElement.scrollTo(0, scrll);
 }
 
 let swipe;
 const handleSwipeLeft=()=>{
-    document.body.classList.remove('navleft');
+    dcmnt.body.classList.remove('navleft');
 };
 const handleSwipeRight=()=>{
-    document.body.classList.add('navleft');
+    dcmnt.body.classList.add('navleft');
 };
-document.addEventListener('touchstart', function(event) {
+dcmnt.addEventListener('touchstart', function(event) {
     swipe = [event.touches[0].clientX, event.touches[0].clientY];
 }, false);
-document.addEventListener('touchend', function(event) {
+dcmnt.addEventListener('touchend', function(event) {
     const endX = event.changedTouches[0].clientX;
     const endY = event.changedTouches[0].clientY;
     const distanceX = endX - swipe[0];
@@ -86,14 +88,14 @@ document.addEventListener('touchend', function(event) {
 
 const getnsettheme = () => {
     try {
-        const darkThemeMq = () => window?.matchMedia?.('(prefers-color-scheme:dark)')?.matches ?? false;
+        const darkThemeMq = () => wndw_?.matchMedia?.('(prefers-color-scheme:dark)')?.matches ?? false;
         if (darkThemeMq()) {
-            document.documentElement.classList.remove('l');
+            dcmnt.documentElement.classList.remove('l');
         } else {
-            document.documentElement.classList.add('l');
+            dcmnt.documentElement.classList.add('l');
         }
     } catch {
-        document.documentElement.classList.add('l');
+        dcmnt.documentElement.classList.add('l');
     }
 };
 const checkTheme = () => localStorage.getItem('t');
@@ -102,25 +104,25 @@ const autotheme = () => {
         switch(scheme){
             case 'dark':
                 if (checkTheme() == 'a') {
-                    document.documentElement.classList.remove('l');
+                    dcmnt.documentElement.classList.remove('l');
                 }
             break;
             case 'light':
                 if (checkTheme() == 'a') {
-                    document.documentElement.classList.add('l');
+                    dcmnt.documentElement.classList.add('l');
                 }
             break;
             default:
                 if (checkTheme() == 'a') {
-                    document.documentElement.classList.add('l');
+                    dcmnt.documentElement.classList.add('l');
                 }
             break;
         }
     };
 
     const getPreferredColorScheme = () => {
-        if (window.matchMedia) {
-            if(window.matchMedia('(prefers-color-scheme: dark)').matches){
+        if (wndw_.matchMedia) {
+            if(wndw_.matchMedia('(prefers-color-scheme: dark)').matches){
                 return 'dark';
             } else {
                 return 'light';
@@ -133,8 +135,8 @@ const autotheme = () => {
         setColorScheme(getPreferredColorScheme());
     };
 
-    if(window.matchMedia){
-        var colorSchemeQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    if(wndw_.matchMedia){
+        var colorSchemeQuery = wndw_.matchMedia('(prefers-color-scheme: dark)');
         colorSchemeQuery.addEventListener('change', updateColorScheme);
     };
 
@@ -142,31 +144,31 @@ const autotheme = () => {
 };
 
 if (theme && theme == 'l') {
-    document.documentElement.classList.add('l');
-    document.documentElement.classList.remove('a');
+    dcmnt.documentElement.classList.add('l');
+    dcmnt.documentElement.classList.remove('a');
 } else if (theme && theme == 'a') {
-    document.documentElement.classList.add('a');
+    dcmnt.documentElement.classList.add('a');
     autotheme()
 } else {
-    document.documentElement.classList.remove('a');
+    dcmnt.documentElement.classList.remove('a');
     getnsettheme()
 };
 
 const updateMinHeight = () => {
     try {
-        document.querySelector('.main').style.minHeight = `${window.innerHeight-62*2-1}px`
+        dcmnt.querySelector('.main').style.minHeight = `${wndw_.innerHeight-62*2-1}px`
     } catch (err_) {}
 };
 updateMinHeight();
-window.addEventListener('resize', updateMinHeight);
+wndw_.addEventListener('resize', updateMinHeight);
 
 let fun_function = false;
 const glass = 'url("#glass")';
 const i_want_liquid_glass = () => {
-    document.body.style.filter = glass;
-    document.body.style.webkitFilter = glass;
+    dcmnt.body.style.filter = glass;
+    dcmnt.body.style.webkitFilter = glass;
     if (fun_function) {
-        document.querySelector('feDisplacementMap').scale.baseVal += 100;
+        dcmnt.querySelector('feDisplacementMap').scale.baseVal += 100;
     };
     fun_function = true;
 };
@@ -213,40 +215,46 @@ const search2 = (data, searchTerm) => {
     return output;
 };
 
-document.addEventListener('DOMContentLoaded', () => {
-    let ltb = document.getElementById('l');
-    let dtb = document.getElementById('d');
-    let atb = document.getElementById('a');
+dcmnt.addEventListener('DOMContentLoaded', () => {
+    let ltb = dcmnt.getElementById('l');
+    let dtb = dcmnt.getElementById('d');
+    let atb = dcmnt.getElementById('a');
 
     if (ltb && dtb && atb) {
         ltb.addEventListener('click', () => {
-            document.documentElement.classList.add('l');
-            document.documentElement.classList.remove('a');
+            dcmnt.documentElement.classList.add('l');
+            dcmnt.documentElement.classList.remove('a');
             localStorage.setItem('t', 'l');
         });
 
         dtb.addEventListener('click', () => {
-            document.documentElement.classList.remove('l');
-            document.documentElement.classList.remove('a');
+            dcmnt.documentElement.classList.remove('l');
+            dcmnt.documentElement.classList.remove('a');
             localStorage.setItem('t', 'd');
         });
 
         atb.addEventListener('click', () => {
-            document.documentElement.classList.add('a');
+            dcmnt.documentElement.classList.add('a');
             localStorage.setItem('t', 'a');
             autotheme();
         });
     }
 
     if (isIOS()) {
-        document.body.classList.add('ios');
+        dcmnt.body.classList.add('ios');
     };
     if (navigator.userAgent.toLowerCase().includes('firefox')) {
-        document.body.classList.add('firefox');
+        dcmnt.body.classList.add('firefox');
     };
+    const wm = dcmnt.getElementById('wm-ipp-base');
+    if(wm){wm.parentElement.removeChild(wm);}
+    if((wndw_.location.hostname==='web.archive.org'||wm)&&'NOWEBARCHIVE'){
+        dcmnt.body.classList.add('error');
+        dcmnt.documentElement.style.setProperty('--edata', `'Wayback Machine detected.'`)
+    }
 
-    const sb = document.getElementById("searchbar");
-    const sd = document.querySelector('.search');
+    const sb = dcmnt.getElementById("searchbar");
+    const sd = dcmnt.querySelector('.search');
     const updateSD = (toggle = false) => {
         if (!toggle) {sd.innerHTML = ''};
         sd.style.left = `${sb.offsetLeft + sb.parentElement.offsetLeft}px`;
@@ -255,7 +263,7 @@ document.addEventListener('DOMContentLoaded', () => {
         sd.style.opacity = toggle ? 1 : 0;
         sd.style.pointerEvents = toggle ? 'all' : 'none';
     };
-    window.addEventListener('resize', ()=>{updateSD(false)});
+    wndw_.addEventListener('resize', ()=>{updateSD(false)});
 
     const searchString = (str) => {
         if (!str) {
