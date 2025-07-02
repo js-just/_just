@@ -31,6 +31,8 @@ const deployDir = process.argv[2] || __dirname;
 
 function compressFile(filePath) {
     let content = fs.readFileSync(filePath, 'utf8');
+    console.log(filePath);
+    console.log(content);
 
     if (filePath.endsWith('.js') || filePath.endsWith('.css')) {
         content = content.replace(/(?<!["'`][\s\S]*)\/\/.*\n/g, '\n')
@@ -62,6 +64,7 @@ function compressFile(filePath) {
         content = content.replace(/,\s*}/g, '}').replace(/,\s*]}/g, ']');
     }
 
+    console.log(content);
     fs.writeFileSync(filePath, content, 'utf8');
 }
 
