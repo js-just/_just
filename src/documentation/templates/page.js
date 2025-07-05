@@ -9,7 +9,7 @@ const isIOS=()=>{
     return /iPad|iPhone|iPod/.test(navigator.userAgent) && !wndw_.MSStream;
 };
 
-const publicOutput = 'PUBLICOUTPUT';
+const publicOutput = 'REPLACE_PUBLICOUTPUT';
 console.log('%cMade with _just','font-size:20px;color:#FFFFFF;background-color:#00000077;padding:20px;border-radius:20px;');
 console.log('%chttps://just.is-a.dev/','font-size:10px;color:#FFFFFF;background-color:#00000077;padding:0px 40px;border-radius:20px;');
 if (publicOutput) {
@@ -249,22 +249,38 @@ dcmnt.addEventListener('DOMContentLoaded', () => {
     };
     const wm = dcmnt.getElementById('wm-ipp-base');
     if(wm){wm.parentElement.removeChild(wm);}
-    if((wndw_.location.hostname==='web.archive.org'||wm)&&'NOWEBARCHIVE'){
+    if((wndw_.location.hostname==='web.archive.org'||wm)&&'REPLACE_NOWEBARCHIVE'){
         dcmnt.body.classList.add('error');
         dcmnt.documentElement.style.setProperty('--edata', `'Wayback Machine detected.'`)
     }
 
     const sb = dcmnt.getElementById("searchbar");
     const sd = dcmnt.querySelector('.search');
+    const sk = dcmnt.getElementById("search");
+    let sdtoggle = false;
     const updateSD = (toggle = false) => {
         if (!toggle) {sd.innerHTML = ''};
-        sd.style.left = `${sb.offsetLeft + sb.parentElement.offsetLeft}px`;
-        sd.style.top = `${sb.parentElement.offsetTop + sb.offsetHeight - (sb.parentElement.offsetWidth == 0 ? 15 : 0)}px`;
+        sdtoggle = toggle;
+        const leftt = sb.offsetLeft + sb.parentElement.offsetLeft;
+        const toppp = sb.parentElement.offsetTop + sb.offsetHeight - (sb.parentElement.offsetWidth == 0 ? 15 : 0);
+        const opcty = toggle ? 1 : 0;
+        sd.style.left = `${leftt}px`;
+        sd.style.top = `${toppp}px`;
         sd.style.width = `${sb.offsetWidth - 8*2}px`;
-        sd.style.opacity = toggle ? 1 : 0;
+        sd.style.opacity = opcty;
         sd.style.pointerEvents = toggle ? 'all' : 'none';
+
+        sk.style.left = `${leftt + sb.offsetWidth}px`;
+        sk.style.top = `${toppp - (sb.offsetHeight / 2)}px`;
+        sk.style.opacity = opcty;
     };
     wndw_.addEventListener('resize', ()=>{updateSD(false)});
+    wndw_.addEventListener('keydown', (key)=>{
+        if (key.key === 'REPLACE_SEARCHKEY') {
+            sb.focus();
+        }
+    });
+    sk.addEventListener('click', ()=>{sb.focus()});
 
     const searchString = (str) => {
         if (!str) {

@@ -1069,3 +1069,7 @@ html:has(.error):after {
 .error * {
     display: none !important;
 }
+
+#search {
+    display: none;
+}

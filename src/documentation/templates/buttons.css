@@ -1,0 +1,16 @@
+#search {
+    background-color: var(--bg);
+    border: 1px solid var(--cl);
+    font-family: Monospace;
+    position: fixed;
+    z-index: 23;
+    display: block !important;
+    width: 20px;
+    height: 16px;
+    padding-bottom: 1px;
+    translate: calc(-100% - 5px) -50%;
+    text-align: center;
+    border-radius: 50px;
+    cursor: text;
+    user-select: none;
+}

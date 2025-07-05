@@ -28,24 +28,28 @@ const baseregex = /(@_just base)/g;
 const baseregex2= /(@_just base;)/g;
 const coderegex = /(@_just highlight)/g;
 const coderegex2= /(@_just highlight;)/g;
+const btnsregex = /(@_just buttons)/g;
+const btnsregex2= /(@_just buttons;)/g;
 const classRegex= /\.([a-zA-Z0-9_-]+)/g;
 /**
  * @param {string} CSS 
  * @param {string} CUSTOM
  * @param {string} CODE 
  * @param {boolean} USECODE
+ * @param {string} CSSBUTTONS
  * @returns {string}
  */
-exports.customcss = function (CSS, CUSTOM, CODE, USECODE = true) {
+exports.customcss = function (CSS, CUSTOM, CODE, USECODE = true, CSSBUTTONS) {
     if (!CUSTOM) {
-        return USECODE ? CSS + CODE : CSS
+        return USECODE ? CSS + CODE + CSSBUTTONS : CSS + CSSBUTTONS;
     }
-    CUSTOM = CUSTOM
+    return CUSTOM
         .replace(baseregex2,CSS)
         .replace(baseregex, CSS)
         .replace(coderegex2, USECODE ? CODE : '')
         .replace(coderegex, USECODE ? CODE : '')
-    return CUSTOM
+        .replace(btnsregex, CSSBUTTONS)
+        .replace(btnsregex2, CSSBUTTONS)
 }
 
 const savedclasses = {};

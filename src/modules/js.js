@@ -25,7 +25,7 @@ SOFTWARE.
 */
 
 const _just = {};
-_just.number = require('../modules/number.js');
+_just.number = require('./number.js');
 
 /**
  * @param {string} code 

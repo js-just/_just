@@ -25,11 +25,12 @@ SOFTWARE.
 */
 
 const _just = {};
-const [HTMLtemplate, CSStemplate, JStemplate, PATH, repo, owner, customCSS, hljslangs, langs__, CSSHIGHLIGHTtemplate, langstext_, vrsn] = process.argv.slice(2);
+const [HTMLtemplate, CSStemplate, JStemplate, PATH, repo, owner, customCSS, hljslangs, langs__, CSSHIGHLIGHTtemplate, langstext_, vrsn, CSSBUTTONStemplate] = process.argv.slice(2);
 let HTML = HTMLtemplate;
 let CSS = CSStemplate;
 let JS = JStemplate;
 let CSSHIGHLIGHT = CSSHIGHLIGHTtemplate;
+let CSSBUTTONS = CSSBUTTONStemplate;
 _just.string = require('../modules/string.js');
 /**
  * @param {string} type 
@@ -48,7 +49,7 @@ const langaliases = JSON.parse(langs__);
 const langstext = JSON.parse(langstext_);
 _just.highlight = require('./highlight.js');
 _just.number = require('../modules/number.js');
-_just.js = require('./js.js');
+_just.js = require('../modules/js.js');
 _just.version = vrsn;
 
 const link = (text, link_, ext = false, extid = "ext", target = "_blank", title_) => `<a href="${link_}" target="${target}"${ext ? ` id="${extid}"` : ''}${title_ ? ` title="${title_}"` : ''}>${text}</a>`;
@@ -59,7 +60,8 @@ const template = {
     "footer": `Made with ${link('_just', 'https://just.is-a.dev/')}.`,
     "viewport": "width=device-width, initial-scale=1.0",
     "twitter": "summary_large_image",
-    "lang": "en"
+    "lang": "en",
+    "searchkey": "/"
 }
 const fs = require('fs');
 const path = require('path');
@@ -160,7 +162,8 @@ const cssid = {
     "main": dataname[5]+randomChar(1),
     "ext": dataname[5]+randomChar(1),
     "searchbar": dataname2[3],
-    "glass": dataname2[6]
+    "glass": dataname2[6],
+    "search": dataname2[7],
 }
 const cssvar = {
     "bg": dataname[6]+randomChar(1),
@@ -195,6 +198,7 @@ Object.entries(cssclass).forEach(([key, class_]) => {
 })
 Object.entries(cssid).forEach(([key, id_]) => {
     CSS = CSS.replaceAll(`#${key}`, `#${id_}`);
+    CSSBUTTONS = CSSBUTTONS.replaceAll(`#${key}`, `#${id_}`);
 });
 Object.entries(cssvar).forEach(([key, var_]) => {
     CSS = CSS.replaceAll(`--${key}`, `--${var_}`);
@@ -462,6 +466,7 @@ checkTLD(domain).then(tldvalid => {
     }
     const linkregex = /(?<=\s|^|[.,!?;:*_^~=])\[(.*?)\]\((.*?)\)(?=\s|[.,!?;:*_^~=]|$)/g;
     let taskid = 0;
+    let insertedcode = false;
     const MDtoHTML = (input) => {
         let text = MDescape(input);
         text = text.replace(/```([\w]*)\s*[\r\n]+([\s\S]*?)```/g, (match, lang_, code_) => {
@@ -483,6 +488,7 @@ checkTLD(domain).then(tldvalid => {
                         console.log(`Debug: Code language: ${lang_}`);
                         const hljshighlight = highlightcode && supportedlangs.includes(lang_)
                         const output_ = hljshighlight ? filter_(hljs.highlight(code_, {language: lang_}).value) : undefined;
+                        insertedcode = true;
                         return `<code class="${cssclass.code}">${
                             hljshighlight ? `<code>${langstext[lang_]}</code>${lang_ == 'css' ? _just.highlight.css(output_) : output_}` : filter_(code_)
                         }</code>`;
@@ -634,7 +640,9 @@ checkTLD(domain).then(tldvalid => {
     const publicOutput = config.publicOutput || false;
     const hideOutput = config.hideOutput || false;
     const noWebarchive = config.noWebarchive || true;
-    JS = JS.replace("&&'NOWEBARCHIVE'", `&&${noWebarchive}`)
+    const searchkey = docsConfig ? docsConfig.searchKey || template.searchkey : template.searchkey;
+    JS = JS.replace("&&'REPLACE_NOWEBARCHIVE'", `&&${noWebarchive}`).replace('REPLACE_SEARCHKEY', searchkey);
+    HTML = HTML.replace('REPLACE_SEARCHKEY', searchkey);
 
     const links = docsConfig ? docsConfig.links || [] : [];
     const buttons = docsConfig ? docsConfig.buttons || [] : [];
@@ -921,7 +929,7 @@ checkTLD(domain).then(tldvalid => {
             )
     });
 
-    CSS = _just.customCSS.customcss(CSS, customCSS == 'false' ? undefined : customCSS, CSSHIGHLIGHT);
+    CSS = _just.customCSS.customcss(CSS, customCSS == 'false' ? undefined : customCSS, CSSHIGHLIGHT, insertedcode, CSSBUTTONS);
     for (const [pathh, htmlcontent] of Object.entries(htmlfiles)) {
         const updated = _just.customCSS.highlightclasses(CSSHIGHLIGHTtemplate, CSS, htmlcontent, dataname[8]);
         CSS = updated[0];
@@ -941,7 +949,7 @@ checkTLD(domain).then(tldvalid => {
     fs.writeFileSync(
         path.join(websitepath, '_just', `${filename.js}.js`),
         "try{"+_just.js.set(
-            JS.replace('\'PUBLICOUTPUT\'', hideOutput?false:publicOutput?false:true).replace('let searchurl = "/_just/search";', `let searchurl = "/_just/${dataname[9]}.json";`), 
+            JS.replace('\'REPLACE_PUBLICOUTPUT\'', hideOutput?false:publicOutput?false:true).replace('let searchurl = "/_just/search";', `let searchurl = "/_just/${dataname[9]}.json";`), 
             JSdata.names.filter(n => n !== jstrimmedstrvar), 
             dataname2.reverse().slice(0, JSdata.total-1),
             jstrimmedstrvarbasestr

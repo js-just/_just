@@ -186,6 +186,7 @@ elif [ "$TYPE" == "docs" ]; then
     CSS=$(cat "$GITHUB_ACTION_PATH/src/documentation/templates/page.css") && \
     JS=$(cat "$GITHUB_ACTION_PATH/src/documentation/templates/page.js") && \
     HIGHLIGHTCSS=$(cat "$GITHUB_ACTION_PATH/src/documentation/templates/highlight.css") && \
+    BUTTONSCSS=$(cat "$GITHUB_ACTION_PATH/src/documentation/templates/buttons.css") && \
     CUSTOMCSS=false && \
     CUSTOMCSSPATH="just.config.css" && \
     if [ -f "$CUSTOMCSSPATH" ]; then
@@ -212,7 +213,7 @@ elif [ "$TYPE" == "docs" ]; then
     HLJSLANGS=$(cat "$GITHUB_ACTION_PATH/data/hljslangs.json") && \
     LANGS=$(cat "$GITHUB_ACTION_PATH/data/langs.json") && \
     LANGSTEXT=$(cat "$GITHUB_ACTION_PATH/data/langstext.json") && \
-    node "$INDEXJS0" "$HTML" "$CSS" "$JS" "$INPUT_PATH" "$GITHUB_REPOSITORY" "$GITHUB_REPOSITORY_OWNER" "$CUSTOMCSS" "$HLJSLANGS" "$LANGS" "$HIGHLIGHTCSS" "$LANGSTEXT" "$VERSION" || jserr && \
+    node "$INDEXJS0" "$HTML" "$CSS" "$JS" "$INPUT_PATH" "$GITHUB_REPOSITORY" "$GITHUB_REPOSITORY_OWNER" "$CUSTOMCSS" "$HLJSLANGS" "$LANGS" "$HIGHLIGHTCSS" "$LANGSTEXT" "$VERSION" "$BUTTONSCSS" || jserr && \
     node $GITHUB_ACTION_PATH/src/compress.js "$INPUT_PATH" && \
     node "$GITHUB_ACTION_PATH/src/documentation/logs.js" "$INPUT_PATH" && \
     echo -e "$msg9"
