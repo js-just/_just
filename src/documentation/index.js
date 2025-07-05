@@ -202,6 +202,7 @@ Object.entries(cssid).forEach(([key, id_]) => {
 });
 Object.entries(cssvar).forEach(([key, var_]) => {
     CSS = CSS.replaceAll(`--${key}`, `--${var_}`);
+    CSSBUTTONS = CSSBUTTONS.replaceAll(`--${key}`, `--${var_}`);
 });
 HTML = HTML
     .replace('<nav class="left">', `<nav class="${cssclass.left}">`)

@@ -271,7 +271,7 @@ dcmnt.addEventListener('DOMContentLoaded', () => {
 
         sk.style.left = `${leftt + sb.offsetWidth}px`;
         sk.style.top = `${toppp - (sb.offsetHeight / 2)}px`;
-        sk.style.opacity = !toggle ? 1 : 0;
+        sk.style.opacity = (!toggle && sb.offsetParent) ? 1 : 0;
     };
     wndw_.addEventListener('resize', ()=>{updateSD(false)});
     wndw_.addEventListener('keydown', (key)=>{
