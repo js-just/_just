@@ -218,7 +218,8 @@ HTML = HTML
     .replace('<button id="a"', `<button id="${cssid.a}"`)
     .replace('<div class="search"></div>', `<div class="${cssclass.search}"></div>`)
     .replace(' id="searchbar">', ` id="${cssid.searchbar}">`)
-    .replace('<filter id="glass"', `<filter id="${cssid.glass}"`);
+    .replace('<filter id="glass"', `<filter id="${cssid.glass}"`)
+    .replace('<span id="search">', `<span id="${cssid.search}">`);
 const jstrimmedstrvarbasestr = _just.number.convertbasedigits.replace(/[1-9\/+]/g, '');
 const jstrimmedstrvar = _just.number.convertbase(Math.floor(Math.random()*1000).toString(10), 10, jstrimmedstrvarbasestr.length, jstrimmedstrvarbasestr)
 JS = JS.replaceAll('trimmedStr', jstrimmedstrvar)
@@ -241,7 +242,8 @@ JS = JS.replaceAll('trimmedStr', jstrimmedstrvar)
     .replace('.getElementById("searchbar")', `.getElementById("${cssid.searchbar}")`)
     .replace('url("#glass")', `url("#${cssid.glass}")`)
     .replace("add('error')", `add('${cssclass.error}')`)
-    .replace("setProperty('--edata'", `setProperty('--${cssvar.edata}'`);
+    .replace("setProperty('--edata'", `setProperty('--${cssvar.edata}'`)
+    .replace('getElementById("search")', `getElementById("${cssid.search}")`);
 
 const charset = docsConfig ? docsConfig.charset || template.charset : template.charset;
 

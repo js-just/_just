@@ -263,16 +263,15 @@ dcmnt.addEventListener('DOMContentLoaded', () => {
         sdtoggle = toggle;
         const leftt = sb.offsetLeft + sb.parentElement.offsetLeft;
         const toppp = sb.parentElement.offsetTop + sb.offsetHeight - (sb.parentElement.offsetWidth == 0 ? 15 : 0);
-        const opcty = toggle ? 1 : 0;
         sd.style.left = `${leftt}px`;
         sd.style.top = `${toppp}px`;
         sd.style.width = `${sb.offsetWidth - 8*2}px`;
-        sd.style.opacity = opcty;
+        sd.style.opacity = toggle ? 1 : 0;
         sd.style.pointerEvents = toggle ? 'all' : 'none';
 
         sk.style.left = `${leftt + sb.offsetWidth}px`;
         sk.style.top = `${toppp - (sb.offsetHeight / 2)}px`;
-        sk.style.opacity = opcty;
+        sk.style.opacity = !toggle ? 1 : 0;
     };
     wndw_.addEventListener('resize', ()=>{updateSD(false)});
     wndw_.addEventListener('keydown', (key)=>{
