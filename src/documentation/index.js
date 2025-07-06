@@ -205,12 +205,12 @@ Object.entries(cssclass).forEach(([key, class_]) => {
 Object.entries(cssid).forEach(([key, id_]) => {
     CSS = CSS.replaceAll(`#${key}`, `#${id_}`);
     CSSBUTTONS = CSSBUTTONS.replaceAll(`#${key}`, `#${id_}`);
-    CSSSEARCH = CSSSEARCH.replaceAll(`.${key}`, `.${id_}`);
+    CSSSEARCH = CSSSEARCH.replaceAll(`#${key}`, `#${id_}`);
 });
 Object.entries(cssvar).forEach(([key, var_]) => {
     CSS = CSS.replaceAll(`--${key}`, `--${var_}`);
     CSSBUTTONS = CSSBUTTONS.replaceAll(`--${key}`, `--${var_}`);
-    CSSSEARCH = CSSSEARCH.replaceAll(`.${key}`, `.${var_}`);
+    CSSSEARCH = CSSSEARCH.replaceAll(`--${key}`, `--${var_}`);
 });
 HTML = HTML
     .replace('<nav class="left">', `<nav class="${cssclass.left}">`)
