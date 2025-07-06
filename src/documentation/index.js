@@ -939,7 +939,17 @@ checkTLD(domain).then(tldvalid => {
     for (const [pathh, htmlcontent] of Object.entries(htmlfiles)) {
         const updated = _just.customCSS.highlightclasses(CSSHIGHLIGHTtemplate, CSS, htmlcontent, dataname[8]);
         CSS = updated[0];
-        fs.writeFileSync(pathh, updated[1], charset);
+        fs.writeFileSync(
+            pathh, 
+            updated[1].replace(/(?<=<code>)(.*?)(?=<\/code>)/g, (match, cde) => cde.replace(/&&#35;(.*?);/g, (match, num_) => {
+                    if (/\d/.test(num_)) {
+                        return `&#${num_};`;
+                    } else {
+                        return `&&#35;${num_};`;
+                    }
+                })), 
+            charset
+        );
         logs += `${l[2]}OUTPUT: ${_just.string.runnerPath(pathh)} (${_just.string.fileSize(fs.statSync(pathh).size)})`;
     }
     CSS = CSS.replace(new RegExp(`.${dataname[8]}3ibute`, 'g'), `.${dataname[8]}14`).replace("content: '_just';", `content: '_just ${_just.version}';`);
