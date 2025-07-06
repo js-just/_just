@@ -668,11 +668,11 @@ checkTLD(domain).then(tldvalid => {
     const logo = logoPath ? `<img src="${logoPath}" width="35px" height="auto" alt="Logo">` : '';
     const name = docsConfig && docsConfig.title ? span(title) : logoPath ? '' : span(title);
     const htmlLang = lang ? ` lang="${`${lang}`.toLowerCase()}"` : '';
-    const htmlhead = () => {
+    const htmlhead = (filelink = undefined) => {
         let prefetch = '';
         console.log(`Debug: Prefetch ids: ${pageList.length}`);
         for (let i = 0; i <= pageList.length; i++) {
-            prefetch += pageList[i] && pageList[i].path ? `<link rel="prefetch" href="${pageList[i].path.endsWith('/') ? pageList[i].path + 'index' : pageList[i].path}.html">` : '';
+            prefetch += pageList[i] && pageList[i].path && ((filelink && pageList[i].path != filelink) || !filelink) ? `<link rel="prefetch" href="${pageList[i].path.endsWith('/') ? pageList[i].path + 'index' : pageList[i].path}.html">` : '';
             console.log(`Debug: Prefetch id: ${i}`);
         }
         let output = `
@@ -681,6 +681,7 @@ checkTLD(domain).then(tldvalid => {
         ${ogtitl}
         ${ogdesc}
         ${prefetch}
+        <link rel="preload" href="/_just/${dataname[9]}.json" as="fetch" type="application/json">
         <meta property="og:type" content="website">`;
         if (twitter) {
             output += `<meta property="twitter:card" content="${twitter}">`
@@ -894,7 +895,7 @@ checkTLD(domain).then(tldvalid => {
             .replace('REPLACE_CHARSET', charset)
             .replace('REPLACE_VIEWPORT', viewport)
             .replace('REPLACE_TITLE', metatitle)
-            .replace('REPLACE_DATA', htmlhead())
+            .replace('REPLACE_DATA', htmlhead(pathtourl[file]))
             .replace('REPLACE_CUSTOM', insertHTMLinHead)
             .replace('REPLACE_LOGO', logo)
             .replace('REPLACE_NAME', filterText(name))
