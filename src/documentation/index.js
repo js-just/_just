@@ -152,11 +152,11 @@ const cssclass = {
     "stb": dataname[4]+randomChar(1),
     "underline": dataname[3],
     "firefox": dataname2[0],
+    "searchactive": dataname2[9],
     "search": dataname2[1],
     "debug": dataname2[2],
     "error": dataname2[4],
     "small": dataname2[8],
-    "searchactive": dataname2[9],
 }
 const cssid = {
     "l": dataname[5]+randomChar(1),
