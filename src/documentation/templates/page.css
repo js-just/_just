@@ -1073,3 +1073,8 @@ html:has(.error):after {
 #search {
     display: none;
 }
+
+.small {
+    opacity: 0.5;
+    font-size: 12px;
+}

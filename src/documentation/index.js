@@ -154,6 +154,7 @@ const cssclass = {
     "search": dataname2[1],
     "debug": dataname2[2],
     "error": dataname2[4],
+    "small": dataname2[8]
 }
 const cssid = {
     "l": dataname[5]+randomChar(1),
@@ -536,6 +537,8 @@ checkTLD(domain).then(tldvalid => {
             const regex = new RegExp(`^#{${i}}\\s+(.*?)\\s*$`, 'gm');
             text = text.replace(regex, MDtoHTML(`<h${i}>$1</h${i}>`));
         }
+        const smlregex = new RegExp(`^-#\\s+(.*?)\\s*$`, 'gm');
+        text = text.replace(smlregex, MDtoHTML(`<span class="${cssclass.small}">$1</span>`)) 
         /*alternate headers currently disabled. they cause some bugs*///text = text.replace(/(?<=\s|^)(.*?)\n={3,}(?=\s|\n|$)/, MDtoHTML(`${_just.element(dataname[5])}<h1>$1</h1>`)).replace(/(?<=\s|^)(.*?)\n-{3,}(?=\s|\n|$)/, MDtoHTML(`${_just.element(dataname[6])}<h2>$1</h2>`));
 
         function processBlockquotes(inputText, level) {

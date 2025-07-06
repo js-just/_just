@@ -24,6 +24,9 @@ SOFTWARE.
 
 */
 
+const base = `.,!?;:`;
+const all = `${base}*_\`<>=~^"'-+()&%$#№@\\\\|/×÷℃℉©®℗™‹›«»\\[\\]¸¨′‵‘’‚‛″‶“”„‟‴‷⁗*‰‱✓✕¡¿‼⁈⁇¥฿₫₩֏€₹₪₺₡₦£₽₢₱৳₲₮₸₾₥៛₨₴₵₭؋૱¢﷼₣₿₼௹¤⃀₻ƒ₧৲₳₯₤₷৹₰₠ℳ₶৻`;
+
 /**
  * @param {string} text 
  * @param {Array} cssclass
@@ -583,7 +586,7 @@ exports.MDtoHTML = function (text, cssclass) {
 
     text = text.replace(/(?<=\s|^|[.,!?;:])==__(.*?)__==(?=\s|[.,!?;:]|$)/g, `<mark class="${cssclass.underline}">$1</mark>`);
     text = text.replace(/(?<=\s|^|[.,!?;:])__==(.*?)==__(?=\s|[.,!?;:]|$)/g, `<mark class="${cssclass.underline}">$1</mark>`);
-    text = text.replace(/(?<=\s|^|[.,!?;:])__(.*?)__(?=\s|[.,!?;:]|$)/g, `<u>$1</u>`);
+    text = text.replace(new RegExp(`(?<=\\s|^|[${all}])__(.*?)__(?=\\s|[${all}]|$)`, 'g'), `<u>$1</u>`);
     
 
     text = text.replace(/(?<=\s|^|[.,!?;:])==~~\*\*(.*?)\*\*~~==(?=\s|[.,!?;:]|$)/g, `<mark><strong class="${cssclass["line-through"]}">$1</strong></mark>`);
@@ -598,7 +601,7 @@ exports.MDtoHTML = function (text, cssclass) {
 
     text = text.replace(/(?<=\s|^|[.,!?;:])==\*\*(.*?)\*\*==(?=\s|[.,!?;:]|$)/g, '<mark><strong>$1</strong></mark>');
     text = text.replace(/(?<=\s|^|[.,!?;:])\*\*==(.*?)==\*\*(?=\s|[.,!?;:]|$)/g, '<mark><strong>$1</strong></mark>');
-    text = text.replace(/(?<=\s|^|[.,!?;:])\*\*(.*?)\*\*(?=\s|[.,!?;:]|$)/g, '<strong>$1</strong>');
+    text = text.replace(new RegExp(`(?<=\\s|^|[${all}])\\*\\*(.*?)\\*\\*(?=\\s|[${all}]|$)`, 'g'), '<strong>$1</strong>');
 
 
 
@@ -614,7 +617,7 @@ exports.MDtoHTML = function (text, cssclass) {
 
     text = text.replace(/(?<=\s|^|[.,!?;:])==_(.*?)_==(?=\s|[.,!?;:]|$)/g, '<mark><em>$1</em></mark>');
     text = text.replace(/(?<=\s|^|[.,!?;:])_==(.*?)==_(?=\s|[.,!?;:]|$)/g, '<mark><em>$1</em></mark>');
-    text = text.replace(/(?<=\s|^|[.,!?;:])_(.*?)_(?=\s|[.,!?;:]|$)/g, '<em>$1</em>');
+    text = text.replace(new RegExp(`(?<=\\s|^|[${all}])_(.*?)_(?=\\s|[${all}]|$)`, 'g'), '<em>$1</em>');
 
 
     text = text.replace(/(?<=\s|^|[.,!?;:])==~~\*(.*?)\*~~==(?=\s|[.,!?;:]|$)/g, `<mark><em class="${cssclass["line-through"]}">$1</em></mark>`);
@@ -629,7 +632,7 @@ exports.MDtoHTML = function (text, cssclass) {
 
     text = text.replace(/(?<=\s|^|[.,!?;:])==\*(.*?)\*==(?=\s|[.,!?;:]|$)/g, '<mark><em>$1</em></mark>');
     text = text.replace(/(?<=\s|^|[.,!?;:])\*==(.*?)==\*(?=\s|[.,!?;:]|$)/g, '<mark><em>$1</em></mark>');
-    text = text.replace(/(?<=\s|^|[.,!?;:])\*(.*?)\*(?=\s|[.,!?;:]|$)/g, '<em>$1</em>');
+    text = text.replace(new RegExp(`(?<=\\s|^|[${all}])\\*(.*?)\\*(?=\\s|[${all}]|$)`, 'g'), '<em>$1</em>');
 
 
 
@@ -637,8 +640,8 @@ exports.MDtoHTML = function (text, cssclass) {
     text = text.replace(/(?<=\s|^|[.,!?;:])==~~(.*?)~~==(?=\s|[.,!?;:]|$)/g, `<mark class="${cssclass["line-through"]}">$1</mark>`);
 
 
-    text = text.replace(/(?<=\s|^|[.,!?;:<>])~~(.*?)~~(?=\s|[.,!?;:<>]|$)/g, `<del>$1</del>`);
-    text = text.replace(/(?<=\s|^|[.,!?;:<>])==(.*?)==(?=\s|[.,!?;:<>]|$)/g, `<mark>$1</mark>`);
+    text = text.replace(new RegExp(`(?<=\\s|^|[${all}])~~(.*?)~~(?=\\s|[${all}]|$)`, 'g'), `<del>$1</del>`);
+    text = text.replace(new RegExp(`(?<=\\s|^|[${all}])==(.*?)==(?=\\s|[${all}]|$)`, 'g'), `<mark>$1</mark>`);
 
     return text;
 }

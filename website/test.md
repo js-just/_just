@@ -62,3 +62,12 @@ No code here
 [a link](https://just.is-a.dev/ "link title")
 <https://just.is-a.dev/>
 https://just.is-a.dev
+
+---
+
+## v0.0.28 bugs:
+> [!WARNING] Just an Ultimate Site Tool is in **beta**. Expect regular updates, possible bugs, and changes. If you have found a bug, please [report it here](https://github.com/js-just/_just/issues/new?labels=bug&template=bug.md).
+"**`_just`**"
+
+## v0.0.29 features:
+-# small text
