@@ -79,9 +79,9 @@ dcmnt.addEventListener('touchend', function(event) {
     const distanceY = endY - swipe[1];
 
     if (distanceY < 35 && distanceY > -35) {
-        if (distanceX > 50) {
+        if (distanceX > 35) {
             handleSwipeRight();
-        } else if (distanceX < -50) {
+        } else if (distanceX < -35) {
             handleSwipeLeft();
         }
     }
