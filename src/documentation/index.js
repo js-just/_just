@@ -681,7 +681,7 @@ checkTLD(domain).then(tldvalid => {
         ${ogtitl}
         ${ogdesc}
         ${prefetch}
-        <link rel="preload" href="/_just/${dataname[9]}.json" as="fetch" type="application/json">
+        <link rel="preload" href="/_just/${dataname[9]}.json" as="fetch" type="application/json" crossorigin="anonymous">
         <meta property="og:type" content="website">`;
         if (twitter) {
             output += `<meta property="twitter:card" content="${twitter}">`
