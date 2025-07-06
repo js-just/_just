@@ -11,7 +11,7 @@
     translate: calc(-100% - 5px) -50%;
     text-align: center;
     border-radius: 50px;
-    cursor: text;
+    cursor: pointer;
     user-select: none;
     transition: none;
 }
