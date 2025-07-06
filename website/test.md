@@ -66,8 +66,22 @@ https://just.is-a.dev
 ---
 
 ## v0.0.28 bugs:
+#### blockquote link:
 > [!WARNING] Just an Ultimate Site Tool is in **beta**. Expect regular updates, possible bugs, and changes. If you have found a bug, please [report it here](https://github.com/js-just/_just/issues/new?labels=bug&template=bug.md).
+
+#### text styling:
 "**`_just`**"
+
+#### multiple links(?):
+same:
+[a link](https://juststudio.is-a.dev) [another link](https://justdeveloper.is-a.dev/)
+<https://juststudio.is-a.dev> <https://justdeveloper.is-a.dev>
+https://juststudio.is-a.dev https://justdeveloper.is-a.dev
+
+different:
+[a link](https://juststudio.is-a.dev) <https://juststudio.is-a.dev> 
+<https://juststudio.is-a.dev> https://justdeveloper.is-a.dev
+https://juststudio.is-a.dev [another link](https://justdeveloper.is-a.dev/)
 
 ## v0.0.29 features:
 -# small text

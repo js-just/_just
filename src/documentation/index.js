@@ -466,7 +466,7 @@ checkTLD(domain).then(tldvalid => {
             input = input.replaceAll(char, code);
         });
         return input
-            .replace(/(http:\/\/|https:\/\/)/g, (match, protocol_) => `${charCodes(protocol_)}`)
+            .replace(/(http:\/\/|https:\/\/|data:)/g, (match, protocol_) => `${charCodes(protocol_)}`)
     }
     const linkregex = /(?<=\s|^|[.,!?;:*_^~=])\[(.*?)\]\((.*?)\)(?=\s|[.,!?;:*_^~=]|$)/g;
     let taskid = 0;
@@ -502,9 +502,11 @@ checkTLD(domain).then(tldvalid => {
                 .replace(/(?<=\s|^|[.,!?;:*_^~=])!\[(.*?)\]\((.*?)\)(?=\s|[.,!?;:*_^~=]|$)/g, (match, text, link_) => {return `<img src="${link_}" alt="${text}" loading="lazy">`})
                 .replace(/(?<=\s|^|[.,!?;:*_^~=])\[(.*?)\]\((.*?) ("|')(.*?)\3\)(?=\s|[.,!?;:*_^~=]|$)/g, (match, text, link_, q, linktitle) => {return link(text, link_, extlink(link_), cssid.ext, "_blank", linktitle)})
                 .replace(linkregex, (match, text, link_) => {return link(text, link_, extlink(link_), cssid.ext)})
-                .replace(/(?<=\s|^|[.,!?;:*_^~=])(http:\/\/|https:\/\/)(.*?)(?=\s|[,!;:*^~`<>]|[.?=#%&+] |$)/g, (match, protocol_, link_) => {
+                .replace(/(?<=\s|^|[.,!?;:*_^~=])(http:\/\/|https:\/\/|data:)(.*?)(?=\s|[,!;:*^~`<>]|[.?=#%&+] |$)/g, (match, protocol_, link_) => {
                         const link__ = `${protocol_.trim()}${link_.trim()}`;
-                        if (checklink(link__)) {
+                        if (protocol_.trim() === 'data:') {
+                            return link(link__, link__, true, cssid.ext);
+                        } else if (checklink(link__)) {
                             try {
                                 const linkurl = new URL(link__);
                                 if (linkurl.hostname.includes('xn--')) {
