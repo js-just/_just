@@ -353,12 +353,14 @@ dcmnt.addEventListener('DOMContentLoaded', () => {
                 console.warn(err__);
                 sd.innerHTML = `<span>Failed to fetch.${pta}</span>`;
                 dcmnt.documentElement.classList.remove('searchactive');
+                setTimeout(()=>{updateSD(st)},300);
                 return
             });
             const data = await response.json().catch((err__)=>{
                 console.warn(err__);
                 sd.innerHTML = `<span>Something went wrong.${pta}</span>`;
                 dcmnt.documentElement.classList.remove('searchactive');
+                setTimeout(()=>{updateSD(st)},300);
                 return
             });
             const searchdata = search2(data, sv);
@@ -367,17 +369,20 @@ dcmnt.addEventListener('DOMContentLoaded', () => {
             } else {
                 sd.innerHTML = '';
                 dcmnt.documentElement.classList.add('searchactive');
+                setTimeout(()=>{updateSD(st)},300);
                 for (const [id, data_] of Object.entries(searchdata)) {
                     sd.innerHTML += `<a href="${data_[0]}" target="_self">${data_[1].replaceAll('/n','')}</a>`;
                 }
             }
         } else {
             dcmnt.documentElement.classList.remove('searchactive');
+            setTimeout(()=>{updateSD(st)},300);
         }
     });
     dcmnt.addEventListener("click", (event)=>{
         if (lastst && !dcmnt.querySelector(".navbar").contains(event.target)) {
             dcmnt.documentElement.classList.remove('searchactive');
+            setTimeout(()=>{updateSD(false)},300);
         }
     });
 
