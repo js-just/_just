@@ -273,9 +273,26 @@ dcmnt.addEventListener('DOMContentLoaded', () => {
         sk.style.top = `${toppp - (sb.offsetHeight / 2)}px`;
         sk.style.opacity = (!toggle && sb.offsetParent) ? 1 : 0;
     };
+    const sbdp = sb.placeholder || 'Search documentation';
+    let sbi = undefined;
     wndw_.addEventListener('resize', ()=>{updateSD(false)});
-    wndw_.addEventListener('keydown', (key)=>{
-        if (key.key === 'REPLACE_SEARCHKEY') {
+    sb.addEventListener("focus", (event) => {
+        const target1 = event.target;
+        if (!target1.value || target1.value != '') {
+            target1.placeholder = '|';
+            sbi = setInterval(()=>{
+                target1.placeholder = target1.placeholder == '|' ? '' : '|';
+            },500);
+        }
+    });
+    sb.addEventListener("blur", (event) => {
+        event.target.placeholder = sbdp;
+        if (sbi) {
+            clearInterval(sbi);
+        }
+    });
+    wndw_.addEventListener('keydown', (key_)=>{
+        if (key_.key === 'REPLACE_SEARCHKEY') {
             sb.focus();
         }
     });
