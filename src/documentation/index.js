@@ -661,10 +661,10 @@ checkTLD(domain).then(tldvalid => {
 
     const insertHTMLinHead = docsConfig ? docsConfig.insertInHTMLHead || '' : '';
 
-    const keywords = metaKeywords ? `<meta name="keywords" content="${metaKeywords}"/>` : '';
-    const desc = description ? `<meta name="description" content="${description}"/>` : '';
-    const ogdesc = ogdescription ? `<meta property="og:description" content="${ogdescription}"/>` : '';
-    const ogtitl = ogtitle ? `<meta property="og:title" content="${ogtitle}"/>` : '';
+    const keywords = metaKeywords ? `<meta name="keywords" content="${metaKeywords}">` : '';
+    const desc = description ? `<meta name="description" content="${description}">` : '';
+    const ogdesc = ogdescription ? `<meta property="og:description" content="${ogdescription}">` : '';
+    const ogtitl = ogtitle ? `<meta property="og:title" content="${ogtitle}">` : '';
     const logo = logoPath ? `<img src="${logoPath}" width="35px" height="auto" alt="Logo">` : '';
     const name = docsConfig && docsConfig.title ? span(title) : logoPath ? '' : span(title);
     const htmlLang = lang ? ` lang="${`${lang}`.toLowerCase()}"` : '';
@@ -672,7 +672,7 @@ checkTLD(domain).then(tldvalid => {
         let prefetch = '';
         console.log(`Debug: Prefetch ids: ${pageList.length}`);
         for (let i = 0; i <= pageList.length; i++) {
-            prefetch += pageList[i] && pageList[i].path ? `<link rel="prefetch" href="${pageList[i].path}"/>` : '';
+            prefetch += pageList[i] && pageList[i].path ? `<link rel="prefetch" href="${pageList[i].path.endsWith('/') ? pageList[i].path + 'index' : pageList[i].path}.html">` : '';
             console.log(`Debug: Prefetch id: ${i}`);
         }
         let output = `
@@ -681,15 +681,15 @@ checkTLD(domain).then(tldvalid => {
         ${ogtitl}
         ${ogdesc}
         ${prefetch}
-        <meta property="og:type" content="website"/>`;
+        <meta property="og:type" content="website">`;
         if (twitter) {
-            output += `<meta property="twitter:card" content="${twitter}"/>`
+            output += `<meta property="twitter:card" content="${twitter}">`
         }
         if (yandexVerification) {
-            output += `\n<meta name="yandex-verification" content="${yandexVerification}"/>`;
+            output += `\n<meta name="yandex-verification" content="${yandexVerification}">`;
         }
         if (googleVerification) {
-            output += `\n<meta name="google-site-verification" content="${googleVerification}" />`;
+            output += `\n<meta name="google-site-verification" content="${googleVerification}">`;
         }
         if (googleAnalytics) {
             output += `\n<script async src="https://www.googletagmanager.com/gtag/js?id=${googleAnalytics}"></script>
