@@ -291,9 +291,10 @@ dcmnt.addEventListener('DOMContentLoaded', () => {
             clearInterval(sbi);
         }
     });
-    wndw_.addEventListener('keydown', (key_)=>{
-        if (key_.key === 'REPLACE_SEARCHKEY') {
+    wndw_.addEventListener('keydown', (key)=>{
+        if (key["key"] === 'REPLACE_SEARCHKEY') {
             sb.focus();
+            key.preventDefault();
         }
     });
     sk.addEventListener('click', ()=>{sb.focus()});
