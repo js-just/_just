@@ -544,15 +544,18 @@ checkTLD(domain).then(tldvalid => {
         function processBlockquotes(inputText, level) {
             const regex = new RegExp(`^(>\\s+){${level}}(.*?)\\s*$`, 'gm');
             return MDtoHTML(inputText.replace(regex, (match, p1, p2) => {
-                const innerBlockquote = processBlockquotes(p2.trim(), level + 1);
                 const classAttr = (num) =>
                     p2.startsWith('[!NOTE]') ? (num ? 7 : ` class="${cssclass.note}"`) :
                     p2.startsWith('[!TIP]') ? (num ? 6 : ` class="${cssclass.ntip}"`) :
                     p2.startsWith('[!IMPORTANT]') ? (num ? 12 : ` class="${cssclass.impr}"`) :
                     p2.startsWith('[!WARNING]') ? (num ? 10 : ` class="${cssclass.warn}"`) :
                     p2.startsWith('[!CAUTION]') ? (num ? 10 : ` class="${cssclass.caut}"`) :
-                    num ? undefined : '';
-                return `<blockquote${classAttr()}>${(level > 1 ? '<br>' : '')}${classAttr(true) ? innerBlockquote.trim().slice(classAttr(true)).trim() : innerBlockquote}</blockquote>`;
+                    num ? 0 : '';
+                const innerBlockquote = processBlockquotes(
+                    p2.trim().slice(classAttr(true)).trim(), 
+                    level + 1
+                );
+                return `<blockquote${classAttr()}>${(level > 1 ? '<br>' : '')}${innerBlockquote}</blockquote>`;
             }));
         }
 
