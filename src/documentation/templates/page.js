@@ -235,6 +235,7 @@ const search2 = (data, searchTerm) => {
     return output;
 };
 
+let searchurl = "/_just/search";
 dcmnt.addEventListener('DOMContentLoaded', () => {
     let ltb = dcmnt.getElementById('l');
     let dtb = dcmnt.getElementById('d');
@@ -338,7 +339,6 @@ dcmnt.addEventListener('DOMContentLoaded', () => {
         }
         return true;
     };
-    let searchurl = "/_just/search";
     sb.addEventListener("input", async () => {
         const sv = sb.value;
         const st = searchString(sv);
@@ -368,5 +368,5 @@ dcmnt.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    updateSD(false);updateMinHeight();
+    updateSD(false);updateMinHeight();fetch(searchurl);
 });
