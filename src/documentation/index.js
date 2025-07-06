@@ -669,11 +669,16 @@ checkTLD(domain).then(tldvalid => {
     const name = docsConfig && docsConfig.title ? span(title) : logoPath ? '' : span(title);
     const htmlLang = lang ? ` lang="${`${lang}`.toLowerCase()}"` : '';
     const htmlhead = () => {
+        let prefetch = '';
+        for (let i = 0; i <= pageList.length; i++) {
+            prefetch += `<link rel="prefetch" href="${pageList[i].path}"/>`;
+        }
         let output = `
         ${keywords}
         ${desc}
         ${ogtitl}
         ${ogdesc}
+        ${prefetch}
         <meta property="og:type" content="website"/>`;
         if (twitter) {
             output += `<meta property="twitter:card" content="${twitter}"/>`
@@ -882,8 +887,8 @@ checkTLD(domain).then(tldvalid => {
         const pages = generateListItems(addFolderToPageList(pageList));
         let outHTML = HTML
             .replace('<html>', `<html${htmlLang}>`)
-            .replace('REPLACE_CSS', filename.css)
-            .replace('REPLACE_JS', filename.js)
+            .replaceAll('REPLACE_CSS', filename.css)
+            .replaceAll('REPLACE_JS', filename.js)
             .replace('REPLACE_CHARSET', charset)
             .replace('REPLACE_VIEWPORT', viewport)
             .replace('REPLACE_TITLE', metatitle)
