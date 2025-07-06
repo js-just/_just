@@ -72,16 +72,5 @@ https://just.is-a.dev
 #### text styling:
 "**`_just`**"
 
-#### multiple links(?):
-same:
-[a link](https://juststudio.is-a.dev) [another link](https://justdeveloper.is-a.dev/)
-<https://juststudio.is-a.dev> <https://justdeveloper.is-a.dev>
-https://juststudio.is-a.dev https://justdeveloper.is-a.dev
-
-different:
-[a link](https://juststudio.is-a.dev) <https://juststudio.is-a.dev> 
-<https://juststudio.is-a.dev> https://justdeveloper.is-a.dev
-https://juststudio.is-a.dev [another link](https://justdeveloper.is-a.dev/)
-
 ## v0.0.29 features:
 -# small text
