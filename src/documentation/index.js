@@ -253,7 +253,7 @@ JS = JS.replaceAll('trimmedStr', jstrimmedstrvar)
     .replace("add('error')", `add('${cssclass.error}')`)
     .replace("setProperty('--edata'", `setProperty('--${cssvar.edata}'`)
     .replace('getElementById("search")', `getElementById("${cssid.search}")`)
-    .replace("setProperty('--sdfix'", `.setProperty('--${cssvar.sdfix}', `)
+    .replace("setProperty('--sdfix'", `setProperty('--${cssvar.sdfix}', `)
     .replaceAll("('searchactive')", `('${cssclass.searchactive}')`);
 
 const charset = docsConfig ? docsConfig.charset || template.charset : template.charset;

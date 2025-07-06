@@ -295,7 +295,7 @@ dcmnt.addEventListener('DOMContentLoaded', () => {
         sd.style.width = `${sb.offsetWidth - 8*2}px`;
         sd.style.opacity = toggle ? 1 : 0;
         sd.style.pointerEvents = toggle ? 'all' : 'none';
-        sd.style.setProperty('--sdfix', `${-leftt}px`);
+        sd.style.setProperty('--sdfix', `-${leftt}px`);
 
         sk.style.left = `${leftt + sb.offsetWidth}px`;
         sk.style.top = `${toppp - (sb.offsetHeight / 2)}px`;
