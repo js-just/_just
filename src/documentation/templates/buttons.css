@@ -1,6 +1,6 @@
 #search {
     background-color: var(--bg);
-    border: 1px solid var(--cl);
+    border: 2px solid var(--cl);
     font-family: Monospace;
     position: fixed;
     z-index: 23;

@@ -6,7 +6,7 @@ const scrll = localStorage.getItem('s' + page_);
 const theme = localStorage.getItem('t');
 const main_ = 'html > body > main > div#main > article.main';
 const isIOS=()=>{
-    return /iPad|iPhone|iPod/.test(navigator.userAgent) && !wndw_.MSStream;
+    return (/iPad|iPhone|iPod/.test(navigator.userAgent) && !wndw_.MSStream) || (/Mac/.test(navigator.userAgent) && wndw_.innerWidth <= 700);
 };
 
 const publicOutput = 'REPLACE_PUBLICOUTPUT';

@@ -636,6 +636,8 @@ code, code span {
     cursor: text;
 }
 .line {
+    position: relative;
+    z-index: 1;
     width: 100%;
     height: 5px;
     background-color: var(--md);
@@ -679,10 +681,11 @@ code, code span {
         display: block;
         translate: -5px -23px;
         margin-bottom: -20px;
-        width: fit-content;
+        width: max-content;
         border-bottom-left-radius: 0px;
         border-bottom-right-radius: 0px;
         pointer-events: none;
+        white-space: nowrap;
     }
 }
 .note, .ntip, .impr, .warn, .caut {
