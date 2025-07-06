@@ -670,8 +670,10 @@ checkTLD(domain).then(tldvalid => {
     const htmlLang = lang ? ` lang="${`${lang}`.toLowerCase()}"` : '';
     const htmlhead = () => {
         let prefetch = '';
+        console.log(`Debug: Prefetch ids: ${pageList.length}`);
         for (let i = 0; i <= pageList.length; i++) {
-            prefetch += `<link rel="prefetch" href="${pageList[i].path}"/>`;
+            prefetch += pageList[i] && pageList[i].path ? `<link rel="prefetch" href="${pageList[i].path}"/>` : '';
+            console.log(`Debug: Prefetch id: ${i}`);
         }
         let output = `
         ${keywords}
