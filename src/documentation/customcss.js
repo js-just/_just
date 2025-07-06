@@ -30,18 +30,22 @@ const coderegex = /(@_just highlight)/g;
 const coderegex2= /(@_just highlight;)/g;
 const btnsregex = /(@_just buttons)/g;
 const btnsregex2= /(@_just buttons;)/g;
+const srchregex = /(@_just search)/g;
+const srchregex2= /(@_just search;)/g;
 const classRegex= /\.([a-zA-Z0-9_-]+)/g;
 /**
  * @param {string} CSS 
- * @param {string} CUSTOM
+ * @param {string?} CUSTOM
  * @param {string} CODE 
- * @param {boolean} USECODE
+ * @param {boolean?} USECODE
  * @param {string} CSSBUTTONS
+ * @param {string} CSSSEARCH
  * @returns {string}
  */
-exports.customcss = function (CSS, CUSTOM, CODE, USECODE = true, CSSBUTTONS) {
+exports.customcss = function (CSS, CUSTOM, CODE, USECODE = true, CSSBUTTONS, CSSSEARCH) {
+    const addcss = CSSBUTTONS + CSSSEARCH;
     if (!CUSTOM) {
-        return USECODE ? CSS + CODE + CSSBUTTONS : CSS + CSSBUTTONS;
+        return USECODE ? CSS + CODE + addcss : CSS + addcss;
     }
     return CUSTOM
         .replace(baseregex2,CSS)
@@ -50,6 +54,8 @@ exports.customcss = function (CSS, CUSTOM, CODE, USECODE = true, CSSBUTTONS) {
         .replace(coderegex, USECODE ? CODE : '')
         .replace(btnsregex, CSSBUTTONS)
         .replace(btnsregex2, CSSBUTTONS)
+        .replace(srchregex, CSSSEARCH)
+        .replace(srchregex2, CSSSEARCH)
 }
 
 const savedclasses = {};

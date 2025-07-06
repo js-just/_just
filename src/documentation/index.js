@@ -25,12 +25,13 @@ SOFTWARE.
 */
 
 const _just = {};
-const [HTMLtemplate, CSStemplate, JStemplate, PATH, repo, owner, customCSS, hljslangs, langs__, CSSHIGHLIGHTtemplate, langstext_, vrsn, CSSBUTTONStemplate] = process.argv.slice(2);
+const [HTMLtemplate, CSStemplate, JStemplate, PATH, repo, owner, customCSS, hljslangs, langs__, CSSHIGHLIGHTtemplate, langstext_, vrsn, CSSBUTTONStemplate, CSSSEARCHtemplate] = process.argv.slice(2);
 let HTML = HTMLtemplate;
 let CSS = CSStemplate;
 let JS = JStemplate;
 let CSSHIGHLIGHT = CSSHIGHLIGHTtemplate;
 let CSSBUTTONS = CSSBUTTONStemplate;
+let CSSSEARCH = CSSSEARCHtemplate;
 _just.string = require('../modules/string.js');
 /**
  * @param {string} type 
@@ -154,7 +155,8 @@ const cssclass = {
     "search": dataname2[1],
     "debug": dataname2[2],
     "error": dataname2[4],
-    "small": dataname2[8]
+    "small": dataname2[8],
+    "searchactive": dataname2[9],
 }
 const cssid = {
     "l": dataname[5]+randomChar(1),
@@ -179,6 +181,7 @@ const cssvar = {
     "nh": dataname[6]+randomChar(1),
     "fr": dataname[6]+randomChar(1),
     "edata": dataname2[5],
+    "sdfix": dataname2[10],
 }
 addchars();
 cssvar["md"] = dataname[7]+randomChar(1);
@@ -196,15 +199,18 @@ cssvar["cb"] = dataname[8]+randomChar(1);
 cssvar["sb"] = dataname[8]+randomChar(1);
 Object.entries(cssclass).forEach(([key, class_]) => {
     CSS = key === "l" ? CSS.replaceAll(`.${key} `, `.${class_} `).replaceAll(`.${key}:`, `.${class_}:`).replaceAll(`.${key})`, `.${class_})`) : CSS.replaceAll(`.${key}`, `.${class_}`);
-    CSSBUTTONS = CSSBUTTONS.replaceAll(`.${key}`, `.${class_}`)
+    CSSBUTTONS = CSSBUTTONS.replaceAll(`.${key}`, `.${class_}`);
+    CSSSEARCH = CSSSEARCH.replaceAll(`.${key}`, `.${class_}`);
 })
 Object.entries(cssid).forEach(([key, id_]) => {
     CSS = CSS.replaceAll(`#${key}`, `#${id_}`);
     CSSBUTTONS = CSSBUTTONS.replaceAll(`#${key}`, `#${id_}`);
+    CSSSEARCH = CSSSEARCH.replaceAll(`.${key}`, `.${class_}`);
 });
 Object.entries(cssvar).forEach(([key, var_]) => {
     CSS = CSS.replaceAll(`--${key}`, `--${var_}`);
     CSSBUTTONS = CSSBUTTONS.replaceAll(`--${key}`, `--${var_}`);
+    CSSSEARCH = CSSSEARCH.replaceAll(`.${key}`, `.${class_}`);
 });
 HTML = HTML
     .replace('<nav class="left">', `<nav class="${cssclass.left}">`)
@@ -246,7 +252,9 @@ JS = JS.replaceAll('trimmedStr', jstrimmedstrvar)
     .replace('url("#glass")', `url("#${cssid.glass}")`)
     .replace("add('error')", `add('${cssclass.error}')`)
     .replace("setProperty('--edata'", `setProperty('--${cssvar.edata}'`)
-    .replace('getElementById("search")', `getElementById("${cssid.search}")`);
+    .replace('getElementById("search")', `getElementById("${cssid.search}")`)
+    .replace("setProperty('--sdfix'", `.setProperty('--${cssvar.sdfix}', `)
+    .replaceAll("('searchactive')", `('${cssclass.searchactive}')`);
 
 const charset = docsConfig ? docsConfig.charset || template.charset : template.charset;
 
@@ -949,7 +957,7 @@ checkTLD(domain).then(tldvalid => {
             )
     });
 
-    CSS = _just.customCSS.customcss(CSS, customCSS == 'false' ? undefined : customCSS, CSSHIGHLIGHT, insertedcode, CSSBUTTONS);
+    CSS = _just.customCSS.customcss(CSS, customCSS == 'false' ? undefined : customCSS, CSSHIGHLIGHT, insertedcode, CSSBUTTONS, CSSSEARCH);
     for (const [pathh, htmlcontent] of Object.entries(htmlfiles)) {
         const updated = _just.customCSS.highlightclasses(CSSHIGHLIGHTtemplate, CSS, htmlcontent, dataname[8]);
         CSS = updated[0];

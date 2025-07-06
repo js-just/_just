@@ -295,6 +295,7 @@ dcmnt.addEventListener('DOMContentLoaded', () => {
         sd.style.width = `${sb.offsetWidth - 8*2}px`;
         sd.style.opacity = toggle ? 1 : 0;
         sd.style.pointerEvents = toggle ? 'all' : 'none';
+        sd.style.setProperty('--sdfix', `-${leftt}px`);
 
         sk.style.left = `${leftt + sb.offsetWidth}px`;
         sk.style.top = `${toppp - (sb.offsetHeight / 2)}px`;
@@ -339,9 +340,11 @@ dcmnt.addEventListener('DOMContentLoaded', () => {
         }
         return true;
     };
+    let lastst = false;
     sb.addEventListener("input", async () => {
         const sv = sb.value;
         const st = searchString(sv);
+        lastst = st;
         sd.innerHTML = '<span>Loading...</span>';
         updateSD(st);
         const pta = '<br>Please try again';
@@ -349,11 +352,13 @@ dcmnt.addEventListener('DOMContentLoaded', () => {
             const response = await fetch(searchurl).catch((err__)=>{
                 console.warn(err__);
                 sd.innerHTML = `<span>Failed to fetch.${pta}</span>`;
+                dcmnt.documentElement.classList.remove('searchactive');
                 return
             });
             const data = await response.json().catch((err__)=>{
                 console.warn(err__);
                 sd.innerHTML = `<span>Something went wrong.${pta}</span>`;
+                dcmnt.documentElement.classList.remove('searchactive');
                 return
             });
             const searchdata = search2(data, sv);
@@ -361,10 +366,18 @@ dcmnt.addEventListener('DOMContentLoaded', () => {
                 sd.innerHTML = '<span>Nothing found.</span>';
             } else {
                 sd.innerHTML = '';
+                dcmnt.documentElement.classList.add('searchactive');
                 for (const [id, data_] of Object.entries(searchdata)) {
                     sd.innerHTML += `<a href="${data_[0]}" target="_self">${data_[1].replaceAll('/n','')}</a>`;
                 }
             }
+        } else {
+            dcmnt.documentElement.classList.remove('searchactive');
+        }
+    });
+    dcmnt.addEventListener("click", (event)=>{
+        if (lastst && !dcmnt.querySelector(".navbar").contains(event.target)) {
+            dcmnt.documentElement.classList.remove('searchactive');
         }
     });
 

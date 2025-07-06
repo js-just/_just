@@ -1,0 +1,18 @@
+.searchactive {
+    overflow-y: hidden;
+}
+.searchactive main {
+    filter: blur(3px) brightness(0.8);
+    pointer-events: none;
+}
+.searchactive #searchbar {
+    position: fixed;
+    top: calc(62px + 10px);
+    left: 50%;
+    translate: -50%;
+    min-width: max-content;
+    width: 70%;
+}
+.searchactive .search {
+    translate: calc(var(--sdfix) - 50%) 55px;
+}
