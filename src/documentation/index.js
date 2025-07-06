@@ -873,7 +873,7 @@ checkTLD(domain).then(tldvalid => {
         for (const [idk, headerdata] of Object.entries(contents)) {
             pageHeaders += `<li${ headerdata[2] ? ' class="secondary"' : '' }>
                                 <a href="#${headerdata[1]}">
-                                    ${span(headerdata[0])}
+                                    ${addEnd(span(headerdata[0]), ':').slice(0,-1)}
                                 </a>
                             </li>`;
         }
