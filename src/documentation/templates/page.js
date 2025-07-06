@@ -265,6 +265,12 @@ dcmnt.addEventListener('DOMContentLoaded', () => {
         dcmnt.documentElement.classList.add('a');
         localStorage.removeItem('t');
         autotheme();
+        const colorSchemeQuery0 = wndw_.matchMedia('(prefers-color-scheme: dark)');
+        if (colorSchemeQuery0.addEventListener) {
+            colorSchemeQuery0.addEventListener('change', autotheme);
+        } else if (colorSchemeQuery0.addListener) {
+            colorSchemeQuery0.addListener(autotheme);
+        }
     };
     if (navigator.userAgent.toLowerCase().includes('firefox')) {
         dcmnt.body.classList.add('firefox');
