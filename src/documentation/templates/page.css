@@ -771,12 +771,14 @@ footer {
             color: var(--cl);
             font-family: var(--tf);
             font-weight: 600;
+            overflow: hidden;
             svg {
                 position: relative;
                 width: 20px;
                 top: 50%;
                 left: 50%;
                 translate: -50% -50%;
+                -webkit-translate: -50% -50%;
                 scale: 0.75;
                 opacity: 0.75;
                 fill: var(--cl);
@@ -990,8 +992,12 @@ h1, h2, h3 {
         text-align: center;
     }
 }
-.firefox .search {
+.firefox .search, .ios .search {
     backdrop-filter: blur(4px) brightness(0.3) !important;
+    -wenkit-backdrop-filter: blur(4px) brightness(0.3) !important;
+}
+.ios .search {
+    background-color: var(--bg);
 }
 
 .line-through {

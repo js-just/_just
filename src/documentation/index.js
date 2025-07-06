@@ -196,6 +196,7 @@ cssvar["cb"] = dataname[8]+randomChar(1);
 cssvar["sb"] = dataname[8]+randomChar(1);
 Object.entries(cssclass).forEach(([key, class_]) => {
     CSS = key === "l" ? CSS.replaceAll(`.${key} `, `.${class_} `).replaceAll(`.${key}:`, `.${class_}:`).replaceAll(`.${key})`, `.${class_})`) : CSS.replaceAll(`.${key}`, `.${class_}`);
+    CSSBUTTONS = CSSBUTTONS.replaceAll(`.${key}`, `.${class_}`)
 })
 Object.entries(cssid).forEach(([key, id_]) => {
     CSS = CSS.replaceAll(`#${key}`, `#${id_}`);

@@ -5,9 +5,11 @@ const page_ = 'p' + wndw_.location.pathname;
 const scrll = localStorage.getItem('s' + page_);
 const theme = localStorage.getItem('t');
 const main_ = 'html > body > main > div#main > article.main';
-const isIOS=()=>{
+const IsIOS=()=>{
     return (/iPad|iPhone|iPod/.test(navigator.userAgent) && !wndw_.MSStream) || (/Mac/.test(navigator.userAgent) && wndw_.innerWidth <= 700);
 };
+const ISIOS=IsIOS();
+const isIOS=()=>ISIOS;
 
 const publicOutput = 'REPLACE_PUBLICOUTPUT';
 console.log('%cMade with _just','font-size:20px;color:#FFFFFF;background-color:#00000077;padding:20px;border-radius:20px;');
@@ -63,11 +65,14 @@ if (scrll) {
 }
 
 let swipe;
+let navv = false;
 const handleSwipeLeft=()=>{
     dcmnt.body.classList.remove('navleft');
+    navv = false;
 };
 const handleSwipeRight=()=>{
     dcmnt.body.classList.add('navleft');
+    navv = true;
 };
 dcmnt.addEventListener('touchstart', function(event) {
     swipe = [event.touches[0].clientX, event.touches[0].clientY];
@@ -160,8 +165,22 @@ const updateMinHeight = () => {
         dcmnt.querySelector('.main').style.minHeight = `${wndw_.innerHeight-62*2-1}px`
     } catch (err_) {}
 };
-updateMinHeight();
-wndw_.addEventListener('resize', updateMinHeight);
+const updateWidth = () => {
+    if (wndw_.innerWidth < 556) {
+        try {
+            dcmnt.querySelector('.main').style.width = null;
+            dcmnt.querySelector('.main').style.width = `${dcmnt.querySelector('.main').offsetWidth - 10}px`
+        } catch (err_) {}
+    }
+};
+updateMinHeight();updateWidth();
+wndw_.addEventListener('resize', ()=>{
+    updateMinHeight();
+    if (navv) {
+        handleSwipeLeft();
+    }
+    updateWidth();
+});
 
 let fun_function = false;
 const glass = 'url("#glass")';
@@ -243,6 +262,9 @@ dcmnt.addEventListener('DOMContentLoaded', () => {
 
     if (isIOS()) {
         dcmnt.body.classList.add('ios');
+        dcmnt.documentElement.classList.add('a');
+        localStorage.removeItem('t');
+        autotheme();
     };
     if (navigator.userAgent.toLowerCase().includes('firefox')) {
         dcmnt.body.classList.add('firefox');
@@ -257,10 +279,8 @@ dcmnt.addEventListener('DOMContentLoaded', () => {
     const sb = dcmnt.getElementById("searchbar");
     const sd = dcmnt.querySelector('.search');
     const sk = dcmnt.getElementById("search");
-    let sdtoggle = false;
     const updateSD = (toggle = false) => {
         if (!toggle) {sd.innerHTML = ''};
-        sdtoggle = toggle;
         const leftt = sb.offsetLeft + sb.parentElement.offsetLeft;
         const toppp = sb.parentElement.offsetTop + sb.offsetHeight - (sb.parentElement.offsetWidth == 0 ? 15 : 0);
         sd.style.left = `${leftt}px`;
