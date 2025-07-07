@@ -231,7 +231,7 @@ HTML = HTML
     .replace(' id="searchbar">', ` id="${cssid.searchbar}">`)
     .replace('<filter id="glass"', `<filter id="${cssid.glass}"`)
     .replace('<span id="search">', `<span id="${cssid.search}">`);
-const jstrimmedstrvarbasestr = _just.number.convertbasedigits.replace(/[1-9\/+]/g, '');
+const jstrimmedstrvarbasestr = _just.number.convertbasedigits.replace(/[0-9\/+]/g, '');
 const jstrimmedstrvar = _just.number.convertbase(Math.floor(Math.random()*1000).toString(10), 10, jstrimmedstrvarbasestr.length, jstrimmedstrvarbasestr)
 JS = JS.replaceAll('trimmedStr', jstrimmedstrvar)
     .replace('html > body > main > div#main > article.main', `html > body > main > div#${cssid.main} > article.${cssclass.main}`)
