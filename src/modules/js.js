@@ -32,8 +32,6 @@ _just.number = require('./number.js');
  * @returns {{total: number, names: string[]}}
  */
 exports.get = function(code) {
-    let id = 0;
-
     const variableRegex = /\b(const|let|var)\s+([a-zA-Z_$][a-zA-Z0-9_$]*)/g;
     const functionRegex = /\bfunction\s+([a-zA-Z_$][a-zA-Z0-9_$]*)\s*$/g;
 
@@ -42,11 +40,11 @@ exports.get = function(code) {
 
     let match;
     while ((match = variableRegex.exec(code)) !== null) {
-        variables.add(match[2] || `_just__${_just.number.convertbase(`${id++}`, 10, 62) || id++}`);
+        variables.add(match[2]);
     }
 
     while ((match = functionRegex.exec(code)) !== null) {
-        functions.add(match[1] || `_just__${_just.number.convertbase(`${id++}`, 10, 62) || id++}`);
+        functions.add(match[1]);
     }
 
     const allNames = Array.from(new Set([...variables, ...functions]));
@@ -65,10 +63,11 @@ exports.get = function(code) {
  * @returns {string}
  */
 exports.set = function(code, oldNames, newNames, jstrimmedstrvarbasestr) {
+    let id = 0;
     const nameMap = {};
     for (let i = 0; i < oldNames.length; i++) {
         const name_ = _just.number.convertbase(i.toString(10), 10, jstrimmedstrvarbasestr.length, jstrimmedstrvarbasestr) || i.toString(36);
-        nameMap[oldNames[i]] = newNames[i] || '_just_'+name_;
+        nameMap[oldNames[i]] = newNames[i].trim() == '' ? `_just__${_just.number.convertbase(`${id++}`, 10, 62) || id++}` : newNames[i] || '_just_'+name_;
     }
 
     const lines = code.split('\n');
