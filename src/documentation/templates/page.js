@@ -22,7 +22,7 @@ if (SETTINGS.publicOutput) {
 };
 
 const convertbase =(str,fromBase,toBase,DIGITS="0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ+/")=>{
-    const add = (x, y, base) => {
+    const cbadd = (x, y, base) => {
         let z = [];
         const n = Math.max(x.length, y.length);
         let carry = 0;
@@ -45,10 +45,10 @@ const convertbase =(str,fromBase,toBase,DIGITS="0123456789abcdefghijklmnopqrstuv
         let result = [];
         let power = x;
         while (true) {
-            num & 1 && (result = add(result, power, base));
+            num & 1 && (result = cbadd(result, power, base));
             num = num >> 1;
             if (num === 0) break;
-            power = add(power, power, base);
+            power = cbadd(power, power, base);
         }
 
         return result;
@@ -71,7 +71,7 @@ const convertbase =(str,fromBase,toBase,DIGITS="0123456789abcdefghijklmnopqrstuv
     let outArray = [];
     let power = [1];
     for (let i = 0; i < digits.length; i++) {
-        digits[i] && (outArray = add(outArray, multiplyByNumber(digits[i], power, toBase), toBase));
+        digits[i] && (outArray = cbadd(outArray, multiplyByNumber(digits[i], power, toBase), toBase));
         power = multiplyByNumber(fromBase, power, toBase);
     };
 
