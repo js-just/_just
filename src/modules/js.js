@@ -67,7 +67,7 @@ exports.set = function(code, oldNames, newNames, jstrimmedstrvarbasestr) {
     const nameMap = {};
     for (let i = 0; i < oldNames.length; i++) {
         const name_ = _just.number.convertbase(i.toString(10), 10, jstrimmedstrvarbasestr.length, jstrimmedstrvarbasestr) || i.toString(36);
-        nameMap[oldNames[i]] = newNames[i].trim() == '' ? `_just__${_just.number.convertbase(`${id++}`, 10, 62) || id++}` : newNames[i] || '_just_'+name_;
+        nameMap[oldNames[i]] = newNames[i] && newNames[i].trim() == '' ? `_just__${_just.number.convertbase(`${id++}`, 10, 62) || id++}` : newNames[i] || '_just_'+name_;
     }
 
     const lines = code.split('\n');
