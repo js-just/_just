@@ -36,7 +36,7 @@ const convertbase =(str,fromBase,toBase,DIGITS="0123456789abcdefghijklmnopqrstuv
             i++;
         }
         return z;
-    }
+    };
 
     const multiplyByNumber = (num, x, base) => {
         if (num < 0) return null;
@@ -52,13 +52,13 @@ const convertbase =(str,fromBase,toBase,DIGITS="0123456789abcdefghijklmnopqrstuv
         }
 
         return result;
-    }
+    };
 
     const parseToDigitsArray = (str, base) => {
         const digits = str.split('');
         let arr = [];
         for (let i = digits.length - 1; i >= 0; i--) {
-            const n = DIGITS.indexOf(digits[i])
+            const n = DIGITS.indexOf(digits[i]);
             if (n == -1) return null;
             arr.push(n);
         }
@@ -73,7 +73,7 @@ const convertbase =(str,fromBase,toBase,DIGITS="0123456789abcdefghijklmnopqrstuv
     for (let i = 0; i < digits.length; i++) {
         digits[i] && (outArray = add(outArray, multiplyByNumber(digits[i], power, toBase), toBase));
         power = multiplyByNumber(fromBase, power, toBase);
-    }
+    };
 
     let out = '';
     for (let i = outArray.length - 1; i >= 0; i--)
@@ -322,7 +322,7 @@ dcmnt.addEventListener('DOMContentLoaded', () => {
         } else {
             return false;
         };
-    }
+    };
 
     if (ltb && dtb && atb) {
         ltb.addEventListener('click', () => {
