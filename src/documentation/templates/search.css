@@ -30,6 +30,11 @@
     opacity: 1;
     width: auto;
     text-align: left;
+    display: flex;
+    gap: 7px;
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: flex-start;
 }
 .searchactive .search a strong {
     display: flex;
