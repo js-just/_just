@@ -306,6 +306,17 @@ const search2 = (data, searchTerm, sb) => {
     return output;
 };
 
+let cooldown0 = false;
+const cooldown = (timems, cdvarid) => {
+    switch(cdvarid) {
+        case 0:    
+            cooldown0=true;
+            setTimeout(()=>{cooldown0=false;},timems);
+        default:
+            return true;
+    }
+}
+
 let searchurl = "/_just/search";
 dcmnt.addEventListener('DOMContentLoaded', () => {
     let ltb = dcmnt.getElementById('l');
@@ -365,6 +376,7 @@ dcmnt.addEventListener('DOMContentLoaded', () => {
     const sd = dcmnt.querySelector('.search');
     const sk = dcmnt.getElementById("search");
     const updateSD = (toggle = false) => {
+        if(cooldown0)return;else{cooldown(300,0)};
         if (!toggle) {sd.innerHTML = ''};
         const leftt = sb.offsetLeft + sb.parentElement.offsetLeft;
         const toppp = sb.parentElement.offsetTop + sb.offsetHeight - (sb.parentElement.offsetWidth == 0 ? 15 : 0);
@@ -431,14 +443,14 @@ dcmnt.addEventListener('DOMContentLoaded', () => {
                 console.warn(err__);
                 sd.innerHTML = `<span>Failed to fetch.${pta}</span>`;
                 dcmnt.documentElement.classList.remove('searchactive');
-                setTimeout(()=>{updateSD(st)},300);
+                setTimeout(()=>{updateSD(st)},301);
                 return
             });
             const data = await response.json().catch((err__)=>{
                 console.warn(err__);
                 sd.innerHTML = `<span>Something went wrong.${pta}</span>`;
                 dcmnt.documentElement.classList.remove('searchactive');
-                setTimeout(()=>{updateSD(st)},300);
+                setTimeout(()=>{updateSD(st)},301);
                 return
             });
             const searchdata = search2(data, sv, sb);
@@ -447,7 +459,7 @@ dcmnt.addEventListener('DOMContentLoaded', () => {
             } else {
                 sd.innerHTML = '';
                 dcmnt.documentElement.classList.add('searchactive');
-                setTimeout(()=>{updateSD(st)},300);
+                setTimeout(()=>{updateSD(st)},301);
                 for (const [id, data_] of Object.entries(searchdata)) {
                     sd.innerHTML += SETTINGS.searchV2 ? 
                         `<a href="${data_[0]}" target="_self"><strong>${('REPLACE_DATAARRAY'.find(item => item[0] === data_[0]) || [])[1] || data_[0]}</strong><span>${data_[1].replaceAll('/n',' ').replaceAll(' - ','')}</span></a>` : 
@@ -456,13 +468,13 @@ dcmnt.addEventListener('DOMContentLoaded', () => {
             }
         } else {
             dcmnt.documentElement.classList.remove('searchactive');
-            setTimeout(()=>{updateSD(st)},300);
+            setTimeout(()=>{updateSD(st)},301);
         }
     });
     dcmnt.addEventListener("click", (event)=>{
         if (lastst && !dcmnt.querySelector(".navbar").contains(event.target)) {
             dcmnt.documentElement.classList.remove('searchactive');
-            setTimeout(()=>{updateSD(false)},300);
+            setTimeout(()=>{updateSD(false)},301);
         }
     });
 
