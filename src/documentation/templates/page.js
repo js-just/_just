@@ -474,6 +474,7 @@ dcmnt.addEventListener('DOMContentLoaded', () => {
         } else {
             dcmnt.documentElement.classList.remove('searchactive');
             setTimeout(()=>{updateSD(st)},301);
+            setTimeout(()=>{if(!lastst){updateSD(st)}},602);
         }
     });
     dcmnt.addEventListener("click", (event)=>{
