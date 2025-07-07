@@ -39,7 +39,7 @@ const convertbase =(str,fromBase,toBase,DIGITS="0123456789abcdefghijklmnopqrstuv
     };
 
     const multiplyByNumber = (num, x, base) => {
-        if (num < 0) return null;
+        if (num < 0) return(null);
         if (num == 0) return [];
 
         let result = [];
@@ -59,14 +59,14 @@ const convertbase =(str,fromBase,toBase,DIGITS="0123456789abcdefghijklmnopqrstuv
         let arr = [];
         for (let i = digits.length - 1; i >= 0; i--) {
             const n = DIGITS.indexOf(digits[i]);
-            if (n == -1) return null;
+            if (n == -1) return(null);
             arr.push(n);
         }
         return arr;
     };
 
     const digits = parseToDigitsArray(str);
-    if (digits === null) return null;
+    if (digits === (null)) return(null);
 
     let outArray = [];
     let power = [1];
@@ -238,7 +238,7 @@ const updateMinHeight = () => {
 const updateWidth = () => {
     if (wndw_.innerWidth < 556) {
         try {
-            dcmnt.querySelector('.main').style.width = null;
+            dcmnt.querySelector('.main').style.width =(null);
             dcmnt.querySelector('.main').style.width = `${dcmnt.querySelector('.main').offsetWidth - 10}px`
         } catch (err_) {}
     }
