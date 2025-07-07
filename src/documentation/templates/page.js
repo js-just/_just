@@ -376,16 +376,21 @@ dcmnt.addEventListener('DOMContentLoaded', () => {
     const sd = dcmnt.querySelector('.search');
     const sk = dcmnt.getElementById("search");
     const updateSD = (toggle = false) => {
-        if(cooldown0)return;else{cooldown(300,0)};
-        if (!toggle) {sd.innerHTML = ''};
+        let run = true;
+        if (cooldown0) run = false; else {
+            cooldown(300,0)
+        };
+        if (!toggle && run) {sd.innerHTML = ''};
         const leftt = sb.offsetLeft + sb.parentElement.offsetLeft;
         const toppp = sb.parentElement.offsetTop + sb.offsetHeight - (sb.parentElement.offsetWidth == 0 ? 15 : 0);
-        sd.style.left = `${leftt}px`;
-        sd.style.top = `${toppp}px`;
-        sd.style.width = `${sb.offsetWidth - 8*2}px`;
-        sd.style.opacity = toggle ? 1 : 0;
-        sd.style.pointerEvents = toggle ? 'all' : 'none';
-        sd.style.setProperty('--sdfix', `calc(-${leftt}px + ${sb.offsetLeft}px)`);
+        sd.style.left = run ? `${leftt}px` : sd.style.left;
+        sd.style.top = run ? `${toppp}px` : sd.style.top;
+        sd.style.width = run ? `${sb.offsetWidth - 8*2}px` : sd.style.width;
+        if (run) {
+            sd.style.opacity = toggle ? 1 : 0;
+            sd.style.pointerEvents = toggle ? 'all' : 'none';
+            sd.style.setProperty('--sdfix', `calc(-${leftt}px + ${sb.offsetLeft}px)`);
+        }
 
         sk.style.left = `${leftt + sb.offsetWidth}px`;
         sk.style.top = `${toppp - (sb.offsetHeight / 2)}px`;
