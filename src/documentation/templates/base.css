@@ -1099,5 +1099,5 @@ html:has(.navleft) .main {
     -webkit-filter: blur(3px) brightness(0.8);
 }
 .navleft .navbar .links {
-    translate: calc(0px - calc(var(--mp) - 5px));
+    translate: calc(0px - calc(var(--mp) - 5px)) !important;
 }
