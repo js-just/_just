@@ -54,7 +54,7 @@ const convertbase =(str,fromBase,toBase,DIGITS="0123456789abcdefghijklmnopqrstuv
         return result;
     };
 
-    const parseToDigitsArray = (str, base) => {
+    const parseToDigitsArray = (str) => {
         const digits = str.split('');
         let arr = [];
         for (let i = digits.length - 1; i >= 0; i--) {
@@ -63,9 +63,9 @@ const convertbase =(str,fromBase,toBase,DIGITS="0123456789abcdefghijklmnopqrstuv
             arr.push(n);
         }
         return arr;
-    }
+    };
 
-    const digits = parseToDigitsArray(str, fromBase);
+    const digits = parseToDigitsArray(str);
     if (digits === null) return null;
 
     let outArray = [];
@@ -76,8 +76,8 @@ const convertbase =(str,fromBase,toBase,DIGITS="0123456789abcdefghijklmnopqrstuv
     };
 
     let out = '';
-    for (let i = outArray.length - 1; i >= 0; i--)
-        out += DIGITS[outArray[i]];
+    for (let i = outArray.length - 1; i >= 0; i--){
+        out += DIGITS[outArray[i]]};
 
     return out;
 }
