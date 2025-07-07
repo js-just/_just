@@ -94,6 +94,26 @@
                     <button id="a" title="Switch to Dynamic Theme" type="button">A</button>
                 </div>
                 <span>REPLACE_FOOTER</span>
+                <noscript>
+                    <style>
+                        noscript {
+                            position: fixed;
+                        }
+                        noscript:before {
+                            content: 'Please enable JavaScript in your browser settings.';
+                            position: fixed;
+                            left: 0px;
+                            translate: 0px 62px;
+                            font-weight: bolder;
+                            font-size: 2em;
+                            width: 100%;
+                            text-align: center;
+                            height: 100%;
+                            background-color: var(--cb);
+                            outline: 20px solid var(--ct);
+                        }
+                    </style>
+                </noscript>
             </footer>
         </main>
         <svg xmlns="http://www.w3.org/2000/svg" width="0" height="0" style="position:absolute;overflow:hidden;">

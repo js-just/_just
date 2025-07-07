@@ -230,7 +230,9 @@ HTML = HTML
     .replace('<div class="search"></div>', `<div class="${cssclass.search}"></div>`)
     .replace(' id="searchbar" disabled>', ` id="${cssid.searchbar}" disabled>`)
     .replace('<filter id="glass"', `<filter id="${cssid.glass}"`)
-    .replace('<span id="search">', `<span id="${cssid.search}">`);
+    .replace('<span id="search">', `<span id="${cssid.search}">`)
+    .replace('var(--cb)', `var(--${cssvar.cb})`)
+    .replace('var(--ct)', `var(--${cssvar.ct})`);
 const jstrimmedstrvarbasestr = _just.number.convertbasedigits.replace(/[0-9\/+]/g, '');
 const jstrimmedstrvar = _just.number.convertbase(Math.floor(Math.random()*1000).toString(10), 10, jstrimmedstrvarbasestr.length, jstrimmedstrvarbasestr+'0123456789+/')
 JS = JS.replaceAll('trimmedStr', jstrimmedstrvar)
