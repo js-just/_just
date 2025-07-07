@@ -7,6 +7,7 @@
 }
 .searchactive main {
     filter: blur(3px) brightness(0.8);
+    -webkit-filter: blur(3px) brightness(0.8);
     pointer-events: none;
 }
 .searchactive #searchbar {

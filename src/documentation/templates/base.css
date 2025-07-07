@@ -1092,3 +1092,9 @@ html:has(.navleft) {
     overflow: hidden;
     touch-action: pan-y;
 }
+html:has(.navleft) .main {
+    pointer-events: none;
+    user-select: none;
+    filter: blur(3px) brightness(0.8);
+    -webkit-filter: blur(3px) brightness(0.8);
+}
