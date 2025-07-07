@@ -1098,3 +1098,6 @@ html:has(.navleft) .main {
     filter: blur(3px) brightness(0.8);
     -webkit-filter: blur(3px) brightness(0.8);
 }
+.navleft .navbar .links {
+    translate: calc(0px - calc(var(--mp) - 5px));
+}
