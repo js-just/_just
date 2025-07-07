@@ -52,6 +52,7 @@ _just.highlight = require('./highlight.js');
 _just.number = require('../modules/number.js');
 _just.js = require('../modules/js.js');
 _just.version = vrsn;
+_just.array = require('../modules/array.js');
 
 const link = (text, link_, ext = false, extid = "ext", target = "_blank", title_) => `<a href="${link_}" target="${target}"${ext ? ` id="${extid}"` : ''}${title_ ? ` title="${title_}"` : ''}>${text}</a>`;
 const span = (text) => `<span>${text}</span>`;
@@ -117,11 +118,12 @@ HTML = HTML.replace('--hc:', `--${dataname[0].slice(0,-1)}:`);
 CSS = CSS.replaceAll('var(--hc)', `var(--${dataname[0].slice(0,-1)})`);
 JS = _just.js.fuck(JS).replace('\'--hc\'', `'--${dataname[0].slice(0,-1)}'`);
 
-const dataname2 = [];
+const predataname2 = [];
 const dataname2limit = 3843;
 for (let i = 1; i <= dataname2limit; i++) {
-    dataname2.push(dataname[9] + _just.number.convertbase(i.toString(10), 10, 62, _just.string.shuffleString(_just.number.convertbasedigits.slice(0,-2)) + '+/'));
+    predataname2.push(dataname[9] + _just.number.convertbase(i.toString(10), 10, 62, _just.string.shuffleString(_just.number.convertbasedigits.slice(0,-2)) + '+/'));
 }
+const dataname2 = _just.array.shuffleArray(predataname2);
 
 addchars();
 for (let i = 48; i <= 57; i++) {

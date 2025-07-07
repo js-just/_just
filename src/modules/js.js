@@ -72,6 +72,7 @@ exports.set = function(code, oldNames, newNames, jstrimmedstrvarbasestr) {
 
     const lines = code.split('\n');
 
+    id = 0;
     const processedLines = lines.map(line => {
         let inString = false;
         let stringChar = '';
@@ -104,7 +105,7 @@ exports.set = function(code, oldNames, newNames, jstrimmedstrvarbasestr) {
                     i--;
 
                     if (nameMap.hasOwnProperty(word)) {
-                        resultLine += nameMap[word];
+                        resultLine += nameMap[word] != 'null' ? nameMap[word] || `_just__${_just.number.convertbase(`${id++}`, 10, 62) || id++}` || `_just___${id++}` : `_just__${_just.number.convertbase(`${id++}`, 10, 62) || id++}` || `_just___${id++}`;
                     } else {
                         resultLine += word;
                     }
