@@ -241,6 +241,10 @@ const updateWidth = () => {
             dcmnt.querySelector('.main').style.width =(null);
             dcmnt.querySelector('.main').style.width = `${dcmnt.querySelector('.main').offsetWidth - 10}px`
         } catch (err_) {}
+    } else {
+        try {
+            dcmnt.querySelector('.main').style.width =(null);
+        } catch (err_) {}
     }
 };
 updateMinHeight();updateWidth();
@@ -487,5 +491,5 @@ dcmnt.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    updateSD(false);updateMinHeight();fetch(searchurl);
+    updateSD(false);updateMinHeight();updateWidth();fetch(searchurl);
 });

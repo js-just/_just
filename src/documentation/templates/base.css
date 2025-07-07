@@ -1089,5 +1089,5 @@ html:has(.error):after {
 }
 
 html:has(.navleft) {
-    overflow-y: hidden;
+    overflow: hidden;
 }
