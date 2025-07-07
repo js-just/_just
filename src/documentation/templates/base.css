@@ -1087,3 +1087,7 @@ html:has(.error):after {
     opacity: 0.5;
     font-size: 12px;
 }
+
+html:has(.navleft) {
+    overflow-y: hidden;
+}
