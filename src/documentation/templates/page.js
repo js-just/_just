@@ -11,10 +11,13 @@ const IsIOS=()=>{
 const ISIOS=IsIOS();
 const isIOS=()=>ISIOS;
 
-const publicOutput = 'REPLACE_PUBLICOUTPUT';
+const SETTINGS = {
+    "publicOutput": 'REPLACE_PUBLICOUTPUT',
+    "searchV2": 'REPLACE_SEARCHV2'
+}
 console.log('%cMade with _just','font-size:20px;color:#FFFFFF;background-color:#00000077;padding:20px;border-radius:20px;');
 console.log('%chttps://just.is-a.dev/','font-size:10px;color:#FFFFFF;background-color:#00000077;padding:0px 40px;border-radius:20px;');
-if (publicOutput) {
+if (SETTINGS.publicOutput) {
     console.log(`_just output: ${wndw_.location.protocol}//${wndw_.location.hostname}/_just_data/output.txt`)
 };
 
@@ -204,7 +207,7 @@ const search1 = (data, searchTerm) => {
       
       if (index !== -1) {
         const start = Math.max(0, index - 6);
-        let end = Math.min(value_.length, index + searchTerm.length + 9);
+        let end = SETTINGS.searchV2 ? value_.length : Math.min(value_.length, index + searchTerm.length + 9);
         
         let snippet = value_.substring(start, end);
         
@@ -223,9 +226,10 @@ const search1 = (data, searchTerm) => {
   }
   return(null);
 };
-const search2 = (data, searchTerm) => {
+const search2 = (data, searchTerm, sb) => {
     let output = [];
-    for (let i = 1; i <= 5; i++) {
+    const limit = SETTINGS.searchV2 ? Math.floor((wndw_.innerHeight-(sb.offsetTop+sb.offsetHeight+16)-10)/29) : 5;
+    for (let i = 1; i <= limit; i++) {
         const search1_ = search1(data, searchTerm);
         if (search1_) {
             data[search1_[0]] = '';
@@ -363,7 +367,7 @@ dcmnt.addEventListener('DOMContentLoaded', () => {
                 setTimeout(()=>{updateSD(st)},300);
                 return
             });
-            const searchdata = search2(data, sv);
+            const searchdata = search2(data, sv, sb);
             if (searchdata.length == 0) {
                 sd.innerHTML = '<span>Nothing found.</span>';
             } else {

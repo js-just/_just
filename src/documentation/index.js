@@ -358,7 +358,8 @@ function generateListItems(PageList) {
         folderMap[folder].push(page);
     });
 
-    let listItemsHtml = '';
+    let listItemsHTML = '';
+    const pageListJSON = [];
     const folders = Object.keys(folderMap);
     const sortedFolders = folders.sort((a, b) => {
         if (a === '' || a === null) return -1;
@@ -368,18 +369,19 @@ function generateListItems(PageList) {
     for (const folderName of sortedFolders) {
         const pages = folderMap[folderName];
 
-        listItemsHtml += `${ folderName != '' ? `<li>
+        listItemsHTML += `${ folderName != '' ? `<li>
                             <span><strong>${folderName}</strong></span>
                             <ul>` : '<li><ul>'}`;
         pages.forEach(page => {
             page.title = page.title == 'index' ? 'Home' : String(page.title).charAt(0).toUpperCase() + String(page.title).slice(1);
-            listItemsHtml += `<li><a href="${page.path}"><span>${page.title}</span></a></li>`;
+            listItemsHTML += `<li><a href="${page.path}"><span>${page.title}</span></a></li>`;
+            pageListJSON.push([page.path, page.title]);
         });
-        listItemsHtml += `   </ul>
+        listItemsHTML += `   </ul>
                         </li>`;
     }
 
-    return listItemsHtml;
+    return [listItemsHTML, pageListJSON];
 }
 
 
@@ -898,6 +900,7 @@ checkTLD(domain).then(tldvalid => {
         const pages = generateListItems(addFolderToPageList(pageList));
         let outHTML = HTML
             .replace('<html>', `<html${htmlLang}>`)
+            .replace('REPLACE_SCRIPT', `const ${dataname2[11]}=${JSON.stringify(pages[1])}`)
             .replaceAll('REPLACE_CSS', filename.css)
             .replaceAll('REPLACE_JS', filename.js)
             .replace('REPLACE_CHARSET', charset)
@@ -907,7 +910,7 @@ checkTLD(domain).then(tldvalid => {
             .replace('REPLACE_CUSTOM', insertHTMLinHead)
             .replace('REPLACE_LOGO', logo)
             .replace('REPLACE_NAME', filterText(name))
-            .replace('REPLACE_PAGES', filterText(pages))
+            .replace('REPLACE_PAGES', filterText(pages[0]))
             .replace('REPLACE_CONTENTS', filterText(pageHeaders))
             .replace('REPLACE_FOOTER', filterText(footer))
             .replace('REPLACE_LINKS', htmlnav())
@@ -957,7 +960,8 @@ checkTLD(domain).then(tldvalid => {
             )
     });
 
-    CSS = _just.customCSS.customcss(CSS, customCSS == 'false' ? undefined : customCSS, CSSHIGHLIGHT, insertedcode, CSSBUTTONS, CSSSEARCH);
+    const CSSdata = _just.customCSS.customcss(CSS, customCSS == 'false' ? undefined : customCSS, CSSHIGHLIGHT, insertedcode, CSSBUTTONS, CSSSEARCH);
+    CSS = CSSdata[0];
     for (const [pathh, htmlcontent] of Object.entries(htmlfiles)) {
         const updated = _just.customCSS.highlightclasses(CSSHIGHLIGHTtemplate, CSS, htmlcontent, dataname[8]);
         CSS = updated[0];
@@ -987,7 +991,7 @@ checkTLD(domain).then(tldvalid => {
     fs.writeFileSync(
         path.join(websitepath, '_just', `${filename.js}.js`),
         "try{"+_just.js.set(
-            JS.replace('\'REPLACE_PUBLICOUTPUT\'', hideOutput?false:publicOutput?false:true).replace('let searchurl = "/_just/search";', `let searchurl = "/_just/${dataname[9]}.json";`), 
+            JS.replace('\'REPLACE_PUBLICOUTPUT\'', hideOutput?false:publicOutput?false:true).replace('\'REPLACE_SEARCHV2\'', CSSdata[1] || false).replace('let searchurl = "/_just/search";', `let searchurl = "/_just/${dataname[9]}.json";`), 
             JSdata.names.filter(n => n !== jstrimmedstrvar), 
             dataname2.reverse().slice(0, JSdata.total-1),
             jstrimmedstrvarbasestr

@@ -40,14 +40,21 @@ const classRegex= /\.([a-zA-Z0-9_-]+)/g;
  * @param {boolean?} USECODE
  * @param {string} CSSBUTTONS
  * @param {string} CSSSEARCH
- * @returns {string}
+ * @returns {[string, boolean]}
  */
 exports.customcss = function (CSS, CUSTOM, CODE, USECODE = true, CSSBUTTONS, CSSSEARCH) {
     const addcss = CSSBUTTONS + CSSSEARCH;
     if (!CUSTOM) {
-        return USECODE ? CSS + CODE + addcss : CSS + addcss;
+        return [
+            USECODE ? CSS + CODE + addcss : CSS + addcss,
+            true,
+        ];
     }
-    return CUSTOM
+    let usedcsssearch = false;
+    if (CUSTOM.replace(srchregex, CSSSEARCH).replace(srchregex2, CSSSEARCH) != CUSTOM) {
+        usedcsssearch = true;
+    }
+    const custom = CUSTOM
         .replace(baseregex2,CSS)
         .replace(baseregex, CSS)
         .replace(coderegex2, USECODE ? CODE : '')
@@ -55,7 +62,8 @@ exports.customcss = function (CSS, CUSTOM, CODE, USECODE = true, CSSBUTTONS, CSS
         .replace(btnsregex, CSSBUTTONS)
         .replace(btnsregex2, CSSBUTTONS)
         .replace(srchregex, CSSSEARCH)
-        .replace(srchregex2, CSSSEARCH)
+        .replace(srchregex2, CSSSEARCH);
+    return [custom, usedcsssearch];
 }
 
 const savedclasses = {};
