@@ -315,7 +315,7 @@ const cooldown = (timems, cdvarid) => {
         default:
             return true;
     }
-}
+};
 
 let searchurl = "/_just/search";
 dcmnt.addEventListener('DOMContentLoaded', () => {
