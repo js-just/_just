@@ -15,6 +15,7 @@
 }
 .searchactive .search {
     translate: calc(var(--sdfix) - 50%) 55px;
+    transition: 0ms;
 }
 
 .searchactive .search a {
