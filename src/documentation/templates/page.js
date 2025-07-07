@@ -240,7 +240,9 @@ const updateWidth = () => {
         try {
             dcmnt.querySelector('.main').style.width =(null);
             dcmnt.querySelector('.main').style.width = `${dcmnt.querySelector('.main').offsetWidth - 10}px`
-        } catch (err_) {}
+        } catch (err_) {
+            console.warn(err_)
+        }
     }
 };
 updateMinHeight();updateWidth();
