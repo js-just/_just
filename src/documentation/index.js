@@ -663,7 +663,7 @@ checkTLD(domain).then(tldvalid => {
     const hideOutput = config.hideOutput || false;
     const noWebarchive = config.noWebarchive || true;
     const searchkey = docsConfig ? docsConfig.searchKey || template.searchkey : template.searchkey;
-    JS = JS.replace("&&'REPLACE_NOWEBARCHIVE'", `&&${noWebarchive}`).replace('REPLACE_SEARCHKEY', searchkey);
+    JS = JS.replace("&&'REPLACE_NOWEBARCHIVE'", `&&${noWebarchive}`).replace("'REPLACE_DATAARRAY'", dataname2[11]).replace('REPLACE_SEARCHKEY', searchkey);
     HTML = HTML.replace('REPLACE_SEARCHKEY', searchkey);
 
     const links = docsConfig ? docsConfig.links || [] : [];
@@ -833,6 +833,12 @@ checkTLD(domain).then(tldvalid => {
             .replaceAll('*', '')
             .replaceAll('_', '')
             .replaceAll('> ','')
+            .replaceAll('>', charCodes('>'))
+            .replaceAll('<', charCodes('<'))
+            .replaceAll('-# ','')
+            .replaceAll('~', '')
+            .replaceAll('=', charCodes('='))
+            .replaceAll('^', charCodes('^'))
         for (let i = 6; i >= 1; i--) {
             input = input.replace(new RegExp(`^#{${i}}\\s+(.*?)\\s*$`, 'gm'), '$1')
         }

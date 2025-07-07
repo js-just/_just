@@ -375,7 +375,9 @@ dcmnt.addEventListener('DOMContentLoaded', () => {
                 dcmnt.documentElement.classList.add('searchactive');
                 setTimeout(()=>{updateSD(st)},300);
                 for (const [id, data_] of Object.entries(searchdata)) {
-                    sd.innerHTML += `<a href="${data_[0]}" target="_self">${data_[1].replaceAll('/n','')}</a>`;
+                    sd.innerHTML += SETTINGS.searchV2 ? 
+                        `<a href="${data_[0]}" target="_self"><strong>${('REPLACE_DATAARRAY'.find(item => item[0] === data_[0]) || [])[1] || data_[0]}</strong><span>${data_[1].replaceAll('/n',' ').replaceAll(' - ','')}</span></a>` : 
+                        `<a href="${data_[0]}" target="_self">${data_[1].replaceAll('/n',' ').replaceAll(' - ','')}</a>`;
                 }
             }
         } else {

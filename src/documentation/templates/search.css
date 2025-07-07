@@ -16,3 +16,28 @@
 .searchactive .search {
     translate: calc(var(--sdfix) - 50%) 55px;
 }
+
+.searchactive .search a {
+    display: flex;
+    gap: 30px;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    align-items: flex-start;
+}
+.searchactive .search a span {
+    opacity: 1;
+    width: auto;
+    text-align: left;
+}
+.searchactive .search a strong:after {
+    content: '';
+    position: fixed;
+    width: 5px;
+    height: 3px;
+    background-color: white;
+    translate: 10px 10px;
+}
+.searchactive .search a span strong:after {
+    display: none;
+}
