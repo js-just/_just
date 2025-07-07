@@ -32,6 +32,8 @@ _just.number = require('./number.js');
  * @returns {{total: number, names: string[]}}
  */
 exports.get = function(code) {
+    let id = 0;
+
     const variableRegex = /\b(const|let|var)\s+([a-zA-Z_$][a-zA-Z0-9_$]*)/g;
     const functionRegex = /\bfunction\s+([a-zA-Z_$][a-zA-Z0-9_$]*)\s*$/g;
 
@@ -40,11 +42,11 @@ exports.get = function(code) {
 
     let match;
     while ((match = variableRegex.exec(code)) !== null) {
-        variables.add(match[2]);
+        variables.add(match[2] || `_just__${_just.number.convertbase(`${id++}`, 10, 62) || id++}`);
     }
 
     while ((match = functionRegex.exec(code)) !== null) {
-        functions.add(match[1]);
+        functions.add(match[1] || `_just__${_just.number.convertbase(`${id++}`, 10, 62) || id++}`);
     }
 
     const allNames = Array.from(new Set([...variables, ...functions]));
