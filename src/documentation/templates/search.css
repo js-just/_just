@@ -1,3 +1,7 @@
+#search, #searchbar {
+    cursor: not-allowed;
+}
+
 .searchactive {
     overflow-y: hidden;
 }
@@ -35,6 +39,7 @@
     flex-direction: row;
     justify-content: flex-end;
     align-items: flex-start;
+    white-space: nowrap;
 }
 .searchactive .search a strong {
     display: flex;

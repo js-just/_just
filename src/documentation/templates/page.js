@@ -373,8 +373,11 @@ dcmnt.addEventListener('DOMContentLoaded', () => {
     }
 
     const sb = dcmnt.getElementById("searchbar");
+    sb.style.cursor = 'text';
+    sb.disabled = false;
     const sd = dcmnt.querySelector('.search');
     const sk = dcmnt.getElementById("search");
+    sk.style.cursor = 'pointer';
     const updateSD = (toggle = false) => {
         let run = true;
         if (cooldown0) run = false; else {
