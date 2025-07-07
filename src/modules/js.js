@@ -47,7 +47,7 @@ exports.get = function(code) {
         functions.add(match[1]);
     }
 
-    const allNames = Array.from(new Set([...variables, ...functions]));
+    const allNames = Array.from(new Set([...variables, ...functions])).filter(v => v != 'null');
 
     return {
         total: allNames.length,
