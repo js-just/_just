@@ -30,12 +30,17 @@
     width: auto;
     text-align: left;
 }
+.searchactive .search a strong {
+    display: flex;
+    white-space: nowrap;
+}
 .searchactive .search a strong:after {
     content: '';
-    position: fixed;
+    position: relative;
+    top: 0px;
     width: 5px;
     height: 3px;
-    background-color: white;
+    background-color: var(--cl);
     translate: 10px 10px;
 }
 .searchactive .search a span strong:after {
