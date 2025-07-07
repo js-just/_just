@@ -676,17 +676,17 @@ code, code span {
 .code:has(code) {
     margin-top: 28px;
     border-top-left-radius: 0px;
-    code {
-        position: relative;
-        display: block;
-        translate: -5px -23px;
-        margin-bottom: -20px;
-        width: max-content;
-        border-bottom-left-radius: 0px;
-        border-bottom-right-radius: 0px;
-        pointer-events: none;
-        white-space: nowrap;
-    }
+}
+.code code {
+    position: relative;
+    display: block;
+    translate: -5px -23px;
+    margin-bottom: -20px;
+    width: max-content;
+    border-bottom-left-radius: 0px;
+    border-bottom-right-radius: 0px;
+    pointer-events: none;
+    white-space: nowrap;
 }
 .note, .ntip, .impr, .warn, .caut {
     border-top-right-radius: 10px;
@@ -1033,7 +1033,7 @@ input[type="checkbox"] {
     position: absolute;
     width: 10px;
     height: 10px;
-    translate: -12.5px 3.5px;;
+    translate: -12.5px 3.5px;
     border-radius: 50%;
 }
 .code, .code code, .code * {
