@@ -228,7 +228,7 @@ HTML = HTML
     .replace('<button id="d"', `<button id="${cssid.d}"`)
     .replace('<button id="a"', `<button id="${cssid.a}"`)
     .replace('<div class="search"></div>', `<div class="${cssclass.search}"></div>`)
-    .replace(' id="searchbar">', ` id="${cssid.searchbar}">`)
+    .replace(' id="searchbar" disabled>', ` id="${cssid.searchbar}" disabled>`)
     .replace('<filter id="glass"', `<filter id="${cssid.glass}"`)
     .replace('<span id="search">', `<span id="${cssid.search}">`);
 const jstrimmedstrvarbasestr = _just.number.convertbasedigits.replace(/[0-9\/+]/g, '');
