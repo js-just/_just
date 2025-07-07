@@ -232,7 +232,7 @@ HTML = HTML
     .replace('<filter id="glass"', `<filter id="${cssid.glass}"`)
     .replace('<span id="search">', `<span id="${cssid.search}">`);
 const jstrimmedstrvarbasestr = _just.number.convertbasedigits.replace(/[0-9\/+]/g, '');
-const jstrimmedstrvar = _just.number.convertbase(Math.floor(Math.random()*1000).toString(10), 10, jstrimmedstrvarbasestr.length, jstrimmedstrvarbasestr)
+const jstrimmedstrvar = _just.number.convertbase(Math.floor(Math.random()*1000).toString(10), 10, jstrimmedstrvarbasestr.length, jstrimmedstrvarbasestr+'0123456789+/')
 JS = JS.replaceAll('trimmedStr', jstrimmedstrvar)
     .replace('html > body > main > div#main > article.main', `html > body > main > div#${cssid.main} > article.${cssclass.main}`)
     .replace('\'.main\'', `'.${cssclass.main}'`)
