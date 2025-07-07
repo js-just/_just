@@ -80,7 +80,7 @@ const convertbase =(str,fromBase,toBase,DIGITS="0123456789abcdefghijklmnopqrstuv
         out += DIGITS[outArray[i]]};
 
     return out;
-}
+};
 wndw_.addEventListener('scroll', () => {
     let headerIndex_=false;
     if (dcmnt.body.scrollTop > 150 || dcmnt.documentElement.scrollTop > 150) {
