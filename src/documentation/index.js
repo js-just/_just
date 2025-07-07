@@ -237,7 +237,7 @@ const jstrimmedstrvarbasestr = _just.number.convertbasedigits.replace(/[0-9\/+]/
 const jstrimmedstrvar = _just.number.convertbase(Math.floor(Math.random()*1000).toString(10), 10, jstrimmedstrvarbasestr.length, jstrimmedstrvarbasestr+'0123456789+/')
 JS = JS.replaceAll('trimmedStr', jstrimmedstrvar)
     .replace('html > body > main > div#main > article.main', `html > body > main > div#${cssid.main} > article.${cssclass.main}`)
-    .replace('\'.main\'', `'.${cssclass.main}'`)
+    .replaceAll('\'.main\'', `'.${cssclass.main}'`)
     .replaceAll('".navbar"', `".${cssclass.navbar}"`)
     .replaceAll('\'navleft\'', `'${cssclass.navleft}'`)
     .replaceAll('\'ios\'', `'${cssclass.ios}'`)
