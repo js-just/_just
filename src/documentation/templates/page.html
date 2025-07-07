@@ -14,6 +14,23 @@
         <link rel="preload" href="https://fonts.googleapis.com/css2?family=Murecho:wght@100..900&family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" as="style">
         <link href="https://fonts.googleapis.com/css2?family=Murecho:wght@100..900&family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
         REPLACE_CUSTOM
+        <noscript>
+            <style>
+                html > body > header > nav:first-of-type > div:last-of-type, 
+                html > body > main > div:first-of-type > nav:last-of-type > div > div, 
+                html > body > main > footer > div {
+                    display: none;
+                }
+                html > body > header > nav:first-of-type > :nth-child(2):not(a) {
+                    left: 100% !important;
+                    translate: calc(-15px - 100%) !important;
+                    width: max-content;
+                    @media(max-width: 700px) {
+                        translate: calc(-30px - 100%) !important;
+                    }
+                }
+            </style>
+        </noscript>
     </head>
     <body style="--hc: 0"><script>0</script>
         <header>
