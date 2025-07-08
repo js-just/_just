@@ -631,6 +631,7 @@ checkTLD(domain).then(tldvalid => {
         return resultTextArray.join('');
     }
 
+    const usePathInput = config.usePathInput ? config.usePathInput : true;
     function findMarkdownFiles(dir) {
         let results = [];
         const list = fs.readdirSync(dir);
@@ -643,7 +644,7 @@ checkTLD(domain).then(tldvalid => {
                 results.push(file);
             }
         });
-        return true ? results.filter(f => pathtourl[f]) : results;
+        return usePathInput ? results.filter(f => pathtourl[f]) : results;
     }
 
     const rootDirB = process.cwd();
@@ -665,7 +666,7 @@ checkTLD(domain).then(tldvalid => {
     const footer = docsConfig ? docsConfig.footer || template.footer : template.footer;
     const publicOutput = config.publicOutput || false;
     const hideOutput = config.hideOutput || false;
-    const noWebarchive = config.noWebarchive || true;
+    const noWebarchive = config.noWebarchive ? config.noWebarchive : true;
     const searchkey = docsConfig ? docsConfig.searchKey || template.searchkey : template.searchkey;
     JS = JS.replace("&&'REPLACE_NOWEBARCHIVE'", `&&${noWebarchive}`).replace("'REPLACE_DATAARRAY'", dataname2[11]).replace('REPLACE_SEARCHKEY', searchkey);
     HTML = HTML.replace('REPLACE_SEARCHKEY', searchkey);
