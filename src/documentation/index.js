@@ -859,6 +859,7 @@ checkTLD(domain).then(tldvalid => {
         return _just.string.removeLast(outputt, '|');
     }
     const htmlfiles = {};
+    const mdlogs = {};
     markdownFiles.forEach(file => {
         let content = fs.readFileSync(file, charset);
         if (getTitleFromMd(file)) {
@@ -867,7 +868,7 @@ checkTLD(domain).then(tldvalid => {
         const fileNameWithoutExt = path.basename(file, path.extname(file));
         const outFilePath = (ext) => path.join(path.dirname(file), `${fileNameWithoutExt}.${ext}`);
         fileID++;
-        logs += `${l[1]}FILE #${fileID} "${_just.string.runnerPath(file)}":${l[2]}INPUT: ${_just.string.fileSize(fs.statSync(file).size)}`;
+        mdlogs[outFilePath('html')] = `${l[1]}FILE #${fileID} "${_just.string.runnerPath(file)}":${l[2]}INPUT: ${_just.string.fileSize(fs.statSync(file).size)}`;
 
         if (pathtourl[file]) {
             mdjson[pathtourl[file]] = toText(content);
@@ -987,7 +988,8 @@ checkTLD(domain).then(tldvalid => {
                 })), 
             charset
         );
-        logs += `${l[2]}OUTPUT: ${_just.string.runnerPath(pathh)} (${_just.string.fileSize(fs.statSync(pathh).size)})`;
+        const outputlogs = `OUTPUT: ${_just.string.runnerPath(pathh)} (${_just.string.fileSize(fs.statSync(pathh).size)})`;
+        logs += mdlogs[pathh] ? `${mdlogs[pathh]}${l[2]}${outputlogs}` : `${l[1]}ERROR:${l[2]}MESSAGE: NO LOGS FOUND FOR FILE ${_just.string.runnerPath(pathh)}${l[2]}FILE ${outputlogs}`;
     }
     CSS = CSS.replace(new RegExp(`.${dataname[8]}3ibute`, 'g'), `.${dataname[8]}14`).replace("content: '_just';", `content: '_just ${_just.version}';`);
 
