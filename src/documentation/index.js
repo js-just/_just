@@ -643,7 +643,7 @@ checkTLD(domain).then(tldvalid => {
                 results.push(file);
             }
         });
-        return results;
+        return true ? results.filter(f => pathtourl[f]) : results;
     }
 
     const rootDirB = process.cwd();
