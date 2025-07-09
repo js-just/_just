@@ -687,6 +687,7 @@ code, code span {
     border-bottom-right-radius: 0px;
     pointer-events: none;
     white-space: nowrap;
+    user-select: none;
 }
 .note, .ntip, .impr, .warn, .caut {
     border-top-right-radius: 10px;

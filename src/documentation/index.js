@@ -474,8 +474,8 @@ checkTLD(domain).then(tldvalid => {
             .replace(/\\(.)/g, (match, textdata) => {return `&#${textdata.charCodeAt(0)};${textdata.slice(1)}`})
             .replaceAll('\\', '');
     }
-    const MDcode = (input, mode) => {
-        const specialChars = ['*', '_', '#', '-', '=', '~', '.', ':', '^', '|', '<', '>', '[', ']', '(', ')', '\'', '"'];
+    const MDcode = (input, mode, cde) => {
+        const specialChars = cde ? ['*', '~', '.', ':', '^', '|', '[', ']', '(', ')', '\''] : ['*', '_', '#', '-', '=', '~', '.', ':', '^', '|', '<', '>', '[', ']', '(', ')', '\'', '"'];
         specialChars.forEach(char => {
             const code = mode ? '' : `&#${char.charCodeAt(0)};`;
             input = input.replaceAll(char, code);
@@ -501,15 +501,20 @@ checkTLD(domain).then(tldvalid => {
                         if (highlightcode && !supportedlangs.includes(lang_) && langaliases[lang_]) {
                             lang_ = langaliases[lang_]
                         }
-                        if (lang_ == 'shell' && code_.startsWith('#!/bin/bash')) {
-                            lang_ = 'bash'
-                        }
                         console.log(`Debug: Code language: ${lang_}`);
                         const hljshighlight = highlightcode && supportedlangs.includes(lang_)
-                        const output_ = hljshighlight ? filter_(hljs.highlight(code_, {language: lang_}).value) : undefined;
+                        const output_ = hljshighlight ? hljs.highlight(code_, {language: lang_}).value : undefined;
                         insertedcode = true;
                         return `<code class="${cssclass.code}">${
-                            hljshighlight ? `<code>${langstext[lang_]}</code>${lang_ == 'css' ? _just.highlight.css(output_) : output_}` : filter_(code_)
+                            hljshighlight ? 
+                            `<code>${langstext[lang_]}</code>${
+                                filter_(MDcode(
+                                    `${lang_ == 'css' ? _just.highlight.css(output_) : output_}`, 
+                                    false, 
+                                    true
+                                ))
+                            }` : 
+                            filter_(MDcode(code_, false, true))
                         }</code>`;
                     })
                 .replace(/(?<=\s|^|[.,!?;:*_^~=])`(.*?)`(?=\s|[.,!?;:*_^~=]|$)/g, (match, code) => {return `<code>${MDcode(code)}</code>`})

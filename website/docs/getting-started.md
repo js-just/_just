@@ -2,7 +2,7 @@ _just: title: Getting Started
 # Getting Started
 ## Installation
 #### Making your first project
-1. Create new repository, and create `/.github/workflows/publish.yml` file, template:
+- Create new repository, and create `/.github/workflows/publish.yml` file, template:
 ```yml
 name: Website
 
@@ -57,7 +57,7 @@ You can also choose _just version:
         uses: js-just/_just@(put version name here)
 ```
 **If you know what exactly you are doing, you may change anything.**
-2. Create `just.config.js` file in the root directory:
+- Create `just.config.js` file in the root directory:
 Choose what mode you want to use.
 `Postprocessor` mode:
 ```js
@@ -70,7 +70,7 @@ module.exports = {
 module.exports = {
     type: "redirect", 
     redirect_config: {
-        url: "https://justdeveloper.is-a.dev/", // Required. Replace with destination URL.
+        url: "https://example.com/", // Required. Replace with destination URL.
     }
 }
 ```
@@ -90,9 +90,10 @@ module.exports = {
     }
 }
 ```
-3. Read the documentation for the mode that you've chosen.
+- Read the documentation for the mode that you've chosen.
+---
 #### Pro installation
-1. Create or modify your `.github/workflows/github_pages_workflow_name.yml`:
+- Create or modify your `.github/workflows/github_pages_workflow_name.yml`:
 Make sure that permissions are allowing to write pages and id-token, and does not allowing to write contents.
 ```yml
 permissions:
@@ -119,7 +120,7 @@ jobs:
         with:
           path: .
 ```
-2. Create `just.config.js` file:
+- Create `just.config.js` file:
 Basic usage:
 ```js
 module.exports = {
@@ -133,4 +134,4 @@ module.exports = {
   type: ["docs", "compress"]
 }
 ```
-3. Read the documentation for the mode/modes that you've chosen.
+- Read the documentation for the mode/modes that you've chosen.
