@@ -73,5 +73,7 @@
     "f95": "fortran",
     "nc": "gcode",
     "gms": "gams",
-    "gss": "gauss"
+    "gss": "gauss",
+    "golang": "go",
+    "gololang": "golo"
 }
