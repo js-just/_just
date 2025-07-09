@@ -73,3 +73,15 @@ end
 ```md
 # markdown inside markdown
 ```
+```go
+// go
+```
+```golang
+// golang
+```
+```golo
+
+```
+```gololang
+
+```
