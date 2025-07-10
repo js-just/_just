@@ -1049,11 +1049,11 @@ checkTLD(domain).then(tldvalid => {
 
 
     const fetchjson = async (protocol) => {
-        const response1 = await fetch(`${protocol}://${domain}/_just/`);
-        const data1 = await response1.json();
-        const response2 = await fetch(`${protocol}://${domain}/_just/${data1.json}.json`);
-        const data2 = await response2.json();
-        fs.writeFileSync(path.join(websitepath, '_just', `${data1.json}.json`), JSON.stringify(data2));
+        const response1 = await fetch(`${protocol}://${domain}/_just/`).catch() || undefined;
+        const data1 = response1 ? await response1.json().catch() || undefined : undefined;
+        const response2 = await fetch(`${protocol}://${domain}/_just/${data1.json}.json`).catch() || undefined;
+        const data2 = response2 ? await response2.json().catch() || undefined : undefined;
+        if (data1 && data2) fs.writeFileSync(path.join(websitepath, '_just', `${data1.json}.json`), JSON.stringify(data2));
     }
     if (domain) {
         try {

@@ -3,8 +3,7 @@ name: Update "latest" repo
 on:
   push:
     paths:
-      - ".github/workflows/latest.yml"
-  push:
+    - ".github/workflows/latest.yml"
     tags:
       - v*
   workflow_dispatch:
