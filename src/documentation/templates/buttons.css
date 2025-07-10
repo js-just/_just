@@ -18,3 +18,61 @@
 .ios #search {
     display: none !important;
 }
+
+.next {
+    padding: 10px;
+    margin-top: 45px;
+    border: 2px solid var(--md);
+    border-radius: 20px;
+}
+.next:before {
+    content: '';
+    background-color: var(--md);
+    opacity: 0.5;
+    width: calc(100% + 20px);
+    height: 1px;
+    display: block;
+    top: -30px;
+    position: relative;
+    left: -10px;
+}
+.next button {
+    width: 50%;
+    background-color: transparent;
+    color: var(--cl);
+    font-weight: bold;
+    opacity: 1;
+    border-radius: 20px;
+    overflow: hidden;
+}
+.next .next1 {
+    border-right: 1px solid var(--md);
+    border-top-right-radius: 0px;
+    border-bottom-right-radius: 0px;
+}
+.next .next2 {
+    border-left: 1px solid var(--md);
+    border-top-left-radius: 0px;
+    border-bottom-left-radius: 0px;
+}
+.next button:hover {
+    scale: 101%;
+    background-color: #ffffff20;
+}
+.l .next button:hover {
+    background-color: #00000020;
+}
+.next button small, .next button span {
+    display: block !important;
+}
+.next button small {
+    font-weight: normal;
+}
+.next button:hover small, .next button:hover span {
+    translate: 0px -50%;
+}
+.next button:hover small {
+    scale: 103%;
+    opacity: 0 !important;
+    filter: blur(2px);
+}

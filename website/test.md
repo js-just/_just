@@ -74,3 +74,6 @@ https://just.is-a.dev
 
 ## v0.0.29 features:
 -# small text
+
+_just: prev: /docs/getting-started
+_just: next: /docs/getting-started

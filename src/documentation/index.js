@@ -53,6 +53,7 @@ _just.number = require('../modules/number.js');
 _just.js = require('../modules/js.js');
 _just.version = vrsn;
 _just.array = require('../modules/array.js');
+_just.prevnext = require('./prevnext.js');
 
 const link = (text, link_, ext = false, extid = "ext", target = "_blank", title_) => `<a href="${link_}" target="${target}"${ext ? ` id="${extid}"` : ''}${title_ ? ` title="${title_}"` : ''}>${text}</a>`;
 const span = (text) => `<span>${text}</span>`;
@@ -159,6 +160,9 @@ const cssclass = {
     "debug": dataname2[2],
     "error": dataname2[4],
     "small": dataname2[8],
+    "next1": dataname2[12],
+    "next2": dataname2[13],
+    "next": dataname2[14],
 }
 const cssid = {
     "l": dataname[5]+randomChar(1),
@@ -880,7 +884,7 @@ checkTLD(domain).then(tldvalid => {
         }
 
         const headers = [];
-        const toHTML = hbuoclpMDtoHTML(
+        let toHTML = hbuoclpMDtoHTML(
             addEnd(content, '\n')
                 .replace(/> (.*?)\n\n> (.*?)\n/g, `> $1\n\n> ${_just.element(dataname[7])}$2\n`)
                 .replaceAll('\n>\n> ', '\n> ')
@@ -914,10 +918,22 @@ checkTLD(domain).then(tldvalid => {
                             </li>`;
         }
 
+        const idk_ = toHTML.endsWith('</p>');
+        const prevnext = _just.prevnext.get(idk_ ? _just.string.removeLast(toHTML, '</p>') : toHTML);
+        toHTML = idk_ ? prevnext[0] + '</p>' : prevnext[0];
+        let pagejs = '';
+        const btnjs = (id, href) => `document.getElementById('${id}').addEventListener("click",()=>{const link=document.createElement('a');link.href='${href}';link.target='_self';link.style.display='none';document.body.appendChild(link);link.click();document.body.removeChild(link)});`
+        if (prevnext[1].prev) {
+            pagejs = btnjs(filename.css, prevnext[1].prev)
+        }
+        if (prevnext[1].next) {
+            pagejs += btnjs(filename.js, prevnext[1].next)
+        }
+
         const pages = generateListItems(addFolderToPageList(pageList));
         let outHTML = HTML
             .replace('<html>', `<html${htmlLang}>`)
-            .replace('REPLACE_SCRIPT', `const ${dataname2[11]}=${JSON.stringify(pages[1])}`)
+            .replace('REPLACE_SCRIPT', `const ${dataname2[11]}=${JSON.stringify(pages[1])};${pagejs ? `document.addEventListener('DOMContentLoaded',()=>{${pagejs}});` : ''}`)
             .replaceAll('REPLACE_CSS', filename.css)
             .replaceAll('REPLACE_JS', filename.js)
             .replace('REPLACE_CHARSET', charset)
@@ -932,9 +948,9 @@ checkTLD(domain).then(tldvalid => {
             .replace('REPLACE_FOOTER', filterText(footer))
             .replace('REPLACE_LINKS', htmlnav())
             .replace('REPLACE_BUTTONS', htmlnav(1));
-        
+
         fs.writeFileSync(outFilePath('txt'), toHTML, charset);
-        htmlfiles[outFilePath('html')] = outHTML.replace(
+        htmlfiles[outFilePath('html')] = outHTML.replace('REPLACE_PREVNEXT', _just.prevnext.html(prevnext[1], cssclass.next, cssclass.next1, cssclass.next2, filename.js, filename.css)).replace(
                 'REPLACE_CONTENT',
                 _just.string.removeLast(
                     addEnd(
@@ -1009,11 +1025,11 @@ checkTLD(domain).then(tldvalid => {
     fs.writeFileSync(
         path.join(websitepath, '_just', `${filename.js}.js`),
         "try{"+_just.js.set(
-            JS.replace('\'REPLACE_PUBLICOUTPUT\'', hideOutput?false:publicOutput?false:true).replace('\'REPLACE_SEARCHV2\'', CSSdata[1] || false).replace('let searchurl = "/_just/search";', `let searchurl = "/_just/${dataname[9]}.json";`), 
+            JS.replace('\'REPLACE_PUBLICOUTPUT\'', hideOutput?false:publicOutput?false:true).replace('\'REPLACE_SEARCHV2\'', CSSdata[1] || false).replace('let searchurl = "/_just/search";', `let searchurl="/_just/${dataname[9]}.json";`), 
             JSdata.names.filter(n => n !== jstrimmedstrvar), 
             dataname2.reverse().slice(0, JSdata.total-1),
             jstrimmedstrvarbasestr
-        ).replace("/^[!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~]+$/.test(null)", `/^[!"#$%&'()*+,-./:;<=>?@[\\]^_\`{|}~]+$/.test(${jstrimmedstrvar})`)+`}catch(e_){document.addEventListener('DOMContentLoaded', () => {${JSerr}});${JSerr}}`,
+        ).replace("/^[!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~]+$/.test(null)", `/^[!"#$%&'()*+,-./:;<=>?@[\\]^_\`{|}~]+$/.test(${jstrimmedstrvar})`)+`}catch(e_){document.addEventListener('DOMContentLoaded',()=>{${JSerr}});${JSerr}}`,
         template.charset
     );
 

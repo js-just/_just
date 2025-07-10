@@ -1,7 +1,14 @@
 _just: title: Getting Started
 # Getting Started
+### Necessary knowledge
+This documentation assumes some familiarity with
+- JavaScript
+- YAML
+- Markdown
+- HTML
+- CSS
 ## Installation
-#### Making your first project
+### Making your first project
 - Create new repository, and create `/.github/workflows/publish.yml` file, template:
 ```yml
 name: Website
@@ -59,13 +66,14 @@ You can also choose _just version:
 **If you know what exactly you are doing, you may change anything.**
 - Create `just.config.js` file in the root directory:
 Choose what mode you want to use.
-`Postprocessor` mode:
+ 
+Using `Postprocessor` mode:
 ```js
 module.exports = {
   type: "postprocessor"
 }
 ```
-`Redirector` mode: 
+Using `Redirector` mode: 
 ```js
 module.exports = {
     type: "redirect", 
@@ -74,13 +82,13 @@ module.exports = {
     }
 }
 ```
-`Compressor` mode:
+Using `Compressor` mode:
 ```js
 module.exports = {
     type: "compress"
 }
 ```
-`Generator` mode:
+Using `Generator` mode:
 ```js
 module.exports = {
     type: "docs",
@@ -92,7 +100,7 @@ module.exports = {
 ```
 - Read the documentation for the mode that you've chosen.
 ---
-#### Pro installation
+### Pro installation
 - Create or modify your `.github/workflows/github_pages_workflow_name.yml`:
 Make sure that permissions are allowing to write pages and id-token, and does not allowing to write contents.
 ```yml
@@ -135,3 +143,5 @@ module.exports = {
 }
 ```
 - Read the documentation for the mode/modes that you've chosen.
+
+_just: prev: /docs
