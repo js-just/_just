@@ -25,6 +25,7 @@ SOFTWARE.
 */
 
 const regex = /(?<=^|\n)_just: (prev|next): \/(.*?)(?=\n|$)/g;
+exports.regex = regex;
 
 /**
  * @param {string} text 
@@ -65,6 +66,6 @@ exports.html = (data, n0, n1, n2, pid, nid) => {
     if (!data.prev && !data.next) {
         return '';
     } else {
-        return `<div class="${n0}">${data.prev ? `<button class="${n1}" id="${pid}"><small>Previous page</small><span>${data.prev}</span></button>` : ''}${data.next ? `<button class="${n2}" id="${nid}"><small>Next page</small><span>${data.next}</span></button>` : ''}</div>`
+        return `<div class="${n0}"${data.next && !data.prev ? ' style="display:flex;flex-direction:column;"' :''}>${data.prev ? `<button class="${n1}" id="${pid}"><small>Previous page</small><span>${data.prev}</span></button>` : ''}${data.next ? `<button class="${n2}" id="${nid}"${data.next && !data.prev ? ' style="align-self:flex-end;"' : ''}><small>Next page</small><span>${data.next}</span></button>` : ''}</div>`;
     }
 }

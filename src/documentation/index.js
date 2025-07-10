@@ -920,14 +920,14 @@ checkTLD(domain).then(tldvalid => {
 
         const idk_ = toHTML.endsWith('</p>');
         const prevnext = _just.prevnext.get(idk_ ? _just.string.removeLast(toHTML, '</p>') : toHTML);
-        toHTML = idk_ ? prevnext[0] + '</p>' : prevnext[0];
+        toHTML = idk_ ? prevnext[0].replace(_just.prevnext.regex, '') + '</p>' : prevnext[0].replace(_just.prevnext.regex, '');
         let pagejs = '';
         const btnjs = (id, href) => `document.getElementById('${id}').addEventListener("click",()=>{const link=document.createElement('a');link.href='${href}';link.target='_self';link.style.display='none';document.body.appendChild(link);link.click();document.body.removeChild(link)});`
         if (prevnext[1].prev) {
-            pagejs = btnjs(filename.css, prevnext[1].prev)
+            pagejs = btnjs(filename.js, prevnext[1].prev)
         }
         if (prevnext[1].next) {
-            pagejs += btnjs(filename.js, prevnext[1].next)
+            pagejs += btnjs(filename.css, prevnext[1].next)
         }
 
         const pages = generateListItems(addFolderToPageList(pageList));
