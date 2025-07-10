@@ -357,13 +357,26 @@ const pageList = getPageList();
 
 function generateListItems(PageList) {
     const folderMap = {};
+    const folderList = [];
+    const donotinsert = [];
+    const pagelinks = {};
+    const pagefolder = {};
+    const foldernameify = (fldrname) => _just.string.toText(_just.string.Aa(fldrname), true);
 
     PageList.forEach(page => {
         const folder = page.folder || '';
         if (!folderMap[folder]) {
             folderMap[folder] = [];
+            if (folder != '') folderList.push(foldernameify(folder));
         }
         folderMap[folder].push(page);
+        pagefolder[page.title] = foldernameify(folder);
+    });
+    PageList.forEach(page => {
+        if (folderList.includes(page.title) && pagefolder[page.title] !== page.title && !pagefolder[page.title].split('').includes('/')) {
+            pagelinks[page.title] = page.path;
+            donotinsert.push(page.title);
+        }
     });
 
     let listItemsHTML = '';
@@ -378,11 +391,11 @@ function generateListItems(PageList) {
         const pages = folderMap[folderName];
 
         listItemsHTML += `${ folderName != '' ? `<li>
-                            <span><strong>${_just.string.toText(_just.string.Aa(folderName), true)}</strong></span>
+                            <span>${donotinsert.includes(foldernameify(folderName)) && pagelinks[foldernameify(folderName)] ? `<a href="${pagelinks[foldernameify(folderName)]}" target="_self">` : ''}<strong>${foldernameify(folderName)}</strong>${donotinsert.includes(foldernameify(folderName)) && pagelinks[foldernameify(folderName)] ? '</a>' : ''}</span>
                             <ul>` : '<li><ul>'}`;
         pages.forEach(page => {
             page.title = page.title == 'index' ? 'Home' : page.title;
-            listItemsHTML += `<li><a href="${page.path}"><span>${page.title}</span></a></li>`;
+            listItemsHTML += donotinsert.includes(page.title) ? '' : `<li><a href="${page.path}" target="_self"><span>${page.title}</span></a></li>`;
             pageListJSON.push([page.path, page.title]);
         });
         listItemsHTML += `   </ul>
