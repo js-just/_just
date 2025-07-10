@@ -23,6 +23,7 @@
 #!/bin/bash
 mkdir -p latest && \
 cp "LICENSE" "latest/LICENSE" && \
+cp "README.md" "latest/README.md" && \
 YMLTEMPLATE=$(cat "src/latest.yml") && \
 chmod +x "src/latest.py" && \
 LATEST=$(python3 "src/latest.py") && \

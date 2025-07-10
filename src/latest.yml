@@ -20,7 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-name: '_just'
+name: 'latest'
 description: 'Just an Ultimate Site Tool: Use latest version'
 author: 'JustStudio.'
 branding:
