@@ -326,7 +326,7 @@ function getPageList() {
             pagePath = _just.string.removeLast(pagePath, 'index')
             title = 'Home';
         } else {
-            title = _just.string.removeLast(path.basename(pagePath), ext);
+            title = _just.string.toText(_just.string.Aa(_just.string.removeLast(path.basename(pagePath), ext)), true);
         }
         logs += `${l[2]}PAGEPATH (after): ${pagePath}`;
         logs += `${l[2]}TITLE (before): ${title}`;
@@ -378,10 +378,10 @@ function generateListItems(PageList) {
         const pages = folderMap[folderName];
 
         listItemsHTML += `${ folderName != '' ? `<li>
-                            <span><strong>${folderName}</strong></span>
+                            <span><strong>${_just.string.toText(_just.string.Aa(folderName), true)}</strong></span>
                             <ul>` : '<li><ul>'}`;
         pages.forEach(page => {
-            page.title = page.title == 'index' ? 'Home' : String(page.title).charAt(0).toUpperCase() + String(page.title).slice(1);
+            page.title = page.title == 'index' ? 'Home' : page.title;
             listItemsHTML += `<li><a href="${page.path}"><span>${page.title}</span></a></li>`;
             pageListJSON.push([page.path, page.title]);
         });
@@ -913,7 +913,7 @@ checkTLD(domain).then(tldvalid => {
         for (const [idk, headerdata] of Object.entries(contents)) {
             pageHeaders += `<li${ headerdata[2] ? ' class="secondary"' : '' }>
                                 <a href="#${headerdata[1]}">
-                                    ${addEnd(span(headerdata[0]), ':').slice(0,-1)}
+                                    ${span(_just.string.toText(headerdata[0]))}
                                 </a>
                             </li>`;
         }

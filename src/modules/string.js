@@ -76,3 +76,22 @@ exports.shuffleString = function (str) {
   }
   return arr.join('');
 }
+
+/**
+ * @param {string} str 
+ * @returns {string}
+ */
+exports.Aa = function (str) {
+    return String(str).charAt(0).toUpperCase() + String(str).slice(1);
+}
+
+/**
+ * @param {string} str
+ * @param {boolean?} spaces
+ * @returns {string}
+ */
+exports.toText = function (str, spaces = false) {
+    if (str.endsWith(':')) str = str.slice(0,-1)
+    else if (str.endsWith('?')) str = str.slice(0,-1);
+    return spaces ? str.replaceAll('_', ' ').replaceAll('-', ' ') : str;
+}

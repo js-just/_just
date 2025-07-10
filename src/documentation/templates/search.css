@@ -18,7 +18,7 @@
     min-width: max-content;
     width: 70%;
 }
-.searchactive .search {
+.searchactive:not(.ios) .search {
     translate: calc(var(--sdfix) - 50%) 55px;
     transition: 0ms;
 }

@@ -24,6 +24,10 @@
     margin-top: 45px;
     border: 2px solid var(--md);
     border-radius: 20px;
+    max-width: 769px;
+    position: relative;
+    translate: -50% 0px;
+    left: 50%;
 }
 .next:before {
     content: '';
@@ -64,6 +68,7 @@
 }
 .next button small, .next button span {
     display: block !important;
+    white-space: nowrap;
 }
 .next button small {
     font-weight: normal;
@@ -75,4 +80,10 @@
     scale: 103%;
     opacity: 0 !important;
     filter: blur(2px);
+    -webkit-filter: blur(2px);
+}
+@media (max-width: 450px) {
+    .next {
+        display: none;
+    }
 }
