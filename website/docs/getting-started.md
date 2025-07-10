@@ -2,6 +2,10 @@ _just: title: Getting Started
 # Getting Started
 ### Necessary knowledge
 This documentation assumes some familiarity with
+- GitHub
+- GitHub Actions
+- GitHub Pages
+And some familiarity with these languages
 - JavaScript
 - YAML
 - Markdown
@@ -38,11 +42,11 @@ jobs:
       - name: Generate with _just
         uses: js-just/_just@v0.0.29
         with:
-          path: .
+          path: . # Path to your website directory to be generated/compressed. (Only for compressor and generator modes)
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: .
+          path: . # Path to your entire website to be deployed to GitHub Pages
 
   deploy:
     environment:
@@ -102,7 +106,7 @@ module.exports = {
 ---
 ### Pro installation
 - Create or modify your `.github/workflows/github_pages_workflow_name.yml`:
-Make sure that permissions are allowing to write pages and id-token, and does not allowing to write contents.
+Make sure that permissions allow writing `pages` and `id-token`, but do not allow writing `contents`, only read.
 ```yml
 permissions:
   contents: read
@@ -117,16 +121,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Setup Pages
-        uses: actions/configure-pages@v5
       - name: Generate with _just
-        uses: js-just/_just@(version name (recommended) / main branch (latest commit) (unstable, not recommended) / commit SHA (not recommended))
+        uses: js-just/_just@ # version name (recommended) (example: v0.0.29) / main branch (latest commit) (unstable, not recommended) / commit SHA (not recommended)
         with:
-          path: (path to your website directory) (for compressor or generator modes only)
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: .
+          path: # Path to your website directory to be generated/compressed. (Only for compressor and generator modes)
 ```
 - Create `just.config.js` file:
 Basic usage:
