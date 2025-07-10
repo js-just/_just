@@ -441,6 +441,7 @@ function checkdomain(input, throwerror) {
     }
 }
 const domain = docsConfig ? checkdomain(docsConfig.domain, true) || undefined : undefined;
+const caughterrors = [];
 checkTLD(domain).then(tldvalid => {
     if (domain && domain.endsWith('.is-a.dev')) {
         _just.ssapi["is-a.dev"](domain);
