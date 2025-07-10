@@ -60,12 +60,20 @@ exports.get = (text) => {
  * @param {string} n2 
  * @param {string} pid 
  * @param {string} nid 
+ * @param {[string[]]} pl
  * @returns {string}
  */
-exports.html = (data, n0, n1, n2, pid, nid) => {
+exports.html = (data, n0, n1, n2, pid, nid, pl) => {
     if (!data.prev && !data.next) {
         return '';
     } else {
-        return `<div class="${n0}"${data.next && !data.prev ? ' style="display:flex;flex-direction:column;"' :''}>${data.prev ? `<button class="${n1}" id="${pid}"><small>Previous page</small><span>${data.prev}</span></button>` : ''}${data.next ? `<button class="${n2}" id="${nid}"${data.next && !data.prev ? ' style="align-self:flex-end;"' : ''}><small>Next page</small><span>${data.next}</span></button>` : ''}</div>`;
+        const dataprev = '/' + data.prev;
+        const datanext = '/' + data.next;
+        const pl1 = [], pl2 = {};
+        for (const [id, p] of Object.entries(pl)) {
+            pl1.push(p[0]);
+            pl2[p[0]] = p[1];
+        }
+        return `<div class="${n0}"${data.next && !data.prev ? ' style="display:flex;flex-direction:column;"' :''}>${data.prev && pl1.includes(dataprev) ? `<button class="${n1}" id="${pid}"><small>Previous page</small><span>${pl2[dataprev] || data.prev}</span></button>` : ''}${data.next && pl1.includes(datanext) ? `<button class="${n2}" id="${nid}"${data.next && !data.prev ? ' style="align-self:flex-end;"' : ''}><small>Next page</small><span>${pl2[datanext] || data.next}</span></button>` : ''}</div>`;
     }
 }

@@ -922,7 +922,7 @@ checkTLD(domain).then(tldvalid => {
         const prevnext = _just.prevnext.get(idk_ ? _just.string.removeLast(toHTML, '</p>') : toHTML);
         toHTML = idk_ ? prevnext[0].replace(_just.prevnext.regex, '') + '</p>' : prevnext[0].replace(_just.prevnext.regex, '');
         let pagejs = '';
-        const btnjs = (id, href) => `document.getElementById('${id}').addEventListener("click",()=>{const link=document.createElement('a');link.href='${href}';link.target='_self';link.style.display='none';document.body.appendChild(link);link.click();document.body.removeChild(link)});`
+        const btnjs = (id, href) => `document.getElementById('${id}').addEventListener("click",()=>{const link=document.createElement('a');link.href='/${href}';link.target='_self';link.style.display='none';document.body.appendChild(link);link.click();document.body.removeChild(link)});`
         if (prevnext[1].prev) {
             pagejs = btnjs(filename.js, prevnext[1].prev)
         }
@@ -950,7 +950,7 @@ checkTLD(domain).then(tldvalid => {
             .replace('REPLACE_BUTTONS', htmlnav(1));
 
         fs.writeFileSync(outFilePath('txt'), toHTML, charset);
-        htmlfiles[outFilePath('html')] = outHTML.replace('REPLACE_PREVNEXT', _just.prevnext.html(prevnext[1], cssclass.next, cssclass.next1, cssclass.next2, filename.js, filename.css)).replace(
+        htmlfiles[outFilePath('html')] = outHTML.replace('REPLACE_PREVNEXT', _just.prevnext.html(prevnext[1], cssclass.next, cssclass.next1, cssclass.next2, filename.js, filename.css, pages[1])).replace(
                 'REPLACE_CONTENT',
                 _just.string.removeLast(
                     addEnd(
