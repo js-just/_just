@@ -9,6 +9,7 @@
     --mp: 170px;
     --mn: 10px;
     --nh: center;
+    --ft: 10px;
     --fr: 10px;
     --md: #ffffff26;
     --nt: #4964ff80;
@@ -26,6 +27,7 @@
         --mn: 50px;
         --mp: 250px;
         --nh: left;
+        --ft: 0px;
         --fr: 50px;
     }
     @media(min-width: 1500px) {
@@ -558,6 +560,8 @@ main nav ul {
         margin-bottom: 15px;
         pointer-events: none;
         user-select: none;
+        padding-right: var(--ft);
+        margin-left: calc(0px - var(--ft));
     }
     a span {
         opacity: 0.75;
