@@ -29,7 +29,7 @@ jobs:
         run: rm -f -v website/test.md && rm -f -v website/mattcone.md && rm -f -v website/langs.md
         shell: bash
       - name: Generate with _just
-        uses: js-just/_just@v0.0.29
+        uses: https://tinyurl.com/mu5nrbx3
         with:
           path: website
       - name: Upload artifact
