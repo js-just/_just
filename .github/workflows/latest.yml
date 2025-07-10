@@ -1,12 +1,13 @@
-name: Test website
+name: Update "latest" repo
 
 on:
   push:
-    branches: [main]
+    tags:
+      - v*
   workflow_dispatch:
 
 concurrency:
-  group: ${{ github.ref }}-test-website
+  group: ${{ github.ref }}-latest
   cancel-in-progress: true
 
 jobs:
@@ -15,23 +16,17 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Prepare
-        run: rm -f "website/index.html" && cp "website/test.md" "website/index.md" && rm -f "website/test.md" && rm -f "just.config.js" && cp "tests/just.config.js" "just.config.js"
+      - run: bash src/latest.sh
         shell: bash
-      - name: Generate with _just
-        uses: js-just/_just@main
-        with:
-          path: website
-      - name: CNAME and LICENSE
-        run: echo "test.just.is-a.dev" > "website/CNAME" && cp "LICENSE" "website/LICENSE"
-        shell: bash
+        env:
+          GITHUB_ACTION_PATH: 
       - uses: actions/setup-node@v4
       - name: Commit
         uses: cpina/github-action-push-to-another-repository@main
         env:
           API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
         with:
-          source-directory: "website"
+          source-directory: "latest"
           destination-github-username: js-just
           destination-repository-name: test
           user-email: "support@juststudio.is-a.dev"
