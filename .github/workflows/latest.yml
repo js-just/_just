@@ -4,6 +4,8 @@ on:
   push:
     tags:
       - v*
+    paths:
+      - ".github/workflows/latest.yml"
   workflow_dispatch:
 
 concurrency:
