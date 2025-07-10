@@ -1050,33 +1050,20 @@ checkTLD(domain).then(tldvalid => {
 
     const fetchjson = async (protocol) => {
         const response1 = await fetch(`${protocol}://${domain}/_just/`).catch() || undefined;
-        const data1 = response1 ? await response1.json().catch() || undefined : undefined;
+        const data1 = response1 ? await response1.json() || undefined : undefined;
         const response2 = await fetch(`${protocol}://${domain}/_just/${data1.json}.json`).catch() || undefined;
-        const data2 = response2 ? await response2.json().catch() || undefined : undefined;
+        const data2 = response2 ? await response2.json() || undefined : undefined;
         if (data1 && data2) fs.writeFileSync(path.join(websitepath, '_just', `${data1.json}.json`), JSON.stringify(data2));
     }
     if (domain) {
-        try {
-            fetchjson('http').catch((ee)=>{
-                caughterrors.push(ee);
-                errorlogs += `${l[1]}AT LINE ${_just.line.line() || '-1'} (__REPLACE_LINE__): ${_just.line.err(ee)}`;
-                try {
-                    fetchjson('https')
-                } catch (e_e) {
-                    caughterrors.push(e_e);
-                    errorlogs += `${l[1]}AT LINE ${_just.line.line() || '-1'} (__REPLACE_LINE__): ${_just.line.err(e_e)}`;
-                }
-            })
-        } catch (ee) {
+        fetchjson('http').catch((ee)=>{
             caughterrors.push(ee);
             errorlogs += `${l[1]}AT LINE ${_just.line.line() || '-1'} (__REPLACE_LINE__): ${_just.line.err(ee)}`;
-            try {
-                fetchjson('https')
-            } catch (e_e) {
+            fetchjson('https').catch((e_e)=>{
                 caughterrors.push(e_e);
-                errorlogs += `${l[1]}AT LINE ${_just.line.line() || '-1'} (__REPLACE_LINE__): ${_just.line.err(e_e)}`;
-            }
-        }
+                errorlogs += `${l[1]}AT LINE ${_just.line.line() || '-1'} (__REPLACE_LINE__): ${_just.line.err(ee)}`;
+            });
+        })
     }
     console.log(errorlogs + configlogs);
     const outlogs = hideOutput?'':logs+errorlogs+configlogs;
