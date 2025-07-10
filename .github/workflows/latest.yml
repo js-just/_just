@@ -30,7 +30,7 @@ jobs:
         with:
           source-directory: "latest"
           destination-github-username: js-just
-          destination-repository-name: test
+          destination-repository-name: latest
           user-email: "support@juststudio.is-a.dev"
           target-branch: main
       
