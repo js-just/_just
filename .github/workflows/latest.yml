@@ -2,10 +2,11 @@ name: Update "latest" repo
 
 on:
   push:
-    tags:
-      - v*
     paths:
       - ".github/workflows/latest.yml"
+  push:
+    tags:
+      - v*
   workflow_dispatch:
 
 concurrency:
