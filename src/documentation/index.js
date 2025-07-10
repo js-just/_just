@@ -1056,7 +1056,16 @@ checkTLD(domain).then(tldvalid => {
     }
     if (domain) {
         try {
-            fetchjson('http')
+            fetchjson('http').catch((ee)=>{
+                caughterrors.push(ee);
+                errorlogs += `${l[1]}AT LINE ${_just.line.line() || '-1'} (__REPLACE_LINE__): ${_just.line.err(ee)}`;
+                try {
+                    fetchjson('https')
+                } catch (e_e) {
+                    caughterrors.push(e_e);
+                    errorlogs += `${l[1]}AT LINE ${_just.line.line() || '-1'} (__REPLACE_LINE__): ${_just.line.err(e_e)}`;
+                }
+            })
         } catch (ee) {
             caughterrors.push(ee);
             errorlogs += `${l[1]}AT LINE ${_just.line.line() || '-1'} (__REPLACE_LINE__): ${_just.line.err(ee)}`;
