@@ -669,7 +669,7 @@ checkTLD(domain).then(tldvalid => {
                 console.log('Debug: File found: '+file);
             }
         });
-        return usePathInput ? results.filter(f => pathtourl[f]) : results;
+        return usePathInput ? results.filter(f => pathtourl[f] || pathtourl[f] == '') : results;
     }
 
     const rootDirB = process.cwd();
