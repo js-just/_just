@@ -166,6 +166,9 @@ const cssclass = {
     "next1": dataname2[12],
     "next2": dataname2[13],
     "next": dataname2[14],
+    "linkspace": dataname2[15],
+    "linkmark": dataname2[16],
+    "linkdot": dataname2[17],
 }
 const cssid = {
     "l": dataname[5]+randomChar(1),
@@ -1023,9 +1026,20 @@ checkTLD(domain).then(tldvalid => {
     for (const [pathh, htmlcontent] of Object.entries(htmlfiles)) {
         const updated = _just.customCSS.highlightclasses(CSSHIGHLIGHTtemplate, CSS, htmlcontent, dataname[8]);
         CSS = updated[0];
+        const fixlinkregex = (char) => new RegExp(`<a href="(.*?)" target="_blank" id="${cssid.ext}"(.*?)>(.*?)</a>${char}`, 'g');
+        let htmloutput = updated[1]
+            .replace(fixlinkregex(' '), (match, href_, title_, text_) => `<a href="${href_}" target="_blank" id="${cssid.ext}"${title_} class="${cssclass.linkspace}">${text_}</a>`)
+            .replace(fixlinkregex('(.|,|_)'), (match, href_, title_, text_, char_) => `<a href="${href_}" target="_blank" id="${cssid.ext}"${title_} class="${cssclass.linkdot}">${text_}</a>${char_}`)
+            .replace(fixlinkregex('( {1,}.)'), (match, href_, title_, text_) => `<a href="${href_}" target="_blank" id="${cssid.ext}"${title_} class="${cssclass.linkdot}">${text_}</a>.`)
+            .replace(fixlinkregex('( {1,},)'), (match, href_, title_, text_) => `<a href="${href_}" target="_blank" id="${cssid.ext}"${title_} class="${cssclass.linkdot}">${text_}</a>,`);
+        const charss=["!", "?", ":", ";", "#", "$", "%", "^", "&", "*", "\\(", "\\)", "-", "=", "+", '"', "'", '`', "\\[", "\\]", "\\{", "\\}", "\\\\", "\\|", "/", "~", "@", "№"];
+        charss.forEach(charrr => {
+            htmloutput = htmloutput
+                .replace(fixlinkregex(charrr), (match, href_, title_, text_) => `<a href="${href_}" target="_blank" id="${cssid.ext}"${title_} class="${cssclass.linkspace}">${text_}</a>${charrr == "\\\\" ? '\\' : charrr.replaceAll('\\', '')}`);
+        });
         fs.writeFileSync(
             pathh, 
-            updated[1].replace(/(?<=<code>)(.*?)(?=<\/code>)/g, (match, cde) => cde.replace(/&&#35;(.*?);/g, (match, num_) => {
+            htmloutput.replace(/(?<=<code>)(.*?)(?=<\/code>)/g, (match, cde) => cde.replace(/&&#35;(.*?);/g, (match, num_) => {
                     if (/\d/.test(num_)) {
                         return `&#${num_};`;
                     } else {

@@ -1113,3 +1113,40 @@ html:has(.navleft) .main {
 .navleft .navbar .links {
     translate: calc(0px - calc(var(--mp) - 10px)) !important;
 }
+
+.linkspace {
+    margin-right: -12px;
+}
+.linkspace:after {
+    translate: 0px -20%;
+}
+.linkspace:hover:not(:focus):after {
+    translate: 0px -25%;
+}
+
+.linkmark {
+    margin-right: -17px;
+}
+.linkmark:after {
+    translate: -1px -70%;
+}
+.linkmark:hover:not(:focus) {
+    margin-right: -10px;
+}
+.linkmark:hover:not(:focus):after {
+    translate: 0px -25%;
+}
+
+.main #ext {
+    white-space: nowrap;
+}
+
+.linkdot {
+    margin-right: -17px;
+}
+.linkdot:after {
+    translate: 2px -40%;
+}
+.linkdot:hover:not(:focus):after {
+    translate: 2px -45%;
+}

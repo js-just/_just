@@ -87,3 +87,19 @@
         display: none;
     }
 }
+
+.code {
+    cursor: default;
+    white-space: nowrap;
+    overflow-x: scroll;
+}
+.code::-webkit-scrollbar {
+    width: 5px;
+    height: 5px
+}
+.code::-webkit-scrollbar-thumb {
+    border: 1px solid var(--bg);
+}
+.code code {
+    position: absolute;
+}
