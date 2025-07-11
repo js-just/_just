@@ -54,6 +54,7 @@ _just.js = require('../modules/js.js');
 _just.version = vrsn;
 _just.array = require('../modules/array.js');
 _just.prevnext = require('./prevnext.js');
+const esc = '\x1B';
 
 const link = (text, link_, ext = false, extid = "ext", target = "_blank", title_) => `<a href="${link_}" target="${target}"${ext ? ` id="${extid}"` : ''}${title_ ? ` title="${title_}"` : ''}>${text}</a>`;
 const span = (text) => `<span>${text}</span>`;
@@ -70,10 +71,12 @@ const fs = require('fs');
 const path = require('path');
 const config = JSON.parse(fs.readFileSync('just.config.json', template.charset));
 const docsConfig = config.docs_config;
+const debug_ = config.debug || false;
+const debuglog = (text) => {if (debug_) {console.log(`${esc}[0;36mDebug: ${text}`)}};
 
 const configmbl = docsConfig ? docsConfig.mbl || undefined : undefined;
 if (configmbl && (configmbl > 4 || configmbl < 1)) {
-    const warningg = `${_just.error.prefix}[0;33mWarning 0209[0m: [0;33mUnstable config: mbl: [0m${configmbl}`;
+    const warningg = `${_just.error.prefix}${esc}[0;33mWarning 0209${esc}[0m: ${esc}[0;33mUnstable config: mbl: ${esc}[0m${configmbl}`;
     console.warn(warningg);
 }
 const mbl = configmbl ? configmbl : 4;
@@ -512,14 +515,14 @@ checkTLD(domain).then(tldvalid => {
                         }).replaceAll('\n\n', '\n');
                         const highlightcode = lang_ && lang_ != '';
                         if (highlightcode && !supportedlangs.includes(lang_) && !langaliases[lang_]) {
-                            const warningg = `${_just.error.prefix}[0;33mWarning 0209[0m: [0;33mUnsuppotred language: hljs: [0m${lang_}`;
+                            const warningg = `${_just.error.prefix}${esc}[0;33mWarning 0209${esc}[0m: ${esc}[0;33mUnsuppotred language: hljs: ${esc}[0m${lang_}`;
                             errorlogs += `${l[1]}AT LINE ${_just.line.line() || '-1'} (__REPLACE_LINE__): ${_just.line.err(warningg)}`;
                             console.warn(warningg);
                         }
                         if (highlightcode && !supportedlangs.includes(lang_) && langaliases[lang_]) {
                             lang_ = langaliases[lang_]
                         }
-                        console.log(`Debug: Code language: ${lang_}`);
+                        debuglog(`Code language: ${lang_}`);
                         const hljshighlight = highlightcode && supportedlangs.includes(lang_)
                         const output_ = hljshighlight ? hljs.highlight(code_, {language: lang_}).value : undefined;
                         insertedcode = true;
@@ -663,10 +666,10 @@ checkTLD(domain).then(tldvalid => {
             const stat = fs.statSync(file);
             if (stat && stat.isDirectory()) {
                 results = results.concat(findMarkdownFiles(file));
-                console.log('Debug: Dir found: '+file);
+                debuglog('Dir found: '+file);
             } else if (file.endsWith('.md') || file.endsWith('.mdx')) {
                 results.push(file);
-                console.log('Debug: File found: '+file);
+                debuglog('File found: '+file);
             }
         });
         return usePathInput ? results.filter(f => pathtourl[f] || pathtourl[f] == '') : results;
@@ -674,8 +677,8 @@ checkTLD(domain).then(tldvalid => {
 
     const rootDirB = process.cwd();
     const markdownFiles = findMarkdownFiles(rootDirB);
-    console.log('Debug: pathtourl: '+JSON.stringify(pathtourl));
-    console.log('Debug: md files: '+JSON.stringify(markdownFiles));
+    debuglog('pathtourl: '+JSON.stringify(pathtourl));
+    debuglog('md files: '+JSON.stringify(markdownFiles));
 
     const title = docsConfig ? docsConfig.title || template.title : template.title;
     const metatitle = docsConfig ? docsConfig.metatitle || title : title;
@@ -713,10 +716,10 @@ checkTLD(domain).then(tldvalid => {
     const htmlhead = (filelink = undefined) => {
         const start = filelink == "" ? '' : '/';
         let prefetch = '';
-        console.log(`Debug: Prefetch ids: ${pageList.length}`);
+        debuglog(`Prefetch ids: ${pageList.length}`);
         for (let i = 0; i <= pageList.length; i++) {
             prefetch += pageList[i] && pageList[i].path && ((filelink && pageList[i].path != filelink) || !filelink) ? `<link rel="prefetch" href="${pageList[i].path.endsWith('/') ? pageList[i].path + 'index' : pageList[i].path}.html">` : '';
-            console.log(`Debug: Prefetch id: ${i}`);
+            debuglog(`Prefetch id: ${i}`);
         }
         let output = `
         ${keywords}
@@ -954,6 +957,7 @@ checkTLD(domain).then(tldvalid => {
         let outHTML = HTML
             .replace('<html>', `<html${htmlLang}>`)
             .replaceAll('="/_just/', `="${start}_just/`)
+            .replace("content: '_just';", `content: '_just ${_just.version}';`)
             .replace('REPLACE_SCRIPT', `const ${dataname2[11]}=${JSON.stringify(pages[1])};${pagejs ? `document.addEventListener('DOMContentLoaded',()=>{${pagejs}});` : ''}`)
             .replaceAll('REPLACE_CSS', filename.css)
             .replaceAll('REPLACE_JS', filename.js)
