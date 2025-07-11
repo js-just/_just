@@ -674,7 +674,8 @@ checkTLD(domain).then(tldvalid => {
 
     const rootDirB = process.cwd();
     const markdownFiles = findMarkdownFiles(rootDirB);
-    console.log('Debug: md files: '+JSON.stringify(markdownFiles))
+    console.log('Debug: pathtourl: '+JSON.stringify(pathtourl));
+    console.log('Debug: md files: '+JSON.stringify(markdownFiles));
 
     const title = docsConfig ? docsConfig.title || template.title : template.title;
     const metatitle = docsConfig ? docsConfig.metatitle || title : title;
