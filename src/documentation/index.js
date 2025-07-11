@@ -711,7 +711,7 @@ checkTLD(domain).then(tldvalid => {
     const name = docsConfig && docsConfig.title ? span(title) : logoPath ? '' : span(title);
     const htmlLang = lang ? ` lang="${`${lang}`.toLowerCase()}"` : '';
     const htmlhead = (filelink = undefined) => {
-        const start = filelink == "" ? './' : '/';
+        const start = filelink == "" ? '' : '/';
         let prefetch = '';
         console.log(`Debug: Prefetch ids: ${pageList.length}`);
         for (let i = 0; i <= pageList.length; i++) {
@@ -950,7 +950,7 @@ checkTLD(domain).then(tldvalid => {
         }
 
         const pages = generateListItems(addFolderToPageList(pageList));
-        const start = pathtourl[file] == "" ? './' : '/';
+        const start = pathtourl[file] == "" ? '' : '/';
         let outHTML = HTML
             .replace('<html>', `<html${htmlLang}>`)
             .replaceAll('="/_just/', `="${start}_just/`)
