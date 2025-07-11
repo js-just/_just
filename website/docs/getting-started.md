@@ -40,7 +40,7 @@ jobs:
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Generate with _just
-        uses: js-just/_just@v0.0.29
+        uses: js-just/latest@main
         with:
           path: . # Path to your website directory to be generated/compressed. (Only for compressor and generator modes)
       - name: Upload artifact

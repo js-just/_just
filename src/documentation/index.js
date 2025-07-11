@@ -970,7 +970,7 @@ checkTLD(domain).then(tldvalid => {
             .replace('REPLACE_NAME', filterText(name))
             .replace('REPLACE_PAGES', filterText(pages[0]))
             .replace('REPLACE_CONTENTS', filterText(pageHeaders))
-            .replace('REPLACE_FOOTER', filterText(footer))
+            .replace('REPLACE_FOOTER', docsConfig && docsConfig.footer ? `<span>${filterText(footer)}</span>` : '')
             .replace('REPLACE_LINKS', htmlnav())
             .replace('REPLACE_BUTTONS', htmlnav(1));
 
