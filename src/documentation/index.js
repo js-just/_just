@@ -1035,11 +1035,17 @@ checkTLD(domain).then(tldvalid => {
         const charss=["!", "?", ":", ";", "#", "$", "%", "^", "&", "*", "\\(", "\\)", "-", "=", "+", '"', "'", '`', "\\[", "\\]", "\\{", "\\}", "\\\\", "\\|", "/", "~", "@", "№"];
         charss.forEach(charrr => {
             htmloutput = htmloutput
-                .replace(fixlinkregex(charrr), (match, href_, title_, text_) => `<a href="${href_}" target="_blank" id="${cssid.ext}"${title_} class="${cssclass.linkspace}">${text_}</a>${charrr == "\\\\" ? '\\' : charrr.replaceAll('\\', '')}`);
+                .replace(fixlinkregex(charrr), (match, href_, title_, text_) => `<a href="${href_}" target="_blank" id="${cssid.ext}"${title_} class="${cssclass.linkmark}">${text_}</a>${charrr == "\\\\" ? '\\' : charrr.replaceAll('\\', '')}`);
         });
         fs.writeFileSync(
             pathh, 
-            htmloutput.replace(/(?<=<code>)(.*?)(?=<\/code>)/g, (match, cde) => cde.replace(/&&#35;(.*?);/g, (match, num_) => {
+            htmloutput.replace(/<a href="(.*?)" target="_blank" id="(.*?)"(.*?)>(.*?)<\/a>\+\*\?/, (match, hreff, idd, titleclass, textt) => {
+                if (idd == cssid.ext) {
+                    return `<a href="${hreff}" target="_blank" id="${idd}"${titleclass}>${textt}</a>`;
+                } else {
+                    return `<a href="${hreff}" target="_blank" id="${idd}"${titleclass}>${textt}</a>+*?`;
+                }
+            }).replace(/(?<=<code>)(.*?)(?=<\/code>)/g, (match, cde) => cde.replace(/&&#35;(.*?);/g, (match, num_) => {
                     if (/\d/.test(num_)) {
                         return `&#${num_};`;
                     } else {
