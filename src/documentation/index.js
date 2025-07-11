@@ -663,8 +663,10 @@ checkTLD(domain).then(tldvalid => {
             const stat = fs.statSync(file);
             if (stat && stat.isDirectory()) {
                 results = results.concat(findMarkdownFiles(file));
+                console.log('Debug: Dir found: '+file);
             } else if (file.endsWith('.md') || file.endsWith('.mdx')) {
                 results.push(file);
+                console.log('Debug: File found: '+file);
             }
         });
         return usePathInput ? results.filter(f => pathtourl[f]) : results;
