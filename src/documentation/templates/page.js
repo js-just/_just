@@ -373,7 +373,7 @@ dcmnt.addEventListener('DOMContentLoaded', () => {
     if(wm){wm.parentElement.removeChild(wm);}
     if((wndw_.location.hostname==='web.archive.org'||wm)&&'REPLACE_NOWEBARCHIVE'){
         dcmnt.body.classList.add('error');
-        dcmnt.documentElement.style.setProperty('--edata', `'Wayback Machine detected.'`)
+        dcmnt.documentElement.style.setProperty('--edata', `'Wayback Machine detected. (0301)'`)
     }
 
     const sb = dcmnt.getElementById("searchbar");

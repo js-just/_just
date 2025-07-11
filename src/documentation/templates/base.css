@@ -1046,8 +1046,15 @@ input[type="checkbox"] {
     color: #ffffff;
 }
 
+html:before, html:after, body:before, body:after {
+    content: none !important;
+}
+header, main {
+    display: block !important;
+}
+
 .error:before {
-    content: 'Uh oh!';
+    content: 'Uh oh!' !important;
     font-size: 2em;
     position: fixed;
     top: 50%;
@@ -1058,12 +1065,12 @@ input[type="checkbox"] {
     white-space: nowrap;
 }
 .error:after {
-    content: 'Something went wrong.';
+    content: 'Something went wrong.' !important;
     position: fixed;
     top: 50%;
 }
 html:has(.error):before {
-    content: '_just';
+    content: '_just' !important;
     font-size: 13px;
     position: fixed;
     bottom: 5px;
@@ -1072,7 +1079,7 @@ html:has(.error):before {
     margin-right: 5px;
 }
 html:has(.error):after {
-    content: var(--edata);
+    content: var(--edata) !important;
     position: fixed;
     top: calc(50% + 24px);
     width: 100%;

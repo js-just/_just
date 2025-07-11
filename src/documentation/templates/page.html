@@ -34,6 +34,51 @@
                 }
             </style>
         </noscript>
+        <style>
+            html:before {
+                content: '_just';
+                font-size: 13px;
+                position: fixed;
+                bottom: 5px;
+                left: 5px;
+                line-break: anywhere;
+                margin-right: 5px;
+            }
+            html:after {
+                content: 'Couldn\'t load the website. (0302)';
+                position: fixed;
+                top: calc(50% + 24px);
+                width: 100%;
+                text-align: center;
+                font-size: 12px;
+                opacity: 0.5;
+            }
+            body:before {
+                content: 'Uh oh!';
+                font-size: 2em;
+                position: fixed;
+                top: 50%;
+                translate: 0 calc(-100% - 6px);
+                width: 100%;
+                text-align: center;
+                border-bottom: 1px solid white;
+                white-space: nowrap;
+            }
+            body:after {
+                content: 'Something went wrong.';
+                position: fixed;
+                top: 50%;
+                width: 100%;
+                text-align: center;
+            }
+            html {
+                color: white;
+                background-color: black;
+            }
+            header, main {
+                display: none;
+            }
+        </style>
     </head>
     <body style="--hc: 0"><script>0</script>
         <header>

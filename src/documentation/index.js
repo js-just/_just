@@ -1042,7 +1042,7 @@ checkTLD(domain).then(tldvalid => {
     fs.writeFileSync(path.join(websitepath, '_just', `${filename.css}.css`), CSS, template.charset);
 
     const JSdata = _just.js.get(JS);
-    const JSerr = `document.body.classList.add('${cssclass.error}');document.documentElement.style.setProperty('--${cssvar.edata}', \`'\${e_}'\`)`;
+    const JSerr = `document.body.classList.add('${cssclass.error}');document.documentElement.style.setProperty('--${cssvar.edata}', \`'\${e_} (0300)'\`)`;
     fs.writeFileSync(
         path.join(websitepath, '_just', `${filename.js}.js`),
         "try{"+_just.js.set(
