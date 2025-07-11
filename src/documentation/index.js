@@ -711,6 +711,7 @@ checkTLD(domain).then(tldvalid => {
     const name = docsConfig && docsConfig.title ? span(title) : logoPath ? '' : span(title);
     const htmlLang = lang ? ` lang="${`${lang}`.toLowerCase()}"` : '';
     const htmlhead = (filelink = undefined) => {
+        const start = filelink == "" ? './' : '/';
         let prefetch = '';
         console.log(`Debug: Prefetch ids: ${pageList.length}`);
         for (let i = 0; i <= pageList.length; i++) {
@@ -723,7 +724,7 @@ checkTLD(domain).then(tldvalid => {
         ${ogtitl}
         ${ogdesc}
         ${prefetch}
-        <link rel="preload" href="/_just/${dataname[9]}.json" as="fetch" type="application/json" crossorigin="anonymous">
+        <link rel="preload" href="${start}_just/${dataname[9]}.json" as="fetch" type="application/json" crossorigin="anonymous">
         <meta property="og:type" content="website">`;
         if (twitter) {
             output += `<meta property="twitter:card" content="${twitter}">`
@@ -897,7 +898,7 @@ checkTLD(domain).then(tldvalid => {
         fileID++;
         mdlogs[outFilePath('html')] = `${l[1]}FILE #${fileID} "${_just.string.runnerPath(file)}":${l[2]}INPUT: ${_just.string.fileSize(fs.statSync(file).size)}`;
 
-        if (pathtourl[file]) {
+        if (pathtourl[file] || pathtourl[file] == '') {
             mdjson[pathtourl[file]] = toText(content);
         }
 
@@ -949,8 +950,10 @@ checkTLD(domain).then(tldvalid => {
         }
 
         const pages = generateListItems(addFolderToPageList(pageList));
+        const start = pathtourl[file] == "" ? './' : '/';
         let outHTML = HTML
             .replace('<html>', `<html${htmlLang}>`)
+            .replaceAll('="/_just/', `="${start}_just/`)
             .replace('REPLACE_SCRIPT', `const ${dataname2[11]}=${JSON.stringify(pages[1])};${pagejs ? `document.addEventListener('DOMContentLoaded',()=>{${pagejs}});` : ''}`)
             .replaceAll('REPLACE_CSS', filename.css)
             .replaceAll('REPLACE_JS', filename.js)
