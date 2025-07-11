@@ -1114,26 +1114,26 @@ html:has(.navleft) .main {
     translate: calc(0px - calc(var(--mp) - 10px)) !important;
 }
 
-.linkspace {
+.main .linkspace {
     margin-right: -12px;
 }
-.linkspace:after {
+.main .linkspace:after {
     translate: 0px -20%;
 }
-.linkspace:hover:not(:focus):after {
+.main .linkspace:hover:not(:focus):after {
     translate: 0px -25%;
 }
 
-.linkmark {
+.main .linkmark {
     margin-right: -17px;
 }
-.linkmark:after {
+.main .linkmark:after {
     translate: -1px -70%;
 }
-.linkmark:hover:not(:focus) {
+.main .linkmark:hover:not(:focus) {
     margin-right: -10px;
 }
-.linkmark:hover:not(:focus):after {
+.main .linkmark:hover:not(:focus):after {
     translate: 0px -25%;
 }
 
@@ -1141,12 +1141,12 @@ html:has(.navleft) .main {
     white-space: nowrap;
 }
 
-.linkdot {
+.main .linkdot {
     margin-right: -17px;
 }
-.linkdot:after {
+.main .linkdot:after {
     translate: 2px -40%;
 }
-.linkdot:hover:not(:focus):after {
+.main .linkdot:hover:not(:focus):after {
     translate: 2px -45%;
 }

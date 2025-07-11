@@ -1039,7 +1039,7 @@ checkTLD(domain).then(tldvalid => {
         });
         fs.writeFileSync(
             pathh, 
-            htmloutput.replace(/<a href="(.*?)" target="_blank" id="(.*?)"(.*?)>(.*?)<\/a>\+\*\?/, (match, hreff, idd, titleclass, textt) => {
+            htmloutput.replace(/<a href="(.*?)" target="_blank" id="(.*?)"(.*?)>(.*?)<\/a>\+\*\?/g, (match, hreff, idd, titleclass, textt) => {
                 if (idd == cssid.ext) {
                     return `<a href="${hreff}" target="_blank" id="${idd}"${titleclass}>${textt}</a>`;
                 } else {
