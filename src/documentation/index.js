@@ -442,7 +442,7 @@ function generateListItems(PageList) {
             const hasPages = __pages.length > 0;
             const hasSubfolders = Object.keys(__subfolders).length > 0;
 
-            const pageslength = __pages.length > 1 ? __pages.length - 1 : __pages.level;
+            const pageslength = __pages.length > 1 ? __pages.length - 1 : __pages.length;
             const liheight = hasPages ? pageslength * 15 : 0;
             html += `<li style="--${cssvar.liheight}:${__pages.length * 19 + liheight + 19}px">`;
             if (hasPages || hasSubfolders) {
