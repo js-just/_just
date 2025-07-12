@@ -375,6 +375,9 @@ const pageList = getPageList();
 function generateListItems(PageList) {
     const folderTree = {};
     const folderMap = {};
+    const folders_ = [];
+    const foldernameify = (fldrname) => _just.string.toText(_just.string.Aa(fldrname), true);
+    const pagetitleify = (pagetitle) => pagetitle === 'index' ? 'Home' : pagetitle;
     debuglog('   PL: '+JSON.stringify(PageList));
 
     PageList.forEach(page => {
@@ -401,6 +404,9 @@ function generateListItems(PageList) {
                 currentLevel[part].__pages.push(page);
             }
             currentLevel = currentLevel[part].__subfolders;
+            if (!folders_.includes(foldernameify(part))) {
+                folders_.push(foldernameify(part));
+            }
         });
     });
     debuglog('   FT: '+JSON.stringify(folderTree))
@@ -408,10 +414,11 @@ function generateListItems(PageList) {
     function buildFolderHTML(folderObj) {
         let html = '';
 
+        PageList.filter(page => !folders_.includes(page)).forEach(page => {
+            html += `<li style="--${cssvar.liheight}: 19px"><a href="${page.path}" target="_self">${span(pagetitleify(page.title))}</a></li>`;
+        })
         for (const folderName in folderObj) {
             const { __pages, __subfolders } = folderObj[folderName];
-
-            const displayFolderName = _just.string.toText(_just.string.Aa(folderName), true);
 
             const hasPages = __pages.length > 0;
             const hasSubfolders = Object.keys(__subfolders).length > 0;
@@ -420,13 +427,12 @@ function generateListItems(PageList) {
             html += `<li style="--${cssvar.liheight}: ${__pages.length * 19 + liheight + 19}px">`;
             if (hasPages || hasSubfolders) {
                 html += `<span>`;
-                html += `<strong>${displayFolderName}</strong>`;
+                html += `<strong>${foldernameify(folderName)}</strong>`;
                 html += `</span>`;
                 html += `<ul>`;
                 
                 __pages.forEach(page => {
-                    const title = page.title === 'index' ? 'Home' : page.title;
-                    html += `<li style="--${cssvar.liheight}: 19px"><a href="${page.path}" target="_self"><span>${title}</span></a></li>`;
+                    html += `<li style="--${cssvar.liheight}: 19px"><a href="${page.path}" target="_self">${span(pagetitleify(page.title))}</a></li>`;
                 });
 
                 html += buildFolderHTML(__subfolders);
@@ -434,8 +440,7 @@ function generateListItems(PageList) {
                 html += `</ul>`;
             } else {
                 __pages.forEach(page => {
-                    const title = page.title === 'index' ? 'Home' : page.title;
-                    html += `<li style="--${cssvar.liheight}: 19px"><a href="${page.path}" target="_self"><span>${title}</span></a></li>`;
+                    html += `<li style="--${cssvar.liheight}: 19px"><a href="${page.path}" target="_self">${span(pagetitleify(page.title))}</a></li>`;
                 });
             }
             html += `</li>`;
@@ -720,10 +725,10 @@ checkTLD(domain).then(tldvalid => {
             const stat = fs.statSync(file);
             if (stat && stat.isDirectory()) {
                 results = results.concat(findMarkdownFiles(file));
-                debuglog('   DF: '+file);
+                debuglog('   DF: '+_just.string.runnerPath(file));
             } else if (file.endsWith('.md') || file.endsWith('.mdx')) {
                 results.push(file);
-                debuglog('   FF: '+file);
+                debuglog('   FF: '+_just.string.runnerPath(file));
             }
         });
         return usePathInput ? results.filter(f => pathtourl[f] || pathtourl[f] == '') : results;
@@ -1024,7 +1029,7 @@ checkTLD(domain).then(tldvalid => {
             .replace('REPLACE_NAME', filterText(name))
             .replace('REPLACE_PAGES', filterText(pages[0]))
             .replace('REPLACE_CONTENTS', filterText(pageHeaders))
-            .replace('REPLACE_FOOTER', docsConfig && docsConfig.footer ? `<span>${filterText(footer)}</span>` : '')
+            .replace('REPLACE_FOOTER', docsConfig && docsConfig.footer ? span(filterText(footer)) : '')
             .replace('REPLACE_LINKS', htmlnav())
             .replace('REPLACE_BUTTONS', htmlnav(1));
 
