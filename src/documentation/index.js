@@ -786,6 +786,8 @@ checkTLD(domain).then(tldvalid => {
 
     const insertHTMLinHead = docsConfig ? docsConfig.insertInHTMLHead || '' : '';
 
+    const docsUsePathInput = docsConfig ? docsConfig.usePathInput || false : false;
+
     const keywords = metaKeywords ? `<meta name="keywords" content="${metaKeywords}">` : '';
     const desc = description ? `<meta name="description" content="${description}">` : '';
     const ogdesc = ogdescription ? `<meta property="og:description" content="${ogdescription}">` : '';
@@ -1136,16 +1138,19 @@ checkTLD(domain).then(tldvalid => {
     }
     CSS = CSS.replace(new RegExp(`.${dataname[8]}3ibute`, 'g'), `.${dataname[8]}14`).replace("content: '_just';", `content: '_just ${_just.version}';`);
 
+    const _justdir = docsUsePathInput ? `${PATH}/_just`: '_just';
+    const _just_datadir = docsUsePathInput ? `${PATH}/_just_data`: '_just_data';
+
     logs += linklogs; logs += buttonlogs;
     logs += `${l[0]}USED NAMES:${l[1]}"${uniqueNames_.join('", "')}"${l[0]}DATA NAMES:${l[1]}"${dataname.join('", "')}"${l[0]}OTHER:${l[1]}JSTRIMMEDVAR:${l[2]}NAME: ${jstrimmedstrvar == null ? '(FAILED. WILL BE REPLACED WITH ID)' : `"${jstrimmedstrvar}"`}${l[2]}CUSTOM BASE: ${jstrimmedstrvarbasestr.length}${l[2]}CUSTOM BASE STRING: "${jstrimmedstrvarbasestr}"`;
     console.log(logs);
     const websitepath = rootDirA !== '.' ? rootDirA : rootDirB;
-    fs.writeFileSync(path.join(websitepath, '_just', `${filename.css}.css`), CSS, template.charset);
+    fs.writeFileSync(path.join(websitepath, _justdir, `${filename.css}.css`), CSS, template.charset);
 
     const JSdata = _just.js.get(JS);
     const JSerr = `document.body.classList.add('${cssclass.error}');document.documentElement.style.setProperty('--${cssvar.edata}', \`'\${e_} (0300)'\`)`;
     fs.writeFileSync(
-        path.join(websitepath, '_just', `${filename.js}.js`),
+        path.join(websitepath, _justdir, `${filename.js}.js`),
         "try{"+_just.js.set(
             JS.replace('\'REPLACE_PUBLICOUTPUT\'', hideOutput?false:publicOutput?false:true).replace('\'REPLACE_SEARCHV2\'', CSSdata[1] || false).replace('let searchurl = "/_just/search";', `let searchurl="/_just/${dataname[9]}.json";`), 
             JSdata.names.filter(n => n !== jstrimmedstrvar), 
@@ -1161,7 +1166,7 @@ checkTLD(domain).then(tldvalid => {
         const data1 = response1 ? await response1.json() || undefined : undefined;
         const response2 = await fetch(`${protocol}://${domain}/_just/${data1.json}.json`).catch() || undefined;
         const data2 = response2 ? await response2.json() || undefined : undefined;
-        if (data1 && data2) fs.writeFileSync(path.join(websitepath, '_just', `${data1.json}.json`), JSON.stringify(data2));
+        if (data1 && data2) fs.writeFileSync(path.join(websitepath, _justdir, `${data1.json}.json`), JSON.stringify(data2));
     }
     if (domain) {
         fetchjson('http').catch((ee)=>{
@@ -1175,9 +1180,9 @@ checkTLD(domain).then(tldvalid => {
     }
     if (debug_) console.log(errorlogs + configlogs);
     const outlogs = hideOutput?'':logs+errorlogs+configlogs;
-    if (debug_) fs.writeFileSync(path.join(websitepath, '_just_data', 'output.txt'), outlogs, template.charset);
-    fs.writeFileSync(path.join(websitepath, '_just', `${dataname[9]}.json`), JSON.stringify(mdjson), template.charset);
-    fs.writeFileSync(path.join(websitepath, '_just', 'index.json'), JSON.stringify({
+    if (debug_) fs.writeFileSync(path.join(websitepath, _just_datadir, 'output.txt'), outlogs, template.charset);
+    fs.writeFileSync(path.join(websitepath, _justdir, `${dataname[9]}.json`), JSON.stringify(mdjson), template.charset);
+    fs.writeFileSync(path.join(websitepath, _justdir, 'index.json'), JSON.stringify({
         "js": filename.js,
         "css": filename.css,
         "json": dataname[9]
