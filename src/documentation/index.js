@@ -72,7 +72,7 @@ const path = require('path');
 const config = JSON.parse(fs.readFileSync('just.config.json', template.charset));
 const docsConfig = config.docs_config;
 const debug_ = config.debug || false;
-const debuglog = (text) => {if (debug_) {console.log(`${esc}[0;36mDebug: ${text}`)}};
+const debuglog = (text) => {if (debug_) {console.log(`${_just.error.prefix}${esc}[0;36mDebug: ${text}`)}};
 
 const configmbl = docsConfig ? docsConfig.mbl || undefined : undefined;
 if (configmbl && (configmbl > 4 || configmbl < 1)) {
@@ -179,6 +179,7 @@ const cssid = {
     "searchbar": dataname2[3],
     "glass": dataname2[6],
     "search": dataname2[7],
+    "liheight": dataname2[18]
 }
 const cssvar = {
     "bg": dataname[6]+randomChar(1),
@@ -276,7 +277,8 @@ const l = ['\n\n','\n    ','\n        '];
 const date = new Date();
 let logs = `_just ${_just.version} - ${date} (${date.getTime()})${l[0]}_JUST FILES:${l[1]}CSS: ${filename.css}${l[1]}JS: ${filename.js}`;
 let errorlogs = `${l[0]}CAUGHT ERRORS:`;
-debuglog(`INFO:${l[2]}  DNA = DirNameArray${l[2]}DNA>2 = DirNameArray.length > 2${l[2]}   DN = DirName${l[2]}   CL = Code Language${l[2]}   DF = Dir Found${l[2]}   FF = File Found${l[2]}P2URL = PathToURL${l[2]}MDF = Markdown Files${l[2]} PIDs = Pages (Page IDs)${l[2]}  PID = Page ID`);
+const nl = l[2].slice(0,-2)+' '.repeat(7);
+debuglog(`INFO:${nl}  DNA = DirNameArray${nl}DNA>2 = DirNameArray.length > 2${nl}   DN = DirName${nl}   CL = Code Language${nl}   DF = Dir Found${nl}   FF = File Found${nl}P2URL = PathToURL${nl}  MDF = Markdown Files${nl} PIDs = Pages (Page IDs)${nl}  PID = Page ID`);
 
 const rootDirA = PATH || '.';
 const extensions = ['.md', '.mdx', '.html'];
@@ -412,10 +414,9 @@ function generateListItems(PageList) {
             const hasPages = __pages.length > 0;
             const hasSubfolders = Object.keys(__subfolders).length > 0;
 
-            html += `<li>`;
+            html += `<li style="--${cssid.liheight}: 10px">`;
             if (hasPages || hasSubfolders) {
                 html += `<span>`;
-                // Можно добавить ссылку на папку или оставить просто название
                 html += `<strong>${displayFolderName}</strong>`;
                 html += `</span>`;
                 html += `<ul>`;
@@ -440,8 +441,6 @@ function generateListItems(PageList) {
         return html;
     }
 
-    const listItemsHTML = `<ul>${buildFolderHTML(folderTree)}</ul>`;
-
     const pageListJSON = [];
     const folders = Object.keys(folderMap);
     const sortedFolders = folders.sort((a, b) => {
@@ -456,7 +455,7 @@ function generateListItems(PageList) {
         });
     }
 
-    return [listItemsHTML, pageListJSON];
+    return [buildFolderHTML(folderTree), pageListJSON];
 }
 
 
@@ -996,7 +995,7 @@ checkTLD(domain).then(tldvalid => {
         const prevnext = _just.prevnext.get(idk_ ? _just.string.removeLast(toHTML, '</p>') : toHTML);
         toHTML = idk_ ? prevnext[0].replace(_just.prevnext.regex, '') + '</p>' : prevnext[0].replace(_just.prevnext.regex, '');
         let pagejs = '';
-        const btnjs = (id, href) => `document.getElementById('${id}').addEventListener("click",()=>{const link=document.createElement('a');link.href='/${href}';link.target='_self';link.style.display='none';document.body.appendChild(link);link.click();document.body.removeChild(link)});`
+        const btnjs = (id, href) => `document.getElementById('${id}').addEventListener("click",()=>{const ${id}=document.createElement('a');${id}.href='/${href}';${id}.target='_self';${id}.style.display='none';document.body.appendChild(${id});${id}.click();document.body.removeChild(${id})});`
         if (prevnext[1].prev) {
             pagejs = btnjs(filename.js, prevnext[1].prev)
         }

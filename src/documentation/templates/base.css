@@ -1150,3 +1150,27 @@ html:has(.navleft) .main {
 .main .linkdot:hover:not(:focus):after {
     translate: 2px -45%;
 }
+
+main nav li ul {
+    padding-top: 0px;
+    width: 100%;
+}
+main nav li ul li:has(strong) {
+    padding-top: 10px;
+}
+@media(min-width: 1250px) {
+    main nav li ul li:has(strong) {
+        padding-left: 10px;
+    }
+    main nav li ul li:has(strong):before {
+        content: '';
+        height: var(--liheight);
+        width: 3px;
+        background-color: var(--md);
+        display: block;
+        position: absolute;
+        translate: -10px 0px;
+        border-radius: 50px;
+        opacity: 0.5;
+    }
+}
