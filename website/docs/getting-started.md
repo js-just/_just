@@ -8,9 +8,9 @@ This documentation assumes some familiarity with
 And some familiarity with these languages
 - JavaScript
 - YAML
-- Markdown
 - HTML
 - CSS
+- Markdown
 ## Installation
 ### Making your first project
 - Create new repository, and create `/.github/workflows/publish.yml` file, template:
