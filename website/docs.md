@@ -11,7 +11,7 @@ Currently it have 4 modes:
 - `Compressor`: Compresses your website.
 - `Generator`: Generates documentation website using Markdown.
 
-> [!WARNING] Just an Ultimate Site Tool is in **alpha**. Expect regular updates, possible bugs, and changes. If you have found a bug, please [report it here](https://github.com/js-just/_just/issues/new?labels=bug&template=bug.md).
+> [!WARNING] Just an Ultimate Site Tool is still in development at the **alpha** stage. Expect regular updates, possible bugs, and changes. If you have found a bug, please [report it here](https://github.com/js-just/_just/issues/new?labels=bug&template=bug.md).
 > [!CAUTION] The docs are under construction!
 > [!TIP] Do not use `Redirector` if you can make server-side `HTTP 3XX` redirects.
 
