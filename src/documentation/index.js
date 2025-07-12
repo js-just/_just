@@ -1140,6 +1140,11 @@ checkTLD(domain).then(tldvalid => {
 
     const _justdir = docsUsePathInput ? `${PATH}/_just`: '_just';
     const _just_datadir = docsUsePathInput ? `${PATH}/_just_data`: '_just_data';
+    if(docsUsePathInput) {
+        fs.mkdirSync(path.join(websitepath, PATH));
+    }
+    fs.mkdirSync(path.join(websitepath, _justdir));
+    fs.mkdirSync(path.join(websitepath, _just_datadir));
 
     logs += linklogs; logs += buttonlogs;
     logs += `${l[0]}USED NAMES:${l[1]}"${uniqueNames_.join('", "')}"${l[0]}DATA NAMES:${l[1]}"${dataname.join('", "')}"${l[0]}OTHER:${l[1]}JSTRIMMEDVAR:${l[2]}NAME: ${jstrimmedstrvar == null ? '(FAILED. WILL BE REPLACED WITH ID)' : `"${jstrimmedstrvar}"`}${l[2]}CUSTOM BASE: ${jstrimmedstrvarbasestr.length}${l[2]}CUSTOM BASE STRING: "${jstrimmedstrvarbasestr}"`;
