@@ -376,6 +376,9 @@ function generateListItems(PageList) {
 
     PageList.forEach(page => {
         const folder = page.folder || '';
+        if (!folderMap[folder]) {
+            folderMap[folder] = [];
+        }
         folderMap[folder].push(page);
     });
 
