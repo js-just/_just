@@ -1141,15 +1141,15 @@ checkTLD(domain).then(tldvalid => {
     const websitepath = rootDirA !== '.' ? rootDirA : rootDirB;
     const _justdir = docsUsePathInput ? `${PATH}/_just`: '_just';
     const _just_datadir = docsUsePathInput ? `${PATH}/_just_data`: '_just_data';
-    if(docsUsePathInput) {
+    if(docsUsePathInput && !fs.existsSync(path.join(websitepath, PATH))) {
         new Promise ((resolve, reject) => {
             fs.mkdirSync(path.join(websitepath, PATH));
             resolve();
         }).catch();
     }
     new Promise ((resolve, reject) => {
-        fs.mkdirSync(path.join(websitepath, _justdir));
-        fs.mkdirSync(path.join(websitepath, _just_datadir));
+        if (!fs.existsSync(path.join(websitepath, _justdir))) fs.mkdirSync(path.join(websitepath, _justdir));
+        if (!fs.existsSync(path.join(websitepath, _just_datadir))) fs.mkdirSync(path.join(websitepath, _just_datadir));
         resolve();
     }).catch();
 
