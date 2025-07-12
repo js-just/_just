@@ -414,8 +414,8 @@ function generateListItems(PageList) {
             const hasPages = __pages.length > 0;
             const hasSubfolders = Object.keys(__subfolders).length > 0;
 
-            const liheight = hasPages ? (__pages.length - 1) * 15 : 0;
-            html += `<li style="--${cssvar.liheight}: ${__pages.length * 19 + liheight}px">`;
+            const liheight = hasPages ? __pages.length * 15 : 0;
+            html += `<li style="--${cssvar.liheight}: ${__pages.length * 19 + liheight + 19}px">`;
             if (hasPages || hasSubfolders) {
                 html += `<span>`;
                 html += `<strong>${displayFolderName}</strong>`;
@@ -996,7 +996,7 @@ checkTLD(domain).then(tldvalid => {
         const prevnext = _just.prevnext.get(idk_ ? _just.string.removeLast(toHTML, '</p>') : toHTML);
         toHTML = idk_ ? prevnext[0].replace(_just.prevnext.regex, '') + '</p>' : prevnext[0].replace(_just.prevnext.regex, '');
         let pagejs = '';
-        const btnjs = (id, href) => `document.getElementById('${id}').addEventListener("click",()=>{const ${id}=document.createElement('a');${id}.href='/${href}';${id}.target='_self';${id}.style.display='none';document.body.appendChild(${id});${id}.click();document.body.removeChild(${id})});`
+        const btnjs = (id, href) => `document.getElementById('${id}').addEventListener("click",()=>{const ${id.replace('-','_')}=document.createElement('a');${id.replace('-','_')}.href='/${href}';${id.replace('-','_')}.target='_self';${id.replace('-','_')}.style.display='none';document.body.appendChild(${id.replace('-','_')});${id.replace('-','_')}.click();document.body.removeChild(${id.replace('-','_')})});`;
         if (prevnext[1].prev) {
             pagejs = btnjs(filename.js, prevnext[1].prev)
         }
