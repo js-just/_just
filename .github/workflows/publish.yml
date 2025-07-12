@@ -6,6 +6,8 @@ on:
     paths:
     - "website/*"
     - ".github/workflows/publish.yml"
+    - "just.config.js"
+    - "CNAME"
   workflow_dispatch:
 
 permissions:

@@ -143,9 +143,9 @@ module.exports = {
 - Read the documentation for the mode/modes that you've chosen.
 
 ## Modes documentation
-- [Postprocessor](/modes/postprocessor)
-- [Redirector](/modes/redirector)
-- [Compressor](/modes/compressor)
-- [Generator](/modes/generator)
+- [Postprocessor](modes/postprocessor)
+- [Redirector](modes/redirector)
+- [Compressor](modes/compressor)
+- [Generator](modes/generator)
 
 _just: prev: /docs

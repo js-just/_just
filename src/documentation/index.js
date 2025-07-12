@@ -355,7 +355,12 @@ function getPageList() {
 function addFolderToPageList(pageList) {
     return pageList.map(page => {
         const folderNameArray = page.path.split('/').filter(Boolean);
-        const folderName = folderNameArray.length > 1 ? folderNameArray[folderNameArray.length - 2] : null;
+        debuglog('  FNA: '+folderNameArray);
+        let folderName = folderNameArray.length > 1 ? folderNameArray[folderNameArray.length - 2] : null;
+        debuglog('   FN: '+folderName);
+        if (folderNameArray.length > 2) {
+            debuglog('FNA>2: yes');
+        };
         return { ...page, folder: folderName };
     });
 }
@@ -525,7 +530,7 @@ checkTLD(domain).then(tldvalid => {
                         if (highlightcode && !supportedlangs.includes(lang_) && langaliases[lang_]) {
                             lang_ = langaliases[lang_]
                         }
-                        debuglog(`Code language: ${lang_}`);
+                        debuglog(`   CL: ${lang_}`);
                         const hljshighlight = highlightcode && supportedlangs.includes(lang_)
                         const output_ = hljshighlight ? hljs.highlight(code_, {language: lang_}).value : undefined;
                         insertedcode = true;
@@ -669,10 +674,10 @@ checkTLD(domain).then(tldvalid => {
             const stat = fs.statSync(file);
             if (stat && stat.isDirectory()) {
                 results = results.concat(findMarkdownFiles(file));
-                debuglog('Dir found: '+file);
+                debuglog('   DF: '+file);
             } else if (file.endsWith('.md') || file.endsWith('.mdx')) {
                 results.push(file);
-                debuglog('File found: '+file);
+                debuglog('   FF: '+file);
             }
         });
         return usePathInput ? results.filter(f => pathtourl[f] || pathtourl[f] == '') : results;
@@ -680,8 +685,8 @@ checkTLD(domain).then(tldvalid => {
 
     const rootDirB = process.cwd();
     const markdownFiles = findMarkdownFiles(rootDirB);
-    debuglog('pathtourl: '+JSON.stringify(pathtourl));
-    debuglog('md files: '+JSON.stringify(markdownFiles));
+    debuglog('P2URL: '+JSON.stringify(pathtourl));
+    debuglog('  MDF: '+JSON.stringify(markdownFiles));
 
     const title = docsConfig ? docsConfig.title || template.title : template.title;
     const metatitle = docsConfig ? docsConfig.metatitle || title : title;
@@ -719,10 +724,10 @@ checkTLD(domain).then(tldvalid => {
     const htmlhead = (filelink = undefined) => {
         const start = filelink == "" ? '' : '/';
         let prefetch = '';
-        debuglog(`Prefetch ids: ${pageList.length}`);
+        debuglog(` PIDs: ${pageList.length}`);
         for (let i = 0; i <= pageList.length; i++) {
             prefetch += pageList[i] && pageList[i].path && ((filelink && pageList[i].path != filelink) || !filelink) ? `<link rel="prefetch" href="${pageList[i].path.endsWith('/') ? pageList[i].path + 'index' : pageList[i].path}.html">` : '';
-            debuglog(`Prefetch id: ${i}`);
+            debuglog(`  PID: ${i}`);
         }
         let output = `
         ${keywords}
