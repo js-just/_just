@@ -1148,8 +1148,8 @@ checkTLD(domain).then(tldvalid => {
         }).catch();
     }
     new Promise ((resolve, reject) => {
-        if (!fs.existsSync(path.join(websitepath, _justdir))) fs.mkdirSync(path.join(websitepath, _justdir));
-        if (!fs.existsSync(path.join(websitepath, _just_datadir))) fs.mkdirSync(path.join(websitepath, _just_datadir));
+        if (!fs.existsSync(path.join(websitepath, _justdir))) {fs.mkdirSync(path.join(websitepath, _justdir))};
+        if (!fs.existsSync(path.join(websitepath, _just_datadir))) {fs.mkdirSync(path.join(websitepath, _just_datadir))};
         resolve();
     }).catch();
 
