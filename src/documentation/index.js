@@ -428,6 +428,13 @@ function generateListItems(PageList) {
             plitemid++;
             html += `<li style="--${cssvar.liheight}:19px${plitemid < plfiltered.length ? ';margin-bottom:-20px' : ''}"><a href="${page.path}" target="_self">${span(pagetitleify(page.title))}</a></li>`;
         });
+        const plfiltered2= PageList.filter(page => folders_.includes(page.title));
+        const plfiltered3= [];
+        const plfiltered4= {};
+        plfiltered2.forEach(page => {
+            plfiltered3.push(page.title);
+            plfiltered4[page.title] = page.path;
+        });
         for (const folderName in folderObj) {
             const { __pages, __subfolders } = folderObj[folderName];
 
@@ -437,10 +444,13 @@ function generateListItems(PageList) {
             const liheight = hasPages ? __pages.length * 15 : 0;
             html += `<li style="--${cssvar.liheight}:${__pages.length * 19 + liheight + 19}px">`;
             if (hasPages || hasSubfolders) {
-                html += `<span>`;
+                const insertLink = plfiltered3.includes(foldernameify(folderName)) && plfiltered4[foldernameify(folderName)];
+                html += '<span>';
+                html += insertLink ? `<a href="${plfiltered4[foldernameify(folderName)]}" target="_self">` : '';
                 html += `<strong>${foldernameify(folderName)}</strong>`;
-                html += `</span>`;
-                html += `<ul>`;
+                html += insertLink ? '</a>' : '';
+                html += '</span>';
+                html += '<ul>';
                 
                 __pages.forEach(page => {
                     html += `<li style="--${cssvar.liheight}:19px"><a href="${page.path}" target="_self">${span(pagetitleify(page.title))}</a></li>`;
@@ -448,13 +458,13 @@ function generateListItems(PageList) {
 
                 html += buildFolderHTML(__subfolders);
                 
-                html += `</ul>`;
+                html += '</ul>';
             } else {
                 __pages.forEach(page => {
                     html += `<li style="--${cssvar.liheight}:19px"><a href="${page.path}" target="_self">${span(pagetitleify(page.title))}</a></li>`;
                 });
             }
-            html += `</li>`;
+            html += '</li>';
         }
 
         return html;
