@@ -276,6 +276,7 @@ const l = ['\n\n','\n    ','\n        '];
 const date = new Date();
 let logs = `_just ${_just.version} - ${date} (${date.getTime()})${l[0]}_JUST FILES:${l[1]}CSS: ${filename.css}${l[1]}JS: ${filename.js}`;
 let errorlogs = `${l[0]}CAUGHT ERRORS:`;
+debuglog(`INFO:${l[2]}  DNA = DirNameArray${l[2]}DNA>2 = DirNameArray.length > 2${l[2]}   DN = DirName${l[2]}   CL = Code Language${l[2]}   DF = Dir Found${l[2]}   FF = File Found${l[2]}P2URL = PathToURL${l[2]}MDF = Markdown Files${l[2]} PIDs = Pages (Page IDs)${l[2]}  PID = Page ID`);
 
 const rootDirA = PATH || '.';
 const extensions = ['.md', '.mdx', '.html'];
@@ -355,42 +356,89 @@ function getPageList() {
 function addFolderToPageList(pageList) {
     return pageList.map(page => {
         const folderNameArray = page.path.split('/').filter(Boolean);
-        debuglog('  FNA: '+folderNameArray);
+        debuglog('  DNA: '+folderNameArray);
         let folderName = folderNameArray.length > 1 ? folderNameArray[folderNameArray.length - 2] : null;
-        debuglog('   FN: '+folderName);
         if (folderNameArray.length > 2) {
-            debuglog('FNA>2: yes');
+            folderName = folderNameArray.slice(0,-1).join('/');
+            debuglog('DNA>2: Yes');
+        } else {
+            debuglog('DNA>2: No');
         };
+        debuglog('   DN: '+folderName);
         return { ...page, folder: folderName };
     });
 }
 const pageList = getPageList();
 
 function generateListItems(PageList) {
+    const folderTree = {};
     const folderMap = {};
-    const folderList = [];
-    const donotinsert = [];
-    const pagelinks = {};
-    const pagefolder = {};
-    const foldernameify = (fldrname) => _just.string.toText(_just.string.Aa(fldrname), true);
 
     PageList.forEach(page => {
         const folder = page.folder || '';
-        if (!folderMap[folder]) {
-            folderMap[folder] = [];
-            if (folder != '') folderList.push(foldernameify(folder));
-        }
         folderMap[folder].push(page);
-        pagefolder[page.title] = foldernameify(folder);
-    });
-    PageList.forEach(page => {
-        if (folderList.includes(page.title) && pagefolder[page.title] !== page.title && !pagefolder[page.title].split('').includes('/')) {
-            pagelinks[page.title] = page.path;
-            donotinsert.push(page.title);
-        }
     });
 
-    let listItemsHTML = '';
+    PageList.forEach(page => {
+        const folderPath = page.folder || '';
+        const parts = folderPath.split('/').filter(Boolean);
+        let currentLevel = folderTree;
+
+        parts.forEach((part, index) => {
+            if (!currentLevel[part]) {
+                currentLevel[part] = {
+                    __pages: [],
+                    __subfolders: {}
+                };
+            }
+            if (index === parts.length - 1) {
+                currentLevel[part].__pages.push(page);
+            }
+            currentLevel = currentLevel[part].__subfolders;
+        });
+    });
+
+    function buildFolderHTML(folderObj, parentFolderName = '') {
+        let html = '';
+
+        for (const folderName in folderObj) {
+            const { __pages, __subfolders } = folderObj[folderName];
+
+            const displayFolderName = _just.string.toText(_just.string.Aa(folderName), true);
+
+            const hasPages = __pages.length > 0;
+            const hasSubfolders = Object.keys(__subfolders).length > 0;
+
+            html += `<li>`;
+            if (hasPages || hasSubfolders) {
+                html += `<span>`;
+                // Можно добавить ссылку на папку или оставить просто название
+                html += `<strong>${displayFolderName}</strong>`;
+                html += `</span>`;
+                html += `<ul>`;
+                
+                __pages.forEach(page => {
+                    const title = page.title === 'index' ? 'Home' : page.title;
+                    html += `<li><a href="${page.path}" target="_self"><span>${title}</span></a></li>`;
+                });
+
+                html += buildFolderHTML(__subfolders);
+                
+                html += `</ul>`;
+            } else {
+                __pages.forEach(page => {
+                    const title = page.title === 'index' ? 'Home' : page.title;
+                    html += `<li><a href="${page.path}" target="_self"><span>${title}</span></a></li>`;
+                });
+            }
+            html += `</li>`;
+        }
+
+        return html;
+    }
+
+    const listItemsHTML = `<ul>${buildFolderHTML(folderTree)}</ul>`;
+
     const pageListJSON = [];
     const folders = Object.keys(folderMap);
     const sortedFolders = folders.sort((a, b) => {
@@ -400,17 +448,9 @@ function generateListItems(PageList) {
     });
     for (const folderName of sortedFolders) {
         const pages = folderMap[folderName];
-
-        listItemsHTML += `${ folderName != '' ? `<li>
-                            <span>${donotinsert.includes(foldernameify(folderName)) && pagelinks[foldernameify(folderName)] ? `<a href="${pagelinks[foldernameify(folderName)]}" target="_self">` : ''}<strong>${foldernameify(folderName)}</strong>${donotinsert.includes(foldernameify(folderName)) && pagelinks[foldernameify(folderName)] ? '</a>' : ''}</span>
-                            <ul>` : '<li><ul>'}`;
-        pages.forEach(page => {
-            page.title = page.title == 'index' ? 'Home' : page.title;
-            listItemsHTML += donotinsert.includes(page.title) ? '' : `<li><a href="${page.path}" target="_self"><span>${page.title}</span></a></li>`;
+        pages.forEach(page => {;
             pageListJSON.push([page.path, page.title]);
         });
-        listItemsHTML += `   </ul>
-                        </li>`;
     }
 
     return [listItemsHTML, pageListJSON];
@@ -518,6 +558,7 @@ checkTLD(domain).then(tldvalid => {
     const MDtoHTML = (input) => {
         let text = MDescape(input);
         text = text.replace(/```([\w]*)\s*[\r\n]+([\s\S]*?)```/g, (match, lang_, code_) => {
+                        const inputlang = lang_;
                         const filter_ = (inpt) => inpt.replace(/\n( {1,})/g, (match, spaces) => {
                             return `\n${'&nbsp;'.repeat(spaces.length)}`;
                         }).replaceAll('\n\n', '\n');
@@ -530,7 +571,7 @@ checkTLD(domain).then(tldvalid => {
                         if (highlightcode && !supportedlangs.includes(lang_) && langaliases[lang_]) {
                             lang_ = langaliases[lang_]
                         }
-                        debuglog(`   CL: ${lang_}`);
+                        debuglog(`   CL: ${inputlang} => ${lang_}`);
                         const hljshighlight = highlightcode && supportedlangs.includes(lang_)
                         const output_ = hljshighlight ? hljs.highlight(code_, {language: lang_}).value : undefined;
                         insertedcode = true;
@@ -724,7 +765,7 @@ checkTLD(domain).then(tldvalid => {
     const htmlhead = (filelink = undefined) => {
         const start = filelink == "" ? '' : '/';
         let prefetch = '';
-        debuglog(` PIDs: ${pageList.length}`);
+        debuglog(` PIDs: ${pageList.length + 1}`);
         for (let i = 0; i <= pageList.length; i++) {
             prefetch += pageList[i] && pageList[i].path && ((filelink && pageList[i].path != filelink) || !filelink) ? `<link rel="prefetch" href="${pageList[i].path.endsWith('/') ? pageList[i].path + 'index' : pageList[i].path}.html">` : '';
             debuglog(`  PID: ${i}`);
