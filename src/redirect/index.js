@@ -26,7 +26,6 @@ SOFTWARE.
 
 const template = {
     "title": (url) => `Redirecting to ${url}...`,
-    "description": "Made with Just an Ultimate Site Tool",
     "viewport": "width=device-width, initial-scale=1.0",
     "twitter": "summary_large_image"
 }
@@ -55,11 +54,10 @@ const generatePage = (url, params, path_) => {
     }
 
     const tempTitle = template.title(URL);
-    const tempDescription = template.description;
     const tempViewport = template.viewport;
 
     const title = params ? params.title || tempTitle : tempTitle;
-    const description = params ? params.description || tempDescription : tempDescription;
+    const description = params ? params.description || undefined : undefined;
     const metaKeywords = params ? params.keywords || undefined : undefined;
     const lang = params ? params.htmlLang || undefined : undefined;
     const robots = params ? params.robots || undefined : undefined;
@@ -81,15 +79,15 @@ const generatePage = (url, params, path_) => {
     const googleVerification = params ? params.google || undefined : undefined;
 
     const page = path_ ? PATH() : "index";
-    const keywords = metaKeywords ? `<meta name="keywords" content="${metaKeywords}"/>` : '';
+    const keywords = metaKeywords ? `<meta name="keywords" content="${metaKeywords}">` : '';
     const htmlLang = lang ? ` lang="${`${lang}`.toLowerCase()}"` : '';
     const optionalstuff = () => {
         let output = '';
         if (yandexVerification) {
-            output += `\n<meta name="yandex-verification" content="${yandexVerification}"/>`;
+            output += `\n<meta name="yandex-verification" content="${yandexVerification}">`;
         }
         if (googleVerification) {
-            output += `\n<meta name="google-site-verification" content="${googleVerification}" />`;
+            output += `\n<meta name="google-site-verification" content="${googleVerification}">`;
         }
         if (googleAnalytics) {
             output += `\n<script async src="https://www.googletagmanager.com/gtag/js?id=${googleAnalytics}"></script>
@@ -103,7 +101,7 @@ const generatePage = (url, params, path_) => {
                         </script>`
         }
         if (robots) {
-            output += `\n<meta name="robots" content="${robots}" />`
+            output += `\n<meta name="robots" content="${robots}">`
         }
         return output;
     }
@@ -116,14 +114,12 @@ const generatePage = (url, params, path_) => {
         <meta name="viewport" content="${viewport}">
         <title>${title}</title>
         <link rel="stylesheet" href="/_just/style.css">
-        <meta name="description" content="${description}"/>${keywords}
-        ${meta}"og:title" content="${title}"/>
-        ${meta}"og:description" content="${description}"/>
-        ${meta}"og:type" content="website"/>
-        ${meta}"twitter:card" content="${twitterCard}"/>
-        ${meta}"og:title" content="${ogTitle}"/>
-        ${meta}"og:description" content="${ogDescription}"/>
-        ${meta}"og:url" content="${URL}"/>${optionalstuff()}
+        ${description ? `<meta name="description" content="${description}">` : ''}${keywords}
+        ${meta}"og:type" content="website">
+        ${meta}"twitter:card" content="${twitterCard}">
+        ${meta}"og:title" content="${ogTitle}">
+        ${ogDescription ? `${meta}"og:description" content="${ogDescription}">` : ''}
+        ${meta}"og:url" content="${URL}">${optionalstuff()}
     </head>
     <body>
         <h1>${title}</h1>
@@ -131,14 +127,11 @@ const generatePage = (url, params, path_) => {
             <span class="r">${text1 || `Redirecting...<br><small>to ${link}${URL}</a></small>`}</span>
             <span class="d">${text2 || "Didn't get redirected?"} ${link}${text3 || 'Click here!'}</a></span>
         </div>
-        <script src="/_just/${page}.js"></script>
+        <script>window.location.href='${URL}';</script>
     </body>
-    </html>`);
+</html>`);
     
     fs.writeFileSync(`deploy/${page}.html`, htmlContent);
-    
-    const jsContent = `window.location.href='${URL}';`;
-    fs.writeFileSync(`deploy/_just/${page}.js`, jsContent);
 };
 
 generatePage(redirectConfig.url, redirectConfig.params);
@@ -216,7 +209,7 @@ module.exports = {
                 text1: "Hello, World!",
                 text2: "do not click anywhere.",
                 text3: "click here!"
-            }
+            },
             og: {
                 title: "Redirect",
                 description: "Hello, World!"
