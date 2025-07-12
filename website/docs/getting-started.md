@@ -41,12 +41,12 @@ jobs:
         uses: actions/configure-pages@v5
       - name: Generate with _just
         uses: js-just/latest@main
-        with:
-          path: . # Path to your website directory to be generated/compressed. (Only for compressor and generator modes)
+        with: # Remove "with" and "path" here if you are not using compressor or generator modes!
+          path: . # Root directory, or you can replace the dot with the path to your website/docs directory to be generated/compressed. (Only for compressor and generator modes)
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: . # Path to your entire website to be deployed to GitHub Pages
+          path: . # Root directory, or you can replace the dot with the path to your entire website to be deployed to GitHub Pages.
 
   deploy:
     environment:
@@ -141,5 +141,11 @@ module.exports = {
 }
 ```
 - Read the documentation for the mode/modes that you've chosen.
+
+## Modes documentation
+- [Postprocessor](/modes/postprocessor)
+- [Redirector](/modes/redirector)
+- [Compressor](/modes/compressor)
+- [Generator](/modes/generator)
 
 _just: prev: /docs
