@@ -375,7 +375,7 @@ const pageList = getPageList();
 function generateListItems(PageList) {
     const folderTree = {};
     const folderMap = {};
-    debuglog('   PL: '+PageList);
+    debuglog('   PL: '+JSON.stringify(PageList));
 
     PageList.forEach(page => {
         const folder = page.folder || '';
@@ -403,7 +403,7 @@ function generateListItems(PageList) {
             currentLevel = currentLevel[part].__subfolders;
         });
     });
-    debuglog('   FT: '+folderTree)
+    debuglog('   FT: '+JSON.stringify(folderTree))
 
     function buildFolderHTML(folderObj) {
         let html = '';
