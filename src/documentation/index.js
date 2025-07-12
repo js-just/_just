@@ -1201,5 +1201,5 @@ checkTLD(domain).then(tldvalid => {
         "css": filename.css,
         "json": dataname[9]
     }), template.charset);
-    fs.writeFileSync(path.join(websitepath, rootDirA, '.nojekyll'), '', template.charset);
+    fs.writeFileSync(path.join(websitepath, '.', '.nojekyll'), '', template.charset);
 }, tldinvalid => {});
