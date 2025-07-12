@@ -415,8 +415,11 @@ function generateListItems(PageList) {
     function buildFolderHTML(folderObj, rootFolder = false) {
         let html = '';
 
-        if (rootFolder) PageList.filter(page => !folders_.includes(page)).forEach(page => {
-            html += `<li style="--${cssvar.liheight}:19px;margin-bottom:-28px"><a href="${page.path}" target="_self">${span(pagetitleify(page.title))}</a></li>`;
+        const plfiltered = PageList.filter(page => !folders_.includes(page.title));
+        let plitemid = 0;
+        if (rootFolder) plfiltered.forEach(page => {
+            plitemid++;
+            html += `<li style="--${cssvar.liheight}:19px${plitemid <= plfiltered.length ? ';margin-bottom:-20px' : ''}"><a href="${page.path}" target="_self">${span(pagetitleify(page.title))}</a></li>`;
         });
         for (const folderName in folderObj) {
             const { __pages, __subfolders } = folderObj[folderName];
