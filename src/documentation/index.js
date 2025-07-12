@@ -278,7 +278,7 @@ const date = new Date();
 let logs = `_just ${_just.version} - ${date} (${date.getTime()})${l[0]}_JUST FILES:${l[1]}CSS: ${filename.css}${l[1]}JS: ${filename.js}`;
 let errorlogs = `${l[0]}CAUGHT ERRORS:`;
 const nl = l[2].slice(0,-2)+' '.repeat(7);
-debuglog(`INFO:${nl}  DNA = DirNameArray${nl}DNA>2 = DirNameArray.length > 2${nl}   DN = DirName${nl}   CL = Code Language${nl}   DF = Dir Found${nl}   FF = File Found${nl}P2URL = PathToURL${nl}  MDF = Markdown Files${nl} PIDs = Pages (Page IDs)${nl}  PID = Page ID`);
+debuglog(`INFO:${nl}  DNA = DirNameArray${nl}DNA>2 = DirNameArray.length > 2${nl}   DN = DirName${nl}   PL = PageList${nl}   FT = FolderTree${nl}   CL = Code Language${nl}   DF = Dir Found${nl}   FF = File Found${nl}P2URL = PathToURL${nl}  MDF = Markdown Files${nl} PIDs = Pages (Page IDs)${nl}  PID = Page ID`);
 
 const rootDirA = PATH || '.';
 const extensions = ['.md', '.mdx', '.html'];
@@ -375,6 +375,7 @@ const pageList = getPageList();
 function generateListItems(PageList) {
     const folderTree = {};
     const folderMap = {};
+    debuglog('   PL: '+PageList);
 
     PageList.forEach(page => {
         const folder = page.folder || '';
@@ -402,8 +403,9 @@ function generateListItems(PageList) {
             currentLevel = currentLevel[part].__subfolders;
         });
     });
+    debuglog('   FT: '+folderTree)
 
-    function buildFolderHTML(folderObj, parentFolderName = '') {
+    function buildFolderHTML(folderObj) {
         let html = '';
 
         for (const folderName in folderObj) {
