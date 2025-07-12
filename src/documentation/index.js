@@ -72,7 +72,7 @@ const path = require('path');
 const config = JSON.parse(fs.readFileSync('just.config.json', template.charset));
 const docsConfig = config.docs_config;
 const debug_ = config.debug || false;
-const debuglog = (text) => {if (debug_) {console.log(`${_just.error.prefix}${esc}[0;36mDebug: ${text}`)}};
+const debuglog = (text) => {if (debug_) console.log(`${_just.error.prefix}${esc}[0;36mDebug: ${text}`)};
 
 const configmbl = docsConfig ? docsConfig.mbl || undefined : undefined;
 if (configmbl && (configmbl > 4 || configmbl < 1)) {
@@ -179,7 +179,6 @@ const cssid = {
     "searchbar": dataname2[3],
     "glass": dataname2[6],
     "search": dataname2[7],
-    "liheight": dataname2[18]
 }
 const cssvar = {
     "bg": dataname[6]+randomChar(1),
@@ -195,6 +194,7 @@ const cssvar = {
     "fr": dataname[6]+randomChar(1),
     "edata": dataname2[5],
     "sdfix": dataname2[10],
+    "liheight": dataname2[18],
 }
 addchars();
 cssvar["md"] = dataname[7]+randomChar(1);
@@ -414,7 +414,8 @@ function generateListItems(PageList) {
             const hasPages = __pages.length > 0;
             const hasSubfolders = Object.keys(__subfolders).length > 0;
 
-            html += `<li style="--${cssid.liheight}: 10px">`;
+            const liheight = hasPages ? (__pages.length - 1) * 15 : 0;
+            html += `<li style="--${cssvar.liheight}: ${__pages.length * 19 + liheight}px">`;
             if (hasPages || hasSubfolders) {
                 html += `<span>`;
                 html += `<strong>${displayFolderName}</strong>`;
@@ -423,7 +424,7 @@ function generateListItems(PageList) {
                 
                 __pages.forEach(page => {
                     const title = page.title === 'index' ? 'Home' : page.title;
-                    html += `<li><a href="${page.path}" target="_self"><span>${title}</span></a></li>`;
+                    html += `<li style="--${cssvar.liheight}: 19px"><a href="${page.path}" target="_self"><span>${title}</span></a></li>`;
                 });
 
                 html += buildFolderHTML(__subfolders);
@@ -432,7 +433,7 @@ function generateListItems(PageList) {
             } else {
                 __pages.forEach(page => {
                     const title = page.title === 'index' ? 'Home' : page.title;
-                    html += `<li><a href="${page.path}" target="_self"><span>${title}</span></a></li>`;
+                    html += `<li style="--${cssvar.liheight}: 19px"><a href="${page.path}" target="_self"><span>${title}</span></a></li>`;
                 });
             }
             html += `</li>`;
@@ -1144,9 +1145,9 @@ checkTLD(domain).then(tldvalid => {
             });
         })
     }
-    console.log(errorlogs + configlogs);
+    if (debug_) console.log(errorlogs + configlogs);
     const outlogs = hideOutput?'':logs+errorlogs+configlogs;
-    fs.writeFileSync(path.join(websitepath, '_just_data', 'output.txt'), outlogs, template.charset);
+    if (debug_) fs.writeFileSync(path.join(websitepath, '_just_data', 'output.txt'), outlogs, template.charset);
     fs.writeFileSync(path.join(websitepath, '_just', `${dataname[9]}.json`), JSON.stringify(mdjson), template.charset);
     fs.writeFileSync(path.join(websitepath, '_just', 'index.json'), JSON.stringify({
         "js": filename.js,

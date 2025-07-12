@@ -33,53 +33,57 @@ const fs = require('fs');
 const path = require('path');
 const rootDirA = PATH || '.';
 const rootDirB = process.cwd();
-const logs = fs.readFileSync(path.join(rootDirA !== '.' ? rootDirA : rootDirB, '_just_data', 'output.txt'), charset);
-let logsstr = logs;
-const outputlogs = logsstr !== '';
-const l = ['\n\n','\n    ','\n        '];
-logsstr += outputlogs? l[0] : '';
-let newlogs = `COMPRESSED:`;
+try {
+    const logs = fs.readFileSync(path.join(rootDirA !== '.' ? rootDirA : rootDirB, '_just_data', 'output.txt'), charset);
+    let logsstr = logs;
+    const outputlogs = logsstr !== '';
+    const l = ['\n\n','\n    ','\n        '];
+    logsstr += outputlogs? l[0] : '';
+    let newlogs = `COMPRESSED:`;
 
-function findMarkdownFiles(dir) {
-    let results = [];
-    const list = fs.readdirSync(dir);
-    list.forEach(file => {
-        file = path.join(dir, file);
-        const stat = fs.statSync(file);
-        if (stat && stat.isDirectory()) {
-            results = results.concat(findMarkdownFiles(file));
-        } else if (file.endsWith('.md') || file.endsWith('.mdx')) {
-            results.push(file);
+    function findMarkdownFiles(dir) {
+        let results = [];
+        const list = fs.readdirSync(dir);
+        list.forEach(file => {
+            file = path.join(dir, file);
+            const stat = fs.statSync(file);
+            if (stat && stat.isDirectory()) {
+                results = results.concat(findMarkdownFiles(file));
+            } else if (file.endsWith('.md') || file.endsWith('.mdx')) {
+                results.push(file);
+            }
+        });
+        return results;
+    }
+    let fileID = 0;
+    findMarkdownFiles(rootDirB).forEach(file => {
+        fileID++;
+        newlogs += `${l[1]}FILE #${fileID} "${_just.string.removeLast(_just.string.runnerPath(file), 'md')}html":`;
+        try {
+            const fileNameWithoutExt = path.basename(file, path.extname(file));
+            const outFilePath = (ext) => path.join(path.dirname(file), `${fileNameWithoutExt}.${ext}`);
+            const htmlsize = _just.string.fileSize(fs.statSync(outFilePath('html')).size);
+            newlogs += `${l[2]}SIZE: ${htmlsize} (html output)`;
+        } catch (err) {
+            newlogs += `${l[2]}ERROR: ${err}`;
+        }
+        let sl = false;
+        let fd = false;
+        try {
+            fs.unlink(file, function(err) {
+                newlogs += err ? `${l[2]}MARKDOWN FILE DELETED: NO. (${err}) (fs)` : newlogs += `${l[2]}MARKDOWN FILE DELETED: YES.`;
+                sl = true;
+                fd = true;
+            })
+        } catch (err) {
+            newlogs += sl ? '' : `${l[2]}MARKDOWN FILE DELETED: NO. (${err}) (tc)`; // tc here means try{}catch(){}
+            fd = true;
         }
     });
-    return results;
-}
-let fileID = 0;
-findMarkdownFiles(rootDirB).forEach(file => {
-    fileID++;
-    newlogs += `${l[1]}FILE #${fileID} "${_just.string.removeLast(_just.string.runnerPath(file), 'md')}html":`;
-    try {
-        const fileNameWithoutExt = path.basename(file, path.extname(file));
-        const outFilePath = (ext) => path.join(path.dirname(file), `${fileNameWithoutExt}.${ext}`);
-        const htmlsize = _just.string.fileSize(fs.statSync(outFilePath('html')).size);
-        newlogs += `${l[2]}SIZE: ${htmlsize} (html output)`;
-    } catch (err) {
-        newlogs += `${l[2]}ERROR: ${err}`;
-    }
-    let sl = false;
-    let fd = false;
-    try {
-        fs.unlink(file, function(err) {
-            newlogs += err ? `${l[2]}MARKDOWN FILE DELETED: NO. (${err}) (fs)` : newlogs += `${l[2]}MARKDOWN FILE DELETED: YES.`;
-            sl = true;
-            fd = true;
-        })
-    } catch (err) {
-        newlogs += sl ? '' : `${l[2]}MARKDOWN FILE DELETED: NO. (${err}) (tc)`; // tc here means try{}catch(){}
-        fd = true;
-    }
-});
 
-console.log(newlogs);
-logsstr += outputlogs? newlogs : '';
-fs.writeFileSync(path.join(rootDirA !== '.' ? rootDirA : rootDirB, '_just_data', 'output.txt'), logsstr, charset);
+    console.log(newlogs);
+    logsstr += outputlogs? newlogs : '';
+    fs.writeFileSync(path.join(rootDirA !== '.' ? rootDirA : rootDirB, '_just_data', 'output.txt'), logsstr, charset);
+} catch (eee) {
+    // debug disabled
+}
