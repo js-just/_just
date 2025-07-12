@@ -1168,9 +1168,10 @@ main nav li ul li:has(strong) {
         width: 3px;
         background-color: var(--md);
         display: block;
-        position: absolute;
+        position: relative;
         translate: -10px 0px;
         border-radius: 50px;
         opacity: 0.5;
+        margin-bottom: calc(0px - var(--liheight));
     }
 }
