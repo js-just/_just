@@ -41,7 +41,7 @@ function compressFile(filePath) {
         content = content.replace(/<!--[\s\S]*?-->/g, '');
     }
     if (filePath.endsWith('.html')) {
-        content = content.replace(/(?<!["<>][\s\S]*)(&nbsp){1,}(?!["<>][\s\S]*)/g, (match, b,c, a) => ' '.repeat(a.split('&').filter(Boolean).length));
+        content = content.replace(/(?<!["<][\s\S]*)(&nbsp){1,}(?![">][\s\S]*)/g, (match, b,c, a) => ' '.repeat(a.split('&').filter(Boolean).length));
     }
 
     if (filePath.endsWith('.js')) {
