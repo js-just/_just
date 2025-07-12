@@ -278,7 +278,7 @@ const date = new Date();
 let logs = `_just ${_just.version} - ${date} (${date.getTime()})${l[0]}_JUST FILES:${l[1]}CSS: ${filename.css}${l[1]}JS: ${filename.js}`;
 let errorlogs = `${l[0]}CAUGHT ERRORS:`;
 const nl = l[2].slice(0,-2)+' '.repeat(7);
-debuglog(`INFO:${nl}  DNA = DirNameArray${nl}DNA>2 = DirNameArray.length > 2${nl}   DN = DirName${nl}   PL = PageList${nl}   FT = FolderTree${nl}   CL = Code Language${nl}   DF = Dir Found${nl}   FF = File Found${nl}P2URL = PathToURL${nl}  MDF = Markdown Files${nl} PIDs = Pages (Page IDs)${nl}  PID = Page ID`);
+debuglog(`INFO:${nl}  DNA = DirNameArray${nl}DNA>2 = DirNameArray.length > 2${nl}   DN = DirName${nl}   PL = PageList${nl}   FT = FolderTree${nl}   FL = FolderList${nl}   CL = Code Language${nl}   DF = Dir Found${nl}   FF = File Found${nl}P2URL = PathToURL${nl}  MDF = Markdown Files${nl} PIDs = Pages (Page IDs)${nl}  PID = Page ID`);
 
 const rootDirA = PATH || '.';
 const extensions = ['.md', '.mdx', '.html'];
@@ -409,14 +409,15 @@ function generateListItems(PageList) {
             }
         });
     });
-    debuglog('   FT: '+JSON.stringify(folderTree))
+    debuglog('   FT: '+JSON.stringify(folderTree));
+    debuglog('   FL: '+JSON.stringify(folders_));
 
-    function buildFolderHTML(folderObj) {
+    function buildFolderHTML(folderObj, rootFolder = false) {
         let html = '';
 
-        PageList.filter(page => !folders_.includes(page)).forEach(page => {
-            html += `<li style="--${cssvar.liheight}: 19px"><a href="${page.path}" target="_self">${span(pagetitleify(page.title))}</a></li>`;
-        })
+        if (rootFolder) PageList.filter(page => !folders_.includes(page)).forEach(page => {
+            html += `<li style="--${cssvar.liheight}:19px;margin-bottom:-28px"><a href="${page.path}" target="_self">${span(pagetitleify(page.title))}</a></li>`;
+        });
         for (const folderName in folderObj) {
             const { __pages, __subfolders } = folderObj[folderName];
 
@@ -424,7 +425,7 @@ function generateListItems(PageList) {
             const hasSubfolders = Object.keys(__subfolders).length > 0;
 
             const liheight = hasPages ? __pages.length * 15 : 0;
-            html += `<li style="--${cssvar.liheight}: ${__pages.length * 19 + liheight + 19}px">`;
+            html += `<li style="--${cssvar.liheight}:${__pages.length * 19 + liheight + 19}px">`;
             if (hasPages || hasSubfolders) {
                 html += `<span>`;
                 html += `<strong>${foldernameify(folderName)}</strong>`;
@@ -432,7 +433,7 @@ function generateListItems(PageList) {
                 html += `<ul>`;
                 
                 __pages.forEach(page => {
-                    html += `<li style="--${cssvar.liheight}: 19px"><a href="${page.path}" target="_self">${span(pagetitleify(page.title))}</a></li>`;
+                    html += `<li style="--${cssvar.liheight}:19px"><a href="${page.path}" target="_self">${span(pagetitleify(page.title))}</a></li>`;
                 });
 
                 html += buildFolderHTML(__subfolders);
@@ -440,7 +441,7 @@ function generateListItems(PageList) {
                 html += `</ul>`;
             } else {
                 __pages.forEach(page => {
-                    html += `<li style="--${cssvar.liheight}: 19px"><a href="${page.path}" target="_self">${span(pagetitleify(page.title))}</a></li>`;
+                    html += `<li style="--${cssvar.liheight}:19px"><a href="${page.path}" target="_self">${span(pagetitleify(page.title))}</a></li>`;
                 });
             }
             html += `</li>`;
@@ -463,7 +464,7 @@ function generateListItems(PageList) {
         });
     }
 
-    return [buildFolderHTML(folderTree), pageListJSON];
+    return [buildFolderHTML(folderTree, true), pageListJSON];
 }
 
 
