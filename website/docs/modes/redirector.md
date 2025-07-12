@@ -80,6 +80,8 @@ module.exports = {
 }
 ```
 
+---
+
 ## `module.exports` JSON Schema
 ```json
 {
