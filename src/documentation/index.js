@@ -378,6 +378,12 @@ function generateListItems(PageList) {
     const folders_ = [];
     const foldernameify = (fldrname) => _just.string.toText(_just.string.Aa(fldrname), true);
     const pagetitleify = (pagetitle) => pagetitle === 'index' ? 'Home' : pagetitle;
+
+    const index__ = PageList.findIndex(page => page.path === "/");
+    if (index__ !== -1) {
+        PageList.splice(index__, 1);
+        PageList.unshift(specialWord);
+    }
     debuglog('   PL: '+JSON.stringify(PageList));
 
     PageList.forEach(page => {
@@ -415,7 +421,7 @@ function generateListItems(PageList) {
     function buildFolderHTML(folderObj, rootFolder = false) {
         let html = '';
 
-        const plfiltered = PageList.filter(page => !folders_.includes(page.title));
+        const plfiltered = PageList.filter(page => !page.folder && !folders_.includes(page.title));
         let plitemid = 0;
         if (rootFolder) plfiltered.forEach(page => {
             plitemid++;
@@ -1015,7 +1021,7 @@ checkTLD(domain).then(tldvalid => {
             pagejs += btnjs(filename.css, prevnext[1].next)
         }
 
-        const pages = generateListItems(addFolderToPageList(pageList));
+        const pages = generateListItems(addFolderToPageList(pageList).sort((a, b) => a.title.localeCompare(b.title)));
         const start = pathtourl[file] == "" ? '' : '/';
         let outHTML = HTML
             .replace('<html>', `<html${htmlLang}>`)
