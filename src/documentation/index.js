@@ -442,7 +442,8 @@ function generateListItems(PageList) {
             const hasPages = __pages.length > 0;
             const hasSubfolders = Object.keys(__subfolders).length > 0;
 
-            const liheight = hasPages ? (__pages.length - 1) * 15 : 0;
+            const pageslength = __pages.length > 1 ? __pages.length - 1 : __pages.level;
+            const liheight = hasPages ? pageslength * 15 : 0;
             html += `<li style="--${cssvar.liheight}:${__pages.length * 19 + liheight + 19}px">`;
             if (hasPages || hasSubfolders) {
                 const insertLink = plfiltered3.includes(foldernameify(folderName)) && plfiltered4[foldernameify(folderName)];
