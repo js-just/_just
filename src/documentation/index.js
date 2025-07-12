@@ -420,8 +420,9 @@ function generateListItems(PageList) {
         let plitemid = 0;
         const index__ = plfiltered.findIndex(page => page.path === "/");
         if (index__ !== -1) {
+            const page__ = plfiltered[index__];
             plfiltered.splice(index__, 1);
-            plfiltered.unshift(specialWord);
+            plfiltered.unshift(page__);
         }
         if (rootFolder) plfiltered.forEach(page => {
             plitemid++;
