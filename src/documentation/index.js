@@ -379,11 +379,6 @@ function generateListItems(PageList) {
     const foldernameify = (fldrname) => _just.string.toText(_just.string.Aa(fldrname), true);
     const pagetitleify = (pagetitle) => pagetitle === 'index' ? 'Home' : pagetitle;
 
-    const index__ = PageList.findIndex(page => page.path === "/");
-    if (index__ !== -1) {
-        PageList.splice(index__, 1);
-        PageList.unshift(specialWord);
-    }
     debuglog('   PL: '+JSON.stringify(PageList));
 
     PageList.forEach(page => {
@@ -421,11 +416,16 @@ function generateListItems(PageList) {
     function buildFolderHTML(folderObj, rootFolder = false) {
         let html = '';
 
-        const plfiltered = PageList.filter(page => !page.folder && !folders_.includes(page.title));
+        const plfiltered = PageList.filter(page => page.folder === null && !folders_.includes(page.title));
         let plitemid = 0;
+        const index__ = plfiltered.findIndex(page => page.path === "/");
+        if (index__ !== -1) {
+            plfiltered.splice(index__, 1);
+            plfiltered.unshift(specialWord);
+        }
         if (rootFolder) plfiltered.forEach(page => {
             plitemid++;
-            html += `<li style="--${cssvar.liheight}:19px${plitemid <= plfiltered.length ? ';margin-bottom:-20px' : ''}"><a href="${page.path}" target="_self">${span(pagetitleify(page.title))}</a></li>`;
+            html += `<li style="--${cssvar.liheight}:19px${plitemid < plfiltered.length ? ';margin-bottom:-20px' : ''}"><a href="${page.path}" target="_self">${span(pagetitleify(page.title))}</a></li>`;
         });
         for (const folderName in folderObj) {
             const { __pages, __subfolders } = folderObj[folderName];
