@@ -49,7 +49,7 @@ module.exports = {
     }
 }
 ```
-> [!NOTE] `\n` and `    ` (tabs/4 spaces) will be removed. Use `<br>` instead of `\n`.
+> [!NOTE] `\\n` and tabs/4 spaces will be removed. Use `<br>` instead of `\\n`.
 
 ### Redirect paths
 You may add `paths[]` in `redirect_config{}` to create custom redirect paths.
