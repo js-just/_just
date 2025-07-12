@@ -659,10 +659,10 @@ checkTLD(domain).then(tldvalid => {
     function hbuoclpMDtoHTML(text, maxBlockquoteLevel = mbl) {
         for (let i = 6; i >= 1; i--) {
             const regex = new RegExp(`^#{${i}}\\s+(.*?)\\s*$`, 'gm');
-            text = text.replace(regex, MDtoHTML(`<h${i}>$1</h${i}>`));
+            text = text.replace(regex, (match, header) => `<h${i}>${MDtoHTML(header)}</h${i}>`);
         }
         const smlregex = new RegExp(`^-#\\s+(.*?)\\s*$`, 'gm');
-        text = text.replace(smlregex, MDtoHTML(`<span class="${cssclass.small}">$1</span>`)) 
+        text = text.replace(smlregex, (match, smol) => `<span class="${cssclass.small}">${MDtoHTML(smol)}</span>`);
         /*alternate headers currently disabled. they cause some bugs*///text = text.replace(/(?<=\s|^)(.*?)\n={3,}(?=\s|\n|$)/, MDtoHTML(`${_just.element(dataname[5])}<h1>$1</h1>`)).replace(/(?<=\s|^)(.*?)\n-{3,}(?=\s|\n|$)/, MDtoHTML(`${_just.element(dataname[6])}<h2>$1</h2>`));
 
         function processBlockquotes(inputText, level) {
