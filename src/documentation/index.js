@@ -75,6 +75,7 @@ const debug_ = config.debug || false;
 const debuglog = (text) => {if (debug_) console.log(`${_just.error.prefix}${esc}[0;36mDebug: ${text}`)};
 
 const configmbl = docsConfig ? docsConfig.mbl || undefined : undefined;
+const JSUsePathInput = docsConfig ? docsConfig.usePathInputInJS || false : false;
 if (configmbl && (configmbl > 4 || configmbl < 1)) {
     const warningg = `${_just.error.prefix}${esc}[0;33mWarning 0209${esc}[0m: ${esc}[0;33mUnstable config: mbl: ${esc}[0m${configmbl}`;
     console.warn(warningg);
@@ -787,6 +788,7 @@ checkTLD(domain).then(tldvalid => {
     const insertHTMLinHead = docsConfig ? docsConfig.insertInHTMLHead || '' : '';
 
     const docsUsePathInput = docsConfig ? docsConfig.usePathInput || false : false;
+    const HTMLUsePathInput = docsConfig ? docsConfig.usePathInputInHTML || false : false;
 
     const keywords = metaKeywords ? `<meta name="keywords" content="${metaKeywords}">` : '';
     const desc = description ? `<meta name="description" content="${description}">` : '';
@@ -795,12 +797,12 @@ checkTLD(domain).then(tldvalid => {
     const logo = logoPath ? `<img src="${logoPath}" width="35px" height="auto" alt="Logo">` : '';
     const name = docsConfig && docsConfig.title ? span(title) : logoPath ? '' : span(title);
     const htmlLang = lang ? ` lang="${`${lang}`.toLowerCase()}"` : '';
-    const htmlhead = (filelink = undefined) => {
+    const htmlhead = (filelink = undefined, fixpath = '') => {
         const start = filelink == "" ? '' : '/';
         let prefetch = '';
         debuglog(` PIDs: ${pageList.length + 1}`);
         for (let i = 0; i <= pageList.length; i++) {
-            prefetch += pageList[i] && pageList[i].path && ((filelink && pageList[i].path != filelink) || !filelink) ? `<link rel="prefetch" href="${pageList[i].path.endsWith('/') ? pageList[i].path + 'index' : pageList[i].path}.html">` : '';
+            prefetch += pageList[i] && pageList[i].path && ((filelink && pageList[i].path != filelink) || !filelink) ? `<link rel="prefetch" href="${fixpath}${pageList[i].path.endsWith('/') ? pageList[i].path + 'index' : pageList[i].path}.html">` : '';
             debuglog(`  PID: ${i}`);
         }
         let output = `
@@ -809,7 +811,7 @@ checkTLD(domain).then(tldvalid => {
         ${ogtitl}
         ${ogdesc}
         ${prefetch}
-        <link rel="preload" href="${start}_just/${dataname[9]}.json" as="fetch" type="application/json" crossorigin="anonymous">
+        <link rel="preload" href="${start}${fixpath}_just/${dataname[9]}.json" as="fetch" type="application/json" crossorigin="anonymous">
         <meta property="og:type" content="website">`;
         if (twitter) {
             output += `<meta property="twitter:card" content="${twitter}">`
@@ -984,7 +986,7 @@ checkTLD(domain).then(tldvalid => {
         mdlogs[outFilePath('html')] = `${l[1]}FILE #${fileID} "${_just.string.runnerPath(file)}":${l[2]}INPUT: ${_just.string.fileSize(fs.statSync(file).size)}`;
 
         if (pathtourl[file] || pathtourl[file] == '') {
-            mdjson[pathtourl[file]] = toText(content);
+            mdjson[`${JSUsePathInput && docsUsePathInput ? `${PATH}/`.repeat(2) : JSUsePathInput ? PATH+'/' : ''}${pathtourl[file]}`] = toText(content);
         }
 
         const headers = [];
@@ -1036,9 +1038,10 @@ checkTLD(domain).then(tldvalid => {
 
         const pages = generateListItems(addFolderToPageList(pageList).sort((a, b) => a.title.localeCompare(b.title)));
         const start = pathtourl[file] == "" ? '' : '/';
+        const fixpath = HTMLUsePathInput && docsUsePathInput ? `${PATH}/`.repeat(2) : HTMLUsePathInput ? PATH+'/' : '';
         let outHTML = HTML
             .replace('<html>', `<html${htmlLang}>`)
-            .replaceAll('="/_just/', `="${start}_just/`)
+            .replaceAll('="/_just/', `="${start}${fixpath}_just/`)
             .replace("content: '_just';", `content: '_just ${_just.version}';`)
             .replace('REPLACE_SCRIPT', `const ${dataname2[11]}=${JSON.stringify(pages[1])};${pagejs ? `document.addEventListener('DOMContentLoaded',()=>{${pagejs}});` : ''}`)
             .replaceAll('REPLACE_CSS', filename.css)
@@ -1046,7 +1049,7 @@ checkTLD(domain).then(tldvalid => {
             .replace('REPLACE_CHARSET', charset)
             .replace('REPLACE_VIEWPORT', viewport)
             .replace('REPLACE_TITLE', metatitle)
-            .replace('REPLACE_DATA', htmlhead(pathtourl[file]))
+            .replace('REPLACE_DATA', htmlhead(pathtourl[file], fixpath))
             .replace('REPLACE_CUSTOM', insertHTMLinHead)
             .replace('REPLACE_LOGO', logo)
             .replace('REPLACE_NAME', filterText(name))
@@ -1163,7 +1166,7 @@ checkTLD(domain).then(tldvalid => {
     fs.writeFileSync(
         path.join(websitepath, _justdir, `${filename.js}.js`),
         "try{"+_just.js.set(
-            JS.replace('\'REPLACE_PUBLICOUTPUT\'', hideOutput?false:publicOutput?false:true).replace('\'REPLACE_SEARCHV2\'', CSSdata[1] || false).replace('let searchurl = "/_just/search";', `let searchurl="/_just/${dataname[9]}.json";`), 
+            JS.replace('\'REPLACE_PUBLICOUTPUT\'', hideOutput?false:publicOutput?false:true).replace('\'REPLACE_SEARCHV2\'', CSSdata[1] || false).replace('let searchurl = "/_just/search";', `let searchurl="${JSUsePathInput && docsUsePathInput ? `/${PATH}`.repeat(2) : JSUsePathInput ? '/'+PATH : ''}/_just/${dataname[9]}.json";`), 
             JSdata.names.filter(n => n !== jstrimmedstrvar), 
             dataname2.reverse().slice(0, JSdata.total-1),
             jstrimmedstrvarbasestr
@@ -1198,5 +1201,5 @@ checkTLD(domain).then(tldvalid => {
         "css": filename.css,
         "json": dataname[9]
     }), template.charset);
-    fs.writeFileSync(path.join(websitepath, '.', '.nojekyll'), '', template.charset);
+    fs.writeFileSync(path.join(websitepath, rootDirA, '.nojekyll'), '', template.charset);
 }, tldinvalid => {});
