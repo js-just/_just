@@ -85,3 +85,8 @@ end
 ```gololang
 
 ```
+```diff
+  text
++ added
+- removed
+```
