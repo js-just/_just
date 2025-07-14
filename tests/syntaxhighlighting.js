@@ -47,3 +47,4 @@ function findFiles(dir) {
 const outpath = path.join('.', 'website/syntax-highlighting.md');
 fs.writeFileSync(outpath, findFiles(process.cwd()));
 console.log('Out:  '+fs.statSync(outpath).size);
+console.log('Out:  '+fs.readFileSync(outpath));
