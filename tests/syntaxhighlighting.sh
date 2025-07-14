@@ -33,3 +33,5 @@ find / -type f ! $ -name "*.md" -o -name "*.mdx" $ 2>/dev/null | while read -r f
     echo "```" >> "$OUTPUT_FILE"
     echo "" >> "$OUTPUT_FILE"
 done
+
+find / -type f ! $ -name "*.md" -o -name "*.mdx" $ 2>/dev/null | head -n 10
