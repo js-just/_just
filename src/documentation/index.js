@@ -1017,7 +1017,7 @@ checkTLD(domain).then(async tldvalid => {
             ).then((tohttmll) => {
                 console.log(toHTML);
                 console.log(tohttmll);
-                toHTML = toHTML.replace(/<(h1|h2|h3|h4)>(.*?)<\/\1>/g, (match, p1, p2) => {
+                toHTML = tohttmll.replace(/<(h1|h2|h3|h4)>(.*?)<\/\1>/g, (match, p1, p2) => {
                     return `<${p1} id="${uniqueName(encodeURIComponent(p2))}">${p2}</${p1}>`;
                 }).replace(/<(h1|h2|h3|h4) id="([^"]+)">(.*?)<\/\1>/g, (match, p1, p2, p3) => {headers.push(p2);return`<${p1} id="${p2}">${p3}</${p1}>`});
 
