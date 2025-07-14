@@ -999,7 +999,8 @@ checkTLD(domain).then(async tldvalid => {
             }
 
             const headers = [];
-            let toHTML = await hbuoclpMDtoHTML(
+            let toHTML;
+            toHTML = hbuoclpMDtoHTML(
                 addEnd(content, '\n')
                     .replace(/> (.*?)\n\n> (.*?)\n/g, `> $1\n\n> ${_just.element(dataname[7])}$2\n`)
                     .replaceAll('\n>\n> ', '\n> ')
