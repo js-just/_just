@@ -13,7 +13,7 @@
 .hljs-keyword, .hljs-attr, .hljs-selector-class {
     color: #c3acff;
 }
-.hljs-name, .hljs-selector-tag, .hljs-title.function_, .function_ {
+.hljs-name, .hljs-selector-tag, .hljs-title.function_, .function_, .hljs-property {
     color: #89a8f9;
 }
 .hljs-string {
