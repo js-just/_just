@@ -24,7 +24,7 @@
 
 OUTPUT_FILE="website/syntax-highlighting-test.md"
 
-for file in .; do
+for file in /*; do
     if [[ -f "$file" && ! "$file" =~ \.md$ && ! "$file" =~ \.mdx$ ]]; then
         extension="${file##*.}"
         echo "\`\`\`$extension" >> "$OUTPUT_FILE" && \

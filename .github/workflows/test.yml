@@ -19,7 +19,7 @@ jobs:
         run: rm -f "website/index.html" && cp "website/test.md" "website/index.md" && rm -f "website/test.md" && rm -f "just.config.js" && cp "tests/just.config.js" "just.config.js"
         shell: bash
       - name: Make syntax highlighting test markdown file
-        run: bash tests/syntaxhighlighting.sh
+        run: sudo bash tests/syntaxhighlighting.sh
         shell: bash
       - name: Generate with _just
         uses: js-just/_just@main
