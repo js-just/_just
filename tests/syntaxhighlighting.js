@@ -36,8 +36,8 @@ function findFiles(dir) {
         if (stat && stat.isDirectory()) {
             output += findFiles(file);
             console.log('Dir:  '+file);
-        } else if (!file.endsWith('.md') && !file.endsWith('.mdx')) {
-            output += `\`\`\`${path.extname(file)}\n${fs.readFileSync(file)}\n\`\`\`\n`;
+        } else if (!file.endsWith('.md') && !file.endsWith('.mdx') && path.extname(file)) {
+            output += `\`\`\`${path.extname(file).replace('.','')}\n${fs.readFileSync(file)}\n\`\`\`\n`;
             console.log('File: '+file);
         }
     });
