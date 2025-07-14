@@ -1109,108 +1109,108 @@ checkTLD(domain).then(tldvalid => {
                 //.replaceAll(`${_just.element(dataname[6])}<h2 id=`, `<h2 class="${dataname[6]}" id=`)
                 .replace(new RegExp(`(?<=<code class="${cssclass.code}"><code>(${getlangs()})</code>)(.*?)(?=</code>)`, 'g'), (match, lng, cde) => cde.replace(/<br><br>/g, '<br>')),
             )
-    });
-
-    const CSSdata = _just.customCSS.customcss(CSS, customCSS == 'false' ? undefined : customCSS, CSSHIGHLIGHT, insertedcode, CSSBUTTONS, CSSSEARCH);
-    CSS = CSSdata[0];
-    for (const [pathh, htmlcontent] of Object.entries(htmlfiles)) {
-        const updated = _just.customCSS.highlightclasses(CSSHIGHLIGHTtemplate, CSS, htmlcontent, dataname[8]);
-        CSS = updated[0];
-        const fixlinkregex = (char) => new RegExp(`<a href="(.*?)" target="_blank" id="${cssid.ext}"(.*?)>(.*?)</a>${char}`, 'g');
-        let htmloutput = updated[1]
-            .replace(fixlinkregex(' '), (match, href_, title_, text_) => `<a href="${href_}" target="_blank" id="${cssid.ext}"${title_} class="${cssclass.linkspace}">${text_}</a>`)
-            .replace(fixlinkregex('(.|,|_)'), (match, href_, title_, text_, char_) => `<a href="${href_}" target="_blank" id="${cssid.ext}"${title_} class="${cssclass.linkdot}">${text_}</a>${char_}`)
-            .replace(fixlinkregex('( {1,}.)'), (match, href_, title_, text_) => `<a href="${href_}" target="_blank" id="${cssid.ext}"${title_} class="${cssclass.linkdot}">${text_}</a>.`)
-            .replace(fixlinkregex('( {1,},)'), (match, href_, title_, text_) => `<a href="${href_}" target="_blank" id="${cssid.ext}"${title_} class="${cssclass.linkdot}">${text_}</a>,`);
-        const charss=["!", "?", ":", ";", "#", "$", "%", "^", "&", "*", "\\(", "\\)", "-", "=", "+", '"', "'", '`', "\\[", "\\]", "\\{", "\\}", "\\\\", "\\|", "/", "~", "@", "№"];
-        charss.forEach(charrr => {
-            htmloutput = htmloutput
-                .replace(fixlinkregex(charrr), (match, href_, title_, text_) => `<a href="${href_}" target="_blank" id="${cssid.ext}"${title_} class="${cssclass.linkmark}">${text_}</a>${charrr == "\\\\" ? '\\' : charrr.replaceAll('\\', '')}`);
-        });
-        fs.writeFileSync(
-            pathh, 
-            htmloutput.replace(/<a href="(.*?)" target="_blank" id="(.*?)"(.*?)>(.*?)<\/a>\+\*\?/g, (match, hreff, idd, titleclass, textt) => {
-                if (idd == cssid.ext) {
-                    return `<a href="${hreff}" target="_blank" id="${idd}"${titleclass}>${textt}</a>`;
-                } else {
-                    return `<a href="${hreff}" target="_blank" id="${idd}"${titleclass}>${textt}</a>+*?`;
-                }
-            }).replace(/(?<=<code>)(.*?)(?=<\/code>)/g, (match, cde) => cde.replace(/&&#35;(.*?);/g, (match, num_) => {
-                    if (/\d/.test(num_)) {
-                        return `&#${num_};`;
+    }).then(()=>{
+        const CSSdata = _just.customCSS.customcss(CSS, customCSS == 'false' ? undefined : customCSS, CSSHIGHLIGHT, insertedcode, CSSBUTTONS, CSSSEARCH);
+        CSS = CSSdata[0];
+        for (const [pathh, htmlcontent] of Object.entries(htmlfiles)) {
+            const updated = _just.customCSS.highlightclasses(CSSHIGHLIGHTtemplate, CSS, htmlcontent, dataname[8]);
+            CSS = updated[0];
+            const fixlinkregex = (char) => new RegExp(`<a href="(.*?)" target="_blank" id="${cssid.ext}"(.*?)>(.*?)</a>${char}`, 'g');
+            let htmloutput = updated[1]
+                .replace(fixlinkregex(' '), (match, href_, title_, text_) => `<a href="${href_}" target="_blank" id="${cssid.ext}"${title_} class="${cssclass.linkspace}">${text_}</a>`)
+                .replace(fixlinkregex('(.|,|_)'), (match, href_, title_, text_, char_) => `<a href="${href_}" target="_blank" id="${cssid.ext}"${title_} class="${cssclass.linkdot}">${text_}</a>${char_}`)
+                .replace(fixlinkregex('( {1,}.)'), (match, href_, title_, text_) => `<a href="${href_}" target="_blank" id="${cssid.ext}"${title_} class="${cssclass.linkdot}">${text_}</a>.`)
+                .replace(fixlinkregex('( {1,},)'), (match, href_, title_, text_) => `<a href="${href_}" target="_blank" id="${cssid.ext}"${title_} class="${cssclass.linkdot}">${text_}</a>,`);
+            const charss=["!", "?", ":", ";", "#", "$", "%", "^", "&", "*", "\\(", "\\)", "-", "=", "+", '"', "'", '`', "\\[", "\\]", "\\{", "\\}", "\\\\", "\\|", "/", "~", "@", "№"];
+            charss.forEach(charrr => {
+                htmloutput = htmloutput
+                    .replace(fixlinkregex(charrr), (match, href_, title_, text_) => `<a href="${href_}" target="_blank" id="${cssid.ext}"${title_} class="${cssclass.linkmark}">${text_}</a>${charrr == "\\\\" ? '\\' : charrr.replaceAll('\\', '')}`);
+            });
+            fs.writeFileSync(
+                pathh, 
+                htmloutput.replace(/<a href="(.*?)" target="_blank" id="(.*?)"(.*?)>(.*?)<\/a>\+\*\?/g, (match, hreff, idd, titleclass, textt) => {
+                    if (idd == cssid.ext) {
+                        return `<a href="${hreff}" target="_blank" id="${idd}"${titleclass}>${textt}</a>`;
                     } else {
-                        return `&&#35;${num_};`;
+                        return `<a href="${hreff}" target="_blank" id="${idd}"${titleclass}>${textt}</a>+*?`;
                     }
-                })), 
-            charset
-        );
-        const outputlogs = `OUTPUT: ${_just.string.runnerPath(pathh)} (${_just.string.fileSize(fs.statSync(pathh).size)})`;
-        logs += mdlogs[pathh] ? `${mdlogs[pathh]}${l[2]}${outputlogs}` : `${l[1]}ERROR:${l[2]}MESSAGE: NO LOGS FOUND FOR FILE ${_just.string.runnerPath(pathh)}${l[2]}FILE ${outputlogs}`;
-    }
-    CSS = CSS.replace(new RegExp(`.${dataname[8]}3ibute`, 'g'), `.${dataname[8]}14`).replace("content: '_just';", `content: '_just ${_just.version}';`);
-    
-    const websitepath = rootDirA !== '.' ? rootDirA : rootDirB;
-    const _justdir = docsUsePathInput ? `${PATH}/_just`: '_just';
-    const _just_datadir = docsUsePathInput ? `${PATH}/_just_data`: '_just_data';
-    if(docsUsePathInput && !fs.existsSync(path.join(websitepath, PATH))) {
+                }).replace(/(?<=<code>)(.*?)(?=<\/code>)/g, (match, cde) => cde.replace(/&&#35;(.*?);/g, (match, num_) => {
+                        if (/\d/.test(num_)) {
+                            return `&#${num_};`;
+                        } else {
+                            return `&&#35;${num_};`;
+                        }
+                    })), 
+                charset
+            );
+            const outputlogs = `OUTPUT: ${_just.string.runnerPath(pathh)} (${_just.string.fileSize(fs.statSync(pathh).size)})`;
+            logs += mdlogs[pathh] ? `${mdlogs[pathh]}${l[2]}${outputlogs}` : `${l[1]}ERROR:${l[2]}MESSAGE: NO LOGS FOUND FOR FILE ${_just.string.runnerPath(pathh)}${l[2]}FILE ${outputlogs}`;
+        }
+        CSS = CSS.replace(new RegExp(`.${dataname[8]}3ibute`, 'g'), `.${dataname[8]}14`).replace("content: '_just';", `content: '_just ${_just.version}';`);
+        
+        const websitepath = rootDirA !== '.' ? rootDirA : rootDirB;
+        const _justdir = docsUsePathInput ? `${PATH}/_just`: '_just';
+        const _just_datadir = docsUsePathInput ? `${PATH}/_just_data`: '_just_data';
+        if(docsUsePathInput && !fs.existsSync(path.join(websitepath, PATH))) {
+            new Promise ((resolve, reject) => {
+                fs.mkdirSync(path.join(websitepath, PATH));
+                resolve();
+            }).catch();
+        }
         new Promise ((resolve, reject) => {
-            fs.mkdirSync(path.join(websitepath, PATH));
+            if (!fs.existsSync(path.join(websitepath, _justdir))) {fs.mkdirSync(path.join(websitepath, _justdir))};
+            if (!fs.existsSync(path.join(websitepath, _just_datadir))) {fs.mkdirSync(path.join(websitepath, _just_datadir))};
             resolve();
         }).catch();
-    }
-    new Promise ((resolve, reject) => {
-        if (!fs.existsSync(path.join(websitepath, _justdir))) {fs.mkdirSync(path.join(websitepath, _justdir))};
-        if (!fs.existsSync(path.join(websitepath, _just_datadir))) {fs.mkdirSync(path.join(websitepath, _just_datadir))};
-        resolve();
-    }).catch();
 
-    logs += linklogs; logs += buttonlogs;
-    logs += `${l[0]}USED NAMES:${l[1]}"${uniqueNames_.join('", "')}"${l[0]}DATA NAMES:${l[1]}"${dataname.join('", "')}"${l[0]}OTHER:${l[1]}JSTRIMMEDVAR:${l[2]}NAME: ${jstrimmedstrvar == null ? '(FAILED. WILL BE REPLACED WITH ID)' : `"${jstrimmedstrvar}"`}${l[2]}CUSTOM BASE: ${jstrimmedstrvarbasestr.length}${l[2]}CUSTOM BASE STRING: "${jstrimmedstrvarbasestr}"`;
-    console.log(logs);
-    fs.writeFileSync(path.join(websitepath, _justdir, `${filename.css}.css`), CSS, template.charset);
+        logs += linklogs; logs += buttonlogs;
+        logs += `${l[0]}USED NAMES:${l[1]}"${uniqueNames_.join('", "')}"${l[0]}DATA NAMES:${l[1]}"${dataname.join('", "')}"${l[0]}OTHER:${l[1]}JSTRIMMEDVAR:${l[2]}NAME: ${jstrimmedstrvar == null ? '(FAILED. WILL BE REPLACED WITH ID)' : `"${jstrimmedstrvar}"`}${l[2]}CUSTOM BASE: ${jstrimmedstrvarbasestr.length}${l[2]}CUSTOM BASE STRING: "${jstrimmedstrvarbasestr}"`;
+        console.log(logs);
+        fs.writeFileSync(path.join(websitepath, _justdir, `${filename.css}.css`), CSS, template.charset);
 
-    const JSdata = _just.js.get(JS);
-    const JSerr = `document.body.classList.add('${cssclass.error}');document.documentElement.style.setProperty('--${cssvar.edata}', \`'\${e_} (0300)'\`)`;
-    fs.writeFileSync(
-        path.join(websitepath, _justdir, `${filename.js}.js`),
-        "try{"+_just.js.set(
-            JS.replace('\'REPLACE_PUBLICOUTPUT\'', hideOutput?false:publicOutput)
-              .replace('\'REPLACE_SEARCHV2\'', CSSdata[1] || false)
-              .replace('\'REPLACE_OUTPUT\'', hideOutput?false:watermark)
-              .replace('let searchurl = "/_just/search";', `let searchurl="${JSUsePathInput && docsUsePathInput ? `/${PATH}`.repeat(2) : JSUsePathInput ? '/'+PATH : ''}/_just/${dataname[9]}.json";`), 
-            JSdata.names.filter(n => n !== jstrimmedstrvar), 
-            dataname2.reverse().slice(0, JSdata.total-1),
-            jstrimmedstrvarbasestr
-        ).replace("/^[!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~]+$/.test(null)", `/^[!"#$%&'()*+,-./:;<=>?@[\\]^_\`{|}~]+$/.test(${jstrimmedstrvar})`)+`}catch(e_){document.addEventListener('DOMContentLoaded',()=>{${JSerr}});${JSerr}}`,
-        template.charset
-    );
+        const JSdata = _just.js.get(JS);
+        const JSerr = `document.body.classList.add('${cssclass.error}');document.documentElement.style.setProperty('--${cssvar.edata}', \`'\${e_} (0300)'\`)`;
+        fs.writeFileSync(
+            path.join(websitepath, _justdir, `${filename.js}.js`),
+            "try{"+_just.js.set(
+                JS.replace('\'REPLACE_PUBLICOUTPUT\'', hideOutput?false:publicOutput)
+                .replace('\'REPLACE_SEARCHV2\'', CSSdata[1] || false)
+                .replace('\'REPLACE_OUTPUT\'', hideOutput?false:watermark)
+                .replace('let searchurl = "/_just/search";', `let searchurl="${JSUsePathInput && docsUsePathInput ? `/${PATH}`.repeat(2) : JSUsePathInput ? '/'+PATH : ''}/_just/${dataname[9]}.json";`), 
+                JSdata.names.filter(n => n !== jstrimmedstrvar), 
+                dataname2.reverse().slice(0, JSdata.total-1),
+                jstrimmedstrvarbasestr
+            ).replace("/^[!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~]+$/.test(null)", `/^[!"#$%&'()*+,-./:;<=>?@[\\]^_\`{|}~]+$/.test(${jstrimmedstrvar})`)+`}catch(e_){document.addEventListener('DOMContentLoaded',()=>{${JSerr}});${JSerr}}`,
+            template.charset
+        );
 
 
-    const fetchjson = async (protocol) => {
-        const response1 = await fetch(`${protocol}://${domain}/_just/`).catch() || undefined;
-        const data1 = response1 ? await response1.json() || undefined : undefined;
-        const response2 = await fetch(`${protocol}://${domain}/_just/${data1.json}.json`).catch() || undefined;
-        const data2 = response2 ? await response2.json() || undefined : undefined;
-        if (data1 && data2) fs.writeFileSync(path.join(websitepath, _justdir, `${data1.json}.json`), JSON.stringify(data2));
-    }
-    if (domain) {
-        fetchjson('http').catch((ee)=>{
-            caughterrors.push(ee);
-            errorlogs += `${l[1]}AT LINE ${_just.line.line() || '-1'} (__REPLACE_LINE__): ${_just.line.err(ee)}`;
-            fetchjson('https').catch((e_e)=>{
-                caughterrors.push(e_e);
+        const fetchjson = async (protocol) => {
+            const response1 = await fetch(`${protocol}://${domain}/_just/`).catch() || undefined;
+            const data1 = response1 ? await response1.json() || undefined : undefined;
+            const response2 = await fetch(`${protocol}://${domain}/_just/${data1.json}.json`).catch() || undefined;
+            const data2 = response2 ? await response2.json() || undefined : undefined;
+            if (data1 && data2) fs.writeFileSync(path.join(websitepath, _justdir, `${data1.json}.json`), JSON.stringify(data2));
+        }
+        if (domain) {
+            fetchjson('http').catch((ee)=>{
+                caughterrors.push(ee);
                 errorlogs += `${l[1]}AT LINE ${_just.line.line() || '-1'} (__REPLACE_LINE__): ${_just.line.err(ee)}`;
-            });
-        })
-    }
-    if (debug_) console.log(errorlogs + configlogs);
-    const outlogs = hideOutput?'':logs+errorlogs+configlogs;
-    if (debug_) fs.writeFileSync(path.join(websitepath, _just_datadir, 'output.txt'), outlogs, template.charset);
-    fs.writeFileSync(path.join(websitepath, _justdir, `${dataname[9]}.json`), JSON.stringify(mdjson), template.charset);
-    fs.writeFileSync(path.join(websitepath, _justdir, 'index.json'), JSON.stringify({
-        "js": filename.js,
-        "css": filename.css,
-        "json": dataname[9]
-    }), template.charset);
-    fs.writeFileSync(path.join(websitepath, '.', '.nojekyll'), '', template.charset);
+                fetchjson('https').catch((e_e)=>{
+                    caughterrors.push(e_e);
+                    errorlogs += `${l[1]}AT LINE ${_just.line.line() || '-1'} (__REPLACE_LINE__): ${_just.line.err(ee)}`;
+                });
+            })
+        }
+        if (debug_) console.log(errorlogs + configlogs);
+        const outlogs = hideOutput?'':logs+errorlogs+configlogs;
+        if (debug_) fs.writeFileSync(path.join(websitepath, _just_datadir, 'output.txt'), outlogs, template.charset);
+        fs.writeFileSync(path.join(websitepath, _justdir, `${dataname[9]}.json`), JSON.stringify(mdjson), template.charset);
+        fs.writeFileSync(path.join(websitepath, _justdir, 'index.json'), JSON.stringify({
+            "js": filename.js,
+            "css": filename.css,
+            "json": dataname[9]
+        }), template.charset);
+        fs.writeFileSync(path.join(websitepath, '.', '.nojekyll'), '', template.charset);
+    });
 }, tldinvalid => {});
