@@ -592,9 +592,9 @@ checkTLD(domain).then(tldvalid => {
     const linkregex = /(?<=\s|^|[.,!?;:*_^~=])\[(.*?)\]\((.*?)\)(?=\s|[.,!?;:*_^~=]|$)/g;
     let taskid = 0;
     let insertedcode = false;
-    const MDtoHTML = (input) => {
+    const MDtoHTML = async (input) => {
         let text = MDescape(input);
-        text = text.replace(/```([\w]*)\s*[\r\n]+([\s\S]*?)```/g, (match, lang_, code_) => {
+        text = await text.replace(/```([\w]*)\s*[\r\n]+([\s\S]*?)```/g, async (match, lang_, code_) => {
                         const inputlang = lang_;
                         const filter_ = (inpt) => inpt.replace(/\n( {1,})/g, (match, spaces) => {
                             return `\n${'&nbsp;'.repeat(spaces.length)}`;
@@ -610,7 +610,7 @@ checkTLD(domain).then(tldvalid => {
                         }
                         debuglog(`   CL: ${inputlang} => ${lang_}`);
                         const hljshighlight = highlightcode && supportedlangs.includes(lang_)
-                        const output_ = hljshighlight ? hljs.highlight(code_, {language: lang_}).value : undefined;
+                        const output_ = hljshighlight ? await hljs.highlight(code_, {language: lang_}).value : undefined;
                         insertedcode = true;
                         return `<code class="${cssclass.code}">${
                             hljshighlight ? 
@@ -661,13 +661,13 @@ checkTLD(domain).then(tldvalid => {
         return _just.MDtoHTML.MDtoHTML(text, cssclass).replace(/~(.*?)~/g, '<sub>$1</sub>').replace(/\^(.*?)\^/g, '<sup>$1</sup>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\*(.*?)\*/g, '<em>$1</em>');
     }
     const dividerRegex = /(\n\s*[*_-]{3,}\s*\n)+/g;
-    function hbuoclpMDtoHTML(text, maxBlockquoteLevel = mbl) {
+    async function hbuoclpMDtoHTML(text, maxBlockquoteLevel = mbl) {
         for (let i = 6; i >= 1; i--) {
             const regex = new RegExp(`^#{${i}}\\s+(.*?)\\s*$`, 'gm');
-            text = text.replace(regex, (match, header) => `<h${i}>${MDtoHTML(header)}</h${i}>`);
+            text = text.replace(regex, (match, header) => await `<h${i}>${MDtoHTML(header)}</h${i}>`);
         }
         const smlregex = new RegExp(`^-#\\s+(.*?)\\s*$`, 'gm');
-        text = text.replace(smlregex, (match, smol) => `<span class="${cssclass.small}">${MDtoHTML(smol)}</span>`);
+        text = text.replace(smlregex, (match, smol) => await `<span class="${cssclass.small}">${MDtoHTML(smol)}</span>`);
         /*alternate headers currently disabled. they cause some bugs*///text = text.replace(/(?<=\s|^)(.*?)\n={3,}(?=\s|\n|$)/, MDtoHTML(`${_just.element(dataname[5])}<h1>$1</h1>`)).replace(/(?<=\s|^)(.*?)\n-{3,}(?=\s|\n|$)/, MDtoHTML(`${_just.element(dataname[6])}<h2>$1</h2>`));
 
         function processBlockquotes(inputText, level) {
@@ -697,12 +697,12 @@ checkTLD(domain).then(tldvalid => {
 
         text = text.replace(ulRegex, (match) => {
             const items = match.split('\n').map(item => item.replace(/^- \s*/, '').replace(/^\* \s*/, '').replace(/^\+ \s*/, ''));
-            return `<ul>${items.map(item => `<li>${MDtoHTML(item.trim())}</li>`).join('')}</ul>`;
+            return `<ul>${items.map(item => await `<li>${MDtoHTML(item.trim())}</li>`).join('')}</ul>`;
         });
 
         text = text.replace(olRegex, (match) => {
             const items = match.split('\n').map(item => item.replace(/^\d+\.\s*/, ''));
-            return `<ol>${items.map(item => `<li>${MDtoHTML(item.trim())}</li>`).join('')}</ol>`;
+            return `<ol>${items.map(item => await `<li>${MDtoHTML(item.trim())}</li>`).join('')}</ol>`;
         });
 
         text = text.replace(dividerRegex, `<div class="${cssclass.line}"></div><br>`);
@@ -981,7 +981,7 @@ checkTLD(domain).then(tldvalid => {
     }
     const htmlfiles = {};
     const mdlogs = {};
-    markdownFiles.forEach(file => {
+    markdownFiles.forEach(async file => {
         let content = fs.readFileSync(file, charset);
         if (getTitleFromMd(file)) {
             content = content.split('\n').slice(1).join('\n');
@@ -996,7 +996,7 @@ checkTLD(domain).then(tldvalid => {
         }
 
         const headers = [];
-        let toHTML = hbuoclpMDtoHTML(
+        let toHTML = await hbuoclpMDtoHTML(
             addEnd(content, '\n')
                 .replace(/> (.*?)\n\n> (.*?)\n/g, `> $1\n\n> ${_just.element(dataname[7])}$2\n`)
                 .replaceAll('\n>\n> ', '\n> ')
