@@ -26,11 +26,10 @@ OUTPUT_FILE="website/syntax-highlighting-test.md"
 echo "# test" > "$OUTPUT_FILE"
 
 find / -type f ! $ -name "*.md" -o -name "*.mdx" $ 2>/dev/null | while read -r file; do
-    echo -e "$file"
-    filename=$(basename "$file") && \
-    extension="${filename##*.}" && \
-    echo "\`\`\`$extension" >> "$OUTPUT_FILE" && \
-    cat "$file" >> "$OUTPUT_FILE" && \
-    echo "\`\`\`" >> "$OUTPUT_FILE" && \
+    filename=$(basename "$file")
+    extension="${filename##*.}"
+    echo "```$extension" >> "$OUTPUT_FILE"
+    cat "$file" >> "$OUTPUT_FILE"
+    echo "```" >> "$OUTPUT_FILE"
     echo "" >> "$OUTPUT_FILE"
 done
