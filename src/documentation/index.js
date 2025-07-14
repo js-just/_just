@@ -531,7 +531,7 @@ function checkdomain(input, throwerror) {
 }
 const domain = docsConfig ? checkdomain(docsConfig.domain, true) || undefined : undefined;
 const caughterrors = [];
-checkTLD(domain).then(tldvalid => {
+checkTLD(domain).then(async tldvalid => {
     if (domain && domain.endsWith('.is-a.dev')) {
         _just.ssapi["is-a.dev"](domain);
     }
@@ -982,235 +982,241 @@ checkTLD(domain).then(tldvalid => {
     }
     const htmlfiles = {};
     const mdlogs = {};
-    markdownFiles.forEach(async file => {
-        let content = fs.readFileSync(file, charset);
-        if (getTitleFromMd(file)) {
-            content = content.split('\n').slice(1).join('\n');
-        }
-        const fileNameWithoutExt = path.basename(file, path.extname(file));
-        const outFilePath = (ext) => path.join(path.dirname(file), `${fileNameWithoutExt}.${ext}`);
-        fileID++;
-        mdlogs[outFilePath('html')] = `${l[1]}FILE #${fileID} "${_just.string.runnerPath(file)}":${l[2]}INPUT: ${_just.string.fileSize(fs.statSync(file).size)}`;
+    await new Promise ((resolve) => {
+        let mdid = 0;
+        markdownFiles.forEach(async file => {mdid++;
+            let content = fs.readFileSync(file, charset);
+            if (getTitleFromMd(file)) {
+                content = content.split('\n').slice(1).join('\n');
+            }
+            const fileNameWithoutExt = path.basename(file, path.extname(file));
+            const outFilePath = (ext) => path.join(path.dirname(file), `${fileNameWithoutExt}.${ext}`);
+            fileID++;
+            mdlogs[outFilePath('html')] = `${l[1]}FILE #${fileID} "${_just.string.runnerPath(file)}":${l[2]}INPUT: ${_just.string.fileSize(fs.statSync(file).size)}`;
 
-        if (pathtourl[file] || pathtourl[file] == '') {
-            mdjson[`${JSUsePathInput && docsUsePathInput ? `${PATH}/`.repeat(2) : JSUsePathInput ? PATH+'/' : ''}${pathtourl[file]}`] = toText(content);
-        }
+            if (pathtourl[file] || pathtourl[file] == '') {
+                mdjson[`${JSUsePathInput && docsUsePathInput ? `${PATH}/`.repeat(2) : JSUsePathInput ? PATH+'/' : ''}${pathtourl[file]}`] = toText(content);
+            }
 
-        const headers = [];
-        let toHTML = await hbuoclpMDtoHTML(
-            addEnd(content, '\n')
-                .replace(/> (.*?)\n\n> (.*?)\n/g, `> $1\n\n> ${_just.element(dataname[7])}$2\n`)
-                .replaceAll('\n>\n> ', '\n> ')
-                .replace(new RegExp(`(?<=^|\n)([>|> ]{2,${mbl}}) `, 'g'), (match, bqs) => `\n${bqs.replaceAll(' ', '').split('').join(' ').trim()} `)
-        );
-        toHTML = toHTML.replace(/<(h1|h2|h3|h4)>(.*?)<\/\1>/g, (match, p1, p2) => {
-            return `<${p1} id="${uniqueName(encodeURIComponent(p2))}">${p2}</${p1}>`;
-        }).replace(/<(h1|h2|h3|h4) id="([^"]+)">(.*?)<\/\1>/g, (match, p1, p2, p3) => {headers.push(p2);return`<${p1} id="${p2}">${p3}</${p1}>`});
-
-        const H1 = [...toHTML.matchAll(/<(h1|h2) id="([^"]+)">(.*?)<\/\1>/g)];
-        const HT = [...toHTML.matchAll(/<(h3|h4) id="([^"]+)">(.*?)<\/\1>/g)];
-
-        const h1 = H1.map(match => [match[3], match[2]]);
-        const hT = HT.map(match => [match[3], match[2]]);
-
-        const headermap = new Map(headers.map((id, index) => [id, index]));
-        const contents = [
-            ...h1.map(item => ([ ...item, false ])),
-            ...hT.map(item => ([ ...item, true ]))
-        ];
-        contents.sort((a, b) => {
-            const indexA = headermap.get(a[1]) ?? Infinity;
-            const indexB = headermap.get(b[1]) ?? Infinity;
-            return indexA - indexB;
-        });
-        let pageHeaders = '';
-        for (const [idk, headerdata] of Object.entries(contents)) {
-            pageHeaders += `<li${ headerdata[2] ? ' class="secondary"' : '' }>
-                                <a href="#${headerdata[1]}">
-                                    ${span(_just.string.toText(headerdata[0]))}
-                                </a>
-                            </li>`;
-        }
-
-        const idk_ = toHTML.endsWith('</p>');
-        const prevnext = _just.prevnext.get(idk_ ? _just.string.removeLast(toHTML, '</p>') : toHTML);
-        toHTML = idk_ ? prevnext[0].replace(_just.prevnext.regex, '') + '</p>' : prevnext[0].replace(_just.prevnext.regex, '');
-        let pagejs = '';
-        const btnjs = (id, href) => `document.getElementById('${id}').addEventListener("click",()=>{const ${id.replace('-','_')}=document.createElement('a');${id.replace('-','_')}.href='/${href}';${id.replace('-','_')}.target='_self';${id.replace('-','_')}.style.display='none';document.body.appendChild(${id.replace('-','_')});${id.replace('-','_')}.click();document.body.removeChild(${id.replace('-','_')})});`;
-        if (prevnext[1].prev) {
-            pagejs = btnjs(filename.js, prevnext[1].prev)
-        }
-        if (prevnext[1].next) {
-            pagejs += btnjs(filename.css, prevnext[1].next)
-        }
-
-        const pages = generateListItems(addFolderToPageList(pageList).sort((a, b) => a.title.localeCompare(b.title)));
-        const start = pathtourl[file] == "" ? '' : '/';
-        const fixpath = HTMLUsePathInput && docsUsePathInput ? `${PATH}/`.repeat(2) : HTMLUsePathInput ? PATH+'/' : '';
-        let outHTML = HTML
-            .replace('<html>', `<html${htmlLang}>`)
-            .replaceAll('="/_just/', `="${start}${fixpath}_just/`)
-            .replace("content: '_just';", `content: '_just ${_just.version}';`)
-            .replace('REPLACE_SCRIPT', `const ${dataname2[11]}=${JSON.stringify(pages[1])};${pagejs ? `document.addEventListener('DOMContentLoaded',()=>{${pagejs}});` : ''}`)
-            .replaceAll('REPLACE_CSS', filename.css)
-            .replaceAll('REPLACE_JS', filename.js)
-            .replace('REPLACE_CHARSET', charset)
-            .replace('REPLACE_VIEWPORT', viewport)
-            .replace('REPLACE_TITLE', metatitle)
-            .replace('REPLACE_DATA', htmlhead(pathtourl[file], fixpath))
-            .replace('REPLACE_CUSTOM', insertHTMLinHead)
-            .replace('REPLACE_LOGO', logo)
-            .replace('REPLACE_NAME', filterText(name))
-            .replace('REPLACE_PAGES', filterText(pages[0]))
-            .replace('REPLACE_CONTENTS', filterText(pageHeaders))
-            .replace('REPLACE_FOOTER', docsConfig && docsConfig.footer ? span(filterText(footer)) : '')
-            .replace('REPLACE_LINKS', htmlnav())
-            .replace('REPLACE_BUTTONS', htmlnav(1));
-
-        fs.writeFileSync(outFilePath('txt'), toHTML, charset);
-        htmlfiles[outFilePath('html')] = outHTML.replace('REPLACE_PREVNEXT', _just.prevnext.html(prevnext[1], cssclass.next, cssclass.next1, cssclass.next2, filename.js, filename.css, pages[1])).replace(
-                'REPLACE_CONTENT',
-                _just.string.removeLast(
-                    addEnd(
-                        toHTML
-                            .replaceAll('\n', '<br>')
-                            .replaceAll('</h1><br>', '</h1>')
-                            .replaceAll('</h2><br>', '</h2>')
-                            .replaceAll('</h3><br>', '</h3>')
-                            .replaceAll('</h4><br>', '</h4>')
-                            .replaceAll('</h5><br>', '</h5>')
-                            .replaceAll('</h6><br>', '</h6>')
-                            .replaceAll('</ol><br>', '</ol>')
-                            .replaceAll('</ul><br>', '</ul>')
-                            .replace(/<blockquote><br>((?:(?!<h[1-6][^>]*>.*?<\/h[1-6]>).)*?)<\/blockquote>/g, '<blockquote><blockquote>$1</blockquote></blockquote>')
-                            .replace(/<blockquote><br>> ((?:(?!<h[1-6][^>]*>.*?<\/h[1-6]>).)*?)<\/blockquote>/g, '<blockquote><blockquote><blockquote>$1</blockquote></blockquote></blockquote>')
-                            .replaceAll('</blockquote><br>', '</blockquote>')
-                            .replaceAll('<br><blockquote', '<blockquote')
-                            .replaceAll('</blockquote><blockquote>', '<br>')
-                            .replaceAll('<br><blockquote><br>', '<blockquote>')
-                            .replace(/<blockquote>> ((?:(?!<h[1-6][^>]*>.*?<\/h[1-6]>).)*?)<\/blockquote>/g, '<blockquote><blockquote>$1</blockquote></blockquote>')
-                            .replaceAll('</blockquote></blockquote><blockquote><blockquote>', '<br>')
-                            .replaceAll('</blockquote><blockquote>', '<br>')
-                            .replace(/<blockquote>((?:(?!<h[1-6][^>]*>.*?<\/h[1-6]>).)*?)<br>> ((?:(?!<h[1-6][^>]*>.*?<\/h[1-6]>).)*?)<br>((?:(?!<h[1-6][^>]*>.*?<\/h[1-6]>).)*?)<\/blockquote>/g, '<blockquote>$1<blockquote>$2</blockquote><br>$3</blockquote>')
-                            .replaceAll('</blockquote><br>', '</blockquote>')
-                            .replace(/<\/blockquote>> ((?:(?!<h[1-6][^>]*>.*?<\/h[1-6]>).)*?)<blockquote>/g, '</blockquote><blockquote>$1</blockquote><blockquote>')
-                            .replaceAll('</blockquote><blockquote>', '<br>')
-                            .replaceAll(_just.element(dataname[7]), '</blockquote><blockquote>')
-                            .replaceAll('</blockquote><br><blockquote>', '<br>')
-                            .replaceAll('<blockquote></blockquote>', '')
-                            .replace(/<blockquote>\[!(NOTE|TIP|IMPORTANT|WARNING|CAUTION)\]/g, (match, blockquote) => `<blockquote class="${blockquoteToCSSclass[blockquote]}">`),
-                        '<br>'
-                    ),
-                    '<br>'
-                ).replace(/<blockquote>((?:(?!<h[1-6][^>]*>.*?<\/h[1-6]>).)*?)<br><br><blockquote>/, '<blockquote>$1<blockquote>')
-                .replaceAll('</blockquote><br><blockquote>', '<br>')
-                .replace(/<br><blockquote><blockquote>((?:(?!<h[1-6][^>]*>.*?<\/h[1-6]>).)*?)<\/blockquote><\/blockquote>/g, '<blockquote>$1</blockquote>')
-                //.replaceAll(`${_just.element(dataname[5])}<h1 id=`, `<h1 class="${dataname[5]}" id=`)
-                //.replaceAll(`${_just.element(dataname[6])}<h2 id=`, `<h2 class="${dataname[6]}" id=`)
-                .replace(new RegExp(`(?<=<code class="${cssclass.code}"><code>(${getlangs()})</code>)(.*?)(?=</code>)`, 'g'), (match, lng, cde) => cde.replace(/<br><br>/g, '<br>')),
-            )
-    }).then(()=>{
-        const CSSdata = _just.customCSS.customcss(CSS, customCSS == 'false' ? undefined : customCSS, CSSHIGHLIGHT, insertedcode, CSSBUTTONS, CSSSEARCH);
-        CSS = CSSdata[0];
-        for (const [pathh, htmlcontent] of Object.entries(htmlfiles)) {
-            const updated = _just.customCSS.highlightclasses(CSSHIGHLIGHTtemplate, CSS, htmlcontent, dataname[8]);
-            CSS = updated[0];
-            const fixlinkregex = (char) => new RegExp(`<a href="(.*?)" target="_blank" id="${cssid.ext}"(.*?)>(.*?)</a>${char}`, 'g');
-            let htmloutput = updated[1]
-                .replace(fixlinkregex(' '), (match, href_, title_, text_) => `<a href="${href_}" target="_blank" id="${cssid.ext}"${title_} class="${cssclass.linkspace}">${text_}</a>`)
-                .replace(fixlinkregex('(.|,|_)'), (match, href_, title_, text_, char_) => `<a href="${href_}" target="_blank" id="${cssid.ext}"${title_} class="${cssclass.linkdot}">${text_}</a>${char_}`)
-                .replace(fixlinkregex('( {1,}.)'), (match, href_, title_, text_) => `<a href="${href_}" target="_blank" id="${cssid.ext}"${title_} class="${cssclass.linkdot}">${text_}</a>.`)
-                .replace(fixlinkregex('( {1,},)'), (match, href_, title_, text_) => `<a href="${href_}" target="_blank" id="${cssid.ext}"${title_} class="${cssclass.linkdot}">${text_}</a>,`);
-            const charss=["!", "?", ":", ";", "#", "$", "%", "^", "&", "*", "\\(", "\\)", "-", "=", "+", '"', "'", '`', "\\[", "\\]", "\\{", "\\}", "\\\\", "\\|", "/", "~", "@", "№"];
-            charss.forEach(charrr => {
-                htmloutput = htmloutput
-                    .replace(fixlinkregex(charrr), (match, href_, title_, text_) => `<a href="${href_}" target="_blank" id="${cssid.ext}"${title_} class="${cssclass.linkmark}">${text_}</a>${charrr == "\\\\" ? '\\' : charrr.replaceAll('\\', '')}`);
-            });
-            fs.writeFileSync(
-                pathh, 
-                htmloutput.replace(/<a href="(.*?)" target="_blank" id="(.*?)"(.*?)>(.*?)<\/a>\+\*\?/g, (match, hreff, idd, titleclass, textt) => {
-                    if (idd == cssid.ext) {
-                        return `<a href="${hreff}" target="_blank" id="${idd}"${titleclass}>${textt}</a>`;
-                    } else {
-                        return `<a href="${hreff}" target="_blank" id="${idd}"${titleclass}>${textt}</a>+*?`;
-                    }
-                }).replace(/(?<=<code>)(.*?)(?=<\/code>)/g, (match, cde) => cde.replace(/&&#35;(.*?);/g, (match, num_) => {
-                        if (/\d/.test(num_)) {
-                            return `&#${num_};`;
-                        } else {
-                            return `&&#35;${num_};`;
-                        }
-                    })), 
-                charset
+            const headers = [];
+            let toHTML = await hbuoclpMDtoHTML(
+                addEnd(content, '\n')
+                    .replace(/> (.*?)\n\n> (.*?)\n/g, `> $1\n\n> ${_just.element(dataname[7])}$2\n`)
+                    .replaceAll('\n>\n> ', '\n> ')
+                    .replace(new RegExp(`(?<=^|\n)([>|> ]{2,${mbl}}) `, 'g'), (match, bqs) => `\n${bqs.replaceAll(' ', '').split('').join(' ').trim()} `)
             );
-            const outputlogs = `OUTPUT: ${_just.string.runnerPath(pathh)} (${_just.string.fileSize(fs.statSync(pathh).size)})`;
-            logs += mdlogs[pathh] ? `${mdlogs[pathh]}${l[2]}${outputlogs}` : `${l[1]}ERROR:${l[2]}MESSAGE: NO LOGS FOUND FOR FILE ${_just.string.runnerPath(pathh)}${l[2]}FILE ${outputlogs}`;
-        }
-        CSS = CSS.replace(new RegExp(`.${dataname[8]}3ibute`, 'g'), `.${dataname[8]}14`).replace("content: '_just';", `content: '_just ${_just.version}';`);
-        
-        const websitepath = rootDirA !== '.' ? rootDirA : rootDirB;
-        const _justdir = docsUsePathInput ? `${PATH}/_just`: '_just';
-        const _just_datadir = docsUsePathInput ? `${PATH}/_just_data`: '_just_data';
-        if(docsUsePathInput && !fs.existsSync(path.join(websitepath, PATH))) {
-            new Promise ((resolve, reject) => {
-                fs.mkdirSync(path.join(websitepath, PATH));
-                resolve();
-            }).catch();
-        }
+            toHTML = toHTML.replace(/<(h1|h2|h3|h4)>(.*?)<\/\1>/g, (match, p1, p2) => {
+                return `<${p1} id="${uniqueName(encodeURIComponent(p2))}">${p2}</${p1}>`;
+            }).replace(/<(h1|h2|h3|h4) id="([^"]+)">(.*?)<\/\1>/g, (match, p1, p2, p3) => {headers.push(p2);return`<${p1} id="${p2}">${p3}</${p1}>`});
+
+            const H1 = [...toHTML.matchAll(/<(h1|h2) id="([^"]+)">(.*?)<\/\1>/g)];
+            const HT = [...toHTML.matchAll(/<(h3|h4) id="([^"]+)">(.*?)<\/\1>/g)];
+
+            const h1 = H1.map(match => [match[3], match[2]]);
+            const hT = HT.map(match => [match[3], match[2]]);
+
+            const headermap = new Map(headers.map((id, index) => [id, index]));
+            const contents = [
+                ...h1.map(item => ([ ...item, false ])),
+                ...hT.map(item => ([ ...item, true ]))
+            ];
+            contents.sort((a, b) => {
+                const indexA = headermap.get(a[1]) ?? Infinity;
+                const indexB = headermap.get(b[1]) ?? Infinity;
+                return indexA - indexB;
+            });
+            let pageHeaders = '';
+            for (const [idk, headerdata] of Object.entries(contents)) {
+                pageHeaders += `<li${ headerdata[2] ? ' class="secondary"' : '' }>
+                                    <a href="#${headerdata[1]}">
+                                        ${span(_just.string.toText(headerdata[0]))}
+                                    </a>
+                                </li>`;
+            }
+
+            const idk_ = toHTML.endsWith('</p>');
+            const prevnext = _just.prevnext.get(idk_ ? _just.string.removeLast(toHTML, '</p>') : toHTML);
+            toHTML = idk_ ? prevnext[0].replace(_just.prevnext.regex, '') + '</p>' : prevnext[0].replace(_just.prevnext.regex, '');
+            let pagejs = '';
+            const btnjs = (id, href) => `document.getElementById('${id}').addEventListener("click",()=>{const ${id.replace('-','_')}=document.createElement('a');${id.replace('-','_')}.href='/${href}';${id.replace('-','_')}.target='_self';${id.replace('-','_')}.style.display='none';document.body.appendChild(${id.replace('-','_')});${id.replace('-','_')}.click();document.body.removeChild(${id.replace('-','_')})});`;
+            if (prevnext[1].prev) {
+                pagejs = btnjs(filename.js, prevnext[1].prev)
+            }
+            if (prevnext[1].next) {
+                pagejs += btnjs(filename.css, prevnext[1].next)
+            }
+
+            const pages = generateListItems(addFolderToPageList(pageList).sort((a, b) => a.title.localeCompare(b.title)));
+            const start = pathtourl[file] == "" ? '' : '/';
+            const fixpath = HTMLUsePathInput && docsUsePathInput ? `${PATH}/`.repeat(2) : HTMLUsePathInput ? PATH+'/' : '';
+            let outHTML = HTML
+                .replace('<html>', `<html${htmlLang}>`)
+                .replaceAll('="/_just/', `="${start}${fixpath}_just/`)
+                .replace("content: '_just';", `content: '_just ${_just.version}';`)
+                .replace('REPLACE_SCRIPT', `const ${dataname2[11]}=${JSON.stringify(pages[1])};${pagejs ? `document.addEventListener('DOMContentLoaded',()=>{${pagejs}});` : ''}`)
+                .replaceAll('REPLACE_CSS', filename.css)
+                .replaceAll('REPLACE_JS', filename.js)
+                .replace('REPLACE_CHARSET', charset)
+                .replace('REPLACE_VIEWPORT', viewport)
+                .replace('REPLACE_TITLE', metatitle)
+                .replace('REPLACE_DATA', htmlhead(pathtourl[file], fixpath))
+                .replace('REPLACE_CUSTOM', insertHTMLinHead)
+                .replace('REPLACE_LOGO', logo)
+                .replace('REPLACE_NAME', filterText(name))
+                .replace('REPLACE_PAGES', filterText(pages[0]))
+                .replace('REPLACE_CONTENTS', filterText(pageHeaders))
+                .replace('REPLACE_FOOTER', docsConfig && docsConfig.footer ? span(filterText(footer)) : '')
+                .replace('REPLACE_LINKS', htmlnav())
+                .replace('REPLACE_BUTTONS', htmlnav(1));
+
+            fs.writeFileSync(outFilePath('txt'), toHTML, charset);
+            htmlfiles[outFilePath('html')] = outHTML.replace('REPLACE_PREVNEXT', _just.prevnext.html(prevnext[1], cssclass.next, cssclass.next1, cssclass.next2, filename.js, filename.css, pages[1])).replace(
+                    'REPLACE_CONTENT',
+                    _just.string.removeLast(
+                        addEnd(
+                            toHTML
+                                .replaceAll('\n', '<br>')
+                                .replaceAll('</h1><br>', '</h1>')
+                                .replaceAll('</h2><br>', '</h2>')
+                                .replaceAll('</h3><br>', '</h3>')
+                                .replaceAll('</h4><br>', '</h4>')
+                                .replaceAll('</h5><br>', '</h5>')
+                                .replaceAll('</h6><br>', '</h6>')
+                                .replaceAll('</ol><br>', '</ol>')
+                                .replaceAll('</ul><br>', '</ul>')
+                                .replace(/<blockquote><br>((?:(?!<h[1-6][^>]*>.*?<\/h[1-6]>).)*?)<\/blockquote>/g, '<blockquote><blockquote>$1</blockquote></blockquote>')
+                                .replace(/<blockquote><br>> ((?:(?!<h[1-6][^>]*>.*?<\/h[1-6]>).)*?)<\/blockquote>/g, '<blockquote><blockquote><blockquote>$1</blockquote></blockquote></blockquote>')
+                                .replaceAll('</blockquote><br>', '</blockquote>')
+                                .replaceAll('<br><blockquote', '<blockquote')
+                                .replaceAll('</blockquote><blockquote>', '<br>')
+                                .replaceAll('<br><blockquote><br>', '<blockquote>')
+                                .replace(/<blockquote>> ((?:(?!<h[1-6][^>]*>.*?<\/h[1-6]>).)*?)<\/blockquote>/g, '<blockquote><blockquote>$1</blockquote></blockquote>')
+                                .replaceAll('</blockquote></blockquote><blockquote><blockquote>', '<br>')
+                                .replaceAll('</blockquote><blockquote>', '<br>')
+                                .replace(/<blockquote>((?:(?!<h[1-6][^>]*>.*?<\/h[1-6]>).)*?)<br>> ((?:(?!<h[1-6][^>]*>.*?<\/h[1-6]>).)*?)<br>((?:(?!<h[1-6][^>]*>.*?<\/h[1-6]>).)*?)<\/blockquote>/g, '<blockquote>$1<blockquote>$2</blockquote><br>$3</blockquote>')
+                                .replaceAll('</blockquote><br>', '</blockquote>')
+                                .replace(/<\/blockquote>> ((?:(?!<h[1-6][^>]*>.*?<\/h[1-6]>).)*?)<blockquote>/g, '</blockquote><blockquote>$1</blockquote><blockquote>')
+                                .replaceAll('</blockquote><blockquote>', '<br>')
+                                .replaceAll(_just.element(dataname[7]), '</blockquote><blockquote>')
+                                .replaceAll('</blockquote><br><blockquote>', '<br>')
+                                .replaceAll('<blockquote></blockquote>', '')
+                                .replace(/<blockquote>\[!(NOTE|TIP|IMPORTANT|WARNING|CAUTION)\]/g, (match, blockquote) => `<blockquote class="${blockquoteToCSSclass[blockquote]}">`),
+                            '<br>'
+                        ),
+                        '<br>'
+                    ).replace(/<blockquote>((?:(?!<h[1-6][^>]*>.*?<\/h[1-6]>).)*?)<br><br><blockquote>/, '<blockquote>$1<blockquote>')
+                    .replaceAll('</blockquote><br><blockquote>', '<br>')
+                    .replace(/<br><blockquote><blockquote>((?:(?!<h[1-6][^>]*>.*?<\/h[1-6]>).)*?)<\/blockquote><\/blockquote>/g, '<blockquote>$1</blockquote>')
+                    //.replaceAll(`${_just.element(dataname[5])}<h1 id=`, `<h1 class="${dataname[5]}" id=`)
+                    //.replaceAll(`${_just.element(dataname[6])}<h2 id=`, `<h2 class="${dataname[6]}" id=`)
+                    .replace(new RegExp(`(?<=<code class="${cssclass.code}"><code>(${getlangs()})</code>)(.*?)(?=</code>)`, 'g'), (match, lng, cde) => cde.replace(/<br><br>/g, '<br>')),
+                )
+            if (markdownFiles.length == mdid) {
+                resolve()
+            }
+        })
+    });
+
+    const CSSdata = _just.customCSS.customcss(CSS, customCSS == 'false' ? undefined : customCSS, CSSHIGHLIGHT, insertedcode, CSSBUTTONS, CSSSEARCH);
+    CSS = CSSdata[0];
+    for (const [pathh, htmlcontent] of Object.entries(htmlfiles)) {
+        const updated = _just.customCSS.highlightclasses(CSSHIGHLIGHTtemplate, CSS, htmlcontent, dataname[8]);
+        CSS = updated[0];
+        const fixlinkregex = (char) => new RegExp(`<a href="(.*?)" target="_blank" id="${cssid.ext}"(.*?)>(.*?)</a>${char}`, 'g');
+        let htmloutput = updated[1]
+            .replace(fixlinkregex(' '), (match, href_, title_, text_) => `<a href="${href_}" target="_blank" id="${cssid.ext}"${title_} class="${cssclass.linkspace}">${text_}</a>`)
+            .replace(fixlinkregex('(.|,|_)'), (match, href_, title_, text_, char_) => `<a href="${href_}" target="_blank" id="${cssid.ext}"${title_} class="${cssclass.linkdot}">${text_}</a>${char_}`)
+            .replace(fixlinkregex('( {1,}.)'), (match, href_, title_, text_) => `<a href="${href_}" target="_blank" id="${cssid.ext}"${title_} class="${cssclass.linkdot}">${text_}</a>.`)
+            .replace(fixlinkregex('( {1,},)'), (match, href_, title_, text_) => `<a href="${href_}" target="_blank" id="${cssid.ext}"${title_} class="${cssclass.linkdot}">${text_}</a>,`);
+        const charss=["!", "?", ":", ";", "#", "$", "%", "^", "&", "*", "\\(", "\\)", "-", "=", "+", '"', "'", '`', "\\[", "\\]", "\\{", "\\}", "\\\\", "\\|", "/", "~", "@", "№"];
+        charss.forEach(charrr => {
+            htmloutput = htmloutput
+                .replace(fixlinkregex(charrr), (match, href_, title_, text_) => `<a href="${href_}" target="_blank" id="${cssid.ext}"${title_} class="${cssclass.linkmark}">${text_}</a>${charrr == "\\\\" ? '\\' : charrr.replaceAll('\\', '')}`);
+        });
+        fs.writeFileSync(
+            pathh, 
+            htmloutput.replace(/<a href="(.*?)" target="_blank" id="(.*?)"(.*?)>(.*?)<\/a>\+\*\?/g, (match, hreff, idd, titleclass, textt) => {
+                if (idd == cssid.ext) {
+                    return `<a href="${hreff}" target="_blank" id="${idd}"${titleclass}>${textt}</a>`;
+                } else {
+                    return `<a href="${hreff}" target="_blank" id="${idd}"${titleclass}>${textt}</a>+*?`;
+                }
+            }).replace(/(?<=<code>)(.*?)(?=<\/code>)/g, (match, cde) => cde.replace(/&&#35;(.*?);/g, (match, num_) => {
+                    if (/\d/.test(num_)) {
+                        return `&#${num_};`;
+                    } else {
+                        return `&&#35;${num_};`;
+                    }
+                })), 
+            charset
+        );
+        const outputlogs = `OUTPUT: ${_just.string.runnerPath(pathh)} (${_just.string.fileSize(fs.statSync(pathh).size)})`;
+        logs += mdlogs[pathh] ? `${mdlogs[pathh]}${l[2]}${outputlogs}` : `${l[1]}ERROR:${l[2]}MESSAGE: NO LOGS FOUND FOR FILE ${_just.string.runnerPath(pathh)}${l[2]}FILE ${outputlogs}`;
+    }
+    CSS = CSS.replace(new RegExp(`.${dataname[8]}3ibute`, 'g'), `.${dataname[8]}14`).replace("content: '_just';", `content: '_just ${_just.version}';`);
+    
+    const websitepath = rootDirA !== '.' ? rootDirA : rootDirB;
+    const _justdir = docsUsePathInput ? `${PATH}/_just`: '_just';
+    const _just_datadir = docsUsePathInput ? `${PATH}/_just_data`: '_just_data';
+    if(docsUsePathInput && !fs.existsSync(path.join(websitepath, PATH))) {
         new Promise ((resolve, reject) => {
-            if (!fs.existsSync(path.join(websitepath, _justdir))) {fs.mkdirSync(path.join(websitepath, _justdir))};
-            if (!fs.existsSync(path.join(websitepath, _just_datadir))) {fs.mkdirSync(path.join(websitepath, _just_datadir))};
+            fs.mkdirSync(path.join(websitepath, PATH));
             resolve();
         }).catch();
+    }
+    new Promise ((resolve, reject) => {
+        if (!fs.existsSync(path.join(websitepath, _justdir))) {fs.mkdirSync(path.join(websitepath, _justdir))};
+        if (!fs.existsSync(path.join(websitepath, _just_datadir))) {fs.mkdirSync(path.join(websitepath, _just_datadir))};
+        resolve();
+    }).catch();
 
-        logs += linklogs; logs += buttonlogs;
-        logs += `${l[0]}USED NAMES:${l[1]}"${uniqueNames_.join('", "')}"${l[0]}DATA NAMES:${l[1]}"${dataname.join('", "')}"${l[0]}OTHER:${l[1]}JSTRIMMEDVAR:${l[2]}NAME: ${jstrimmedstrvar == null ? '(FAILED. WILL BE REPLACED WITH ID)' : `"${jstrimmedstrvar}"`}${l[2]}CUSTOM BASE: ${jstrimmedstrvarbasestr.length}${l[2]}CUSTOM BASE STRING: "${jstrimmedstrvarbasestr}"`;
-        console.log(logs);
-        fs.writeFileSync(path.join(websitepath, _justdir, `${filename.css}.css`), CSS, template.charset);
+    logs += linklogs; logs += buttonlogs;
+    logs += `${l[0]}USED NAMES:${l[1]}"${uniqueNames_.join('", "')}"${l[0]}DATA NAMES:${l[1]}"${dataname.join('", "')}"${l[0]}OTHER:${l[1]}JSTRIMMEDVAR:${l[2]}NAME: ${jstrimmedstrvar == null ? '(FAILED. WILL BE REPLACED WITH ID)' : `"${jstrimmedstrvar}"`}${l[2]}CUSTOM BASE: ${jstrimmedstrvarbasestr.length}${l[2]}CUSTOM BASE STRING: "${jstrimmedstrvarbasestr}"`;
+    console.log(logs);
+    fs.writeFileSync(path.join(websitepath, _justdir, `${filename.css}.css`), CSS, template.charset);
 
-        const JSdata = _just.js.get(JS);
-        const JSerr = `document.body.classList.add('${cssclass.error}');document.documentElement.style.setProperty('--${cssvar.edata}', \`'\${e_} (0300)'\`)`;
-        fs.writeFileSync(
-            path.join(websitepath, _justdir, `${filename.js}.js`),
-            "try{"+_just.js.set(
-                JS.replace('\'REPLACE_PUBLICOUTPUT\'', hideOutput?false:publicOutput)
-                .replace('\'REPLACE_SEARCHV2\'', CSSdata[1] || false)
-                .replace('\'REPLACE_OUTPUT\'', hideOutput?false:watermark)
-                .replace('let searchurl = "/_just/search";', `let searchurl="${JSUsePathInput && docsUsePathInput ? `/${PATH}`.repeat(2) : JSUsePathInput ? '/'+PATH : ''}/_just/${dataname[9]}.json";`), 
-                JSdata.names.filter(n => n !== jstrimmedstrvar), 
-                dataname2.reverse().slice(0, JSdata.total-1),
-                jstrimmedstrvarbasestr
-            ).replace("/^[!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~]+$/.test(null)", `/^[!"#$%&'()*+,-./:;<=>?@[\\]^_\`{|}~]+$/.test(${jstrimmedstrvar})`)+`}catch(e_){document.addEventListener('DOMContentLoaded',()=>{${JSerr}});${JSerr}}`,
-            template.charset
-        );
+    const JSdata = _just.js.get(JS);
+    const JSerr = `document.body.classList.add('${cssclass.error}');document.documentElement.style.setProperty('--${cssvar.edata}', \`'\${e_} (0300)'\`)`;
+    fs.writeFileSync(
+        path.join(websitepath, _justdir, `${filename.js}.js`),
+        "try{"+_just.js.set(
+            JS.replace('\'REPLACE_PUBLICOUTPUT\'', hideOutput?false:publicOutput)
+            .replace('\'REPLACE_SEARCHV2\'', CSSdata[1] || false)
+            .replace('\'REPLACE_OUTPUT\'', hideOutput?false:watermark)
+            .replace('let searchurl = "/_just/search";', `let searchurl="${JSUsePathInput && docsUsePathInput ? `/${PATH}`.repeat(2) : JSUsePathInput ? '/'+PATH : ''}/_just/${dataname[9]}.json";`), 
+            JSdata.names.filter(n => n !== jstrimmedstrvar), 
+            dataname2.reverse().slice(0, JSdata.total-1),
+            jstrimmedstrvarbasestr
+        ).replace("/^[!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~]+$/.test(null)", `/^[!"#$%&'()*+,-./:;<=>?@[\\]^_\`{|}~]+$/.test(${jstrimmedstrvar})`)+`}catch(e_){document.addEventListener('DOMContentLoaded',()=>{${JSerr}});${JSerr}}`,
+        template.charset
+    );
 
 
-        const fetchjson = async (protocol) => {
-            const response1 = await fetch(`${protocol}://${domain}/_just/`).catch() || undefined;
-            const data1 = response1 ? await response1.json() || undefined : undefined;
-            const response2 = await fetch(`${protocol}://${domain}/_just/${data1.json}.json`).catch() || undefined;
-            const data2 = response2 ? await response2.json() || undefined : undefined;
-            if (data1 && data2) fs.writeFileSync(path.join(websitepath, _justdir, `${data1.json}.json`), JSON.stringify(data2));
-        }
-        if (domain) {
-            fetchjson('http').catch((ee)=>{
-                caughterrors.push(ee);
+    const fetchjson = async (protocol) => {
+        const response1 = await fetch(`${protocol}://${domain}/_just/`).catch() || undefined;
+        const data1 = response1 ? await response1.json() || undefined : undefined;
+        const response2 = await fetch(`${protocol}://${domain}/_just/${data1.json}.json`).catch() || undefined;
+        const data2 = response2 ? await response2.json() || undefined : undefined;
+        if (data1 && data2) fs.writeFileSync(path.join(websitepath, _justdir, `${data1.json}.json`), JSON.stringify(data2));
+    }
+    if (domain) {
+        fetchjson('http').catch((ee)=>{
+            caughterrors.push(ee);
+            errorlogs += `${l[1]}AT LINE ${_just.line.line() || '-1'} (__REPLACE_LINE__): ${_just.line.err(ee)}`;
+            fetchjson('https').catch((e_e)=>{
+                caughterrors.push(e_e);
                 errorlogs += `${l[1]}AT LINE ${_just.line.line() || '-1'} (__REPLACE_LINE__): ${_just.line.err(ee)}`;
-                fetchjson('https').catch((e_e)=>{
-                    caughterrors.push(e_e);
-                    errorlogs += `${l[1]}AT LINE ${_just.line.line() || '-1'} (__REPLACE_LINE__): ${_just.line.err(ee)}`;
-                });
-            })
-        }
-        if (debug_) console.log(errorlogs + configlogs);
-        const outlogs = hideOutput?'':logs+errorlogs+configlogs;
-        if (debug_) fs.writeFileSync(path.join(websitepath, _just_datadir, 'output.txt'), outlogs, template.charset);
-        fs.writeFileSync(path.join(websitepath, _justdir, `${dataname[9]}.json`), JSON.stringify(mdjson), template.charset);
-        fs.writeFileSync(path.join(websitepath, _justdir, 'index.json'), JSON.stringify({
-            "js": filename.js,
-            "css": filename.css,
-            "json": dataname[9]
-        }), template.charset);
-        fs.writeFileSync(path.join(websitepath, '.', '.nojekyll'), '', template.charset);
-    });
+            });
+        })
+    }
+    if (debug_) console.log(errorlogs + configlogs);
+    const outlogs = hideOutput?'':logs+errorlogs+configlogs;
+    if (debug_) fs.writeFileSync(path.join(websitepath, _just_datadir, 'output.txt'), outlogs, template.charset);
+    fs.writeFileSync(path.join(websitepath, _justdir, `${dataname[9]}.json`), JSON.stringify(mdjson), template.charset);
+    fs.writeFileSync(path.join(websitepath, _justdir, 'index.json'), JSON.stringify({
+        "js": filename.js,
+        "css": filename.css,
+        "json": dataname[9]
+    }), template.charset);
+    fs.writeFileSync(path.join(websitepath, '.', '.nojekyll'), '', template.charset);
 }, tldinvalid => {});
