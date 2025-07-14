@@ -671,9 +671,9 @@ checkTLD(domain).then(tldvalid => {
         text = await text.replace(smlregex, async (match, smol) => `<span class="${cssclass.small}">${await MDtoHTML(smol)}</span>`);
         /*alternate headers currently disabled. they cause some bugs*///text = text.replace(/(?<=\s|^)(.*?)\n={3,}(?=\s|\n|$)/, MDtoHTML(`${_just.element(dataname[5])}<h1>$1</h1>`)).replace(/(?<=\s|^)(.*?)\n-{3,}(?=\s|\n|$)/, MDtoHTML(`${_just.element(dataname[6])}<h2>$1</h2>`));
 
-        function processBlockquotes(inputText, level) {
+        async function processBlockquotes(inputText, level) {
             const regex = new RegExp(`^(>\\s+){${level}}(.*?)\\s*$`, 'gm');
-            return MDtoHTML(inputText.replace(regex, (match, p1, p2) => {
+            return await MDtoHTML(inputText.replace(regex, async (match, p1, p2) => {
                 const classAttr = (num) =>
                     p2.startsWith('[!NOTE]') ? (num ? 7 : ` class="${cssclass.note}"`) :
                     p2.startsWith('[!TIP]') ? (num ? 6 : ` class="${cssclass.ntip}"`) :
@@ -681,7 +681,7 @@ checkTLD(domain).then(tldvalid => {
                     p2.startsWith('[!WARNING]') ? (num ? 10 : ` class="${cssclass.warn}"`) :
                     p2.startsWith('[!CAUTION]') ? (num ? 10 : ` class="${cssclass.caut}"`) :
                     num ? 0 : '';
-                const innerBlockquote = processBlockquotes(
+                const innerBlockquote = await processBlockquotes(
                     p2.trim().slice(classAttr(true)).trim(), 
                     level + 1
                 );
@@ -690,7 +690,7 @@ checkTLD(domain).then(tldvalid => {
         }
 
         for (let i = 1; i <= maxBlockquoteLevel; i++) {
-            text = processBlockquotes(text, i);
+            text = await processBlockquotes(text, i);
         }
 
         const ulRegex = /^(?:-\s+|\*\s+|\+\s+)(.*?)(?:\n(?:-\s+|\*\s+|\+\s+)(.*?))*$/gm;
