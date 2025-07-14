@@ -44,6 +44,7 @@ _just.ssapi = require('../modules/ssapi.js');
 _just.customCSS = require('./customcss.js');
 _just.MDtoHTML = require('./mdtohtml.js');
 _just.line = require('../modules/line.js');
+const { assert } = require('console');
 const hljs = require('../third-party/highlight.min.js');
 const supportedlangs = JSON.parse(hljslangs);
 const langaliases = JSON.parse(langs__);
@@ -664,10 +665,10 @@ checkTLD(domain).then(tldvalid => {
     async function hbuoclpMDtoHTML(text, maxBlockquoteLevel = mbl) {
         for (let i = 6; i >= 1; i--) {
             const regex = new RegExp(`^#{${i}}\\s+(.*?)\\s*$`, 'gm');
-            text = text.replace(regex, (match, header) => await `<h${i}>${MDtoHTML(header)}</h${i}>`);
+            text = await text.replace(regex, async (match, header) => `<h${i}>${await MDtoHTML(header)}</h${i}>`);
         }
         const smlregex = new RegExp(`^-#\\s+(.*?)\\s*$`, 'gm');
-        text = text.replace(smlregex, (match, smol) => await `<span class="${cssclass.small}">${MDtoHTML(smol)}</span>`);
+        text = await text.replace(smlregex, async (match, smol) => `<span class="${cssclass.small}">${await MDtoHTML(smol)}</span>`);
         /*alternate headers currently disabled. they cause some bugs*///text = text.replace(/(?<=\s|^)(.*?)\n={3,}(?=\s|\n|$)/, MDtoHTML(`${_just.element(dataname[5])}<h1>$1</h1>`)).replace(/(?<=\s|^)(.*?)\n-{3,}(?=\s|\n|$)/, MDtoHTML(`${_just.element(dataname[6])}<h2>$1</h2>`));
 
         function processBlockquotes(inputText, level) {
@@ -695,14 +696,14 @@ checkTLD(domain).then(tldvalid => {
         const ulRegex = /^(?:-\s+|\*\s+|\+\s+)(.*?)(?:\n(?:-\s+|\*\s+|\+\s+)(.*?))*$/gm;
         const olRegex = /^(?:\d+\.\s+)(.*?)(?:\n(?:\d+\.\s+)(.*?))*$/gm;
 
-        text = text.replace(ulRegex, (match) => {
+        text = await text.replace(ulRegex, async (match) => {
             const items = match.split('\n').map(item => item.replace(/^- \s*/, '').replace(/^\* \s*/, '').replace(/^\+ \s*/, ''));
-            return `<ul>${items.map(item => await `<li>${MDtoHTML(item.trim())}</li>`).join('')}</ul>`;
+            return await `<ul>${items.map(async item => `<li>${await MDtoHTML(item.trim())}</li>`).join('')}</ul>`;
         });
 
-        text = text.replace(olRegex, (match) => {
+        text = await text.replace(olRegex, async (match) => {
             const items = match.split('\n').map(item => item.replace(/^\d+\.\s*/, ''));
-            return `<ol>${items.map(item => await `<li>${MDtoHTML(item.trim())}</li>`).join('')}</ol>`;
+            return await `<ol>${items.map(async item => `<li>${await MDtoHTML(item.trim())}</li>`).join('')}</ol>`;
         });
 
         text = text.replace(dividerRegex, `<div class="${cssclass.line}"></div><br>`);
