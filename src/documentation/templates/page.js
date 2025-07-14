@@ -13,10 +13,13 @@ const isIOS=()=>ISIOS;
 
 const SETTINGS = {
     "publicOutput": 'REPLACE_PUBLICOUTPUT',
-    "searchV2": 'REPLACE_SEARCHV2'
+    "searchV2": 'REPLACE_SEARCHV2',
+    "output": 'REPLACE_OUTPUT'
 };
-console.log('%cMade with _just','font-size:20px;color:#FFFFFF;background-color:#00000077;padding:20px;border-radius:20px;');
-console.log('%chttps://just.is-a.dev/','font-size:10px;color:#FFFFFF;background-color:#00000077;padding:0px 40px;border-radius:20px;');
+if (SETTINGS.output) {
+    console.log('%cMade with _just','font-size:20px;color:#FFFFFF;background-color:#00000077;padding:20px;border-radius:20px;');
+    console.log('%chttps://just.is-a.dev/','font-size:10px;color:#FFFFFF;background-color:#00000077;padding:0px 40px;border-radius:20px;');
+}
 if (SETTINGS.publicOutput) {
     console.log(`_just output: ${wndw_.location.protocol}//${wndw_.location.hostname}/_just_data/output.txt`)
 };

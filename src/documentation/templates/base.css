@@ -1175,3 +1175,10 @@ main nav li ul li:has(strong) {
         margin-bottom: calc(0px - var(--liheight));
     }
 }
+
+nav.left:not(:has(strong)) > ul {
+    padding-top: 50px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}

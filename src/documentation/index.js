@@ -425,9 +425,13 @@ function generateListItems(PageList) {
             plfiltered.splice(index__, 1);
             plfiltered.unshift(page__);
         }
+        let folderid = 0;
+        for (const folderName in folderObj) {
+            folderid++;
+        }
         if (rootFolder) plfiltered.forEach(page => {
             plitemid++;
-            html += `<li style="--${cssvar.liheight}:19px${plitemid < plfiltered.length ? ';margin-bottom:-20px' : ''}"><a href="${page.path}" target="_self">${span(pagetitleify(page.title))}</a></li>`;
+            html += `<li style="--${cssvar.liheight}:19px${plitemid < plfiltered.length && folderid != 0 ? ';margin-bottom:-20px' : ''}"><a href="${page.path}" target="_self">${span(pagetitleify(page.title))}</a></li>`;
         });
         const plfiltered2= PageList.filter(page => folders_.includes(page.title));
         const plfiltered3= [];
@@ -778,6 +782,7 @@ checkTLD(domain).then(tldvalid => {
     const footer = docsConfig ? docsConfig.footer || template.footer : template.footer;
     const publicOutput = config.publicOutput || false;
     const hideOutput = config.hideOutput || false;
+    const watermark = config.watermark || false;
     const noWebarchive = config.noWebarchive ? config.noWebarchive : true;
     const searchkey = docsConfig ? docsConfig.searchKey || template.searchkey : template.searchkey;
     JS = JS.replace("&&'REPLACE_NOWEBARCHIVE'", `&&${noWebarchive}`).replace("'REPLACE_DATAARRAY'", dataname2[11]).replace('REPLACE_SEARCHKEY', searchkey);
@@ -1167,7 +1172,10 @@ checkTLD(domain).then(tldvalid => {
     fs.writeFileSync(
         path.join(websitepath, _justdir, `${filename.js}.js`),
         "try{"+_just.js.set(
-            JS.replace('\'REPLACE_PUBLICOUTPUT\'', hideOutput?false:publicOutput?false:true).replace('\'REPLACE_SEARCHV2\'', CSSdata[1] || false).replace('let searchurl = "/_just/search";', `let searchurl="${JSUsePathInput && docsUsePathInput ? `/${PATH}`.repeat(2) : JSUsePathInput ? '/'+PATH : ''}/_just/${dataname[9]}.json";`), 
+            JS.replace('\'REPLACE_PUBLICOUTPUT\'', hideOutput?false:publicOutput)
+              .replace('\'REPLACE_SEARCHV2\'', CSSdata[1] || false)
+              .replace('\'REPLACE_OUTPUT\'', hideOutput?false:watermark)
+              .replace('let searchurl = "/_just/search";', `let searchurl="${JSUsePathInput && docsUsePathInput ? `/${PATH}`.repeat(2) : JSUsePathInput ? '/'+PATH : ''}/_just/${dataname[9]}.json";`), 
             JSdata.names.filter(n => n !== jstrimmedstrvar), 
             dataname2.reverse().slice(0, JSdata.total-1),
             jstrimmedstrvarbasestr
