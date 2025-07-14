@@ -666,11 +666,9 @@ checkTLD(domain).then(async tldvalid => {
         for (let i = 6; i >= 1; i--) {
             const regex = new RegExp(`^#{${i}}\\s+(.*?)\\s*$`, 'gm');
             text = await text.replace(regex, async (match, header) => `<h${i}>${await MDtoHTML(header)}</h${i}>`);
-            console.log('0: '+text);
         }
         const smlregex = new RegExp(`^-#\\s+(.*?)\\s*$`, 'gm');
         text = await text.replace(smlregex, async (match, smol) => `<span class="${cssclass.small}">${await MDtoHTML(smol)}</span>`);
-            console.log('1: '+text);
         /*alternate headers currently disabled. they cause some bugs*///text = text.replace(/(?<=\s|^)(.*?)\n={3,}(?=\s|\n|$)/, MDtoHTML(`${_just.element(dataname[5])}<h1>$1</h1>`)).replace(/(?<=\s|^)(.*?)\n-{3,}(?=\s|\n|$)/, MDtoHTML(`${_just.element(dataname[6])}<h2>$1</h2>`));
 
         async function processBlockquotes(inputText, level) {
@@ -693,8 +691,6 @@ checkTLD(domain).then(async tldvalid => {
 
         for (let i = 1; i <= maxBlockquoteLevel; i++) {
             text = await processBlockquotes(text, i);
-            
-            console.log('2: '+text);
         }
 
         const ulRegex = /^(?:-\s+|\*\s+|\+\s+)(.*?)(?:\n(?:-\s+|\*\s+|\+\s+)(.*?))*$/gm;
@@ -704,14 +700,11 @@ checkTLD(domain).then(async tldvalid => {
             const items = match.split('\n').map(item => item.replace(/^- \s*/, '').replace(/^\* \s*/, '').replace(/^\+ \s*/, ''));
             return await `<ul>${items.map(async item => `<li>${await MDtoHTML(item.trim())}</li>`).join('')}</ul>`;
         });
-        
-            console.log('3: '+text);
 
         text = await text.replace(olRegex, async (match) => {
             const items = match.split('\n').map(item => item.replace(/^\d+\.\s*/, ''));
             return await `<ol>${items.map(async item => `<li>${await MDtoHTML(item.trim())}</li>`).join('')}</ol>`;
         });
-            console.log('4: '+text);
 
         text = text.replace(dividerRegex, `<div class="${cssclass.line}"></div><br>`);
 
@@ -747,8 +740,6 @@ checkTLD(domain).then(async tldvalid => {
             paragraphsRegex.lastIndex -= match[0].length;
             
         }
-        
-            console.log('5: '+resultTextArray.join(''));
 
         return resultTextArray.join('');
     }
@@ -1015,8 +1006,7 @@ checkTLD(domain).then(async tldvalid => {
                     .replaceAll('\n>\n> ', '\n> ')
                     .replace(new RegExp(`(?<=^|\n)([>|> ]{2,${mbl}}) `, 'g'), (match, bqs) => `\n${bqs.replaceAll(' ', '').split('').join(' ').trim()} `)
             ).then((tohttmll) => {
-                console.log(toHTML);
-                console.log(tohttmll);
+                console.log(typeof(tohttmll));
                 toHTML = tohttmll.replace(/<(h1|h2|h3|h4)>(.*?)<\/\1>/g, (match, p1, p2) => {
                     return `<${p1} id="${uniqueName(encodeURIComponent(p2))}">${p2}</${p1}>`;
                 }).replace(/<(h1|h2|h3|h4) id="([^"]+)">(.*?)<\/\1>/g, (match, p1, p2, p3) => {headers.push(p2);return`<${p1} id="${p2}">${p3}</${p1}>`});
