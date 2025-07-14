@@ -44,4 +44,6 @@ function findFiles(dir) {
     return output;
 }
 
-fs.writeFileSync(path.join('.', 'website/syntax-highlighting.md'), findFiles(process.cwd()));
+const outpath = path.join('.', 'website/syntax-highlighting.md');
+fs.writeFileSync(outpath, findFiles(process.cwd()));
+console.log('Out:  '+fs.statSync(outpath).size);
