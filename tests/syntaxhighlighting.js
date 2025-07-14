@@ -36,7 +36,7 @@ function findFiles(dir) {
         if (stat && stat.isDirectory()) {
             output += findFiles(file);
             console.log('Dir:  '+file);
-        } else if (!file.endsWith('.md') && !file.endsWith('.mdx') && !file.endsWith('.idx') && !file.endsWith('.pack') && path.extname(file)) {
+        } else if (!file.endsWith('.md') && !file.endsWith('.mdx') && !file.endsWith('.idx') && !file.endsWith('.pack') && path.extname(file) && file.startsWith('/home/runner/work/_just/_just/src')) {
             output += `\`\`\`${path.extname(file).replace('.','')}\n${fs.readFileSync(file)}\n\`\`\`\n`;
             console.log('File: '+file);
         }
