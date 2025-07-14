@@ -1004,116 +1004,117 @@ checkTLD(domain).then(async tldvalid => {
                     .replace(/> (.*?)\n\n> (.*?)\n/g, `> $1\n\n> ${_just.element(dataname[7])}$2\n`)
                     .replaceAll('\n>\n> ', '\n> ')
                     .replace(new RegExp(`(?<=^|\n)([>|> ]{2,${mbl}}) `, 'g'), (match, bqs) => `\n${bqs.replaceAll(' ', '').split('').join(' ').trim()} `)
-            );
-            toHTML = toHTML.replace(/<(h1|h2|h3|h4)>(.*?)<\/\1>/g, (match, p1, p2) => {
-                return `<${p1} id="${uniqueName(encodeURIComponent(p2))}">${p2}</${p1}>`;
-            }).replace(/<(h1|h2|h3|h4) id="([^"]+)">(.*?)<\/\1>/g, (match, p1, p2, p3) => {headers.push(p2);return`<${p1} id="${p2}">${p3}</${p1}>`});
+            ).then(() => {
+                toHTML = toHTML.replace(/<(h1|h2|h3|h4)>(.*?)<\/\1>/g, (match, p1, p2) => {
+                    return `<${p1} id="${uniqueName(encodeURIComponent(p2))}">${p2}</${p1}>`;
+                }).replace(/<(h1|h2|h3|h4) id="([^"]+)">(.*?)<\/\1>/g, (match, p1, p2, p3) => {headers.push(p2);return`<${p1} id="${p2}">${p3}</${p1}>`});
 
-            const H1 = [...toHTML.matchAll(/<(h1|h2) id="([^"]+)">(.*?)<\/\1>/g)];
-            const HT = [...toHTML.matchAll(/<(h3|h4) id="([^"]+)">(.*?)<\/\1>/g)];
+                const H1 = [...toHTML.matchAll(/<(h1|h2) id="([^"]+)">(.*?)<\/\1>/g)];
+                const HT = [...toHTML.matchAll(/<(h3|h4) id="([^"]+)">(.*?)<\/\1>/g)];
 
-            const h1 = H1.map(match => [match[3], match[2]]);
-            const hT = HT.map(match => [match[3], match[2]]);
+                const h1 = H1.map(match => [match[3], match[2]]);
+                const hT = HT.map(match => [match[3], match[2]]);
 
-            const headermap = new Map(headers.map((id, index) => [id, index]));
-            const contents = [
-                ...h1.map(item => ([ ...item, false ])),
-                ...hT.map(item => ([ ...item, true ]))
-            ];
-            contents.sort((a, b) => {
-                const indexA = headermap.get(a[1]) ?? Infinity;
-                const indexB = headermap.get(b[1]) ?? Infinity;
-                return indexA - indexB;
-            });
-            let pageHeaders = '';
-            for (const [idk, headerdata] of Object.entries(contents)) {
-                pageHeaders += `<li${ headerdata[2] ? ' class="secondary"' : '' }>
-                                    <a href="#${headerdata[1]}">
-                                        ${span(_just.string.toText(headerdata[0]))}
-                                    </a>
-                                </li>`;
-            }
+                const headermap = new Map(headers.map((id, index) => [id, index]));
+                const contents = [
+                    ...h1.map(item => ([ ...item, false ])),
+                    ...hT.map(item => ([ ...item, true ]))
+                ];
+                contents.sort((a, b) => {
+                    const indexA = headermap.get(a[1]) ?? Infinity;
+                    const indexB = headermap.get(b[1]) ?? Infinity;
+                    return indexA - indexB;
+                });
+                let pageHeaders = '';
+                for (const [idk, headerdata] of Object.entries(contents)) {
+                    pageHeaders += `<li${ headerdata[2] ? ' class="secondary"' : '' }>
+                                        <a href="#${headerdata[1]}">
+                                            ${span(_just.string.toText(headerdata[0]))}
+                                        </a>
+                                    </li>`;
+                }
 
-            const idk_ = toHTML.endsWith('</p>');
-            const prevnext = _just.prevnext.get(idk_ ? _just.string.removeLast(toHTML, '</p>') : toHTML);
-            toHTML = idk_ ? prevnext[0].replace(_just.prevnext.regex, '') + '</p>' : prevnext[0].replace(_just.prevnext.regex, '');
-            let pagejs = '';
-            const btnjs = (id, href) => `document.getElementById('${id}').addEventListener("click",()=>{const ${id.replace('-','_')}=document.createElement('a');${id.replace('-','_')}.href='/${href}';${id.replace('-','_')}.target='_self';${id.replace('-','_')}.style.display='none';document.body.appendChild(${id.replace('-','_')});${id.replace('-','_')}.click();document.body.removeChild(${id.replace('-','_')})});`;
-            if (prevnext[1].prev) {
-                pagejs = btnjs(filename.js, prevnext[1].prev)
-            }
-            if (prevnext[1].next) {
-                pagejs += btnjs(filename.css, prevnext[1].next)
-            }
+                const idk_ = toHTML.endsWith('</p>');
+                const prevnext = _just.prevnext.get(idk_ ? _just.string.removeLast(toHTML, '</p>') : toHTML);
+                toHTML = idk_ ? prevnext[0].replace(_just.prevnext.regex, '') + '</p>' : prevnext[0].replace(_just.prevnext.regex, '');
+                let pagejs = '';
+                const btnjs = (id, href) => `document.getElementById('${id}').addEventListener("click",()=>{const ${id.replace('-','_')}=document.createElement('a');${id.replace('-','_')}.href='/${href}';${id.replace('-','_')}.target='_self';${id.replace('-','_')}.style.display='none';document.body.appendChild(${id.replace('-','_')});${id.replace('-','_')}.click();document.body.removeChild(${id.replace('-','_')})});`;
+                if (prevnext[1].prev) {
+                    pagejs = btnjs(filename.js, prevnext[1].prev)
+                }
+                if (prevnext[1].next) {
+                    pagejs += btnjs(filename.css, prevnext[1].next)
+                }
 
-            const pages = generateListItems(addFolderToPageList(pageList).sort((a, b) => a.title.localeCompare(b.title)));
-            const start = pathtourl[file] == "" ? '' : '/';
-            const fixpath = HTMLUsePathInput && docsUsePathInput ? `${PATH}/`.repeat(2) : HTMLUsePathInput ? PATH+'/' : '';
-            let outHTML = HTML
-                .replace('<html>', `<html${htmlLang}>`)
-                .replaceAll('="/_just/', `="${start}${fixpath}_just/`)
-                .replace("content: '_just';", `content: '_just ${_just.version}';`)
-                .replace('REPLACE_SCRIPT', `const ${dataname2[11]}=${JSON.stringify(pages[1])};${pagejs ? `document.addEventListener('DOMContentLoaded',()=>{${pagejs}});` : ''}`)
-                .replaceAll('REPLACE_CSS', filename.css)
-                .replaceAll('REPLACE_JS', filename.js)
-                .replace('REPLACE_CHARSET', charset)
-                .replace('REPLACE_VIEWPORT', viewport)
-                .replace('REPLACE_TITLE', metatitle)
-                .replace('REPLACE_DATA', htmlhead(pathtourl[file], fixpath))
-                .replace('REPLACE_CUSTOM', insertHTMLinHead)
-                .replace('REPLACE_LOGO', logo)
-                .replace('REPLACE_NAME', filterText(name))
-                .replace('REPLACE_PAGES', filterText(pages[0]))
-                .replace('REPLACE_CONTENTS', filterText(pageHeaders))
-                .replace('REPLACE_FOOTER', docsConfig && docsConfig.footer ? span(filterText(footer)) : '')
-                .replace('REPLACE_LINKS', htmlnav())
-                .replace('REPLACE_BUTTONS', htmlnav(1));
+                const pages = generateListItems(addFolderToPageList(pageList).sort((a, b) => a.title.localeCompare(b.title)));
+                const start = pathtourl[file] == "" ? '' : '/';
+                const fixpath = HTMLUsePathInput && docsUsePathInput ? `${PATH}/`.repeat(2) : HTMLUsePathInput ? PATH+'/' : '';
+                let outHTML = HTML
+                    .replace('<html>', `<html${htmlLang}>`)
+                    .replaceAll('="/_just/', `="${start}${fixpath}_just/`)
+                    .replace("content: '_just';", `content: '_just ${_just.version}';`)
+                    .replace('REPLACE_SCRIPT', `const ${dataname2[11]}=${JSON.stringify(pages[1])};${pagejs ? `document.addEventListener('DOMContentLoaded',()=>{${pagejs}});` : ''}`)
+                    .replaceAll('REPLACE_CSS', filename.css)
+                    .replaceAll('REPLACE_JS', filename.js)
+                    .replace('REPLACE_CHARSET', charset)
+                    .replace('REPLACE_VIEWPORT', viewport)
+                    .replace('REPLACE_TITLE', metatitle)
+                    .replace('REPLACE_DATA', htmlhead(pathtourl[file], fixpath))
+                    .replace('REPLACE_CUSTOM', insertHTMLinHead)
+                    .replace('REPLACE_LOGO', logo)
+                    .replace('REPLACE_NAME', filterText(name))
+                    .replace('REPLACE_PAGES', filterText(pages[0]))
+                    .replace('REPLACE_CONTENTS', filterText(pageHeaders))
+                    .replace('REPLACE_FOOTER', docsConfig && docsConfig.footer ? span(filterText(footer)) : '')
+                    .replace('REPLACE_LINKS', htmlnav())
+                    .replace('REPLACE_BUTTONS', htmlnav(1));
 
-            fs.writeFileSync(outFilePath('txt'), toHTML, charset);
-            htmlfiles[outFilePath('html')] = outHTML.replace('REPLACE_PREVNEXT', _just.prevnext.html(prevnext[1], cssclass.next, cssclass.next1, cssclass.next2, filename.js, filename.css, pages[1])).replace(
-                    'REPLACE_CONTENT',
-                    _just.string.removeLast(
-                        addEnd(
-                            toHTML
-                                .replaceAll('\n', '<br>')
-                                .replaceAll('</h1><br>', '</h1>')
-                                .replaceAll('</h2><br>', '</h2>')
-                                .replaceAll('</h3><br>', '</h3>')
-                                .replaceAll('</h4><br>', '</h4>')
-                                .replaceAll('</h5><br>', '</h5>')
-                                .replaceAll('</h6><br>', '</h6>')
-                                .replaceAll('</ol><br>', '</ol>')
-                                .replaceAll('</ul><br>', '</ul>')
-                                .replace(/<blockquote><br>((?:(?!<h[1-6][^>]*>.*?<\/h[1-6]>).)*?)<\/blockquote>/g, '<blockquote><blockquote>$1</blockquote></blockquote>')
-                                .replace(/<blockquote><br>> ((?:(?!<h[1-6][^>]*>.*?<\/h[1-6]>).)*?)<\/blockquote>/g, '<blockquote><blockquote><blockquote>$1</blockquote></blockquote></blockquote>')
-                                .replaceAll('</blockquote><br>', '</blockquote>')
-                                .replaceAll('<br><blockquote', '<blockquote')
-                                .replaceAll('</blockquote><blockquote>', '<br>')
-                                .replaceAll('<br><blockquote><br>', '<blockquote>')
-                                .replace(/<blockquote>> ((?:(?!<h[1-6][^>]*>.*?<\/h[1-6]>).)*?)<\/blockquote>/g, '<blockquote><blockquote>$1</blockquote></blockquote>')
-                                .replaceAll('</blockquote></blockquote><blockquote><blockquote>', '<br>')
-                                .replaceAll('</blockquote><blockquote>', '<br>')
-                                .replace(/<blockquote>((?:(?!<h[1-6][^>]*>.*?<\/h[1-6]>).)*?)<br>> ((?:(?!<h[1-6][^>]*>.*?<\/h[1-6]>).)*?)<br>((?:(?!<h[1-6][^>]*>.*?<\/h[1-6]>).)*?)<\/blockquote>/g, '<blockquote>$1<blockquote>$2</blockquote><br>$3</blockquote>')
-                                .replaceAll('</blockquote><br>', '</blockquote>')
-                                .replace(/<\/blockquote>> ((?:(?!<h[1-6][^>]*>.*?<\/h[1-6]>).)*?)<blockquote>/g, '</blockquote><blockquote>$1</blockquote><blockquote>')
-                                .replaceAll('</blockquote><blockquote>', '<br>')
-                                .replaceAll(_just.element(dataname[7]), '</blockquote><blockquote>')
-                                .replaceAll('</blockquote><br><blockquote>', '<br>')
-                                .replaceAll('<blockquote></blockquote>', '')
-                                .replace(/<blockquote>\[!(NOTE|TIP|IMPORTANT|WARNING|CAUTION)\]/g, (match, blockquote) => `<blockquote class="${blockquoteToCSSclass[blockquote]}">`),
+                fs.writeFileSync(outFilePath('txt'), toHTML, charset);
+                htmlfiles[outFilePath('html')] = outHTML.replace('REPLACE_PREVNEXT', _just.prevnext.html(prevnext[1], cssclass.next, cssclass.next1, cssclass.next2, filename.js, filename.css, pages[1])).replace(
+                        'REPLACE_CONTENT',
+                        _just.string.removeLast(
+                            addEnd(
+                                toHTML
+                                    .replaceAll('\n', '<br>')
+                                    .replaceAll('</h1><br>', '</h1>')
+                                    .replaceAll('</h2><br>', '</h2>')
+                                    .replaceAll('</h3><br>', '</h3>')
+                                    .replaceAll('</h4><br>', '</h4>')
+                                    .replaceAll('</h5><br>', '</h5>')
+                                    .replaceAll('</h6><br>', '</h6>')
+                                    .replaceAll('</ol><br>', '</ol>')
+                                    .replaceAll('</ul><br>', '</ul>')
+                                    .replace(/<blockquote><br>((?:(?!<h[1-6][^>]*>.*?<\/h[1-6]>).)*?)<\/blockquote>/g, '<blockquote><blockquote>$1</blockquote></blockquote>')
+                                    .replace(/<blockquote><br>> ((?:(?!<h[1-6][^>]*>.*?<\/h[1-6]>).)*?)<\/blockquote>/g, '<blockquote><blockquote><blockquote>$1</blockquote></blockquote></blockquote>')
+                                    .replaceAll('</blockquote><br>', '</blockquote>')
+                                    .replaceAll('<br><blockquote', '<blockquote')
+                                    .replaceAll('</blockquote><blockquote>', '<br>')
+                                    .replaceAll('<br><blockquote><br>', '<blockquote>')
+                                    .replace(/<blockquote>> ((?:(?!<h[1-6][^>]*>.*?<\/h[1-6]>).)*?)<\/blockquote>/g, '<blockquote><blockquote>$1</blockquote></blockquote>')
+                                    .replaceAll('</blockquote></blockquote><blockquote><blockquote>', '<br>')
+                                    .replaceAll('</blockquote><blockquote>', '<br>')
+                                    .replace(/<blockquote>((?:(?!<h[1-6][^>]*>.*?<\/h[1-6]>).)*?)<br>> ((?:(?!<h[1-6][^>]*>.*?<\/h[1-6]>).)*?)<br>((?:(?!<h[1-6][^>]*>.*?<\/h[1-6]>).)*?)<\/blockquote>/g, '<blockquote>$1<blockquote>$2</blockquote><br>$3</blockquote>')
+                                    .replaceAll('</blockquote><br>', '</blockquote>')
+                                    .replace(/<\/blockquote>> ((?:(?!<h[1-6][^>]*>.*?<\/h[1-6]>).)*?)<blockquote>/g, '</blockquote><blockquote>$1</blockquote><blockquote>')
+                                    .replaceAll('</blockquote><blockquote>', '<br>')
+                                    .replaceAll(_just.element(dataname[7]), '</blockquote><blockquote>')
+                                    .replaceAll('</blockquote><br><blockquote>', '<br>')
+                                    .replaceAll('<blockquote></blockquote>', '')
+                                    .replace(/<blockquote>\[!(NOTE|TIP|IMPORTANT|WARNING|CAUTION)\]/g, (match, blockquote) => `<blockquote class="${blockquoteToCSSclass[blockquote]}">`),
+                                '<br>'
+                            ),
                             '<br>'
-                        ),
-                        '<br>'
-                    ).replace(/<blockquote>((?:(?!<h[1-6][^>]*>.*?<\/h[1-6]>).)*?)<br><br><blockquote>/, '<blockquote>$1<blockquote>')
-                    .replaceAll('</blockquote><br><blockquote>', '<br>')
-                    .replace(/<br><blockquote><blockquote>((?:(?!<h[1-6][^>]*>.*?<\/h[1-6]>).)*?)<\/blockquote><\/blockquote>/g, '<blockquote>$1</blockquote>')
-                    //.replaceAll(`${_just.element(dataname[5])}<h1 id=`, `<h1 class="${dataname[5]}" id=`)
-                    //.replaceAll(`${_just.element(dataname[6])}<h2 id=`, `<h2 class="${dataname[6]}" id=`)
-                    .replace(new RegExp(`(?<=<code class="${cssclass.code}"><code>(${getlangs()})</code>)(.*?)(?=</code>)`, 'g'), (match, lng, cde) => cde.replace(/<br><br>/g, '<br>')),
-                )
-            if (markdownFiles.length == mdid) {
-                resolve()
-            }
+                        ).replace(/<blockquote>((?:(?!<h[1-6][^>]*>.*?<\/h[1-6]>).)*?)<br><br><blockquote>/, '<blockquote>$1<blockquote>')
+                        .replaceAll('</blockquote><br><blockquote>', '<br>')
+                        .replace(/<br><blockquote><blockquote>((?:(?!<h[1-6][^>]*>.*?<\/h[1-6]>).)*?)<\/blockquote><\/blockquote>/g, '<blockquote>$1</blockquote>')
+                        //.replaceAll(`${_just.element(dataname[5])}<h1 id=`, `<h1 class="${dataname[5]}" id=`)
+                        //.replaceAll(`${_just.element(dataname[6])}<h2 id=`, `<h2 class="${dataname[6]}" id=`)
+                        .replace(new RegExp(`(?<=<code class="${cssclass.code}"><code>(${getlangs()})</code>)(.*?)(?=</code>)`, 'g'), (match, lng, cde) => cde.replace(/<br><br>/g, '<br>')),
+                    )
+                if (markdownFiles.length == mdid) {
+                    resolve()
+                }
+            });
         })
     });
 
