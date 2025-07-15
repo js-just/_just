@@ -1164,7 +1164,7 @@ checkTLD(domain).then(tldvalid => {
         }));
         let codeid = 0;
         codes1.forEach(code1 => {
-            htmloutput = htmloutput.replaceAll(_just.element(dataname2[19], codeid), code1);
+            htmloutput = htmloutput.replaceAll(_just.element(dataname2[19], codeid), code1.replaceAll('\n', '<br>'));
             codeid++;
         });
         fs.writeFileSync(
