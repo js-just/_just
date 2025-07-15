@@ -21,10 +21,6 @@ jobs:
       - uses: actions/setup-node@v4
       - name: Make syntax highlighting test markdown file
         run: node tests/syntaxhighlighting.js
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: website
       - name: Generate with _just
         uses: js-just/_just@main
         with:
