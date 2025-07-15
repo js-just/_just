@@ -21,7 +21,7 @@
 # SOFTWARE.
 
 #!/bin/bash
-source $GITHUB_ACTION_PATH/lib/errmsg.sh
+source $GITHUB_ACTION_PATH/src/modules/errmsg.sh
 config=$(cat just.config.json)
 
 docs_config=$(echo "$config" | jq -r '.docs_config')
