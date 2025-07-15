@@ -597,7 +597,7 @@ checkTLD(domain).then(tldvalid => {
         let text = MDescape(input);
         text = text.replace(/```([\w]*)\s*[\r\n]+([\s\S]*?)```/g, (match, lang_, code_) => {
                         if (lang_ === 'CODEID') {
-                            debuglog(`  CID: "${code_}"`);
+                            debuglog(`  CID: "${code_.trim()}"`);
                         }
                         const inputlang = lang_;
                         const filter_ = (inpt) => inpt.replace(/\n( {1,})/g, (match, spaces) => {
