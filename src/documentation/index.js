@@ -1149,21 +1149,27 @@ checkTLD(domain).then(tldvalid => {
             htmloutput = htmloutput
                 .replace(fixlinkregex(charrr), (match, href_, title_, text_) => `<a href="${href_}" target="_blank" id="${cssid.ext}"${title_} class="${cssclass.linkmark}">${text_}</a>${charrr == "\\\\" ? '\\' : charrr.replaceAll('\\', '')}`);
         });
+        htmloutput = htmloutput.replace(/<a href="(.*?)" target="_blank" id="(.*?)"(.*?)>(.*?)<\/a>\+\*\?/g, (match, hreff, idd, titleclass, textt) => {
+            if (idd == cssid.ext) {
+                return `<a href="${hreff}" target="_blank" id="${idd}"${titleclass}>${textt}</a>`;
+            } else {
+                return `<a href="${hreff}" target="_blank" id="${idd}"${titleclass}>${textt}</a>+*?`;
+            }
+        }).replace(/(?<=<code>)(.*?)(?=<\/code>)/g, (match, cde) => cde.replace(/&&#35;(.*?);/g, (match, num_) => {
+            if (/\d/.test(num_)) {
+                return `&#${num_};`;
+            } else {
+                return `&&#35;${num_};`;
+            }
+        }));
+        let codeid = 0;
+        codes1.forEach(code1 => {
+            htmloutput = htmloutput.replaceAll(_just.element(dataname2[19], codeid), code1);
+            codeid++;
+        });
         fs.writeFileSync(
             pathh, 
-            htmloutput.replace(/<a href="(.*?)" target="_blank" id="(.*?)"(.*?)>(.*?)<\/a>\+\*\?/g, (match, hreff, idd, titleclass, textt) => {
-                if (idd == cssid.ext) {
-                    return `<a href="${hreff}" target="_blank" id="${idd}"${titleclass}>${textt}</a>`;
-                } else {
-                    return `<a href="${hreff}" target="_blank" id="${idd}"${titleclass}>${textt}</a>+*?`;
-                }
-            }).replace(/(?<=<code>)(.*?)(?=<\/code>)/g, (match, cde) => cde.replace(/&&#35;(.*?);/g, (match, num_) => {
-                    if (/\d/.test(num_)) {
-                        return `&#${num_};`;
-                    } else {
-                        return `&&#35;${num_};`;
-                    }
-                })), 
+            htmloutput, 
             charset
         );
         const outputlogs = `OUTPUT: ${_just.string.runnerPath(pathh)} (${_just.string.fileSize(fs.statSync(pathh).size)})`;
