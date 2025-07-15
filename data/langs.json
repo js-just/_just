@@ -75,5 +75,6 @@
     "gms": "gams",
     "gss": "gauss",
     "golang": "go",
-    "gololang": "golo"
+    "gololang": "golo",
+    "svg": "xml"
 }

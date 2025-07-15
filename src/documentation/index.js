@@ -602,6 +602,7 @@ checkTLD(domain).then(tldvalid => {
                             debuglog(`  CID: "${codeid}"`);
                             [lang_, code_] = codes0[codeid]
                         }
+                        lang_ = lang_.toLowerCase();
                         const inputlang = lang_;
                         const filter_ = (inpt) => inpt.replace(/\n( {1,})/g, (match, spaces) => {
                             return `\n${'&nbsp;'.repeat(spaces.length)}`;
@@ -617,16 +618,16 @@ checkTLD(domain).then(tldvalid => {
                         }
                         debuglog(`   CL: ${inputlang} => ${lang_}`);
                         const hljshighlight = highlightcode && supportedlangs.includes(lang_)
-                        const output_ = hljshighlight ? hljs.highlight(code_, {language: lang_}).value : undefined;
+                        const output_ = hljshighlight ? hljs.highlight(lang_ == 'markdown' ? code_.replaceAll("\\`\\`\\`", "```") : code_, {language: lang_}).value : undefined;
                         insertedcode = true;
                         codes1.push(`<code class="${cssclass.code}">${
                             hljshighlight ? 
-                            `<code>${langstext[lang_]}</code>${
+                            `<code>${inputlang == 'html' ? 'HTML' : inputlang == 'svg' ? 'SVG' : langstext[lang_]}</code>${
                                 filter_(
                                     `${lang_ == 'css' ? _just.highlight.css(output_) : output_}`
                                 )
                             }` : 
-                            filter_(code_)
+                            filter_(MDcode(code_, false, true))
                         }</code>`);
                         return _just.element(dataname2[19], codes1.length - 1);
                     })
