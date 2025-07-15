@@ -706,12 +706,12 @@ checkTLD(domain).then(async tldvalid => {
 
         text = await text.replace(ulRegex, async (match) => {
             const items = match.split('\n').map(item => item.replace(/^- \s*/, '').replace(/^\* \s*/, '').replace(/^\+ \s*/, ''));
-            return await `<ul>${items.map(async item => `<li>${await MDtoHTML(item.trim())}</li>`).join('')}</ul>`;
+            return `<ul>${items.map(async item => `<li>${await MDtoHTML(item.trim())}</li>`).join('')}</ul>`;
         });
 
         text = await text.replace(olRegex, async (match) => {
             const items = match.split('\n').map(item => item.replace(/^\d+\.\s*/, ''));
-            return await `<ol>${items.map(async item => `<li>${await MDtoHTML(item.trim())}</li>`).join('')}</ol>`;
+            return `<ol>${items.map(async item => `<li>${await MDtoHTML(item.trim())}</li>`).join('')}</ol>`;
         });
 
         text = text.replace(dividerRegex, `<div class="${cssclass.line}"></div><br>`);
