@@ -718,7 +718,7 @@ checkTLD(domain).then(async tldvalid => {
             let paragraphContent = match[0].trim();
             
             if (paragraphContent) {
-                resultTextArray.push(`<p>${MDtoHTML(paragraphContent)}</p>`);
+                resultTextArray.push(`<p>${await MDtoHTML(paragraphContent)}</p>`);
             }
             
             text = text.slice(match.index + match[0].length);
@@ -733,7 +733,7 @@ checkTLD(domain).then(async tldvalid => {
             }
             
             if (text.length > 0) {
-                resultTextArray.push(`<p>${MDtoHTML(text.trim())}</p>`);
+                resultTextArray.push(`<p>${await MDtoHTML(text.trim())}</p>`);
                 break;
             }
             
