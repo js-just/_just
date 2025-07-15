@@ -44,7 +44,6 @@ _just.ssapi = require('../modules/ssapi.js');
 _just.customCSS = require('./customcss.js');
 _just.MDtoHTML = require('./mdtohtml.js');
 _just.line = require('../modules/line.js');
-const { assert } = require('console');
 const hljs = require('../third-party/highlight.min.js');
 const supportedlangs = JSON.parse(hljslangs);
 const langaliases = JSON.parse(langs__);
@@ -531,7 +530,7 @@ function checkdomain(input, throwerror) {
 }
 const domain = docsConfig ? checkdomain(docsConfig.domain, true) || undefined : undefined;
 const caughterrors = [];
-checkTLD(domain).then(async tldvalid => {
+checkTLD(domain).then(tldvalid => {
     if (domain && domain.endsWith('.is-a.dev')) {
         _just.ssapi["is-a.dev"](domain);
     }
@@ -593,45 +592,37 @@ checkTLD(domain).then(async tldvalid => {
     const linkregex = /(?<=\s|^|[.,!?;:*_^~=])\[(.*?)\]\((.*?)\)(?=\s|[.,!?;:*_^~=]|$)/g;
     let taskid = 0;
     let insertedcode = false;
-    const MDtoHTML = async (input) => {
+    const MDtoHTML = (input) => {
         let text = MDescape(input);
-        text = await text.replace(/```([\w]*)\s*[\r\n]+([\s\S]*?)```/g, async (match, lang_, code_) => {
-                        let nocode = false;
-                        if (false && text.length > 10**5) { // disabled
-                            nocode = true;
-                        }
+        text = text.replace(/```([\w]*)\s*[\r\n]+([\s\S]*?)```/g, (match, lang_, code_) => {
+                        const inputlang = lang_;
                         const filter_ = (inpt) => inpt.replace(/\n( {1,})/g, (match, spaces) => {
                             return `\n${'&nbsp;'.repeat(spaces.length)}`;
                         }).replaceAll('\n\n', '\n');
-                        if (nocode) {
-                            return `<code class="${cssclass.code}">${filter_(MDcode(code_, false, true))}</code>`
-                        } else {
-                            const inputlang = lang_;
-                            const highlightcode = lang_ && lang_ != '';
-                            if (highlightcode && !supportedlangs.includes(lang_) && !langaliases[lang_]) {
-                                const warningg = `${_just.error.prefix}${esc}[0;33mWarning 0209${esc}[0m: ${esc}[0;33mUnsuppotred language: hljs: ${esc}[0m${lang_}`;
-                                errorlogs += `${l[1]}AT LINE ${_just.line.line() || '-1'} (__REPLACE_LINE__): ${_just.line.err(warningg)}`;
-                                console.warn(warningg);
-                            }
-                            if (highlightcode && !supportedlangs.includes(lang_) && langaliases[lang_]) {
-                                lang_ = langaliases[lang_]
-                            }
-                            debuglog(`   CL: ${inputlang} => ${lang_}`);
-                            const hljshighlight = highlightcode && supportedlangs.includes(lang_)
-                            const output_ = hljshighlight ? await hljs.highlight(code_, {language: lang_}).value : undefined;
-                            insertedcode = true;
-                            return `<code class="${cssclass.code}">${
-                                hljshighlight ? 
-                                `<code>${langstext[lang_]}</code>${
-                                    filter_(MDcode(
-                                        `${lang_ == 'css' ? _just.highlight.css(output_) : output_}`, 
-                                        false, 
-                                        true
-                                    ))
-                                }` : 
-                                filter_(MDcode(code_, false, true))
-                            }</code>`;
+                        const highlightcode = lang_ && lang_ != '';
+                        if (highlightcode && !supportedlangs.includes(lang_) && !langaliases[lang_]) {
+                            const warningg = `${_just.error.prefix}${esc}[0;33mWarning 0209${esc}[0m: ${esc}[0;33mUnsuppotred language: hljs: ${esc}[0m${lang_}`;
+                            errorlogs += `${l[1]}AT LINE ${_just.line.line() || '-1'} (__REPLACE_LINE__): ${_just.line.err(warningg)}`;
+                            console.warn(warningg);
                         }
+                        if (highlightcode && !supportedlangs.includes(lang_) && langaliases[lang_]) {
+                            lang_ = langaliases[lang_]
+                        }
+                        debuglog(`   CL: ${inputlang} => ${lang_}`);
+                        const hljshighlight = highlightcode && supportedlangs.includes(lang_)
+                        const output_ = hljshighlight ? hljs.highlight(code_, {language: lang_}).value : undefined;
+                        insertedcode = true;
+                        return `<code class="${cssclass.code}">${
+                            hljshighlight ? 
+                            `<code>${langstext[lang_]}</code>${
+                                filter_(MDcode(
+                                    `${lang_ == 'css' ? _just.highlight.css(output_) : output_}`, 
+                                    false, 
+                                    true
+                                ))
+                            }` : 
+                            filter_(MDcode(code_, false, true))
+                        }</code>`;
                     })
                 .replace(/(?<=\s|^|[.,!?;:*_^~=])`(.*?)`(?=\s|[.,!?;:*_^~=]|$)/g, (match, code) => {return `<code>${MDcode(code)}</code>`})
                 .replace(/(?<=\s|^|[.,!?;:*_^~=])!\[(.*?)\]\((.*?) ("|')(.*?)\3\)(?=\s|[.,!?;:*_^~=]|$)/g, (match, text, link_, q, imgtitle) => {return `<img src="${link_}" alt="${text}" title="${imgtitle}" loading="lazy">`})
@@ -670,18 +661,18 @@ checkTLD(domain).then(async tldvalid => {
         return _just.MDtoHTML.MDtoHTML(text, cssclass).replace(/~(.*?)~/g, '<sub>$1</sub>').replace(/\^(.*?)\^/g, '<sup>$1</sup>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\*(.*?)\*/g, '<em>$1</em>');
     }
     const dividerRegex = /(\n\s*[*_-]{3,}\s*\n)+/g;
-    async function hbuoclpMDtoHTML(text, filepath, maxBlockquoteLevel = mbl) {
+    function hbuoclpMDtoHTML(text, maxBlockquoteLevel = mbl) {
         for (let i = 6; i >= 1; i--) {
             const regex = new RegExp(`^#{${i}}\\s+(.*?)\\s*$`, 'gm');
-            text = await text.replace(regex, async (match, header) => `<h${i}>${await MDtoHTML(header)}</h${i}>`);
+            text = text.replace(regex, (match, header) => `<h${i}>${MDtoHTML(header)}</h${i}>`);
         }
         const smlregex = new RegExp(`^-#\\s+(.*?)\\s*$`, 'gm');
-        text = await text.replace(smlregex, async (match, smol) => `<span class="${cssclass.small}">${await MDtoHTML(smol)}</span>`);
+        text = text.replace(smlregex, (match, smol) => `<span class="${cssclass.small}">${MDtoHTML(smol)}</span>`);
         /*alternate headers currently disabled. they cause some bugs*///text = text.replace(/(?<=\s|^)(.*?)\n={3,}(?=\s|\n|$)/, MDtoHTML(`${_just.element(dataname[5])}<h1>$1</h1>`)).replace(/(?<=\s|^)(.*?)\n-{3,}(?=\s|\n|$)/, MDtoHTML(`${_just.element(dataname[6])}<h2>$1</h2>`));
 
-        async function processBlockquotes(inputText, level) {
+        function processBlockquotes(inputText, level) {
             const regex = new RegExp(`^(>\\s+){${level}}(.*?)\\s*$`, 'gm');
-            return await MDtoHTML(inputText.replace(regex, async (match, p1, p2) => {
+            return MDtoHTML(inputText.replace(regex, (match, p1, p2) => {
                 const classAttr = (num) =>
                     p2.startsWith('[!NOTE]') ? (num ? 7 : ` class="${cssclass.note}"`) :
                     p2.startsWith('[!TIP]') ? (num ? 6 : ` class="${cssclass.ntip}"`) :
@@ -689,7 +680,7 @@ checkTLD(domain).then(async tldvalid => {
                     p2.startsWith('[!WARNING]') ? (num ? 10 : ` class="${cssclass.warn}"`) :
                     p2.startsWith('[!CAUTION]') ? (num ? 10 : ` class="${cssclass.caut}"`) :
                     num ? 0 : '';
-                const innerBlockquote = await processBlockquotes(
+                const innerBlockquote = processBlockquotes(
                     p2.trim().slice(classAttr(true)).trim(), 
                     level + 1
                 );
@@ -698,20 +689,20 @@ checkTLD(domain).then(async tldvalid => {
         }
 
         for (let i = 1; i <= maxBlockquoteLevel; i++) {
-            text = await processBlockquotes(text, i);
+            text = processBlockquotes(text, i);
         }
 
         const ulRegex = /^(?:-\s+|\*\s+|\+\s+)(.*?)(?:\n(?:-\s+|\*\s+|\+\s+)(.*?))*$/gm;
         const olRegex = /^(?:\d+\.\s+)(.*?)(?:\n(?:\d+\.\s+)(.*?))*$/gm;
 
-        text = await text.replace(ulRegex, async (match) => {
+        text = text.replace(ulRegex, (match) => {
             const items = match.split('\n').map(item => item.replace(/^- \s*/, '').replace(/^\* \s*/, '').replace(/^\+ \s*/, ''));
-            return `<ul>${items.map(async item => `<li>${await MDtoHTML(item.trim())}</li>`).join('')}</ul>`;
+            return `<ul>${items.map(item => `<li>${MDtoHTML(item.trim())}</li>`).join('')}</ul>`;
         });
 
-        text = await text.replace(olRegex, async (match) => {
+        text = text.replace(olRegex, (match) => {
             const items = match.split('\n').map(item => item.replace(/^\d+\.\s*/, ''));
-            return `<ol>${items.map(async item => `<li>${await MDtoHTML(item.trim())}</li>`).join('')}</ol>`;
+            return `<ol>${items.map(item => `<li>${MDtoHTML(item.trim())}</li>`).join('')}</ol>`;
         });
 
         text = text.replace(dividerRegex, `<div class="${cssclass.line}"></div><br>`);
@@ -726,7 +717,7 @@ checkTLD(domain).then(async tldvalid => {
             let paragraphContent = match[0].trim();
             
             if (paragraphContent) {
-                resultTextArray.push(`<p>${await MDtoHTML(paragraphContent)}</p>`);
+                resultTextArray.push(`<p>${MDtoHTML(paragraphContent)}</p>`);
             }
             
             text = text.slice(match.index + match[0].length);
@@ -741,7 +732,7 @@ checkTLD(domain).then(async tldvalid => {
             }
             
             if (text.length > 0) {
-                resultTextArray.push(`<p>${await MDtoHTML(text.trim())}</p>`);
+                resultTextArray.push(`<p>${MDtoHTML(text.trim())}</p>`);
                 break;
             }
             
@@ -990,142 +981,132 @@ checkTLD(domain).then(async tldvalid => {
     }
     const htmlfiles = {};
     const mdlogs = {};
-    await new Promise ((resolve) => {
-        let mdid = 0;
-        markdownFiles.forEach(async file => {mdid++;
-            let content = fs.readFileSync(file, charset);
-            if (getTitleFromMd(file)) {
-                content = content.split('\n').slice(1).join('\n');
-            }
-            const fileNameWithoutExt = path.basename(file, path.extname(file));
-            const outFilePath = (ext) => path.join(path.dirname(file), `${fileNameWithoutExt}.${ext}`);
-            fileID++;
-            mdlogs[outFilePath('html')] = `${l[1]}FILE #${fileID} "${_just.string.runnerPath(file)}":${l[2]}INPUT: ${_just.string.fileSize(fs.statSync(file).size)}`;
+    markdownFiles.forEach(file => {
+        let content = fs.readFileSync(file, charset);
+        if (getTitleFromMd(file)) {
+            content = content.split('\n').slice(1).join('\n');
+        }
+        const fileNameWithoutExt = path.basename(file, path.extname(file));
+        const outFilePath = (ext) => path.join(path.dirname(file), `${fileNameWithoutExt}.${ext}`);
+        fileID++;
+        mdlogs[outFilePath('html')] = `${l[1]}FILE #${fileID} "${_just.string.runnerPath(file)}":${l[2]}INPUT: ${_just.string.fileSize(fs.statSync(file).size)}`;
 
-            if (pathtourl[file] || pathtourl[file] == '') {
-                mdjson[`${JSUsePathInput && docsUsePathInput ? `${PATH}/`.repeat(2) : JSUsePathInput ? PATH+'/' : ''}${pathtourl[file]}`] = toText(content);
-            }
+        if (pathtourl[file] || pathtourl[file] == '') {
+            mdjson[`${JSUsePathInput && docsUsePathInput ? `${PATH}/`.repeat(2) : JSUsePathInput ? PATH+'/' : ''}${pathtourl[file]}`] = toText(content);
+        }
 
-            const headers = [];
-            let toHTML;
-            toHTML = hbuoclpMDtoHTML(
-                addEnd(content, '\n')
-                    .replace(/> (.*?)\n\n> (.*?)\n/g, `> $1\n\n> ${_just.element(dataname[7])}$2\n`)
-                    .replaceAll('\n>\n> ', '\n> ')
-                    .replace(new RegExp(`(?<=^|\n)([>|> ]{2,${mbl}}) `, 'g'), (match, bqs) => `\n${bqs.replaceAll(' ', '').split('').join(' ').trim()} `),
-                _just.string.runnerPath(file)
-            ).then((tohttmll) => {
-                toHTML = tohttmll.replace(/<(h1|h2|h3|h4)>(.*?)<\/\1>/g, (match, p1, p2) => {
-                    return `<${p1} id="${uniqueName(encodeURIComponent(p2))}">${p2}</${p1}>`;
-                }).replace(/<(h1|h2|h3|h4) id="([^"]+)">(.*?)<\/\1>/g, (match, p1, p2, p3) => {headers.push(p2);return`<${p1} id="${p2}">${p3}</${p1}>`});
+        const headers = [];
+        let toHTML = hbuoclpMDtoHTML(
+            addEnd(content, '\n')
+                .replace(/> (.*?)\n\n> (.*?)\n/g, `> $1\n\n> ${_just.element(dataname[7])}$2\n`)
+                .replaceAll('\n>\n> ', '\n> ')
+                .replace(new RegExp(`(?<=^|\n)([>|> ]{2,${mbl}}) `, 'g'), (match, bqs) => `\n${bqs.replaceAll(' ', '').split('').join(' ').trim()} `)
+        ).replace(/<(h1|h2|h3|h4)>(.*?)<\/\1>/g, (match, p1, p2) => {
+            return `<${p1} id="${uniqueName(encodeURIComponent(p2))}">${p2}</${p1}>`;
+        }).replace(/<(h1|h2|h3|h4) id="([^"]+)">(.*?)<\/\1>/g, (match, p1, p2, p3) => {headers.push(p2);return`<${p1} id="${p2}">${p3}</${p1}>`});
 
-                const H1 = [...toHTML.matchAll(/<(h1|h2) id="([^"]+)">(.*?)<\/\1>/g)];
-                const HT = [...toHTML.matchAll(/<(h3|h4) id="([^"]+)">(.*?)<\/\1>/g)];
+        const H1 = [...toHTML.matchAll(/<(h1|h2) id="([^"]+)">(.*?)<\/\1>/g)];
+        const HT = [...toHTML.matchAll(/<(h3|h4) id="([^"]+)">(.*?)<\/\1>/g)];
 
-                const h1 = H1.map(match => [match[3], match[2]]);
-                const hT = HT.map(match => [match[3], match[2]]);
+        const h1 = H1.map(match => [match[3], match[2]]);
+        const hT = HT.map(match => [match[3], match[2]]);
 
-                const headermap = new Map(headers.map((id, index) => [id, index]));
-                const contents = [
-                    ...h1.map(item => ([ ...item, false ])),
-                    ...hT.map(item => ([ ...item, true ]))
-                ];
-                contents.sort((a, b) => {
-                    const indexA = headermap.get(a[1]) ?? Infinity;
-                    const indexB = headermap.get(b[1]) ?? Infinity;
-                    return indexA - indexB;
-                });
-                let pageHeaders = '';
-                for (const [idk, headerdata] of Object.entries(contents)) {
-                    pageHeaders += `<li${ headerdata[2] ? ' class="secondary"' : '' }>
-                                        <a href="#${headerdata[1]}">
-                                            ${span(_just.string.toText(headerdata[0]))}
-                                        </a>
-                                    </li>`;
-                }
+        const headermap = new Map(headers.map((id, index) => [id, index]));
+        const contents = [
+            ...h1.map(item => ([ ...item, false ])),
+            ...hT.map(item => ([ ...item, true ]))
+        ];
+        contents.sort((a, b) => {
+            const indexA = headermap.get(a[1]) ?? Infinity;
+            const indexB = headermap.get(b[1]) ?? Infinity;
+            return indexA - indexB;
+        });
+        let pageHeaders = '';
+        for (const [idk, headerdata] of Object.entries(contents)) {
+            pageHeaders += `<li${ headerdata[2] ? ' class="secondary"' : '' }>
+                                <a href="#${headerdata[1]}">
+                                    ${span(_just.string.toText(headerdata[0]))}
+                                </a>
+                            </li>`;
+        }
 
-                const idk_ = toHTML.endsWith('</p>');
-                const prevnext = _just.prevnext.get(idk_ ? _just.string.removeLast(toHTML, '</p>') : toHTML);
-                toHTML = idk_ ? prevnext[0].replace(_just.prevnext.regex, '') + '</p>' : prevnext[0].replace(_just.prevnext.regex, '');
-                let pagejs = '';
-                const btnjs = (id, href) => `document.getElementById('${id}').addEventListener("click",()=>{const ${id.replace('-','_')}=document.createElement('a');${id.replace('-','_')}.href='/${href}';${id.replace('-','_')}.target='_self';${id.replace('-','_')}.style.display='none';document.body.appendChild(${id.replace('-','_')});${id.replace('-','_')}.click();document.body.removeChild(${id.replace('-','_')})});`;
-                if (prevnext[1].prev) {
-                    pagejs = btnjs(filename.js, prevnext[1].prev)
-                }
-                if (prevnext[1].next) {
-                    pagejs += btnjs(filename.css, prevnext[1].next)
-                }
+        const idk_ = toHTML.endsWith('</p>');
+        const prevnext = _just.prevnext.get(idk_ ? _just.string.removeLast(toHTML, '</p>') : toHTML);
+        toHTML = idk_ ? prevnext[0].replace(_just.prevnext.regex, '') + '</p>' : prevnext[0].replace(_just.prevnext.regex, '');
+        let pagejs = '';
+        const btnjs = (id, href) => `document.getElementById('${id}').addEventListener("click",()=>{const ${id.replace('-','_')}=document.createElement('a');${id.replace('-','_')}.href='/${href}';${id.replace('-','_')}.target='_self';${id.replace('-','_')}.style.display='none';document.body.appendChild(${id.replace('-','_')});${id.replace('-','_')}.click();document.body.removeChild(${id.replace('-','_')})});`;
+        if (prevnext[1].prev) {
+            pagejs = btnjs(filename.js, prevnext[1].prev)
+        }
+        if (prevnext[1].next) {
+            pagejs += btnjs(filename.css, prevnext[1].next)
+        }
 
-                const pages = generateListItems(addFolderToPageList(pageList).sort((a, b) => a.title.localeCompare(b.title)));
-                const start = pathtourl[file] == "" ? '' : '/';
-                const fixpath = HTMLUsePathInput && docsUsePathInput ? `${PATH}/`.repeat(2) : HTMLUsePathInput ? PATH+'/' : '';
-                let outHTML = HTML
-                    .replace('<html>', `<html${htmlLang}>`)
-                    .replaceAll('="/_just/', `="${start}${fixpath}_just/`)
-                    .replace("content: '_just';", `content: '_just ${_just.version}';`)
-                    .replace('REPLACE_SCRIPT', `const ${dataname2[11]}=${JSON.stringify(pages[1])};${pagejs ? `document.addEventListener('DOMContentLoaded',()=>{${pagejs}});` : ''}`)
-                    .replaceAll('REPLACE_CSS', filename.css)
-                    .replaceAll('REPLACE_JS', filename.js)
-                    .replace('REPLACE_CHARSET', charset)
-                    .replace('REPLACE_VIEWPORT', viewport)
-                    .replace('REPLACE_TITLE', metatitle)
-                    .replace('REPLACE_DATA', htmlhead(pathtourl[file], fixpath))
-                    .replace('REPLACE_CUSTOM', insertHTMLinHead)
-                    .replace('REPLACE_LOGO', logo)
-                    .replace('REPLACE_NAME', filterText(name))
-                    .replace('REPLACE_PAGES', filterText(pages[0]))
-                    .replace('REPLACE_CONTENTS', filterText(pageHeaders))
-                    .replace('REPLACE_FOOTER', docsConfig && docsConfig.footer ? span(filterText(footer)) : '')
-                    .replace('REPLACE_LINKS', htmlnav())
-                    .replace('REPLACE_BUTTONS', htmlnav(1));
+        const pages = generateListItems(addFolderToPageList(pageList).sort((a, b) => a.title.localeCompare(b.title)));
+        const start = pathtourl[file] == "" ? '' : '/';
+        const fixpath = HTMLUsePathInput && docsUsePathInput ? `${PATH}/`.repeat(2) : HTMLUsePathInput ? PATH+'/' : '';
+        let outHTML = HTML
+            .replace('<html>', `<html${htmlLang}>`)
+            .replaceAll('="/_just/', `="${start}${fixpath}_just/`)
+            .replace("content: '_just';", `content: '_just ${_just.version}';`)
+            .replace('REPLACE_SCRIPT', `const ${dataname2[11]}=${JSON.stringify(pages[1])};${pagejs ? `document.addEventListener('DOMContentLoaded',()=>{${pagejs}});` : ''}`)
+            .replaceAll('REPLACE_CSS', filename.css)
+            .replaceAll('REPLACE_JS', filename.js)
+            .replace('REPLACE_CHARSET', charset)
+            .replace('REPLACE_VIEWPORT', viewport)
+            .replace('REPLACE_TITLE', metatitle)
+            .replace('REPLACE_DATA', htmlhead(pathtourl[file], fixpath))
+            .replace('REPLACE_CUSTOM', insertHTMLinHead)
+            .replace('REPLACE_LOGO', logo)
+            .replace('REPLACE_NAME', filterText(name))
+            .replace('REPLACE_PAGES', filterText(pages[0]))
+            .replace('REPLACE_CONTENTS', filterText(pageHeaders))
+            .replace('REPLACE_FOOTER', docsConfig && docsConfig.footer ? span(filterText(footer)) : '')
+            .replace('REPLACE_LINKS', htmlnav())
+            .replace('REPLACE_BUTTONS', htmlnav(1));
 
-                fs.writeFileSync(outFilePath('txt'), toHTML, charset);
-                htmlfiles[outFilePath('html')] = outHTML.replace('REPLACE_PREVNEXT', _just.prevnext.html(prevnext[1], cssclass.next, cssclass.next1, cssclass.next2, filename.js, filename.css, pages[1])).replace(
-                        'REPLACE_CONTENT',
-                        _just.string.removeLast(
-                            addEnd(
-                                toHTML
-                                    .replaceAll('\n', '<br>')
-                                    .replaceAll('</h1><br>', '</h1>')
-                                    .replaceAll('</h2><br>', '</h2>')
-                                    .replaceAll('</h3><br>', '</h3>')
-                                    .replaceAll('</h4><br>', '</h4>')
-                                    .replaceAll('</h5><br>', '</h5>')
-                                    .replaceAll('</h6><br>', '</h6>')
-                                    .replaceAll('</ol><br>', '</ol>')
-                                    .replaceAll('</ul><br>', '</ul>')
-                                    .replace(/<blockquote><br>((?:(?!<h[1-6][^>]*>.*?<\/h[1-6]>).)*?)<\/blockquote>/g, '<blockquote><blockquote>$1</blockquote></blockquote>')
-                                    .replace(/<blockquote><br>> ((?:(?!<h[1-6][^>]*>.*?<\/h[1-6]>).)*?)<\/blockquote>/g, '<blockquote><blockquote><blockquote>$1</blockquote></blockquote></blockquote>')
-                                    .replaceAll('</blockquote><br>', '</blockquote>')
-                                    .replaceAll('<br><blockquote', '<blockquote')
-                                    .replaceAll('</blockquote><blockquote>', '<br>')
-                                    .replaceAll('<br><blockquote><br>', '<blockquote>')
-                                    .replace(/<blockquote>> ((?:(?!<h[1-6][^>]*>.*?<\/h[1-6]>).)*?)<\/blockquote>/g, '<blockquote><blockquote>$1</blockquote></blockquote>')
-                                    .replaceAll('</blockquote></blockquote><blockquote><blockquote>', '<br>')
-                                    .replaceAll('</blockquote><blockquote>', '<br>')
-                                    .replace(/<blockquote>((?:(?!<h[1-6][^>]*>.*?<\/h[1-6]>).)*?)<br>> ((?:(?!<h[1-6][^>]*>.*?<\/h[1-6]>).)*?)<br>((?:(?!<h[1-6][^>]*>.*?<\/h[1-6]>).)*?)<\/blockquote>/g, '<blockquote>$1<blockquote>$2</blockquote><br>$3</blockquote>')
-                                    .replaceAll('</blockquote><br>', '</blockquote>')
-                                    .replace(/<\/blockquote>> ((?:(?!<h[1-6][^>]*>.*?<\/h[1-6]>).)*?)<blockquote>/g, '</blockquote><blockquote>$1</blockquote><blockquote>')
-                                    .replaceAll('</blockquote><blockquote>', '<br>')
-                                    .replaceAll(_just.element(dataname[7]), '</blockquote><blockquote>')
-                                    .replaceAll('</blockquote><br><blockquote>', '<br>')
-                                    .replaceAll('<blockquote></blockquote>', '')
-                                    .replace(/<blockquote>\[!(NOTE|TIP|IMPORTANT|WARNING|CAUTION)\]/g, (match, blockquote) => `<blockquote class="${blockquoteToCSSclass[blockquote]}">`),
-                                '<br>'
-                            ),
-                            '<br>'
-                        ).replace(/<blockquote>((?:(?!<h[1-6][^>]*>.*?<\/h[1-6]>).)*?)<br><br><blockquote>/, '<blockquote>$1<blockquote>')
-                        .replaceAll('</blockquote><br><blockquote>', '<br>')
-                        .replace(/<br><blockquote><blockquote>((?:(?!<h[1-6][^>]*>.*?<\/h[1-6]>).)*?)<\/blockquote><\/blockquote>/g, '<blockquote>$1</blockquote>')
-                        //.replaceAll(`${_just.element(dataname[5])}<h1 id=`, `<h1 class="${dataname[5]}" id=`)
-                        //.replaceAll(`${_just.element(dataname[6])}<h2 id=`, `<h2 class="${dataname[6]}" id=`)
-                        .replace(new RegExp(`(?<=<code class="${cssclass.code}"><code>(${getlangs()})</code>)(.*?)(?=</code>)`, 'g'), (match, lng, cde) => cde.replace(/<br><br>/g, '<br>')),
-                    )
-                if (markdownFiles.length == mdid) {
-                    resolve()
-                }
-            });
-        })
+        fs.writeFileSync(outFilePath('txt'), toHTML, charset);
+        htmlfiles[outFilePath('html')] = outHTML.replace('REPLACE_PREVNEXT', _just.prevnext.html(prevnext[1], cssclass.next, cssclass.next1, cssclass.next2, filename.js, filename.css, pages[1])).replace(
+                'REPLACE_CONTENT',
+                _just.string.removeLast(
+                    addEnd(
+                        toHTML
+                            .replaceAll('\n', '<br>')
+                            .replaceAll('</h1><br>', '</h1>')
+                            .replaceAll('</h2><br>', '</h2>')
+                            .replaceAll('</h3><br>', '</h3>')
+                            .replaceAll('</h4><br>', '</h4>')
+                            .replaceAll('</h5><br>', '</h5>')
+                            .replaceAll('</h6><br>', '</h6>')
+                            .replaceAll('</ol><br>', '</ol>')
+                            .replaceAll('</ul><br>', '</ul>')
+                            .replace(/<blockquote><br>((?:(?!<h[1-6][^>]*>.*?<\/h[1-6]>).)*?)<\/blockquote>/g, '<blockquote><blockquote>$1</blockquote></blockquote>')
+                            .replace(/<blockquote><br>> ((?:(?!<h[1-6][^>]*>.*?<\/h[1-6]>).)*?)<\/blockquote>/g, '<blockquote><blockquote><blockquote>$1</blockquote></blockquote></blockquote>')
+                            .replaceAll('</blockquote><br>', '</blockquote>')
+                            .replaceAll('<br><blockquote', '<blockquote')
+                            .replaceAll('</blockquote><blockquote>', '<br>')
+                            .replaceAll('<br><blockquote><br>', '<blockquote>')
+                            .replace(/<blockquote>> ((?:(?!<h[1-6][^>]*>.*?<\/h[1-6]>).)*?)<\/blockquote>/g, '<blockquote><blockquote>$1</blockquote></blockquote>')
+                            .replaceAll('</blockquote></blockquote><blockquote><blockquote>', '<br>')
+                            .replaceAll('</blockquote><blockquote>', '<br>')
+                            .replace(/<blockquote>((?:(?!<h[1-6][^>]*>.*?<\/h[1-6]>).)*?)<br>> ((?:(?!<h[1-6][^>]*>.*?<\/h[1-6]>).)*?)<br>((?:(?!<h[1-6][^>]*>.*?<\/h[1-6]>).)*?)<\/blockquote>/g, '<blockquote>$1<blockquote>$2</blockquote><br>$3</blockquote>')
+                            .replaceAll('</blockquote><br>', '</blockquote>')
+                            .replace(/<\/blockquote>> ((?:(?!<h[1-6][^>]*>.*?<\/h[1-6]>).)*?)<blockquote>/g, '</blockquote><blockquote>$1</blockquote><blockquote>')
+                            .replaceAll('</blockquote><blockquote>', '<br>')
+                            .replaceAll(_just.element(dataname[7]), '</blockquote><blockquote>')
+                            .replaceAll('</blockquote><br><blockquote>', '<br>')
+                            .replaceAll('<blockquote></blockquote>', '')
+                            .replace(/<blockquote>\[!(NOTE|TIP|IMPORTANT|WARNING|CAUTION)\]/g, (match, blockquote) => `<blockquote class="${blockquoteToCSSclass[blockquote]}">`),
+                        '<br>'
+                    ),
+                    '<br>'
+                ).replace(/<blockquote>((?:(?!<h[1-6][^>]*>.*?<\/h[1-6]>).)*?)<br><br><blockquote>/, '<blockquote>$1<blockquote>')
+                .replaceAll('</blockquote><br><blockquote>', '<br>')
+                .replace(/<br><blockquote><blockquote>((?:(?!<h[1-6][^>]*>.*?<\/h[1-6]>).)*?)<\/blockquote><\/blockquote>/g, '<blockquote>$1</blockquote>')
+                //.replaceAll(`${_just.element(dataname[5])}<h1 id=`, `<h1 class="${dataname[5]}" id=`)
+                //.replaceAll(`${_just.element(dataname[6])}<h2 id=`, `<h2 class="${dataname[6]}" id=`)
+                .replace(new RegExp(`(?<=<code class="${cssclass.code}"><code>(${getlangs()})</code>)(.*?)(?=</code>)`, 'g'), (match, lng, cde) => cde.replace(/<br><br>/g, '<br>')),
+            )
     });
 
     const CSSdata = _just.customCSS.customcss(CSS, customCSS == 'false' ? undefined : customCSS, CSSHIGHLIGHT, insertedcode, CSSBUTTONS, CSSSEARCH);
@@ -1192,9 +1173,9 @@ checkTLD(domain).then(async tldvalid => {
         path.join(websitepath, _justdir, `${filename.js}.js`),
         "try{"+_just.js.set(
             JS.replace('\'REPLACE_PUBLICOUTPUT\'', hideOutput?false:publicOutput)
-            .replace('\'REPLACE_SEARCHV2\'', CSSdata[1] || false)
-            .replace('\'REPLACE_OUTPUT\'', hideOutput?false:watermark)
-            .replace('let searchurl = "/_just/search";', `let searchurl="${JSUsePathInput && docsUsePathInput ? `/${PATH}`.repeat(2) : JSUsePathInput ? '/'+PATH : ''}/_just/${dataname[9]}.json";`), 
+              .replace('\'REPLACE_SEARCHV2\'', CSSdata[1] || false)
+              .replace('\'REPLACE_OUTPUT\'', hideOutput?false:watermark)
+              .replace('let searchurl = "/_just/search";', `let searchurl="${JSUsePathInput && docsUsePathInput ? `/${PATH}`.repeat(2) : JSUsePathInput ? '/'+PATH : ''}/_just/${dataname[9]}.json";`), 
             JSdata.names.filter(n => n !== jstrimmedstrvar), 
             dataname2.reverse().slice(0, JSdata.total-1),
             jstrimmedstrvarbasestr
