@@ -593,6 +593,7 @@ checkTLD(domain).then(tldvalid => {
     let taskid = 0;
     let insertedcode = false;
     const codes0 = [];
+    const codes1 = [];
     const MDtoHTML = (input) => {
         let text = MDescape(input);
         text = text.replace(/```([\w]*)\s*[\r\n]+([\s\S]*?)```/g, (match, lang_, code_) => {
@@ -618,7 +619,7 @@ checkTLD(domain).then(tldvalid => {
                         const hljshighlight = highlightcode && supportedlangs.includes(lang_)
                         const output_ = hljshighlight ? hljs.highlight(code_, {language: lang_}).value : undefined;
                         insertedcode = true;
-                        return `<code class="${cssclass.code}">${
+                        codes1.push(`<code class="${cssclass.code}">${
                             hljshighlight ? 
                             `<code>${langstext[lang_]}</code>${
                                 filter_(MDcode(
@@ -628,7 +629,8 @@ checkTLD(domain).then(tldvalid => {
                                 ))
                             }` : 
                             filter_(MDcode(code_, false, true))
-                        }</code>`;
+                        }</code>`);
+                        return _just.element(dataname2[19], codes1.length - 1);
                     })
                 .replace(/(?<=\s|^|[.,!?;:*_^~=])`(.*?)`(?=\s|[.,!?;:*_^~=]|$)/g, (match, code) => {return `<code>${MDcode(code)}</code>`})
                 .replace(/(?<=\s|^|[.,!?;:*_^~=])!\[(.*?)\]\((.*?) ("|')(.*?)\3\)(?=\s|[.,!?;:*_^~=]|$)/g, (match, text, link_, q, imgtitle) => {return `<img src="${link_}" alt="${text}" title="${imgtitle}" loading="lazy">`})
