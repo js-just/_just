@@ -1,7 +1,7 @@
 .hljs-number, .hljs-bullet {
     color: #eda31b;
 }
-.hljs-meta, .hljs-variable.language_, .language_, .hljs-params, .hljs-subst, .hljs-string .hljs-variable {
+.hljs-meta, .hljs-variable.language_, .language_, .hljs-params, .hljs-subst, .hljs-string .hljs-variable, .hljs-quote {
     color: #d0d1ff;
 }
 .hljs-meta.prompt_, .hljs-selector-id, .prompt_, .hljs-doctag, .hljs-link {
@@ -31,4 +31,18 @@
 }
 .hljs-emphasis {
     font-style: italic;
+}
+
+.hljs-addition, .hljs-deletion {
+    padding-left: 3px;
+    padding-right: 3px;
+    margin-left: -3px;
+    margin-right: -3px;
+    border-radius: 5px
+}
+.hljs-addition {
+    background-color: #2a8c2e80;
+}
+.hljs-deletion {
+    background-color: #8c2a2a80;
 }

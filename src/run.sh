@@ -185,7 +185,7 @@ elif [ "$TYPE" == "docs" ]; then
     HTML=$(cat "$GITHUB_ACTION_PATH/src/documentation/templates/page.html") && \
     CSS=$(cat "$GITHUB_ACTION_PATH/src/documentation/templates/base.css") && \
     JS=$(cat "$GITHUB_ACTION_PATH/src/documentation/templates/page.js") && \
-    HIGHLIGHTCSS=$(cat "$GITHUB_ACTION_PATH/src/documentation/templates/highlight.css") && \
+    HIGHLIGHTCSS=$(cat "$GITHUB_ACTION_PATH/src/documentation/templates/hljs-themes/_just_default.css") && \
     BUTTONSCSS=$(cat "$GITHUB_ACTION_PATH/src/documentation/templates/buttons.css") && \
     SEARCHCSS=$(cat "$GITHUB_ACTION_PATH/src/documentation/templates/search.css") && \
     CUSTOMCSS=false && \
