@@ -596,7 +596,7 @@ checkTLD(domain).then(tldvalid => {
     const MDtoHTML = (input) => {
         let text = MDescape(input);
         text = text.replace(/```([\w]*)\s*[\r\n]+([\s\S]*?)```/g, (match, lang_, code_) => {
-                        if (lang_ === '_just.codeid') {
+                        if (lang_ === 'CODEID') {
                             debuglog(`  CID: "${code_}"`);
                         }
                         const inputlang = lang_;
@@ -667,9 +667,9 @@ checkTLD(domain).then(tldvalid => {
     const dividerRegex = /(\n\s*[*_-]{3,}\s*\n)+/g;
     function hbuoclpMDtoHTML(text, maxBlockquoteLevel = mbl) {
         text = text.replace(/```([\w]*)\s*[\r\n]+([\s\S]*?)```/g, (match, lang_, code_) => {
-            if (lang_ !== '_just.codeid') {
+            if (lang_ !== 'CODEID') {
                 codes.push([lang_, code_]);
-                return `\`\`\`_just.codeid\n${codes.length - 1}\n\`\`\``;
+                return `\`\`\`CODEID\n${codes.length - 1}\n\`\`\``;
             } else {
                 return `\`\`\`${lang_}\n${code_}\n\`\`\``;
             }
