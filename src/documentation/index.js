@@ -32,27 +32,28 @@ let JS = JStemplate;
 let CSSHIGHLIGHT = CSSHIGHLIGHTtemplate;
 let CSSBUTTONS = CSSBUTTONStemplate;
 let CSSSEARCH = CSSSEARCHtemplate;
-_just.string = require('../modules/string.js');
+const lib = '../../lib/';
+_just.string = require(`${lib}string.js`);
 /**
  * @param {string} type 
  * @param {string} insert 
  * @returns {string}
  */
 _just.element = (type, insert) => `<_just${type ? ` element="${type}"` : ''}>${insert || ''}</_just>`;
-_just.error = require('../modules/errmsg.js');
-_just.ssapi = require('../modules/ssapi.js');
+_just.error = require(`${lib}errmsg.js`);
+_just.ssapi = require(`${lib}ssapi.js`);
 _just.customCSS = require('./customcss.js');
 _just.MDtoHTML = require('./mdtohtml.js');
-_just.line = require('../modules/line.js');
+_just.line = require(`${lib}line.js`);
 const hljs = require('../third-party/highlight.min.js');
 const supportedlangs = JSON.parse(hljslangs);
 const langaliases = JSON.parse(langs__);
 const langstext = JSON.parse(langstext_);
 _just.highlight = require('./highlight.js');
-_just.number = require('../modules/number.js');
-_just.js = require('../modules/js.js');
+_just.number = require(`${lib}number.js`);
+_just.js = require(`${lib}js.js`);
 _just.version = vrsn;
-_just.array = require('../modules/array.js');
+_just.array = require(`${lib}array.js`);
 _just.prevnext = require('./prevnext.js');
 const esc = '\x1B';
 

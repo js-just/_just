@@ -22,7 +22,7 @@
 
 #!/bin/bash
 ERRORS_FILE="$GITHUB_ACTION_PATH/data/codes.json"
-source $GITHUB_ACTION_PATH/src/modules/color.sh
+source $GITHUB_ACTION_PATH/lib/color.sh
 ERROR_PREFIX="_just"
 
 ErrorMessage() {
