@@ -622,13 +622,11 @@ checkTLD(domain).then(tldvalid => {
                         codes1.push(`<code class="${cssclass.code}">${
                             hljshighlight ? 
                             `<code>${langstext[lang_]}</code>${
-                                filter_(MDcode(
-                                    `${lang_ == 'css' ? _just.highlight.css(output_) : output_}`, 
-                                    false, 
-                                    true
-                                ))
+                                filter_(
+                                    `${lang_ == 'css' ? _just.highlight.css(output_) : output_}`
+                                )
                             }` : 
-                            filter_(MDcode(code_, false, true))
+                            filter_(code_)
                         }</code>`);
                         return _just.element(dataname2[19], codes1.length - 1);
                     })
