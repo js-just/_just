@@ -279,7 +279,7 @@ const date = new Date();
 let logs = `_just ${_just.version} - ${date} (${date.getTime()})${l[0]}_JUST FILES:${l[1]}CSS: ${filename.css}${l[1]}JS: ${filename.js}`;
 let errorlogs = `${l[0]}CAUGHT ERRORS:`;
 const nl = l[2].slice(0,-2)+' '.repeat(7);
-debuglog(`INFO:${nl}  DNA = DirNameArray${nl}DNA>2 = DirNameArray.length > 2${nl}   DN = DirName${nl}   PL = PageList${nl}   FT = FolderTree${nl}   FL = FolderList${nl}   CL = Code Language${nl}   DF = Dir Found${nl}   FF = File Found${nl}P2URL = PathToURL${nl}  MDF = Markdown Files${nl} PIDs = Pages (Page IDs)${nl}  PID = Page ID`);
+debuglog(`INFO:${nl}  DNA = DirNameArray${nl}DNA>2 = DirNameArray.length > 2${nl}   DN = DirName${nl}   PL = PageList${nl}   FT = FolderTree${nl}   FL = FolderList${nl}  CID = Code ID${nl}   CL = Code Language${nl}   DF = Dir Found${nl}   FF = File Found${nl}P2URL = PathToURL${nl}  MDF = Markdown Files${nl} PIDs = Pages (Page IDs)${nl}  PID = Page ID`);
 
 const rootDirA = PATH || '.';
 const extensions = ['.md', '.mdx', '.html'];
@@ -592,9 +592,13 @@ checkTLD(domain).then(tldvalid => {
     const linkregex = /(?<=\s|^|[.,!?;:*_^~=])\[(.*?)\]\((.*?)\)(?=\s|[.,!?;:*_^~=]|$)/g;
     let taskid = 0;
     let insertedcode = false;
+    const codes = [];
     const MDtoHTML = (input) => {
         let text = MDescape(input);
         text = text.replace(/```([\w]*)\s*[\r\n]+([\s\S]*?)```/g, (match, lang_, code_) => {
+                        if (lang_ === '_just.codeid') {
+                            debuglog(`  CID: "${code_}"`);
+                        }
                         const inputlang = lang_;
                         const filter_ = (inpt) => inpt.replace(/\n( {1,})/g, (match, spaces) => {
                             return `\n${'&nbsp;'.repeat(spaces.length)}`;
@@ -662,6 +666,14 @@ checkTLD(domain).then(tldvalid => {
     }
     const dividerRegex = /(\n\s*[*_-]{3,}\s*\n)+/g;
     function hbuoclpMDtoHTML(text, maxBlockquoteLevel = mbl) {
+        text = text.replace(/```([\w]*)\s*[\r\n]+([\s\S]*?)```/g, (match, lang_, code_) => {
+            if (lang_ !== '_just.codeid') {
+                codes.push([lang_, code_]);
+                return `\`\`\`_just.codeid\n${codes.length - 1}\n\`\`\``;
+            } else {
+                return `\`\`\`${lang_}\n${code_}\n\`\`\``;
+            }
+        });
         for (let i = 6; i >= 1; i--) {
             const regex = new RegExp(`^#{${i}}\\s+(.*?)\\s*$`, 'gm');
             text = text.replace(regex, (match, header) => `<h${i}>${MDtoHTML(header)}</h${i}>`);
