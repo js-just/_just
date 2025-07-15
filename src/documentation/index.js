@@ -662,7 +662,7 @@ checkTLD(domain).then(async tldvalid => {
         return _just.MDtoHTML.MDtoHTML(text, cssclass).replace(/~(.*?)~/g, '<sub>$1</sub>').replace(/\^(.*?)\^/g, '<sup>$1</sup>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\*(.*?)\*/g, '<em>$1</em>');
     }
     const dividerRegex = /(\n\s*[*_-]{3,}\s*\n)+/g;
-    async function hbuoclpMDtoHTML(text, maxBlockquoteLevel = mbl) {
+    async function hbuoclpMDtoHTML(text, filepath, maxBlockquoteLevel = mbl) {
         for (let i = 6; i >= 1; i--) {
             const regex = new RegExp(`^#{${i}}\\s+(.*?)\\s*$`, 'gm');
             text = await text.replace(regex, async (match, header) => `<h${i}>${await MDtoHTML(header)}</h${i}>`);
@@ -714,7 +714,18 @@ checkTLD(domain).then(async tldvalid => {
         
         let match;
         
+        let success = true;
+        const starttime = Date.now();
+
         while ((match = paragraphsRegex.exec(text)) !== null) {
+            if (Date.now() - starttime > 300000) { // 5 min
+                _just.error.errormessage('0210', `Page "${filepath}" generating too long.`, 'Warning').then((errmsg)=>{console.warn(errmsg)});
+            } else if (Date.now() - starttime > 1500000) { // 25 min
+                success = false;
+                _just.error.errormessage('0128', `Timed out. (Page "${filepath}")`).then((errmsg)=>{throw new Error(errmsg)});
+                break;
+            }
+
             let paragraphContent = match[0].trim();
             
             if (paragraphContent) {
@@ -741,7 +752,7 @@ checkTLD(domain).then(async tldvalid => {
             
         }
 
-        return resultTextArray.join('');
+        return success ? resultTextArray.join('') : undefined;
     }
 
     const usePathInput = config.usePathInput ? config.usePathInput : true;
@@ -1004,7 +1015,8 @@ checkTLD(domain).then(async tldvalid => {
                 addEnd(content, '\n')
                     .replace(/> (.*?)\n\n> (.*?)\n/g, `> $1\n\n> ${_just.element(dataname[7])}$2\n`)
                     .replaceAll('\n>\n> ', '\n> ')
-                    .replace(new RegExp(`(?<=^|\n)([>|> ]{2,${mbl}}) `, 'g'), (match, bqs) => `\n${bqs.replaceAll(' ', '').split('').join(' ').trim()} `)
+                    .replace(new RegExp(`(?<=^|\n)([>|> ]{2,${mbl}}) `, 'g'), (match, bqs) => `\n${bqs.replaceAll(' ', '').split('').join(' ').trim()} `),
+                _just.string.runnerPath(file)
             ).then((tohttmll) => {
                 console.log(typeof(tohttmll));
                 toHTML = tohttmll.replace(/<(h1|h2|h3|h4)>(.*?)<\/\1>/g, (match, p1, p2) => {
