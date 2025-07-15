@@ -1136,10 +1136,8 @@ checkTLD(domain).then(tldvalid => {
     const CSSdata = _just.customCSS.customcss(CSS, customCSS == 'false' ? undefined : customCSS, CSSHIGHLIGHT, insertedcode, CSSBUTTONS, CSSSEARCH);
     CSS = CSSdata[0];
     for (const [pathh, htmlcontent] of Object.entries(htmlfiles)) {
-        const updated = _just.customCSS.highlightclasses(CSSHIGHLIGHTtemplate, CSS, htmlcontent, dataname[8]);
-        CSS = updated[0];
         const fixlinkregex = (char) => new RegExp(`<a href="(.*?)" target="_blank" id="${cssid.ext}"(.*?)>(.*?)</a>${char}`, 'g');
-        let htmloutput = updated[1]
+        let htmloutput = htmlcontent
             .replace(fixlinkregex(' '), (match, href_, title_, text_) => `<a href="${href_}" target="_blank" id="${cssid.ext}"${title_} class="${cssclass.linkspace}">${text_}</a>`)
             .replace(fixlinkregex('(.|,|_)'), (match, href_, title_, text_, char_) => `<a href="${href_}" target="_blank" id="${cssid.ext}"${title_} class="${cssclass.linkdot}">${text_}</a>${char_}`)
             .replace(fixlinkregex('( {1,}.)'), (match, href_, title_, text_) => `<a href="${href_}" target="_blank" id="${cssid.ext}"${title_} class="${cssclass.linkdot}">${text_}</a>.`)
@@ -1167,6 +1165,9 @@ checkTLD(domain).then(tldvalid => {
             htmloutput = htmloutput.replaceAll(_just.element(dataname2[19], codeid), code1.replaceAll('\n', '<br>'));
             codeid++;
         });
+        const updated = _just.customCSS.highlightclasses(CSSHIGHLIGHTtemplate, CSS, htmloutput, dataname[8]);
+        CSS = updated[0];
+        htmloutput = updated[1];
         fs.writeFileSync(
             pathh, 
             htmloutput, 
