@@ -596,34 +596,42 @@ checkTLD(domain).then(async tldvalid => {
     const MDtoHTML = async (input) => {
         let text = MDescape(input);
         text = await text.replace(/```([\w]*)\s*[\r\n]+([\s\S]*?)```/g, async (match, lang_, code_) => {
-                        const inputlang = lang_;
+                        let nocode = false;
+                        if (false && text.length > 10**5) { // disabled
+                            nocode = true;
+                        }
                         const filter_ = (inpt) => inpt.replace(/\n( {1,})/g, (match, spaces) => {
                             return `\n${'&nbsp;'.repeat(spaces.length)}`;
                         }).replaceAll('\n\n', '\n');
-                        const highlightcode = lang_ && lang_ != '';
-                        if (highlightcode && !supportedlangs.includes(lang_) && !langaliases[lang_]) {
-                            const warningg = `${_just.error.prefix}${esc}[0;33mWarning 0209${esc}[0m: ${esc}[0;33mUnsuppotred language: hljs: ${esc}[0m${lang_}`;
-                            errorlogs += `${l[1]}AT LINE ${_just.line.line() || '-1'} (__REPLACE_LINE__): ${_just.line.err(warningg)}`;
-                            console.warn(warningg);
+                        if (nocode) {
+                            return `<code class="${cssclass.code}">${filter_(MDcode(code_, false, true))}</code>`
+                        } else {
+                            const inputlang = lang_;
+                            const highlightcode = lang_ && lang_ != '';
+                            if (highlightcode && !supportedlangs.includes(lang_) && !langaliases[lang_]) {
+                                const warningg = `${_just.error.prefix}${esc}[0;33mWarning 0209${esc}[0m: ${esc}[0;33mUnsuppotred language: hljs: ${esc}[0m${lang_}`;
+                                errorlogs += `${l[1]}AT LINE ${_just.line.line() || '-1'} (__REPLACE_LINE__): ${_just.line.err(warningg)}`;
+                                console.warn(warningg);
+                            }
+                            if (highlightcode && !supportedlangs.includes(lang_) && langaliases[lang_]) {
+                                lang_ = langaliases[lang_]
+                            }
+                            debuglog(`   CL: ${inputlang} => ${lang_}`);
+                            const hljshighlight = highlightcode && supportedlangs.includes(lang_)
+                            const output_ = hljshighlight ? await hljs.highlight(code_, {language: lang_}).value : undefined;
+                            insertedcode = true;
+                            return `<code class="${cssclass.code}">${
+                                hljshighlight ? 
+                                `<code>${langstext[lang_]}</code>${
+                                    filter_(MDcode(
+                                        `${lang_ == 'css' ? _just.highlight.css(output_) : output_}`, 
+                                        false, 
+                                        true
+                                    ))
+                                }` : 
+                                filter_(MDcode(code_, false, true))
+                            }</code>`;
                         }
-                        if (highlightcode && !supportedlangs.includes(lang_) && langaliases[lang_]) {
-                            lang_ = langaliases[lang_]
-                        }
-                        debuglog(`   CL: ${inputlang} => ${lang_}`);
-                        const hljshighlight = highlightcode && supportedlangs.includes(lang_)
-                        const output_ = hljshighlight ? await hljs.highlight(code_, {language: lang_}).value : undefined;
-                        insertedcode = true;
-                        return `<code class="${cssclass.code}">${
-                            hljshighlight ? 
-                            `<code>${langstext[lang_]}</code>${
-                                filter_(MDcode(
-                                    `${lang_ == 'css' ? _just.highlight.css(output_) : output_}`, 
-                                    false, 
-                                    true
-                                ))
-                            }` : 
-                            filter_(MDcode(code_, false, true))
-                        }</code>`;
                     })
                 .replace(/(?<=\s|^|[.,!?;:*_^~=])`(.*?)`(?=\s|[.,!?;:*_^~=]|$)/g, (match, code) => {return `<code>${MDcode(code)}</code>`})
                 .replace(/(?<=\s|^|[.,!?;:*_^~=])!\[(.*?)\]\((.*?) ("|')(.*?)\3\)(?=\s|[.,!?;:*_^~=]|$)/g, (match, text, link_, q, imgtitle) => {return `<img src="${link_}" alt="${text}" title="${imgtitle}" loading="lazy">`})
@@ -714,18 +722,6 @@ checkTLD(domain).then(async tldvalid => {
         
         let match;
         
-        let success = false;
-        const timeout1 = setTimeout(()=>{
-            if (!success) {
-                _just.error.errormessage('0210', `Page "${filepath}" generating too long.`, 'Warning').then((errmsg)=>{console.warn(errmsg)});
-            }
-        }, 300000); // 5min
-        const timeout2 = setTimeout(()=>{
-            if (!success) {
-                _just.error.errormessage('0128', `Timed out. (Page "${filepath}")`).then((errmsg)=>{throw new Error(errmsg)});
-            }
-        }, 1500000); // 25 min
-        
         while ((match = paragraphsRegex.exec(text)) !== null) {
             let paragraphContent = match[0].trim();
             
@@ -752,10 +748,8 @@ checkTLD(domain).then(async tldvalid => {
             paragraphsRegex.lastIndex -= match[0].length;
             
         }
-        success = true;
-        clearTimeout(timeout1);clearTimeout(timeout2);
 
-        return success ? resultTextArray.join('') : undefined;
+        return resultTextArray.join('');
     }
 
     const usePathInput = config.usePathInput ? config.usePathInput : true;
@@ -1021,7 +1015,6 @@ checkTLD(domain).then(async tldvalid => {
                     .replace(new RegExp(`(?<=^|\n)([>|> ]{2,${mbl}}) `, 'g'), (match, bqs) => `\n${bqs.replaceAll(' ', '').split('').join(' ').trim()} `),
                 _just.string.runnerPath(file)
             ).then((tohttmll) => {
-                console.log(typeof(tohttmll));
                 toHTML = tohttmll.replace(/<(h1|h2|h3|h4)>(.*?)<\/\1>/g, (match, p1, p2) => {
                     return `<${p1} id="${uniqueName(encodeURIComponent(p2))}">${p2}</${p1}>`;
                 }).replace(/<(h1|h2|h3|h4) id="([^"]+)">(.*?)<\/\1>/g, (match, p1, p2, p3) => {headers.push(p2);return`<${p1} id="${p2}">${p3}</${p1}>`});
