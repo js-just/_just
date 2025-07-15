@@ -36,7 +36,7 @@ function findFiles(dir) {
         if (stat && stat.isDirectory()) {
             output += findFiles(file);
             console.log('Dir:  '+file);
-        } else if (/*!file.endsWith('.md') &&*/ !file.endsWith('.mdx') && !file.endsWith('.idx') && !file.endsWith('.pack') && !file.endsWith('highlight.js') && !file.endsWith('highlight.min.js') && !file.endsWith('mdtohtml.js') && !file.endsWith('documentation/index.js') && path.extname(file) && file.startsWith('/home/runner/work/_just/_just/src')) {
+        } else if (/*!file.endsWith('.md') &&*/ !file.endsWith('.mdx') && !file.endsWith('.idx') && !file.endsWith('.pack') && !file.endsWith('highlight.js') && !file.endsWith('highlight.min.js') && !file.endsWith('mdtohtml.js') && !file.endsWith('documentation/index.js') && path.extname(file) && ( file.startsWith('/home/runner/work/_just/_just/src') || file.startsWith('/home/runner/work/_just/_just/website') )) {
             output += `\`\`\`${path.extname(file).replace('.','')}\n${fs.readFileSync(file)}\n\`\`\`\n`;
             console.log('File: '+file);
         }
