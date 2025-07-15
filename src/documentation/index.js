@@ -714,18 +714,19 @@ checkTLD(domain).then(async tldvalid => {
         
         let match;
         
-        let success = true;
-        const starttime = Date.now();
-
-        while ((match = paragraphsRegex.exec(text)) !== null) {
-            if (Date.now() - starttime > 300000) { // 5 min
+        let success = false;
+        const timeout1 = setTimeout(()=>{
+            if (!success) {
                 _just.error.errormessage('0210', `Page "${filepath}" generating too long.`, 'Warning').then((errmsg)=>{console.warn(errmsg)});
-            } else if (Date.now() - starttime > 1500000) { // 25 min
-                success = false;
-                _just.error.errormessage('0128', `Timed out. (Page "${filepath}")`).then((errmsg)=>{throw new Error(errmsg)});
-                break;
             }
-
+        }, 300000); // 5min
+        const timeout2 = setTimeout(()=>{
+            if (!success) {
+                _just.error.errormessage('0128', `Timed out. (Page "${filepath}")`).then((errmsg)=>{throw new Error(errmsg)});
+            }
+        }, 1500000); // 25 min
+        
+        while ((match = paragraphsRegex.exec(text)) !== null) {
             let paragraphContent = match[0].trim();
             
             if (paragraphContent) {
@@ -751,6 +752,8 @@ checkTLD(domain).then(async tldvalid => {
             paragraphsRegex.lastIndex -= match[0].length;
             
         }
+        success = true;
+        clearTimeout(timeout1);clearTimeout(timeout2);
 
         return success ? resultTextArray.join('') : undefined;
     }
