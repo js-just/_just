@@ -252,19 +252,13 @@
         },
         {
             "code": "0128",
-            "message": "( TIMED OUT )",
+            "message": "( UNKNOWN CODEID )",
             "crashed": true,
             "link": ""
         },
         {
             "code": "0206",
             "message": "( FAILED TO FETCH RAW.IS-A.DEV/V2.JSON )",
-            "crashed": false,
-            "link": ""
-        },
-        {
-            "code": "0210",
-            "message": "( PAGE GENERATING TOO LONG )",
             "crashed": false,
             "link": ""
         }

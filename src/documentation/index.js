@@ -592,12 +592,14 @@ checkTLD(domain).then(tldvalid => {
     const linkregex = /(?<=\s|^|[.,!?;:*_^~=])\[(.*?)\]\((.*?)\)(?=\s|[.,!?;:*_^~=]|$)/g;
     let taskid = 0;
     let insertedcode = false;
-    const codes = [];
+    const codes0 = [];
     const MDtoHTML = (input) => {
         let text = MDescape(input);
         text = text.replace(/```([\w]*)\s*[\r\n]+([\s\S]*?)```/g, (match, lang_, code_) => {
                         if (lang_ === 'CODEID') {
-                            debuglog(`  CID: "${code_.trim()}"`);
+                            const codeid = parseInt(code_.trim(), 10);
+                            debuglog(`  CID: "${codeid}"`);
+                            [lang_, code_] = codes0[codeid]
                         }
                         const inputlang = lang_;
                         const filter_ = (inpt) => inpt.replace(/\n( {1,})/g, (match, spaces) => {
@@ -668,11 +670,19 @@ checkTLD(domain).then(tldvalid => {
     function hbuoclpMDtoHTML(text, maxBlockquoteLevel = mbl) {
         text = text.replace(/```([\w]*)\s*[\r\n]+([\s\S]*?)```/g, (match, lang_, code_) => {
             if (lang_ !== 'CODEID') {
-                codes.push([lang_, code_]);
-                return `\`\`\`CODEID\n${codes.length - 1}\n\`\`\``;
+                codes0.push([lang_, code_]);
+                return `\`\`\`CODEID\n${codes0.length - 1}\n\`\`\``;
             } else {
                 return `\`\`\`${lang_}\n${code_}\n\`\`\``;
             }
+        }).replace(/```([\w]*)\s*[\r\n]+([\s\S]*?)```/g, (match, lang_, code_) => {
+            if (lang_ == 'CODEID') {
+                const codeid = parseInt(code_.trim(), 10);
+                if (isNaN(codeid) || !codes0[codeid]) {
+                    _just.error.errormessage('0128', `"${codeid}" is not a code id.`).then((errmsg)=>{throw new Error(errmsg)});
+                }
+            }
+            return `\`\`\`${lang_}\n${code_}\n\`\`\``;
         });
         for (let i = 6; i >= 1; i--) {
             const regex = new RegExp(`^#{${i}}\\s+(.*?)\\s*$`, 'gm');
