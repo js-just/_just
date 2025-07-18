@@ -149,6 +149,10 @@ fi
 jserr() {
     echo -e "::error::$(cat "_just_data/e.txt")" && exit 1
 }
+HLJSCSS="$GITHUB_ACTION_PATH/src/documentation/templates/hljs-themes"
+hljsstyles() {
+    echo "$(node $GITHUB_ACTION_PATH/src/documentation/hljscss.js "$(cat "$HLJSCSS/_just_default_light.css")")"
+}
 
 if [ "$TYPE" == "postprocessor" ]; then
     set -e
@@ -185,7 +189,8 @@ elif [ "$TYPE" == "docs" ]; then
     HTML=$(cat "$GITHUB_ACTION_PATH/src/documentation/templates/page.html") && \
     CSS=$(cat "$GITHUB_ACTION_PATH/src/documentation/templates/base.css") && \
     JS=$(cat "$GITHUB_ACTION_PATH/src/documentation/templates/page.js") && \
-    HIGHLIGHTCSS=$(cat "$GITHUB_ACTION_PATH/src/documentation/templates/hljs-themes/_just_default.css") && \
+    HIGHLIGHTCSS=$(cat "$HLJSCSS/_just_default_dark.css") && \
+    HIGHLIGHTJSON=$(hljsstyles) && \
     BUTTONSCSS=$(cat "$GITHUB_ACTION_PATH/src/documentation/templates/buttons.css") && \
     SEARCHCSS=$(cat "$GITHUB_ACTION_PATH/src/documentation/templates/search.css") && \
     CUSTOMCSS=false && \
@@ -214,7 +219,7 @@ elif [ "$TYPE" == "docs" ]; then
     HLJSLANGS=$(cat "$GITHUB_ACTION_PATH/data/hljslangs.json") && \
     LANGS=$(cat "$GITHUB_ACTION_PATH/data/langs.json") && \
     LANGSTEXT=$(cat "$GITHUB_ACTION_PATH/data/langstext.json") && \
-    node "$INDEXJS0" "$HTML" "$CSS" "$JS" "$INPUT_PATH" "$GITHUB_REPOSITORY" "$GITHUB_REPOSITORY_OWNER" "$CUSTOMCSS" "$HLJSLANGS" "$LANGS" "$HIGHLIGHTCSS" "$LANGSTEXT" "$VERSION" "$BUTTONSCSS" "$SEARCHCSS" || jserr && \
+    node "$INDEXJS0" "$HTML" "$CSS" "$JS" "$INPUT_PATH" "$GITHUB_REPOSITORY" "$GITHUB_REPOSITORY_OWNER" "$CUSTOMCSS" "$HLJSLANGS" "$LANGS" "$HIGHLIGHTCSS" "$LANGSTEXT" "$VERSION" "$BUTTONSCSS" "$SEARCHCSS" "$HIGHLIGHTJSON" || jserr && \
     node $GITHUB_ACTION_PATH/src/compress.js "$INPUT_PATH" && \
     node "$GITHUB_ACTION_PATH/src/documentation/logs.js" "$INPUT_PATH" && \
     echo -e "$msg9"

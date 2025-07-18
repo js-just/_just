@@ -1045,6 +1045,10 @@ input[type="checkbox"] {
     background: #3c3c3c;
     color: #ffffff;
 }
+.l .code, .l .code code, .l .code * {
+    background: #e5e5e5;
+    color: #000000;
+}
 
 html:before, html:after, body:before, body:after {
     content: none !important;

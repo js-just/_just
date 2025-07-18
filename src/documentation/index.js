@@ -25,7 +25,7 @@ SOFTWARE.
 */
 
 const _just = {};
-const [HTMLtemplate, CSStemplate, JStemplate, PATH, repo, owner, customCSS, hljslangs, langs__, CSSHIGHLIGHTtemplate, langstext_, vrsn, CSSBUTTONStemplate, CSSSEARCHtemplate] = process.argv.slice(2);
+const [HTMLtemplate, CSStemplate, JStemplate, PATH, repo, owner, customCSS, hljslangs, langs__, CSSHIGHLIGHTtemplate, langstext_, vrsn, CSSBUTTONStemplate, CSSSEARCHtemplate, HIGHLIGHTJSON] = process.argv.slice(2);
 let HTML = HTMLtemplate;
 let CSS = CSStemplate;
 let JS = JStemplate;
@@ -271,6 +271,7 @@ JS = JS.replaceAll('trimmedStr', jstrimmedstrvar)
     .replace('getElementById("search")', `getElementById("${cssid.search}")`)
     .replace("setProperty('--sdfix'", `setProperty('--${cssvar.sdfix}'`)
     .replaceAll("('searchactive')", `('${cssclass.searchactive}')`);
+CSSHIGHLIGHT += `.${cssclass.l}{${JSON.parse(HIGHLIGHTJSON)["_just_light"]}}`;
 
 const charset = docsConfig ? docsConfig.charset || template.charset : template.charset;
 
@@ -901,7 +902,7 @@ checkTLD(domain).then(tldvalid => {
         uniqueNames_.push(`${dataname[10]}${i}`);
     }
     uniqueNames[`${dataname[10]}`] = taskid + 1;
-    for (i = 0; i <= CSSHIGHLIGHTtemplate.length; i++) {
+    for (i = 0; i <= CSSHIGHLIGHTtemplate.length + JSON.parse(HIGHLIGHTJSON)["_just_light"].length; i++) {
         uniqueNames[`${dataname[8]}${i}`] = 1;
         uniqueNames[`${dataname[8]}`] = i;
         uniqueNames_.push(`${dataname[8]}${i}`);
