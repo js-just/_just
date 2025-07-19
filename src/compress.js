@@ -47,7 +47,9 @@ function compressFile(filePath) {
             if (rule && rule.type == 'at-rule') {
                 compressed += rule.name + '{';
                 rule.rules.forEach(rule__ => {
-                    rule_(rule__);
+                    if (rule__) {
+                        rule_(rule__);
+                    }
                 })
                 compressed += '}'
             } else if (rule) {
