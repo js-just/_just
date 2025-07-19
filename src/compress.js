@@ -34,7 +34,6 @@ function compressFile(filePath) {
     let content = fs.readFileSync(filePath, 'utf8');
     if (filePath.endsWith('.css')) {
         content = parseCSS.JSON(content);
-        console.log(content);
         let compressed = '';
         const rule_ = (rule) => {
             compressed += rule.selectors.join(',') + '{';
@@ -45,13 +44,13 @@ function compressFile(filePath) {
             compressed += props.join(';') + '}';
         }
         content.forEach(rule => {
-            if (rule.type == 'at-rule') {
+            if (rule && rule.type == 'at-rule') {
                 compressed += rule.name + '{';
                 rule.rules.forEach(rule__ => {
                     rule_(rule__);
                 })
                 compressed += '}'
-            } else {
+            } else if (rule) {
                 rule_(rule);
             }
         });
