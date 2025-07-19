@@ -54,7 +54,7 @@ function compressFile(filePath) {
                 rule_(rule);
             }
         });
-        fs.writeFileSync(filePath, content, 'utf8');
+        fs.writeFileSync(filePath, compressed, 'utf8');
         return;
     }
 
