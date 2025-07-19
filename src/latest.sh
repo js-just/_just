@@ -28,4 +28,4 @@ YMLTEMPLATE=$(cat "src/latest.yml") && \
 chmod +x "src/latest.py" && \
 LATEST=$(python3 "src/latest.py") && \
 YMLCONTENT=$(echo "$YMLTEMPLATE" | sed "s/@latest/@$LATEST/") && \
-echo "$YMLCONTENT" > "latest/action.yml"
+echo "$(echo "$YMLCONTENT" | sed "s/@l/@latest")" > "latest/action.yml"
