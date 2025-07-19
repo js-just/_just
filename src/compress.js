@@ -28,11 +28,37 @@ const fs = require('fs');
 const path = require('path');
 
 const deployDir = process.argv[2] || __dirname;
+const parseCSS = require('./modules/parse/css.js');
 
 function compressFile(filePath) {
     let content = fs.readFileSync(filePath, 'utf8');
+    if (filePath.endsWith('.css')) {
+        content = parseCSS.JSON(content);
+        let compressed = '';
+        const rule_ = (rule) => {
+            compressed += rule.selectors.join(',') + '{';
+            const props = [];
+            for (const [key, value] of Object.entries(rule.properties)) {
+                props.push(`${key}:${value}`);
+            }
+            compressed += props.join(';') + '}';
+        }
+        content.forEach(rule => {
+            if (rule.type == 'at-rule') {
+                compressed += rule.name + '{';
+                rule.rules.forEach(rule__ => {
+                    rule_(rule__);
+                })
+                compressed += '}'
+            } else {
+                rule_(rule);
+            }
+        });
+        fs.writeFileSync(filePath, content, 'utf8');
+        return;
+    }
 
-    if (filePath.endsWith('.js') || filePath.endsWith('.css')) {
+    if (filePath.endsWith('.js')) {
         content = content.replace(/(?<!["'`][\s\S]*)\/\/.*\n/g, '\n')
                          .replace(/\/\*[\s\S]*?\*\//g, '');
     }
@@ -55,7 +81,7 @@ function compressFile(filePath) {
 
     content = content.replace(/\n\s*/g, ' ').replace(/\s+/g, ' ');
 
-    if (filePath.endsWith('.css') || filePath.endsWith('.js')) {
+    if (filePath.endsWith('.js')) {
         content = content.replace(/;\s*}/g, '}').replace(/;\s*$/, '')
                          .replace(/(?<!['"`][\s\S]*)\/\*(.*?)\*\/(?!['"`][\s\S]*)/g, '');
     }
