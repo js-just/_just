@@ -637,9 +637,9 @@ blockquote {
     margin-left: 10px;
     padding-top: 10px;
     padding-bottom: 10px;
-    blockquote {
-        opacity: 0.75;
-    }
+}
+blockquote blockquote {
+    opacity: 0.75;
 }
 blockquote:hover {
     border-color: var(--cl);
@@ -1003,15 +1003,15 @@ h1, h2, h3 {
     border-bottom-right-radius: 10px;
     overflow: hidden;
     border: 1px solid var(--md);
-    a {
-        height: 19px;
-        overflow: hidden;
-    }
-    span {
-        opacity: 0.75;
-        width: 100%;
-        text-align: center;
-    }
+}
+.search a {
+    height: 19px;
+    overflow: hidden;
+}
+.search span {
+    opacity: 0.75;
+    width: 100%;
+    text-align: center;
 }
 .firefox .search, .ios .search {
     backdrop-filter: blur(4px) brightness(0.3) !important;
