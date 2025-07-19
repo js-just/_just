@@ -66,6 +66,11 @@
 .l .next button:hover {
     background-color: #00000020;
 }
+@media (prefers-color-scheme: light) {
+    .a .next button:hover {
+        background-color: #00000020;
+    }
+}
 .next button small, .next button span {
     display: block !important;
     white-space: nowrap;

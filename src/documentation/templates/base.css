@@ -47,6 +47,15 @@
     --wt: #ffb00080;
     --wb: #ffb0002b;
 }
+@media (prefers-color-scheme: light) {
+    .a {
+        --bg: #f0f0f0;
+        --cl: #121212;
+        --md: #00000026;
+        --wt: #ffb00080;
+        --wb: #ffb0002b;
+    }
+}
 .stb {
     --sb: 0px;
 }
@@ -126,6 +135,12 @@ button, input {
 .l button, .l input {
     background-color: var(--md);
     color: var(--cl);
+}
+@media (prefers-color-scheme: light) {
+    .a button, .a input {
+        background-color: var(--md);
+        color: var(--cl);
+    }
 }
 button:hover, input:hover {
     opacity: 0.85;
@@ -377,6 +392,15 @@ body.navbar-invert .navbar.scroll, .l .navbar .links a#ext:after {
 body.navbar-invert .navbar.scroll, .l .navbar .links a:hover {
     filter: hue-rotate(1deg);
     -webkit-filter: hue-rotate(1deg);
+}
+@media (prefers-color-scheme: light) {
+    .a .navbar .links a#ext:after {
+        opacity: 1;
+    }
+    .a .navbar .links a:hover {
+        filter: hue-rotate(1deg);
+        -webkit-filter: hue-rotate(1deg);
+    }
 }
 .navbar .heading:not(:has(span)) {
     width: auto;
@@ -1064,6 +1088,12 @@ input[type="checkbox"] {
 .l .code, .l .code code, .l .code * {
     background: #e5e5e5;
     color: #000000;
+}
+@media (prefers-color-scheme: light) {
+    .a .code, .a .code code, .a .code * {
+        background: #e5e5e5;
+        color: #000000;
+    }
 }
 
 html:before, html:after, body:before, body:after {

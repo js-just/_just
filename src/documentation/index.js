@@ -280,7 +280,9 @@ lighthighlight.forEach(rule => {
     for (const [keyy, valme] of Object.entries(rule.properties)) {
         props.push(`${keyy}:${valme}`);
     }
-    CSSHIGHLIGHT += `${rule.selectors.map(s => `.${cssclass.l} ${s}`).join(',')}{${props.join(';')}}`;
+    const outstr = (addclass) => `${rule.selectors.map(s => `.${addclass} ${s}`).join(',')}{${props.join(';')}}`;
+    CSSHIGHLIGHT += outstr(cssclass.l);
+    CSSHIGHLIGHT += `@media (prefers-color-scheme: light) {${outstr(cssclass.a)}}`;
 });
 
 const charset = docsConfig ? docsConfig.charset || template.charset : template.charset;
