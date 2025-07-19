@@ -55,6 +55,7 @@ _just.version = vrsn;
 _just.array = require('../modules/array.js');
 _just.prevnext = require('./prevnext.js');
 const esc = '\x1B';
+_just.parseCSS = require('../modules/ast/css.js');
 
 const link = (text, link_, ext = false, extid = "ext", target = "_blank", title_) => `<a href="${link_}" target="${target}"${ext ? ` id="${extid}"` : ''}${title_ ? ` title="${title_}"` : ''}>${text}</a>`;
 const span = (text) => `<span>${text}</span>`;
@@ -273,7 +274,14 @@ JS = JS.replaceAll('trimmedStr', jstrimmedstrvar)
     .replace('getElementById("search")', `getElementById("${cssid.search}")`)
     .replace("setProperty('--sdfix'", `setProperty('--${cssvar.sdfix}'`)
     .replaceAll("('searchactive')", `('${cssclass.searchactive}')`);
-CSSHIGHLIGHT += `.${cssclass.l}{${JSON.parse(HIGHLIGHTJSON)["_just_light"]}}`;
+const lighthighlight = _just.parseCSS.JSON(JSON.parse(HIGHLIGHTJSON)["_just_light"]);
+lighthighlight.forEach(rule => {
+    const props = [];
+    for (const [keyy, valme] of Object.entries(rule.properties)) {
+        props.push(`${keyy}:${valme}`);
+    }
+    CSSHIGHLIGHT += `${rule.selectors.map(s => `.${cssclass.l} ${s}`).join(',')}{${props.join(';')}}`;
+});
 
 const charset = docsConfig ? docsConfig.charset || template.charset : template.charset;
 
