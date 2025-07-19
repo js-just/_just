@@ -28,5 +28,5 @@ YMLTEMPLATE=$(cat "src/latest.yml") && \
 chmod +x "src/latest.py" && \
 LATEST=$(python3 "src/latest.py") && \
 YMLCONTENT=$(echo "$YMLTEMPLATE" | sed "s/@latest/@$LATEST/") && \
-YMLFIX=$(echo "$YMLCONTENT" | sed "s/@l/@latest") && \
+YMLFIX=$(echo "$YMLCONTENT" | sed "s/@l/@latest/") && \
 echo "$YMLFIX" > "latest/action.yml"
