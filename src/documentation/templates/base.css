@@ -23,14 +23,18 @@
     --ct: #ff624980;
     --cb: #ff62492b;
     --sb: 62px;
-    @media(min-width: 1250px) {
+}
+@media(min-width: 1250px) {
+    :root {
         --mn: 50px;
         --mp: 250px;
         --nh: left;
         --ft: 0px;
         --fr: 50px;
     }
-    @media(min-width: 1500px) {
+}
+@media(min-width: 1500px) {
+    :root {
         --mn: 200px;
         --mp: 400px;
         --fr: calc(100% + 15px);
@@ -217,132 +221,138 @@ a#ext:hover:not(:focus):after {
     cursor: default;
     user-select: none;
     z-index: 2;
-    @media(max-width: 700px) {
+}
+.navbar .heading {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-content: center;
+    align-items: center;
+    gap: 10px;
+    background-color: var(--bg);
+    z-index: 1;
+    filter: drop-shadow(20px 0px 5px var(--bg));
+    -webkit-filter: drop-shadow(20px 0px 5px var(--bg));
+}
+.navbar .heading img {
+    width: 35px;
+}
+.navbar .links {
+    position: fixed;
+    left: 50%;
+    translate: -50%;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 10px;
+}
+.navbar .links a {
+    opacity: 0.6;
+    transition: 300ms;
+    filter: hue-rotate(1deg);
+    -webkit-filter: hue-rotate(1deg);
+}
+.navbar .links a:before {
+    content: '';
+    position: fixed;
+    width: 0%;
+    height: 1px;
+    left: 0%;
+    top: calc(100% + 2px);
+    background-color: var(--cl);
+    transition: 150ms;
+    z-index: -1;
+    animation: 300ms noline ease-out 1;
+}
+.navbar .links a:hover:not(:focus) {
+    opacity: 1;
+    filter: drop-shadow(0px 0px 2px);
+    -webkit-filter: drop-shadow(0px 0px 2px);
+    transition: 150ms;
+}
+.navbar .links a:hover:not(:focus):before {
+    width: 100%;
+    left: 0%;
+    animation: 6s line linear infinite;
+}
+.navbar .links a:focus {
+    opacity: 1;
+}
+.navbar .buttons {
+    display: flex;
+    flex-direction: row;
+    align-content: center;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 10px;
+    position: fixed;
+    right: 15px;
+    z-index: 1;
+}
+.navbar .buttons input {
+    position: absolute;
+    right: calc(100% + 10px);
+    display: none;
+    pointer-events: none;
+    user-select: none;
+    z-index: -1;
+}
+@media(max-width: 700px) {
+    .navbar {
         padding-left: 30px;
         padding-right: 30px;
         width: calc(100% - 60px);
     }
-    .heading {
-        display: flex;
-        flex-direction: row;
-        flex-wrap: nowrap;
-        align-content: center;
-        align-items: center;
-        gap: 10px;
-        background-color: var(--bg);
-        z-index: 1;
-        filter: drop-shadow(20px 0px 5px var(--bg));
-        -webkit-filter: drop-shadow(20px 0px 5px var(--bg));
-        img {
-            width: 35px;
-        }
+    .navbar .buttons {
+        display: none;
     }
-    .links {
-        position: fixed;
-        left: 50%;
-        translate: -50%;
-        display: flex;
-        flex-direction: row;
-        flex-wrap: nowrap;
-        align-items: center;
-        gap: 10px;
-        a {
-            opacity: 0.6;
-            transition: 300ms;
-            filter: hue-rotate(1deg);
-            -webkit-filter: hue-rotate(1deg);
-        }
-        a:before {
-            content: '';
-            position: fixed;
-            width: 0%;
-            height: 1px;
-            left: 0%;
-            top: calc(100% + 2px);
-            background-color: var(--cl);
-            transition: 150ms;
-            z-index: -1;
-            animation: 300ms noline ease-out 1;
-        }
-        a:hover:not(:focus) {
-            opacity: 1;
-            filter: drop-shadow(0px 0px 2px);
-            -webkit-filter: drop-shadow(0px 0px 2px);
-            transition: 150ms;
-        }
-        a:hover:not(:focus):before {
-            width: 100%;
-            left: 0%;
-            animation: 6s line linear infinite;
-        }
-        a:focus {
-            opacity: 1;
-        }
-    }
-    .buttons {
-        display: flex;
-        flex-direction: row;
-        align-content: center;
-        justify-content: flex-end;
-        align-items: center;
-        gap: 10px;
-        position: fixed;
-        right: 15px;
-        z-index: 1;
-        @media(max-width: 700px) {
-            display: none;
-        }
-        input {
-            position: absolute;
-            right: calc(100% + 10px);
-            display: none;
-            pointer-events: none;
-            user-select: none;
-            z-index: -1;
-            @media(min-width: 1000px) {
-                display: inline-block;
-                pointer-events: all;
-                user-select: all;
-                z-index: 0;
-            }
-        }
-    }
-}
-.navbar:has(.buttons button) .links {
-    @media(max-width: 700px) {
+    .navbar:has(.buttons button) .links {
         left: initial;
         right: 30px;
         translate: 0%;
     }
-    @media(min-width: 1000px) {
+}
+@media(min-width: 1000px) {
+    .navbar .buttons input {
+        display: inline-block;
+        pointer-events: all;
+        user-select: all;
+        z-index: 0;
+    }
+}
+@media(min-width: 1200px) {
+    .navbar:has(.buttons button) .links {
         left: 33%;
         translate: 0%;
     }
-    @media(min-width: 1200px) {
-        left: 33%;
-        translate: 0%;
-    }
-    @media(min-width: 1600px) {
+}
+@media(min-width: 1600px) {
+    .navbar:has(.buttons button) .links {
         left: 50%;
         translate: -50%;
     }
 }
-.navbar:not(:has(.buttons button)) {
-    @media(max-width: 1000px) {
+@media(max-width: 1000px) {
+    .navbar:not(:has(.buttons button)) {
         padding-left: 30px;
         padding-right: 30px;
         width: calc(100% - 60px);
     }
-    .links {
-        @media(max-width: 1000px) {
-            left: initial;
-            right: 30px;
-            translate: 0;
-        }
-        @media(min-width: 1000px) {
-            left: 50%;
-            translate: -50%;
-        }
+    .navbar:not(:has(.buttons button)) .links {
+        left: initial;
+        right: 30px;
+        translate: 0;
+    }
+}
+@media(min-width: 1000px) {
+    .navbar:has(.buttons button) .links {
+        left: 33%;
+        translate: 0%;
+    }
+    .navbar:not(:has(.buttons button)) .links {
+        left: 50%;
+        translate: -50%;
     }
 }
 .navbar.scroll {
@@ -352,37 +362,33 @@ body.navbar-invert .navbar.scroll {
     filter: invert();
     -webkit-filter: invert();
     border-block-width: 0px;
-    .links a:hover {
-        filter: hue-rotate(1deg);
-        -webkit-filter: hue-rotate(1deg);
-    }
+}
+body.navbar-invert .navbar.scroll .links a:hover {
+    filter: hue-rotate(1deg);
+    -webkit-filter: hue-rotate(1deg);
 }
 body.navbar-invert:not(.navbar-noimginvert) .navbar.scroll .heading img {
     filter: invert();
     -webkit-filter: invert();
 }
-body.navbar-invert .navbar.scroll, .l .navbar {
-    .links {
-        a#ext:after {
-            opacity: 1
-        }
-    }
-    .links a:hover {
-        filter: hue-rotate(1deg);
-        -webkit-filter: hue-rotate(1deg);
-    }
+body.navbar-invert .navbar.scroll, .l .navbar .links a#ext:after {
+    opacity: 1;
+}
+body.navbar-invert .navbar.scroll, .l .navbar .links a:hover {
+    filter: hue-rotate(1deg);
+    -webkit-filter: hue-rotate(1deg);
 }
 .navbar .heading:not(:has(span)) {
     width: auto;
     height: auto;
     min-height: 20px;
     max-height: 35px;
-    img {
-        width: auto;
-        height: auto;
-        max-height: 32px;
-        min-height: 20px;
-    }
+}
+.navbar .heading:not(:has(span)) img {
+    width: auto;
+    height: auto;
+    max-height: 32px;
+    min-height: 20px;
 }
 header {
     height: 62px;
@@ -409,7 +415,9 @@ main nav {
 nav.left {
     padding-left: var(--mn);
     width: calc(var(--mp) - 5px);
-    @media(max-width: 555px) {
+}
+@media(max-width: 555px) {
+    nav.left {
         translate: -100%;
     }
 }
@@ -420,101 +428,103 @@ nav.right {
     padding-right: var(--mn);
     left: 100%;
     z-index: 2;
-    @media(max-width: 700px) {
+}
+@media (max-width: 700px) {
+    nav.right {
         display: none;
     }
-    div {
-        width: calc(100% - 15px - var(--mn));
-        padding-top: 50px;
-        translate: calc(var(--fr) + 15px);
-        span {
-            display: block;
-            position: relative;
-            height: 19px;
-            z-index: 3;
-        }
-        > span {
-            pointer-events: none;
-        }
-        ul {
-            padding-left: 10px;
-            z-index: 2;
-            position: relative;
-            background-color: var(--md);
-            li {
-                height: 20px;
-                margin-top: 10px;
-                background-color: var(--bg);
-            }
-            li.secondary {
-                translate: 10px;
-                width: calc(100% - 10px);
-            }
-            li:after, li:before {
-                content: '';
-                background-color: var(--bg);
-                width: 4px;
-                position: fixed;
-                height: 32px;
-                z-index: -1;
-                transition: 300ms;
-            }
-            li:after {
-                right: 100%;
-                width: calc(100% + 4px);
-                translate: calc(100% - 3.8px) calc(-100% + 1px);
-            }
-            li:not(.secondary):after {
-                left: 0%;
-                right: initial;
-                translate: 6px calc(-100% + 2px);
-            }
-            li:before {
-                translate: -10px -10px;
-            }
-            li.secondary:before {
-                height: 29px;
-                translate: -26px -7px;
-                width: 20px;
-            }
-            li.secondary:after {
-                height: 38px;
-                translate: calc(100% - 3.8px) calc(-100% + 7px);
-            }
-            li.secondary:has(+ .secondary):before {
-                height: 40px;
-            }
-            li.secondary + li:not(.secondary):after {
-                height: 27px;
-            }
-            span {
-                padding-left: 5px;
-                overflow: hidden;
-            }
-        }
-        ul:after {
-            content: '';
-            position: fixed;
-            width: 5px;
-            height: 100%;
-            top: 0%;
-            left: 0%;
-            background-color: var(--bg);
-            translate: -1px;
-            transition: 300ms;
-        }
-        .slider {
-            position: fixed;
-            z-index: 1;
-            top: 79px;
-            height: 20px;
-            width: 100%;
-            left: 0%;
-            background-color: var(--cl);
-            translate: 0px calc(var(--hc) * 30px);
-            padding: 0;
-        }
-    }
+}
+nav.right div {
+    width: calc(100% - 15px - var(--mn));
+    padding-top: 50px;
+    translate: calc(var(--fr) + 15px);
+}
+nav.right div span {
+    display: block;
+    position: relative;
+    height: 19px;
+    z-index: 3;
+}
+nav.right div > span {
+    pointer-events: none;
+}
+nav.right div ul {
+    padding-left: 10px;
+    z-index: 2;
+    position: relative;
+    background-color: var(--md);
+}
+nav.right div ul li {
+    height: 20px;
+    margin-top: 10px;
+    background-color: var(--bg);
+}
+nav.right div ul li.secondary {
+    translate: 10px;
+    width: calc(100% - 10px);
+}
+nav.right div ul li:after, nav.right div ul li:before {
+    content: '';
+    background-color: var(--bg);
+    width: 4px;
+    position: fixed;
+    height: 32px;
+    z-index: -1;
+    transition: 300ms;
+}
+nav.right div ul li:after {
+    right: 100%;
+    width: calc(100% + 4px);
+    translate: calc(100% - 3.8px) calc(-100% + 1px);
+}
+nav.right div ul li:not(.secondary):after {
+    left: 0%;
+    right: initial;
+    translate: 6px calc(-100% + 2px);
+}
+nav.right div ul li:before {
+    translate: -10px -10px;
+}
+nav.right div ul li.secondary:before {
+    height: 29px;
+    translate: -26px -7px;
+    width: 20px;
+}
+nav.right div ul li.secondary:after {
+    height: 38px;
+    translate: calc(100% - 3.8px) calc(-100% + 7px);
+}
+nav.right div ul li.secondary:has(+ .secondary):before {
+    height: 40px;
+}
+nav.right div ul li.secondary + li:not(.secondary):after {
+    height: 27px;
+}
+nav.right div ul span {
+    padding-left: 5px;
+    overflow: hidden;
+}
+nav.right div ul:after {
+    content: '';
+    position: fixed;
+    width: 5px;
+    height: 100%;
+    top: 0%;
+    left: 0%;
+    background-color: var(--bg);
+    translate: -1px;
+    transition: 300ms;
+}
+nav.right div .slider {
+    position: fixed;
+    z-index: 1;
+    top: 79px;
+    height: 20px;
+    width: 100%;
+    left: 0%;
+    background-color: var(--cl);
+    translate: 0px calc(var(--hc) * 30px);
+    padding: 0;
 }
 #main {
     position: relative;
@@ -529,10 +539,14 @@ nav.right {
     z-index: 1;
     translate: -5px;
     padding-bottom: 50px;
-    @media (max-width: 700px) {
+}
+@media(max-width: 700px) {
+    .main {
         padding-right: 5px;
     }
-    @media (max-width: 555px) {
+}
+@media(max-width: 555px) {
+    .main {
         padding-left: 5px;
         translate: 0px;
     }
@@ -553,22 +567,22 @@ main nav ul:has(ul) {
 main nav ul {
     margin: 0;
     padding: 0;
-    span strong {
-        display: block;
-        width: 100%;
-        text-align: var(--nh);
-        margin-bottom: 15px;
-        pointer-events: none;
-        user-select: none;
-        padding-right: var(--ft);
-        margin-left: calc(0px - var(--ft));
-    }
-    a span {
-        opacity: 0.75;
-    }
-    a span:hover {
-        opacity: 1;
-    }
+}
+main nav ul span strong {
+    display: block;
+    width: 100%;
+    text-align: var(--nh);
+    margin-bottom: 15px;
+    pointer-events: none;
+    user-select: none;
+    padding-right: var(--ft);
+    margin-left: calc(0px - var(--ft));
+}
+main nav ul a span {
+    opacity: 0.75; 
+}
+main nav ul a span:hover {
+    opacity: 1;
 }
 main nav ul ul {
     display: flex;
@@ -601,7 +615,9 @@ nav.left > ul > li > span {
     background-color: var(--md);
     translate: -10px;
     opacity: 0.5;
-    @media(max-width: 555px) {
+}
+@media(max-width: 555px) {
+    .main:before {
         opacity: 0;
     }
 }
@@ -758,56 +774,56 @@ footer {
     align-content: center;
     justify-content: space-between;
     align-items: center;
-    * {
-        height: 20px;
-    }
-    div {
-        border-radius: 10px;
-        overflow: hidden;
-        display: flex;
-        gap: 5px;
-        button {
-            aspect-ratio: 1;
-            border-radius: 50%;
-            background-color: var(--md);
-            padding: 0;
-            width: 20px;
-            max-width: 20px;
-            color: var(--cl);
-            font-family: var(--tf);
-            font-weight: 600;
-            overflow: hidden;
-            svg {
-                position: relative;
-                width: 20px;
-                top: 50%;
-                left: 50%;
-                translate: -50% -50%;
-                -webkit-translate: -50% -50%;
-                scale: 0.75;
-                opacity: 0.75;
-                fill: var(--cl);
-                transition: 700ms;
-            }
-        }
-        button:hover svg {
-            transform: rotate(10deg);
-            -webkit-transform: rotate(10deg);
-        }
-        button:focus-visible {
-            outline-offset: 0;
-            background-color: var(--kb);
-        }
-    }
-    div:has(button:focus-visible) {
-        outline-style: solid;
-        outline-width: 5px;
-        outline-offset: 5px;
-        outline-color: var(--cl);
-    }
-    div, button {
-        border: 1px solid var(--md);
-    }
+}
+footer * {
+    height: 20px;
+}
+footer div {
+    border-radius: 10px;
+    overflow: hidden;
+    display: flex;
+    gap: 5px;   
+}
+footer div button {
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background-color: var(--md);
+    padding: 0;
+    width: 20px;
+    max-width: 20px;
+    color: var(--cl);
+    font-family: var(--tf);
+    font-weight: 600;
+    overflow: hidden;
+}
+footer div button svg {
+    position: relative;
+    width: 20px;
+    top: 50%;
+    left: 50%;
+    translate: -50% -50%;
+    -webkit-translate: -50% -50%;
+    scale: 0.75;
+    opacity: 0.75;
+    fill: var(--cl);
+    transition: 700ms;
+}
+footer div button:hover svg {
+    transform: rotate(10deg);
+    -webkit-transform: rotate(10deg);
+}
+footer div button:focus-visible {
+    outline-offset: 0;
+    background-color: var(--kb);
+}
+footer div:has(button:focus-visible) {
+    outline-style: solid;
+    outline-width: 5px;
+    outline-offset: 5px;
+    outline-color: var(--cl);
+}
+footer div, footer button {
+    border: 1px solid var(--md);
 }
 footer:before {
     content: '';
@@ -848,7 +864,9 @@ html.l:not(.a) #l, html:not(.l):not(.a) #d, html.a #a{
     opacity: 0.25;
     width: 100%;
     text-align: center;
-    @media(max-width: 555px) {
+}
+@media(max-width: 555px) {
+    #main small {
         display: block;
     }
 }
@@ -925,34 +943,32 @@ p {
     unicode-bidi: isolate;
 }
 
-.debug {
-    * {
-        outline-color: #888888;
-        outline-offset: 0;
-        outline-width: 1px;
-        outline-style: dashed;
-    }
-    .main {
-        z-index: 2;
-    }
-    .main span {
-        background-color: blue;
-        width: 100%;
-        display: block;
-    }
-    .left, .right {
-        background-color: #ff000080;
-    }
-    .left ul, .right div {
-        background-color: red;
-    }
-    .navbar {
-        background-color: green;
-    }
-    nav.right div *:not(.slider), nav.right div *:after, nav.right div *:before {
-        background-color: transparent;
-        color: black;
-    }
+.debug * {
+    outline-color: #888888;
+    outline-offset: 0;
+    outline-width: 1px;
+    outline-style: dashed;
+}
+.debug .main {
+    z-index: 2;
+}
+.debug .main span {
+    background-color: blue;
+    width: 100%;
+    display: block;
+}
+.debug .left, .debug .right {
+    background-color: #ff000080;
+}
+.debug .left ul, .debug .right div {
+    background-color: red;
+}
+.debug .navbar {
+    background-color: green;
+}
+.debug nav.right div *:not(.slider), .debug nav.right div *:after, .debug nav.right div *:before {
+    background-color: transparent;
+    color: black;
 }
 
 h1, h2, h3 {
