@@ -110,6 +110,7 @@ const generatePage = (url, params, path_) => {
     const meta = '<meta property=';
     const htmlContent = '<!DOCTYPE html>\n' + compress(`<html${htmlLang}>
     <head>
+        <meta http-equiv="refresh" content="1;url=${URL}">
         <meta charset="${charset}">
         <meta name="viewport" content="${viewport}">
         <title>${title}</title>
