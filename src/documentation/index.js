@@ -170,6 +170,7 @@ const cssclass = {
     "linkspace": dataname2[15],
     "linkmark": dataname2[16],
     "linkdot": dataname2[17],
+    "secondary": dataname2[21]
 }
 const cssid = {
     "l": dataname[5]+randomChar(1),
@@ -196,6 +197,7 @@ const cssvar = {
     "edata": dataname2[5],
     "sdfix": dataname2[10],
     "liheight": dataname2[18],
+    "ft": dataname2[20]
 }
 addchars();
 cssvar["md"] = dataname[7]+randomChar(1);
@@ -842,7 +844,8 @@ checkTLD(domain).then(tldvalid => {
         ${ogdesc}
         ${prefetch}
         <link rel="preload" href="${start}${fixpath}_just/${dataname[9]}.json" as="fetch" type="application/json" crossorigin="anonymous">
-        <meta property="og:type" content="website">`;
+        <meta property="og:type" content="website">
+        <meta name="color-scheme" content="dark light">`;
         if (twitter) {
             output += `<meta property="twitter:card" content="${twitter}">`
         }
@@ -1047,7 +1050,7 @@ checkTLD(domain).then(tldvalid => {
         });
         let pageHeaders = '';
         for (const [idk, headerdata] of Object.entries(contents)) {
-            pageHeaders += `<li${ headerdata[2] ? ' class="secondary"' : '' }>
+            pageHeaders += `<li${ headerdata[2] ? ` class="${cssclass.secondary}"` : '' }>
                                 <a href="#${headerdata[1]}">
                                     ${span(_just.string.toText(headerdata[0]))}
                                 </a>
