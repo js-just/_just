@@ -45,9 +45,10 @@ msg6=$(_justMessage "$_GREEN Compressing completed$_RESET")
 msg9=$(_justMessage "$_GREEN Generating completed$_RESET")
 echo -e "$msg1"
 
+chmod +x "$GITHUB_ACTION_PATH/src/time.py" # use python to get current time in ms cuz yes
+TIME0=$(python3 "$GITHUB_ACTION_PATH/src/time.py")
 installNodejs() {
     echo -e "$msg2"
-    chmod +x "$GITHUB_ACTION_PATH/src/time.py" # use python to get current time in ms cuz yes
     local TIME1=$(python3 "$GITHUB_ACTION_PATH/src/time.py")
     if ! command -v node > /dev/null; then # attempt 0: nodejs installed before running _just
         # attempt 1: install via curl
@@ -173,18 +174,24 @@ if [ "$TYPE" == "postprocessor" ]; then
     installNodejs && \
     node $GITHUB_ACTION_PATH/src/compress.js "deploy" && \
     bash $GITHUB_ACTION_PATH/src/postprocessor/build_map.sh && \
-    echo -e "$msg4"
+    TIME3=$(python3 "$GITHUB_ACTION_PATH/src/time.py") && \
+    DONEIN=$(node "$GITHUB_ACTION_PATH/src/time.js" "$TIME0" "$TIME3") && \
+    echo -e "$msg4 ($DONEIN)"
 elif [ "$TYPE" == "redirect" ]; then
     mkdir -p deploy/_just && \
     installNodejs && \
     bash $GITHUB_ACTION_PATH/src/redirect/checks.sh && \
     node $GITHUB_ACTION_PATH/src/redirect/index.js && \
-    echo -e "$msg5"
+    TIME3=$(python3 "$GITHUB_ACTION_PATH/src/time.py") && \
+    DONEIN=$(node "$GITHUB_ACTION_PATH/src/time.js" "$TIME0" "$TIME3") && \
+    echo -e "$msg5 ($DONEIN)"
 elif [ "$TYPE" == "compress" ]; then
     mkdir -p deploy && \
     installNodejs && \
     node $GITHUB_ACTION_PATH/src/compress.js "$INPUT_PATH" && \
-    echo -e "$msg6"
+    TIME3=$(python3 "$GITHUB_ACTION_PATH/src/time.py") && \
+    DONEIN=$(node "$GITHUB_ACTION_PATH/src/time.js" "$TIME0" "$TIME3") && \
+    echo -e "$msg6 ($DONEIN)"
 elif [ "$TYPE" == "docs" ]; then
     HTML=$(cat "$GITHUB_ACTION_PATH/src/documentation/templates/page.html") && \
     CSS=$(cat "$GITHUB_ACTION_PATH/src/documentation/templates/base.css") && \
@@ -222,5 +229,7 @@ elif [ "$TYPE" == "docs" ]; then
     node "$INDEXJS0" "$HTML" "$CSS" "$JS" "$INPUT_PATH" "$GITHUB_REPOSITORY" "$GITHUB_REPOSITORY_OWNER" "$CUSTOMCSS" "$HLJSLANGS" "$LANGS" "$HIGHLIGHTCSS" "$LANGSTEXT" "$VERSION" "$BUTTONSCSS" "$SEARCHCSS" "$HIGHLIGHTJSON" || jserr && \
     node $GITHUB_ACTION_PATH/src/compress.js "$INPUT_PATH" && \
     node "$GITHUB_ACTION_PATH/src/documentation/logs.js" "$INPUT_PATH" && \
-    echo -e "$msg9"
+    TIME3=$(python3 "$GITHUB_ACTION_PATH/src/time.py") && \
+    DONEIN=$(node "$GITHUB_ACTION_PATH/src/time.js" "$TIME0" "$TIME3") && \
+    echo -e "$msg9 ($DONEIN)"
 fi
