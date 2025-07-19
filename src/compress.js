@@ -28,7 +28,7 @@ const fs = require('fs');
 const path = require('path');
 
 const deployDir = process.argv[2] || __dirname;
-const parseCSS = require('./modules/parse/css.js');
+const parseCSS = require('./modules/ast/css.js');
 
 function compressFile(filePath) {
     let content = fs.readFileSync(filePath, 'utf8');

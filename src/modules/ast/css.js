@@ -26,94 +26,120 @@ SOFTWARE.
 
 exports.JSON = function(cssText) {
   const cleanedCSS = cssText.replace(/\/\*[\s\S]*?\*\//g, '');
-
   let index = 0;
+  const length = cleanedCSS.length;
 
   function skipWhitespace() {
-    while (/\s/.test(cleanedCSS[index])) index++;
+    while (index < length && /\s/.test(cleanedCSS[index])) index++;
   }
 
-  function parseRules() {
-    const rules = [];
+  function peek() {
+    return cleanedCSS[index];
+  }
 
-    while (index < cleanedCSS.length) {
-      skipWhitespace();
+  function consume() {
+    return cleanedCSS[index++];
+  }
 
-      if (cleanedCSS[index] === '}') {
-        index++;
-        break;
-      }
+  const stack = [];
+  const rules = [];
 
-      if (cleanedCSS[index] === '@') {
-        rules.push(parseAtRule());
-      } else {
-        rules.push(parseSelectorOrNested());
-      }
+  while (index < length) {
+    skipWhitespace();
+
+    if (index >= length) break;
+
+    const char = peek();
+
+    if (char === '}') {
+      index++;
+      if (stack.length > 0) stack.pop();
+      continue;
     }
 
-    return rules;
+    if (char === '@') {
+      rules.push(parseAtRule());
+    } else {
+      rules.push(parseSelectorOrNested());
+    }
   }
 
   function parseAtRule() {
     let start = index;
-    while (index < cleanedCSS.length && cleanedCSS[index] !== '{' && cleanedCSS[index] !== ';') {
+    while (index < length && cleanedCSS[index] !== '{' && cleanedCSS[index] !== ';') {
       index++;
     }
     const atRuleHeader = cleanedCSS.slice(start, index).trim();
 
     if (cleanedCSS[index] === '{') {
       index++;
-      const nestedRules = parseRules();
-      return {
-        type: 'at-rule',
-        name: atRuleHeader,
-        rules: nestedRules
-      };
+      const nestedRules = [];
+      stack.push({ type: 'at-rule', name: atRuleHeader, rules: nestedRules });
+      
+      while (index < length) {
+        skipWhitespace();
+        if (peek() === '}') {
+          index++;
+          break;
+        }
+        nestedRules.push(parseSelectorOrNested());
+      }
+      
+      return { type: 'at-rule', name: atRuleHeader, rules: nestedRules };
+      
     } else if (cleanedCSS[index] === ';') {
       index++;
-      return {
-        type: 'at-rule',
-        name: atRuleHeader,
-        rules: []
-      };
+      return { type: 'at-rule', name: atRuleHeader, rules: [] };
     }
+    
     return { type: 'at-rule', name: atRuleHeader, rules: [] };
   }
 
   function parseSelectorOrNested() {
     let start = index;
-    while (index < cleanedCSS.length && cleanedCSS[index] !== '{' && cleanedCSS[index] !== '}') {
+    while (
+      index < length &&
+      cleanedCSS[index] !== '{' &&
+      cleanedCSS[index] !== '}'
+    ) {
       index++;
     }
+    
     const selectorText = cleanedCSS.slice(start, index).trim();
 
     if (cleanedCSS[index] === '{') {
       index++;
       
       skipWhitespace();
-      
+
       if (/^[.#a-zA-Z0-9\-\s,:]+$/.test(selectorText)) {
         const selectors = selectorText.split(',').map(s => s.trim());
-        
         const properties = {};
-        while (true) {
+        const nestedRules = [];
+
+        while (index < length) {
           skipWhitespace();
-          if (cleanedCSS[index] === '}') {
+          if (peek() === '}') {
             index++;
             break;
           }
-          if (cleanedCSS[index] === '@') {
-            const atRule = parseAtRule();
-            return { type: 'rule', selectors, properties, nestedRules: [atRule] };
-          }
           
+          if (peek() === '@') {
+            nestedRules.push(parseAtRule());
+            continue;
+          }
+
           let propStart = index;
-          while (index < cleanedCSS.length && cleanedCSS[index] !== ';' && cleanedCSS[index] !== '}') {
+          while (
+            index < length &&
+            cleanedCSS[index] !== ';' &&
+            cleanedCSS[index] !== '}'
+          ) {
             index++;
           }
           
           const line = cleanedCSS.slice(propStart, index).trim();
-          
+
           if (!line) break;
 
           if (line.includes(':')) {
@@ -123,12 +149,10 @@ exports.JSON = function(cssText) {
           } else if (cleanedCSS[index] === '}') {
             index++;
             break;
-          } else if (/^[.#a-zA-Z0-9\-\s,:]+$/.test(line)) {
-            break;
           }
         }
-        
-        return { type: 'rule', selectors, properties };
+
+        return { type: 'rule', selectors, properties, nestedRules };
         
       } else {
         return null;
@@ -139,6 +163,5 @@ exports.JSON = function(cssText) {
     }
   }
 
-  const ast = parseRules();
-  return ast;
+  return rules;
 }
