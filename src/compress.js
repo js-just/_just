@@ -34,6 +34,7 @@ function compressFile(filePath) {
     let content = fs.readFileSync(filePath, 'utf8');
     if (filePath.endsWith('.css')) {
         content = parseCSS.JSON(content);
+        console.log(content);
         let compressed = '';
         const rule_ = (rule) => {
             compressed += rule.selectors.join(',') + '{';
