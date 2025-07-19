@@ -30,31 +30,40 @@ const path = require('path');
 const deployDir = process.argv[2] || __dirname;
 const parseCSS = require('./modules/ast/css.js');
 
-function compressFile(filePath) {
-    let content = fs.readFileSync(filePath, 'utf8');
-    if (filePath.endsWith('.css')) {
-        content = parseCSS.JSON(content);
-        let compressed = '';
-        const rule_ = (rule) => {
+function serializeRules(rules) {
+    let result = '';
+
+    const ruleToString = (rule) => {
+        if (!rule) return '';
+
+        if (rule.type === 'at-rule') {
+            let innerContent = '';
+            if (rule.rules && rule.rules.length > 0) {
+                innerContent = serializeRules(rule.rules);
+            }
+            return `${rule.name}{${innerContent}}`;
+        } else if (rule.type === 'rule') {
             const props = [];
             for (const [key, value] of Object.entries(rule.properties)) {
                 props.push(`${key}:${value}`);
             }
-            return rule.selectors.join(',') + '{' + props.join(';') + '}';
+            return `${rule.selectors.join(',')}{${props.join(';')}}`;
         }
-        content.forEach(rule => {
-            if (rule && rule.type == 'at-rule') {
-                compressed += rule.name + '{';
-                rule.rules.forEach(rule__ => {
-                    if (rule__) {
-                        compressed += rule_(rule__);
-                    }
-                })
-                compressed += '}'
-            } else if (rule) {
-                compressed += rule_(rule);
-            }
-        });
+        return '';
+    };
+
+    for (const rule of rules) {
+        result += ruleToString(rule);
+    }
+
+    return result;
+}
+
+function compressFile(filePath) {
+    let content = fs.readFileSync(filePath, 'utf8');
+    if (filePath.endsWith('.css')) {
+        content = parseCSS.JSON(content);
+        const compressed = serializeRules(content);
         fs.writeFileSync(filePath, compressed, 'utf8');
         return;
     }

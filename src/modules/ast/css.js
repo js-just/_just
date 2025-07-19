@@ -24,6 +24,10 @@ SOFTWARE.
 
 */
 
+/**
+ * @param {string} cssText 
+ * @returns {Array} 
+ */
 exports.JSON = function(cssText) {
   const cleanedCSS = cssText.replace(/\/\*[\s\S]*?\*\//g, '');
   let index = 0;
