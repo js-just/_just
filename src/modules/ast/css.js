@@ -163,5 +163,5 @@ exports.JSON = function(cssText) {
     }
   }
 
-  return rules;
+  return rules.filter(Boolean);
 }
