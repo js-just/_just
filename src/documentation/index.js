@@ -25,7 +25,7 @@ SOFTWARE.
 */
 
 const _just = {};
-const [HTMLtemplate, CSStemplate, JStemplate, PATH, repo, owner, customCSS, hljslangs, langs__, CSSHIGHLIGHTtemplate, langstext_, vrsn, CSSBUTTONStemplate, CSSSEARCHtemplate, HIGHLIGHTJSON] = process.argv.slice(2);
+const [HTMLtemplate, CSStemplate, JStemplate, PATH, repo, owner, customCSS, hljslangs, langs__, CSSHIGHLIGHTtemplate, langstext_, vrsn, CSSBUTTONStemplate, CSSSEARCHtemplate, HIGHLIGHTJSON, fixpathh] = process.argv.slice(2);
 let HTML = HTMLtemplate;
 let CSS = CSStemplate;
 let JS = JStemplate;
@@ -1084,7 +1084,7 @@ checkTLD(domain).then(tldvalid => {
         const fixpath = HTMLUsePathInput && docsUsePathInput ? `${PATH}/`.repeat(2) : HTMLUsePathInput ? PATH+'/' : '';
         let outHTML = HTML
             .replace('<html>', `<html${htmlLang}>`)
-            .replaceAll('="/_just/', `="${start}${fixpath}_just/`)
+            .replaceAll('="/_just/', fixpathh ? `/${fixpathh}/_just/` : `="${start}${fixpath}_just/`)
             .replace("content: '_just';", `content: '_just ${_just.version}';`)
             .replace('REPLACE_SCRIPT', `const ${dataname2[11]}=${JSON.stringify(pages[1])};${pagejs ? `document.addEventListener('DOMContentLoaded',()=>{${pagejs}});` : ''}`)
             .replaceAll('REPLACE_CSS', filename.css)
@@ -1219,7 +1219,7 @@ checkTLD(domain).then(tldvalid => {
             JS.replace('\'REPLACE_PUBLICOUTPUT\'', hideOutput?false:publicOutput)
               .replace('\'REPLACE_SEARCHV2\'', CSSdata[1] || false)
               .replace('\'REPLACE_OUTPUT\'', hideOutput?false:watermark)
-              .replace('let searchurl = "/_just/search";', `let searchurl="${JSUsePathInput && docsUsePathInput ? `/${PATH}`.repeat(2) : JSUsePathInput ? '/'+PATH : ''}/_just/${dataname[9]}.json";`), 
+              .replace('let searchurl = "/_just/search";', `let searchurl="${fixpathh ? '/'+fixpathh : JSUsePathInput && docsUsePathInput ? `/${PATH}`.repeat(2) : JSUsePathInput ? '/'+PATH : ''}/_just/${dataname[9]}.json";`), 
             JSdata.names.filter(n => n !== jstrimmedstrvar), 
             dataname2.reverse().slice(0, JSdata.total-1),
             jstrimmedstrvarbasestr
