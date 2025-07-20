@@ -1,0 +1,47 @@
+name: Demo built
+
+on:
+  workflow_dispatch:
+    inputs:
+      config:
+        description: 'just.config.js'
+        required: true
+        type: string
+      files:
+        description: 'Files'
+        required: true
+        type: string
+
+concurrency:
+  group: ${{ github.ref }}-demo
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+      - id: prepare
+        run: bash src/demo.sh
+        shell: bash
+        env:
+          INPUT_CONFIG: ${{ inputs.config }}
+          INPUT_FILES: ${{ inputs.files }}
+      - name: Generate with _just
+        uses: js-just/latest@main
+        with:
+          path: demo
+      - name: Commit
+        uses: cpina/github-action-push-to-another-repository@main
+        env:
+          API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
+        with:
+          source-directory: "demo"
+          destination-github-username: js-just
+          destination-repository-name: demo
+          user-email: "support@juststudio.is-a.dev"
+          target-branch: main
+          target-directory: ${{ steps.prepare.outputs.id }}
+      
