@@ -31,6 +31,7 @@ SOFTWARE.
 exports.JSON = function(cssText) {
   const cleanedCSS = cssText.replace(/\/\*[\s\S]*?\*\//g, '');
   let index = 0;
+  let ruleid = 0;
   const length = cleanedCSS.length;
 
   function skipWhitespace() {
@@ -78,7 +79,7 @@ exports.JSON = function(cssText) {
     if (cleanedCSS[index] === '{') {
       index++;
       const nestedRules = [];
-      stack.push({ type: 'at-rule', name: atRuleHeader, rules: nestedRules });
+      stack.push({ type: 'at-rule', name: atRuleHeader, rules: nestedRules, id: ruleid++ });
       
       while (index < length) {
         skipWhitespace();
@@ -89,14 +90,14 @@ exports.JSON = function(cssText) {
         nestedRules.push(parseSelectorOrNested());
       }
       
-      return { type: 'at-rule', name: atRuleHeader, rules: nestedRules };
+      return { type: 'at-rule', name: atRuleHeader, rules: nestedRules, id: ruleid++ };
       
     } else if (cleanedCSS[index] === ';') {
       index++;
-      return { type: 'at-rule', name: atRuleHeader, rules: [] };
+      return { type: 'at-rule', name: atRuleHeader, rules: [], id: ruleid++ };
     }
     
-    return { type: 'at-rule', name: atRuleHeader, rules: [] };
+    return { type: 'at-rule', name: atRuleHeader, rules: [], id: ruleid++ };
   }
 
   function parseSelectorOrNested() {
@@ -156,7 +157,7 @@ exports.JSON = function(cssText) {
           }
         }
 
-        return { type: 'rule', selectors, properties, nestedRules };
+        return { type: 'rule', selectors, properties, nestedRules, id: ruleid++ };
         
       } else {
         return null;
@@ -167,5 +168,5 @@ exports.JSON = function(cssText) {
     }
   }
 
-  return rules.filter(Boolean);
+  return rules.filter(Boolean).sort((a, b) => a.id - b.id);;
 }

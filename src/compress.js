@@ -39,7 +39,7 @@ async function serializeRules(rules) {
         if (rule.type === 'at-rule') {
             let innerContent = '';
             if (rule.rules && rule.rules[0]) {
-                innerContent = await serializeRules(rule.rules);
+                innerContent = await serializeRules(rule.rules.sort((a, b) => a.id - b.id));
             }
             return `${rule.name}{${innerContent}}`;
         } else if (rule.type === 'rule') {
@@ -63,7 +63,7 @@ async function compressFile(filePath) {
     let content = readFileSync(filePath, 'utf8');
     if (filePath.endsWith('.css')) {
         content = JSON(content);
-        const compressed = await serializeRules(content);
+        const compressed = await serializeRules(content.sort((a, b) => a.id - b.id));
         writeFileSync(filePath, compressed, 'utf8');
         return;
     }
