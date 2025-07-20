@@ -38,7 +38,7 @@ async function serializeRules(rules) {
 
         if (rule.type === 'at-rule') {
             let innerContent = '';
-            if (rule.rules && rule.rules.length > 0) {
+            if (rule.rules && rule.rules[0]) {
                 innerContent = await serializeRules(rule.rules);
             }
             return `${rule.name}{${innerContent}}`;
