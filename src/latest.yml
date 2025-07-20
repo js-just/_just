@@ -30,6 +30,9 @@ inputs:
   path:
     description: 'Website directory (compress/generate)'
     required: false
+  fix-path:
+    description: 'Fix file path (generate)'
+    required: false
 runs:
   using: 'composite'
   steps:
@@ -37,3 +40,4 @@ runs:
       uses: js-just/_just@latest
       with:
         path: ${{ inputs.path }}
+        fix-path: ${{ inputs.fix-path }}

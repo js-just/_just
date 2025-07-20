@@ -33,6 +33,7 @@ jobs:
         uses: js-just/latest@main
         with:
           path: demo
+          fix-path: ${{ steps.prepare.outputs.id }}
       - name: Update latest ID
         uses: cpina/github-action-push-to-another-repository@main
         env:
