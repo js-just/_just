@@ -335,6 +335,10 @@ a#ext:hover:not(:focus):after {
         user-select: all;
         z-index: 0;
     }
+    .navbar:has(.buttons button) .links {
+        left: 33%;
+        translate: 0%;
+    }
 }
 @media(min-width: 1200px) {
     .navbar:has(.buttons button) .links {
@@ -361,10 +365,6 @@ a#ext:hover:not(:focus):after {
     }
 }
 @media(min-width: 1000px) {
-    .navbar:has(.buttons button) .links {
-        left: 33%;
-        translate: 0%;
-    }
     .navbar:not(:has(.buttons button)) .links {
         left: 50%;
         translate: -50%;
