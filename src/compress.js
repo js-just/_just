@@ -38,8 +38,8 @@ async function serializeRules(rules) {
 
         if (rule.type === 'at-rule') {
             let innerContent = '';
-            if (rule.rules && rule.rules[0]) {
-                innerContent = await serializeRules(rule.rules.sort((a, b) => a.id - b.id));
+            if (rule.rules && rule.rules.filter(Boolean).length > 0) {
+                innerContent = await serializeRules(rule.rules.filter(Boolean).sort((a, b) => a.id - b.id));
             }
             return `${rule.name}{${innerContent}}`;
         } else if (rule.type === 'rule') {
