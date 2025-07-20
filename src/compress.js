@@ -24,11 +24,11 @@ SOFTWARE.
 
 */
 
-const fs = require('fs');
-const path = require('path');
+import { readFileSync, writeFileSync, readdirSync, statSync } from 'fs';
+import { join } from 'path';
 
 const deployDir = process.argv[2] || __dirname;
-const parseCSS = require('./modules/ast/css.js');
+import { JSON } from './modules/ast/css.js';
 
 async function serializeRules(rules) {
     let result = '';
@@ -60,11 +60,11 @@ async function serializeRules(rules) {
 }
 
 async function compressFile(filePath) {
-    let content = fs.readFileSync(filePath, 'utf8');
+    let content = readFileSync(filePath, 'utf8');
     if (filePath.endsWith('.css')) {
-        content = parseCSS.JSON(content);
+        content = JSON(content);
         const compressed = await serializeRules(content);
-        fs.writeFileSync(filePath, compressed, 'utf8');
+        writeFileSync(filePath, compressed, 'utf8');
         return;
     }
 
@@ -100,13 +100,13 @@ async function compressFile(filePath) {
         content = content.replace(/,\s*}/g, '}').replace(/,\s*]}/g, ']');
     }
 
-    fs.writeFileSync(filePath, content, 'utf8');
+    writeFileSync(filePath, content, 'utf8');
 }
 
 async function findAndCompressFiles(dir) {
-    await fs.readdirSync(dir).forEach(async file => {
-        const filePath = path.join(dir, file);
-        const stat = fs.statSync(filePath);
+    await readdirSync(dir).forEach(async file => {
+        const filePath = join(dir, file);
+        const stat = statSync(filePath);
         if (stat.isDirectory()) {
             await findAndCompressFiles(filePath);
         } else if (
