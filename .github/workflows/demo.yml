@@ -30,7 +30,7 @@ jobs:
           INPUT_CONFIG: ${{ inputs.config }}
           INPUT_FILES: ${{ inputs.files }}
       - name: Generate with _just
-        uses: js-just/latest@main
+        uses: js-just/_just@main
         with:
           path: demo
           fix-path: ${{ steps.prepare.outputs.id }}

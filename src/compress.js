@@ -30,16 +30,16 @@ const path = require('path');
 const deployDir = process.argv[2] || __dirname;
 const parseCSS = require('./modules/ast/css.js');
 
-function serializeRules(rules) {
+async function serializeRules(rules) {
     let result = '';
 
-    const ruleToString = (rule) => {
+    const ruleToString = async (rule) => {
         if (!rule) return '';
 
         if (rule.type === 'at-rule') {
             let innerContent = '';
             if (rule.rules && rule.rules.length > 0) {
-                innerContent = serializeRules(rule.rules);
+                innerContent = await serializeRules(rule.rules);
             }
             return `${rule.name}{${innerContent}}`;
         } else if (rule.type === 'rule') {
@@ -53,17 +53,17 @@ function serializeRules(rules) {
     };
 
     for (const rule of rules) {
-        result += ruleToString(rule);
+        result += await ruleToString(rule);
     }
 
     return result;
 }
 
-function compressFile(filePath) {
+async function compressFile(filePath) {
     let content = fs.readFileSync(filePath, 'utf8');
     if (filePath.endsWith('.css')) {
         content = parseCSS.JSON(content);
-        const compressed = serializeRules(content);
+        const compressed = await serializeRules(content);
         fs.writeFileSync(filePath, compressed, 'utf8');
         return;
     }
@@ -103,12 +103,12 @@ function compressFile(filePath) {
     fs.writeFileSync(filePath, content, 'utf8');
 }
 
-function findAndCompressFiles(dir) {
-    fs.readdirSync(dir).forEach(file => {
+async function findAndCompressFiles(dir) {
+    await fs.readdirSync(dir).forEach(async file => {
         const filePath = path.join(dir, file);
         const stat = fs.statSync(filePath);
         if (stat.isDirectory()) {
-            findAndCompressFiles(filePath);
+            await findAndCompressFiles(filePath);
         } else if (
             file.endsWith('.html') || 
             file.endsWith('.svg') || 
@@ -117,12 +117,12 @@ function findAndCompressFiles(dir) {
             file.endsWith('.json') || 
             file.endsWith('.webmanifest')
         ) {
-            compressFile(filePath);
+            await compressFile(filePath);
         }
     });
 }
 
-findAndCompressFiles(deployDir);
+await findAndCompressFiles(deployDir);
 
 /*
 

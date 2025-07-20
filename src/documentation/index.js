@@ -853,7 +853,7 @@ checkTLD(domain).then(tldvalid => {
         ${ogtitl}
         ${ogdesc}
         ${prefetch}
-        <link rel="preload" href="${start}${fixpath}_just/${dataname[9]}.json" as="fetch" type="application/json" crossorigin="anonymous">
+        <link rel="preload" href="${fixpathh ? "/"+fixpathh : `${start}${fixpath}`}_just/${dataname[9]}.json" as="fetch" type="application/json" crossorigin="anonymous">
         <meta property="og:type" content="website">
         <meta name="color-scheme" content="dark light">`;
         if (twitter) {
