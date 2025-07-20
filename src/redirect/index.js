@@ -108,29 +108,29 @@ const generatePage = (url, params, path_) => {
 
     const link = `<a href="${URL}" target="_self">`;
     const meta = '<meta property=';
-    const htmlContent = '<!DOCTYPE html>\n' + compress(`<html${htmlLang}>
-    <head>
-        <meta http-equiv="refresh" content="1;url=${URL}">
-        <meta charset="${charset}">
-        <meta name="viewport" content="${viewport}">
-        <title>${title}</title>
-        <link rel="stylesheet" href="/_just/style.css">
-        ${description ? `<meta name="description" content="${description}">` : ''}${keywords}
-        ${meta}"og:type" content="website">
-        ${meta}"twitter:card" content="${twitterCard}">
-        ${meta}"og:title" content="${ogTitle}">
-        ${ogDescription ? `${meta}"og:description" content="${ogDescription}">` : ''}
-        ${meta}"og:url" content="${URL}">${optionalstuff()}
-    </head>
-    <body>
-        <h1>${title}</h1>
-        <div>
-            <span class="r">${text1 || `Redirecting...<br><small>to ${link}${URL}</a></small>`}</span>
-            <span class="d">${text2 || "Didn't get redirected?"} ${link}${text3 || 'Click here!'}</a></span>
-        </div>
-        <script>window.location.href='${URL}';</script>
-    </body>
-</html>`);
+    const htmlContent = '<!DOCTYPE html>' + `<html${htmlLang}>` +
+    '<head>' +
+        `<meta http-equiv="refresh" content="0;url=${URL}">` +
+        `<meta charset="${charset}">` +
+        `<meta name="viewport" content="${viewport}">` +
+        `<title>${title}</title>` +
+        `<link rel="stylesheet" href="/_just/style.css">` +
+        `${description ? `<meta name="description" content="${description}">` : ''}${keywords}` +
+        `${meta}"og:type" content="website">` +
+        `${meta}"twitter:card" content="${twitterCard}">` +
+        `${meta}"og:title" content="${ogTitle}">` +
+        `${ogDescription ? `${meta}"og:description" content="${ogDescription}">` : ''}` +
+        `${meta}"og:url" content="${URL}">${optionalstuff()}` +
+    '</head>' +
+    '<body>' +
+        `<h1>${title}</h1>` +
+        '<div>' +
+            `<span class="r">${text1 || `Redirecting...<br><small>to ${link}${URL}</a></small>`}</span>` +
+            `<span class="d">${text2 || "Didn't get redirected?"} ${link}${text3 || 'Click here!'}</a></span>` +
+        '</div>' +
+        `<script>window.location.replace('${URL}')</script><script>window.location.href='${URL}'</script><script>window.location.assign('${URL}')</script>` +
+    '</body>' +
+'</html>';
     
     fs.writeFileSync(`deploy/${page}.html`, htmlContent);
 };
