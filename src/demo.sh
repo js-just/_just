@@ -27,6 +27,6 @@ DEMO_BUILT_ID=$(node "src/demo.js" "$INPUT_FILES" "$DEMO_LATEST_ID") && \
 DEMO_NEW_ID=$(node -e "console.log($DEMO_LATEST_ID + 1)") && \
 rm -f "just.config.js" && \
 echo "$INPUT_CONFIG" > just.config.js && \
-echo "id=id/$DEMO_BUILT_ID" >> $GITHUB_OUTPUT && \
+echo "id=built-$DEMO_BUILT_ID" >> $GITHUB_OUTPUT && \
 mkdir -p demo-id && \
 echo "{\"latest\":$DEMO_NEW_ID}" > "demo-id/index.js"
