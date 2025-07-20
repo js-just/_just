@@ -1084,7 +1084,7 @@ checkTLD(domain).then(tldvalid => {
         const fixpath = HTMLUsePathInput && docsUsePathInput ? `${PATH}/`.repeat(2) : HTMLUsePathInput ? PATH+'/' : '';
         let outHTML = HTML
             .replace('<html>', `<html${htmlLang}>`)
-            .replaceAll('="/_just/', fixpathh ? `/${fixpathh}/_just/` : `="${start}${fixpath}_just/`)
+            .replaceAll('="/_just/', fixpathh ? `="/${fixpathh}/_just/` : `="${start}${fixpath}_just/`)
             .replace("content: '_just';", `content: '_just ${_just.version}';`)
             .replace('REPLACE_SCRIPT', `const ${dataname2[11]}=${JSON.stringify(pages[1])};${pagejs ? `document.addEventListener('DOMContentLoaded',()=>{${pagejs}});` : ''}`)
             .replaceAll('REPLACE_CSS', filename.css)
