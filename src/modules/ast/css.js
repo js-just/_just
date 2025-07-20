@@ -117,7 +117,7 @@ exports.JSON = function(cssText) {
       
       skipWhitespace();
 
-      if (/^[.#a-zA-Z0-9\-\s,:()%*\+<>]+$/.test(selectorText)) {
+      if (/^[.#a-zA-Z0-9\-\s,:()%*\+<>_]+$/.test(selectorText)) {
         const selectors = selectorText.split(',').map(s => s.trim());
         const properties = {};
         const nestedRules = [];
