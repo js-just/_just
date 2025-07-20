@@ -26,8 +26,8 @@ SOFTWARE.
 
 const fs = require('fs');
 const path = require('path');
-
-const [files] = process.argv.slice(2);
+const num_ = require('./modules/number.js');
+const [files, id] = process.argv.slice(2);
 const filess = JSON.parse(files);
 const types = [
     "md", "html", "js", "css"
@@ -36,4 +36,4 @@ filess.forEach(file => {
     fs.writeFileSync(path.join(process.cwd(), 'demo', `${file.name.replaceAll('.','')}.${types[file.type]}`), file.content, 'utf-8');
 });
 
-console.log(String(0)); // output id.
+console.log(num_.convertbase(String(id), 10, 62));
