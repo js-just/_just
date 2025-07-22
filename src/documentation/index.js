@@ -783,14 +783,7 @@ checkTLD(domain).then(tldvalid => {
     const usePathInput = config.usePathInput ? config.usePathInput : true;
     const pageConfigs = [];
     function checkForPageConfig(file) {
-        if (file.endsWith('.md')) {
-            file = _just.string.removeLast(file, '.md') + '.justc';
-        } else if (file.endsWith('.mdx')) {
-            file = _just.string.removeLast(file, '.mdx') + '.justc';
-        } else {
-            return null;
-        }
-        if (fs.existsSync(file)) {
+        if (fs.existsSync(file.endsWith('.mdx') ? _just.string.removeLast(file, '.mdx') + '.justc' : _just.string.removeLast(file, '.md') + '.justc')) {
             debuglog('JUSTC: '+_just.string.runnerPath(file));
         }
     }
