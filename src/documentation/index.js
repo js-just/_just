@@ -783,8 +783,9 @@ checkTLD(domain).then(tldvalid => {
     const usePathInput = config.usePathInput ? config.usePathInput : true;
     const pageConfigs = [];
     function checkForPageConfig(file) {
-        if (fs.existsSync(file.endsWith('.mdx') ? _just.string.removeLast(file, '.mdx') + '.justc' : _just.string.removeLast(file, '.md') + '.justc')) {
-            debuglog('JUSTC: '+_just.string.runnerPath(file));
+        const justc_path = `${path.basename(file, path.extname(file))}.justc`;
+        if (fs.existsSync(justc_path)) {
+            debuglog('JUSTC: '+_just.string.runnerPath(justc_path));
         }
     }
     function findMarkdownFiles(dir) {
