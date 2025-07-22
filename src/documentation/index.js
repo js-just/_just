@@ -293,7 +293,7 @@ const date = new Date();
 let logs = `_just ${_just.version} - ${date} (${date.getTime()})${l[0]}_JUST FILES:${l[1]}CSS: ${filename.css}${l[1]}JS: ${filename.js}`;
 let errorlogs = `${l[0]}CAUGHT ERRORS:`;
 const nl = l[2].slice(0,-2)+' '.repeat(7);
-debuglog(`INFO:${nl}  DNA = DirNameArray${nl}DNA>2 = DirNameArray.length > 2${nl}   DN = DirName${nl}   PL = PageList${nl}   FT = FolderTree${nl}   FL = FolderList${nl}  CID = Code ID${nl}   CL = Code Language${nl}   DF = Dir Found${nl}   FF = File Found${nl}JUSTC = A .justc file (Just an Ultimate Site Tool Configuration file) path (if found) or ${esc}[2;41m${esc}[1;30mnull${nl}P2URL = PathToURL${nl}  MDF = Markdown Files${nl} PIDs = Pages (Page IDs)${nl}  PID = Page ID`);
+debuglog(`INFO:${nl}  DNA = DirNameArray${nl}DNA>2 = DirNameArray.length > 2${nl}   DN = DirName${nl}   PL = PageList${nl}   FT = FolderTree${nl}   FL = FolderList${nl}  CID = Code ID${nl}   CL = Code Language${nl}   DF = Dir Found${nl}   FF = File Found${nl}JUSTC = A .justc file (Just an Ultimate Site Tool Configuration file) path (if found) or null${nl}P2URL = PathToURL${nl}  MDF = Markdown Files${nl} PIDs = Pages (Page IDs)${nl}  PID = Page ID`);
 
 const rootDirA = PATH || '.';
 const extensions = ['.md', '.mdx', '.html'];
@@ -784,10 +784,11 @@ checkTLD(domain).then(tldvalid => {
     const pageConfigs = [];
     function checkForPageConfig(file) {
         const justc_path = `${path.basename(file, path.extname(file))}.justc`;
+        console.log(file);console.log(justc_path);
         if (fs.existsSync(justc_path)) {
             debuglog('JUSTC: '+_just.string.runnerPath(justc_path));
         } else {
-            debuglog(`JUSTC: ${esc}[2;41m${esc}[1;30mnull`);
+            debuglog(`JUSTC: null`);
         }
     }
     function findMarkdownFiles(dir) {
