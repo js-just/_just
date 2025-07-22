@@ -783,7 +783,7 @@ checkTLD(domain).then(tldvalid => {
     const usePathInput = config.usePathInput ? config.usePathInput : true;
     const pageConfigs = [];
     function checkForPageConfig(file) {
-        const justc_path = `${path.basename(file, path.extname(file))}.justc`;
+        const justc_path = path.relative(file, `${path.basename(file, path.extname(file))}.justc`);
         console.log(file);console.log(justc_path);
         if (fs.existsSync(justc_path)) {
             debuglog('JUSTC: '+_just.string.runnerPath(justc_path));
