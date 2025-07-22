@@ -182,6 +182,7 @@ const cssid = {
     "searchbar": dataname2[3],
     "glass": dataname2[6],
     "search": dataname2[7],
+    "pageheaders": dataname2[22]
 }
 const cssvar = {
     "bg": dataname[6]+randomChar(1),
@@ -292,7 +293,7 @@ const date = new Date();
 let logs = `_just ${_just.version} - ${date} (${date.getTime()})${l[0]}_JUST FILES:${l[1]}CSS: ${filename.css}${l[1]}JS: ${filename.js}`;
 let errorlogs = `${l[0]}CAUGHT ERRORS:`;
 const nl = l[2].slice(0,-2)+' '.repeat(7);
-debuglog(`INFO:${nl}  DNA = DirNameArray${nl}DNA>2 = DirNameArray.length > 2${nl}   DN = DirName${nl}   PL = PageList${nl}   FT = FolderTree${nl}   FL = FolderList${nl}  CID = Code ID${nl}   CL = Code Language${nl}   DF = Dir Found${nl}   FF = File Found${nl}P2URL = PathToURL${nl}  MDF = Markdown Files${nl} PIDs = Pages (Page IDs)${nl}  PID = Page ID`);
+debuglog(`INFO:${nl}  DNA = DirNameArray${nl}DNA>2 = DirNameArray.length > 2${nl}   DN = DirName${nl}   PL = PageList${nl}   FT = FolderTree${nl}   FL = FolderList${nl}  CID = Code ID${nl}   CL = Code Language${nl}   DF = Dir Found${nl}   FF = File Found${nl}JUSTC = A .justc File Found (Just an Ultimate Site Tool Configuration file)${nl}P2URL = PathToURL${nl}  MDF = Markdown Files${nl} PIDs = Pages (Page IDs)${nl}  PID = Page ID`);
 
 const rootDirA = PATH || '.';
 const extensions = ['.md', '.mdx', '.html'];
@@ -780,6 +781,19 @@ checkTLD(domain).then(tldvalid => {
     }
 
     const usePathInput = config.usePathInput ? config.usePathInput : true;
+    const pageConfigs = [];
+    function checkForPageConfig(file) {
+        if (file.endsWith('.md')) {
+            file = _just.string.removeLast(file, '.md') + '.justc';
+        } else if (file.endsWith('.mdx')) {
+            file = _just.string.removeLast(file, '.mdx') + '.justc';
+        } else {
+            return null;
+        }
+        if (fs.existsSync(file)) {
+            debuglog('JUSTC: '+_just.string.runnerPath(file));
+        }
+    }
     function findMarkdownFiles(dir) {
         let results = [];
         const list = fs.readdirSync(dir);
@@ -792,6 +806,8 @@ checkTLD(domain).then(tldvalid => {
             } else if (file.endsWith('.md') || file.endsWith('.mdx')) {
                 results.push(file);
                 debuglog('   FF: '+_just.string.runnerPath(file));
+                const file_ = file;
+                checkForPageConfig(file_);
             }
         });
         return usePathInput ? results.filter(f => pathtourl[f] || pathtourl[f] == '') : results;
@@ -1059,8 +1075,9 @@ checkTLD(domain).then(tldvalid => {
             return indexA - indexB;
         });
         let pageHeaders = '';
+        let pageHeaderID= 0;
         for (const [idk, headerdata] of Object.entries(contents)) {
-            pageHeaders += `<li${ headerdata[2] ? ` class="${cssclass.secondary}"` : '' }>
+            pageHeaders += `<li${ headerdata[2] ? ` class="${cssclass.secondary}"` : '' } id="${cssid.pageheaders}${pageHeaderID++}">
                                 <a href="#${headerdata[1]}">
                                     ${span(_just.string.toText(headerdata[0]))}
                                 </a>
@@ -1097,7 +1114,7 @@ checkTLD(domain).then(tldvalid => {
             .replace('REPLACE_LOGO', logo)
             .replace('REPLACE_NAME', filterText(name))
             .replace('REPLACE_PAGES', filterText(pages[0]))
-            .replace('REPLACE_CONTENTS', filterText(pageHeaders))
+            .replace('REPLACE_CONTENTS', `<div>${pageHeaders.length > 0 ? `<span>On this page</span><ul id="${cssid.pageheaders}">${filterText(pageHeaders)}</ul><div class="slider"></div>` : ''}</div>`)
             .replace('REPLACE_FOOTER', docsConfig && docsConfig.footer ? span(filterText(footer)) : '')
             .replace('REPLACE_LINKS', htmlnav())
             .replace('REPLACE_BUTTONS', htmlnav(1));
