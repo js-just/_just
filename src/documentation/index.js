@@ -683,6 +683,7 @@ checkTLD(domain).then(tldvalid => {
     }
     const dividerRegex = /(\n\s*[*_-]{3,}\s*\n)+/g;
     function hbuoclpMDtoHTML(text, maxBlockquoteLevel = mbl) {
+        console.log(text);
         text = text.replace(codeRegExp, (match, lang_, code_) => {
             if (lang_ !== 'CODEID') {
                 codes0.push([lang_, code_]);
