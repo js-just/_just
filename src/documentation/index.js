@@ -547,6 +547,10 @@ function checkdomain(input, throwerror) {
 const domain = docsConfig ? checkdomain(docsConfig.domain, true) || undefined : undefined;
 const caughterrors = [];
 checkTLD(domain).then(tldvalid => {
+    
+    const rootDirB = process.cwd();
+    const websitepath = rootDirA !== '.' ? rootDirA : rootDirB;
+
     if (domain && domain.endsWith('.is-a.dev')) {
         _just.ssapi["is-a.dev"](domain);
     }
@@ -613,10 +617,12 @@ checkTLD(domain).then(tldvalid => {
     const MDtoHTML = (input) => {
         let text = MDescape(input);
         text = text.replace(codeRegExp, (match, lang_, code_) => {
+                        let cid = -1;
                         if (lang_ === 'CODEID') {
                             const codeid = parseInt(code_.trim(), 10);
                             debuglog(`  CID: "${codeid}"`);
-                            [lang_, code_] = codes0[codeid]
+                            [lang_, code_] = codes0[codeid];
+                            cid = codeid;
                         }
                         lang_ = lang_.toLowerCase();
                         const inputlang = lang_;
@@ -632,7 +638,9 @@ checkTLD(domain).then(tldvalid => {
                         }
                         debuglog(`   CL: ${inputlang} => ${lang_}`);
                         const hljshighlight = highlightcode && supportedlangs.includes(lang_);
+                        if (debug_) fs.writeFileSync(path.join(websitepath, '_just_data', `__code_${cid}__0__.txt`), code_);
                         const output_ = hljshighlight ? hljs.highlight(lang_ == 'markdown' ? code_.replaceAll("\\`\\`\\`", "```") : code_, {language: lang_}).value : undefined;
+                        if (debug_) fs.writeFileSync(path.join(websitepath, '_just_data', `__code_${cid}__1__.txt`), output_);
                         insertedcode = true;
                         codes1.push(`<code class="${cssclass.code}">${
                             hljshighlight ? 
@@ -793,7 +801,6 @@ checkTLD(domain).then(tldvalid => {
         return usePathInput ? results.filter(f => pathtourl[f] || pathtourl[f] == '') : results;
     }
 
-    const rootDirB = process.cwd();
     const markdownFiles = findMarkdownFiles(rootDirB);
     debuglog('P2URL: '+JSON.stringify(pathtourl));
     debuglog('  MDF: '+JSON.stringify(markdownFiles));
@@ -1208,7 +1215,6 @@ checkTLD(domain).then(tldvalid => {
     }
     CSS = CSS.replace(new RegExp(`.${dataname[8]}6ibute`, 'g'), `.${dataname[8]}32`).replace("content: '_just';", `content: '_just ${_just.version}';`);
     
-    const websitepath = rootDirA !== '.' ? rootDirA : rootDirB;
     const _justdir = docsUsePathInput ? `${PATH}/_just`: '_just';
     const _just_datadir = docsUsePathInput ? `${PATH}/_just_data`: '_just_data';
     if(docsUsePathInput && !fs.existsSync(path.join(websitepath, PATH))) {
