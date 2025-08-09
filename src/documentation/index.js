@@ -639,7 +639,7 @@ checkTLD(domain).then(tldvalid => {
                         }
                         debuglog(`   CL: ${inputlang} => ${lang_}`);
                         const hljshighlight = highlightcode && supportedlangs.includes(lang_);
-                        code_ = hljshighlight ? code_.replace(/&#(x?)([0-9A-Fa-f]+);/g, (match, _code) => String.fromCharCode(parseInt(code, 10))) : code_;
+                        code_ = hljshighlight ? code_.replace(/&#(x?)([0-9A-Fa-f]+);/g, (match, _code) => String.fromCharCode(parseInt(_code, 10))) : code_;
                         const output_ = hljshighlight ? hljs.highlight(lang_ == 'markdown' ? code_.replaceAll("\\`\\`\\`", "```") : code_, {language: lang_}).value : undefined;
                         insertedcode = true;
                         codes1.push(`<code class="${cssclass.code}">${
