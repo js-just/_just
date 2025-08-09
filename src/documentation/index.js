@@ -614,15 +614,15 @@ checkTLD(domain).then(tldvalid => {
     let insertedcode = false;
     const codes0 = [];
     const codes1 = [];
+    let md2htmlrid = 0;
+    let cid = 0;
     const MDtoHTML = (input) => {
         let text = MDescape(input);
         text = text.replace(codeRegExp, (match, lang_, code_) => {
-                        let cid = -1;
                         if (lang_ === 'CODEID') {
                             const codeid = parseInt(code_.trim(), 10);
                             debuglog(`  CID: "${codeid}"`);
                             [lang_, code_] = codes0[codeid];
-                            cid = codeid;
                         }
                         lang_ = lang_.toLowerCase();
                         const inputlang = lang_;
@@ -638,9 +638,9 @@ checkTLD(domain).then(tldvalid => {
                         }
                         debuglog(`   CL: ${inputlang} => ${lang_}`);
                         const hljshighlight = highlightcode && supportedlangs.includes(lang_);
-                        if (debug_) fs.writeFileSync(path.join(websitepath, '_just_data', `__code_${cid}__0__.txt`), code_);
+                        if (debug_) fs.writeFileSync(path.join(websitepath, '_just_data', `__page_${md2htmlrid}__code_${cid}__0__.txt`), code_);
                         const output_ = hljshighlight ? hljs.highlight(lang_ == 'markdown' ? code_.replaceAll("\\`\\`\\`", "```") : code_, {language: lang_}).value : undefined;
-                        if (debug_ && hljshighlight) fs.writeFileSync(path.join(websitepath, '_just_data', `__code_${cid}__1__.txt`), output_);
+                        if (debug_ && hljshighlight) fs.writeFileSync(path.join(websitepath, '_just_data', `__page_${md2htmlrid++}__code_${cid++}__1__.txt`), output_);
                         insertedcode = true;
                         codes1.push(`<code class="${cssclass.code}">${
                             hljshighlight ? 
