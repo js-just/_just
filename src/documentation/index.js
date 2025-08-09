@@ -1050,9 +1050,9 @@ checkTLD(domain).then(tldvalid => {
         const headers = [];
         let toHTML = hbuoclpMDtoHTML(
             addEnd(content, '\n')
-                .replace(/> (.*?)\n\n> (.*?)\n/g, `> $1\n\n> ${_just.element(dataname[7])}$2\n`)
-                .replaceAll('\n>\n> ', '\n> ')
-                .replace(new RegExp(`(?<=^|\n)([>|> ]{2,${mbl}}) `, 'g'), (match, bqs) => `\n${bqs.replaceAll(' ', '').split('').join(' ').trim()} `)
+                //.replace(/> (.*?)\n\n> (.*?)\n/g, `> $1\n\n> ${_just.element(dataname[7])}$2\n`)
+                //.replaceAll('\n>\n> ', '\n> ')
+                //.replace(new RegExp(`(?<=^|\n)([>|> ]{2,${mbl}}) `, 'g'), (match, bqs) => `\n${bqs.replaceAll(' ', '').split('').join(' ').trim()} `)
         ).replace(/<(h1|h2|h3|h4)>(.*?)<\/\1>/g, (match, p1, p2) => {
             return `<${p1} id="${uniqueName(encodeURIComponent(p2))}">${p2}</${p1}>`;
         }).replace(/<(h1|h2|h3|h4) id="([^"]+)">(.*?)<\/\1>/g, (match, p1, p2, p3) => {headers.push(p2);return`<${p1} id="${p2}">${p3}</${p1}>`});
