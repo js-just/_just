@@ -618,7 +618,7 @@ checkTLD(domain).then(tldvalid => {
                         }
                         lang_ = lang_.toLowerCase();
                         const inputlang = lang_;
-                        const filter_ = (inpt) => inpt.replace(/( {1,})/g, (a,b)=>'&nbsp;'.repeat(b.length)).replaceAll('\n\n', '\n');
+                        const filter_ = (inpt) => inpt.replaceAll('\n\n', '\n');
                         const highlightcode = lang_ && lang_ != '';
                         if (highlightcode && !supportedlangs.includes(lang_) && !langaliases[lang_]) {
                             const warningg = `${_just.error.prefix}${esc}[0;33mWarning 0209${esc}[0m: ${esc}[0;33mUnsuppotred language: hljs: ${esc}[0m${lang_}`;
@@ -1187,7 +1187,7 @@ checkTLD(domain).then(tldvalid => {
         }));
         let codeid = 0;
         codes1.forEach(code1 => {
-            htmloutput = htmloutput.replaceAll(_just.element(dataname2[19], codeid), code1.replaceAll('\n', '<br>'));
+            htmloutput = htmloutput.replaceAll(_just.element(dataname2[19], codeid), code1.replaceAll('\n', '<br>').replace(/<br>( {1,})/g, (a,b)=>'<br>'+'&nbsp;'.repeat(b.length)));
             codeid++;
         });
         const updated = _just.customCSS.highlightclasses(CSSHIGHLIGHTtemplate, CSS, htmloutput, dataname[8]);
