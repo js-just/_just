@@ -640,7 +640,7 @@ checkTLD(domain).then(tldvalid => {
                         const hljshighlight = highlightcode && supportedlangs.includes(lang_);
                         if (debug_) fs.writeFileSync(path.join(websitepath, '_just_data', `__code_${cid}__0__.txt`), code_);
                         const output_ = hljshighlight ? hljs.highlight(lang_ == 'markdown' ? code_.replaceAll("\\`\\`\\`", "```") : code_, {language: lang_}).value : undefined;
-                        if (debug_) fs.writeFileSync(path.join(websitepath, '_just_data', `__code_${cid}__1__.txt`), output_);
+                        if (debug_ && hljshighlight) fs.writeFileSync(path.join(websitepath, '_just_data', `__code_${cid}__1__.txt`), output_);
                         insertedcode = true;
                         codes1.push(`<code class="${cssclass.code}">${
                             hljshighlight ? 
@@ -1125,7 +1125,7 @@ checkTLD(domain).then(tldvalid => {
             .replace('REPLACE_LINKS', htmlnav())
             .replace('REPLACE_BUTTONS', htmlnav(1));
 
-        fs.writeFileSync(outFilePath('txt'), toHTML, charset);
+        if (debug_) fs.writeFileSync(outFilePath('txt'), toHTML, charset);
         htmlfiles[outFilePath('html')] = outHTML.replace('REPLACE_PREVNEXT', _just.prevnext.html(prevnext[1], cssclass.next, cssclass.next1, cssclass.next2, filename.js, filename.css, pages[1])).replace(
                 'REPLACE_CONTENT',
                 _just.string.removeLast(
