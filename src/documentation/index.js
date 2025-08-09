@@ -630,11 +630,7 @@ checkTLD(domain).then(tldvalid => {
                         }
                         debuglog(`   CL: ${inputlang} => ${lang_}`);
                         const hljshighlight = highlightcode && supportedlangs.includes(lang_);
-                        console.log('before hljs');
-                        code_.match(/\n {1,}/g).forEach(a => {console.log(a.slice(1).length)});
                         const output_ = hljshighlight ? hljs.highlight(lang_ == 'markdown' ? code_.replaceAll("\\`\\`\\`", "```") : code_, {language: lang_}).value : undefined;
-                        console.log('after hljs');
-                        code_.match(/\n {1,}/g).forEach(a => {console.log(a.slice(1).length)});
                         insertedcode = true;
                         codes1.push(`<code class="${cssclass.code}">${
                             hljshighlight ? 
@@ -786,7 +782,6 @@ checkTLD(domain).then(tldvalid => {
     const pageConfigs = [];
     function checkForPageConfig(file) {
         const justc_path = path.join(path.dirname(file), `${path.basename(file, path.extname(file))}.justc`);
-        console.log(file);console.log(justc_path);
         if (fs.existsSync(justc_path)) {
             debuglog('JUSTC: '+_just.string.runnerPath(justc_path));
         } else {
@@ -1035,6 +1030,7 @@ checkTLD(domain).then(tldvalid => {
     const mdlogs = {};
     markdownFiles.forEach(file => {
         let content = fs.readFileSync(file, charset);
+        fs.writeFileSync(`${file}.txt`, content);
         if (getTitleFromMd(file)) {
             content = content.split('\n').slice(1).join('\n');
         }
