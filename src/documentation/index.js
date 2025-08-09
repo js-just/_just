@@ -1187,15 +1187,15 @@ checkTLD(domain).then(tldvalid => {
         }));
         let codeid = 0;
         codes1.forEach(code1 => {
-            htmloutput = htmloutput.replaceAll(_just.element(dataname2[19], codeid), code1.replaceAll('\n', '<br>').replace(/<br>( {1,})/g, (a,b)=>'<br>'+'&nbsp;'.repeat(b.length)));
+            htmloutput = htmloutput.replaceAll(_just.element(dataname2[19], codeid), code1.replaceAll('\n', '<br>').replace(/<br>( {1,})/g, (a,b)=>`<br data-spaces="${b.length}">${'&nbsp;'.repeat(b.length)}`));
             codeid++;
         });
         const updated = _just.customCSS.highlightclasses(CSSHIGHLIGHTtemplate, CSS, htmloutput, dataname[8]);
         CSS = updated[0];
         htmloutput = updated[1];
         fs.writeFileSync(
-            pathh, 
-            htmloutput, 
+            pathh,
+            htmloutput,
             charset
         );
         const outputlogs = `OUTPUT: ${_just.string.runnerPath(pathh)} (${_just.string.fileSize(fs.statSync(pathh).size)})`;
