@@ -618,9 +618,7 @@ checkTLD(domain).then(tldvalid => {
                         }
                         lang_ = lang_.toLowerCase();
                         const inputlang = lang_;
-                        const filter_ = (inpt) => inpt.replace(/\n( {1,})/g, (match, spaces) => {
-                            return `\n${'&nbsp;'.repeat(spaces.length)}`;
-                        }).replaceAll('\n\n', '\n');
+                        const filter_ = (inpt) => inpt.replace(/( {1,})/g, (a,b)=>'&nbsp;'.repeat(b.length)).replaceAll('\n\n', '\n');
                         const highlightcode = lang_ && lang_ != '';
                         if (highlightcode && !supportedlangs.includes(lang_) && !langaliases[lang_]) {
                             const warningg = `${_just.error.prefix}${esc}[0;33mWarning 0209${esc}[0m: ${esc}[0;33mUnsuppotred language: hljs: ${esc}[0m${lang_}`;
