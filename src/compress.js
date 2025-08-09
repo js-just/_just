@@ -30,7 +30,6 @@ import { join } from 'path';
 let [deployDir, not_] = process.argv[2];
 import { JSON as css } from './modules/ast/css.js';
 
-deployDir = deployDir || __dirname;
 const tryJSONparse = (str) => {
     try {
         str = readFileSync(str);
