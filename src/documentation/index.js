@@ -629,8 +629,12 @@ checkTLD(domain).then(tldvalid => {
                             lang_ = langaliases[lang_]
                         }
                         debuglog(`   CL: ${inputlang} => ${lang_}`);
-                        const hljshighlight = highlightcode && supportedlangs.includes(lang_)
+                        const hljshighlight = highlightcode && supportedlangs.includes(lang_);
+                        console.log('before hljs');
+                        code_.match(/\n {1,}/g).forEach(a => {console.log(a.slice(1).length)});
                         const output_ = hljshighlight ? hljs.highlight(lang_ == 'markdown' ? code_.replaceAll("\\`\\`\\`", "```") : code_, {language: lang_}).value : undefined;
+                        console.log('after hljs');
+                        code_.match(/\n {1,}/g).forEach(a => {console.log(a.slice(1).length)});
                         insertedcode = true;
                         codes1.push(`<code class="${cssclass.code}">${
                             hljshighlight ? 
