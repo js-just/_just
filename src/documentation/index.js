@@ -293,7 +293,7 @@ const date = new Date();
 let logs = `_just ${_just.version} - ${date} (${date.getTime()})${l[0]}_JUST FILES:${l[1]}CSS: ${filename.css}${l[1]}JS: ${filename.js}`;
 let errorlogs = `${l[0]}CAUGHT ERRORS:`;
 const nl = l[2].slice(0,-2)+' '.repeat(7);
-debuglog(`INFO:${nl}  DNA = DirNameArray${nl}DNA>2 = DirNameArray.length > 2${nl}   DN = DirName${nl}   PL = PageList${nl}   FT = FolderTree${nl}   FL = FolderList${nl}  CID = Code ID${nl}   CL = Code Language${nl}   DF = Dir Found${nl}   FF = File Found${nl}JUSTC = A .justc file (Just an Ultimate Site Tool Configuration file) path (if found) or null${nl}P2URL = PathToURL${nl}  MDF = Markdown Files${nl} PIDs = Pages (Page IDs)${nl}  PID = Page ID`);
+debuglog(`INFO:${nl}  DNA = DirNameArray${nl}DNA>2 = DirNameArray.length > 2${nl}   DN = DirName${nl}   PL = PageList${nl}   FT = FolderTree${nl}   FL = FolderList${nl}  CID = Code ID${nl}   CL = Code Language${nl}   DF = Dir Found${nl}   FF = File Found${nl}JUSTC = A .justc file (Just an Ultimate Site Tool Configuration file) path (if found) or null${nl}P2URL = PathToURL${nl}  MDF = Markdown Files${nl} PIDs = Pages (Page IDs)${nl}  PID = Page ID${nl}   C0 = Codes0${nl}   C1 = Codes1`);
 
 const rootDirA = PATH || '.';
 const extensions = ['.md', '.mdx', '.html'];
@@ -697,6 +697,7 @@ checkTLD(domain).then(tldvalid => {
             }
             return `\`\`\`${lang_}\n${code_}\n\`\`\``;
         });
+        debuglog('   C0: '+JSON.stringify(codes0));
         for (let i = 6; i >= 1; i--) {
             const regex = new RegExp(`^#{${i}}\\s+(.*?)\\s*$`, 'gm');
             text = text.replace(regex, (match, header) => `<h${i}>${MDtoHTML(header)}</h${i}>`);
@@ -1051,7 +1052,6 @@ checkTLD(domain).then(tldvalid => {
         ).replace(/<(h1|h2|h3|h4)>(.*?)<\/\1>/g, (match, p1, p2) => {
             return `<${p1} id="${uniqueName(encodeURIComponent(p2))}">${p2}</${p1}>`;
         }).replace(/<(h1|h2|h3|h4) id="([^"]+)">(.*?)<\/\1>/g, (match, p1, p2, p3) => {headers.push(p2);return`<${p1} id="${p2}">${p3}</${p1}>`});
-        fs.writeFileSync(`${file}.txt`, 'dasfsdfasfs\n\n\n'+toHTML);
 
         const H1 = [...toHTML.matchAll(/<(h1|h2) id="([^"]+)">(.*?)<\/\1>/g)];
         const HT = [...toHTML.matchAll(/<(h3|h4) id="([^"]+)">(.*?)<\/\1>/g)];
@@ -1186,6 +1186,7 @@ checkTLD(domain).then(tldvalid => {
             }
         }));
         let codeid = 0;
+        debuglog('   C1: '+JSON.stringify(codes1));
         codes1.forEach(code1 => {
             htmloutput = htmloutput.replaceAll(_just.element(dataname2[19], codeid), code1.replaceAll('\n', '<br>').replace(/<br>( {1,})/g, (a,b)=>`<br data-spaces="${b.length}">${'&nbsp;'.repeat(b.length)}`));
             codeid++;
