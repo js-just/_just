@@ -58,6 +58,7 @@ const esc = '\x1B';
 _just.parseCSS = require('../modules/ast/css.js');
 
 const codeRegExp = /```([\w]*)\s*[\r\n]+([^]*?)```/g;
+const notFencedCodeBlock = '(?<!`{3}[\\s\\S]*)';
 
 const link = (text, link_, ext = false, extid = "ext", target = "_blank", title_) => `<a href="${link_}" target="${target}"${ext ? ` id="${extid}"` : ''}${title_ ? ` title="${title_}"` : ''}>${text}</a>`;
 const span = (text) => `<span>${text}</span>`;
@@ -609,7 +610,7 @@ checkTLD(domain).then(tldvalid => {
         return input
             .replace(/(http:\/\/|https:\/\/|data:)/g, (match, protocol_) => `${charCodes(protocol_)}`)
     }
-    const linkregex = /(?<=\s|^|[.,!?;:*_^~=])\[(.*?)\]\((.*?)\)(?=\s|[.,!?;:*_^~=]|$)/g;
+    const linkregex = /(?<!\`{3}[\s\S]*)(?<=\s|^|[.,!?;:*_^~=])\[(.*?)\]\((.*?)\)(?=\s|[.,!?;:*_^~=]|$)/g;
     let taskid = 0;
     let insertedcode = false;
     const codes0 = [];
@@ -638,6 +639,7 @@ checkTLD(domain).then(tldvalid => {
                         }
                         debuglog(`   CL: ${inputlang} => ${lang_}`);
                         const hljshighlight = highlightcode && supportedlangs.includes(lang_);
+                        code_ = hljshighlight ? code_.replace(/&#(x?)([0-9A-Fa-f]+);/g, (match, _code) => String.fromCharCode(parseInt(code, 10))) : code_;
                         const output_ = hljshighlight ? hljs.highlight(lang_ == 'markdown' ? code_.replaceAll("\\`\\`\\`", "```") : code_, {language: lang_}).value : undefined;
                         insertedcode = true;
                         codes1.push(`<code class="${cssclass.code}">${
@@ -651,12 +653,12 @@ checkTLD(domain).then(tldvalid => {
                         }</code>`);
                         return _just.element(dataname2[19], codes1.length - 1);
                     })
-                .replace(/(?<=\s|^|[.,!?;:*_^~=])`(.*?)`(?=\s|[.,!?;:*_^~=]|$)/g, (match, code) => {return `<code>${MDcode(code)}</code>`})
-                .replace(/(?<=\s|^|[.,!?;:*_^~=])!\[(.*?)\]\((.*?) ("|')(.*?)\3\)(?=\s|[.,!?;:*_^~=]|$)/g, (match, text, link_, q, imgtitle) => {return `<img src="${link_}" alt="${text}" title="${imgtitle}" loading="lazy">`})
-                .replace(/(?<=\s|^|[.,!?;:*_^~=])!\[(.*?)\]\((.*?)\)(?=\s|[.,!?;:*_^~=]|$)/g, (match, text, link_) => {return `<img src="${link_}" alt="${text}" loading="lazy">`})
-                .replace(/(?<=\s|^|[.,!?;:*_^~=])\[(.*?)\]\((.*?) ("|')(.*?)\3\)(?=\s|[.,!?;:*_^~=]|$)/g, (match, text, link_, q, linktitle) => {return link(text, link_, extlink(link_), cssid.ext, "_blank", linktitle)})
+                .replace(/(?<!\`{3}[\s\S]*)(?<=\s|^|[.,!?;:*_^~=])`(.*?)`(?=\s|[.,!?;:*_^~=]|$)/g, (match, code) => {return `<code>${MDcode(code)}</code>`})
+                .replace(/(?<!\`{3}[\s\S]*)(?<=\s|^|[.,!?;:*_^~=])!\[(.*?)\]\((.*?) ("|')(.*?)\3\)(?=\s|[.,!?;:*_^~=]|$)/g, (match, text, link_, q, imgtitle) => {return `<img src="${link_}" alt="${text}" title="${imgtitle}" loading="lazy">`})
+                .replace(/(?<!\`{3}[\s\S]*)(?<=\s|^|[.,!?;:*_^~=])!\[(.*?)\]\((.*?)\)(?=\s|[.,!?;:*_^~=]|$)/g, (match, text, link_) => {return `<img src="${link_}" alt="${text}" loading="lazy">`})
+                .replace(/(?<!\`{3}[\s\S]*)(?<=\s|^|[.,!?;:*_^~=])\[(.*?)\]\((.*?) ("|')(.*?)\3\)(?=\s|[.,!?;:*_^~=]|$)/g, (match, text, link_, q, linktitle) => {return link(text, link_, extlink(link_), cssid.ext, "_blank", linktitle)})
                 .replace(linkregex, (match, text, link_) => {return link(text, link_, extlink(link_), cssid.ext)})
-                .replace(/(?<=\s|^|[.,!?;:*_^~=])(http:\/\/|https:\/\/|data:)(.*?)(?=\s|[,!;:*^~`<>]|[.?=#%&+] |$)/g, (match, protocol_, link_) => {
+                .replace(/(?<!\`{3}[\s\S]*)(?<=\s|^|[.,!?;:*_^~=])(http:\/\/|https:\/\/|data:)(.*?)(?=\s|[,!;:*^~`<>]|[.?=#%&+] |$)/g, (match, protocol_, link_) => {
                         const link__ = `${protocol_.trim()}${link_.trim()}`;
                         if (protocol_.trim() === 'data:') {
                             return link(link__, link__, true, cssid.ext);
@@ -673,32 +675,32 @@ checkTLD(domain).then(tldvalid => {
                             return `<${link__}>`;
                         } else return `${protocol_}${link_}`;
                     })
-                .replace(/(?<=\s|^|[.,!?;:*_^~=])<(http:\/\/|https:\/\/)(.*?)>(?=\s|[.,!?;:*_^~=]|$)/g, (match, protocol_, link_) => {const link__=`${protocol_.trim()}${link_.trim()}`;return link(link__, link__, extlink(link__), cssid.ext)})
-                .replace(/(?<=\s|^|[.,!?;:*_^~=])<(.*?)@(.*?)>(?=\s|[.,!?;:*_^~=]|$)/g, (match, address, domain__) => {
+                .replace(/(?<!\`{3}[\s\S]*)(?<=\s|^|[.,!?;:*_^~=])<(http:\/\/|https:\/\/)(.*?)>(?=\s|[.,!?;:*_^~=]|$)/g, (match, protocol_, link_) => {const link__=`${protocol_.trim()}${link_.trim()}`;return link(link__, link__, extlink(link__), cssid.ext)})
+                .replace(/(?<!\`{3}[\s\S]*)(?<=\s|^|[.,!?;:*_^~=])<(.*?)@(.*?)>(?=\s|[.,!?;:*_^~=]|$)/g, (match, address, domain__) => {
                         if (checkdomain(domain__, false)) {
                             const mail = `${address.trim()}@${domain__.trim()}`;
                             return `<a href="mailto:${mail}">${mail}</a>`;
                         } else return `<${address}@${domain__}>`;
                     })
-                .replace(/(?<=\s|^)([-+*])\s\[( {0,}x {0,}| {0,}X {0,}| {1,})\]\s(.*?)(?=\s|\n|$)/g, (match, prefix, type_, text_) => {
+                .replace(/(?<!\`{3}[\s\S]*)(?<=\s|^)([-+*])\s\[( {0,}x {0,}| {0,}X {0,}| {1,})\]\s(.*?)(?=\s|\n|$)/g, (match, prefix, type_, text_) => {
                     const isChecked = type_.trim().toLowerCase() === 'x';
                     const checkedAttr = isChecked ? ' checked' : '';
                     return `<input type="checkbox" id="${dataname[10]}${taskid++}" ${checkedAttr} title="${MDcode(text_.trim(), true)}"> ${text_.trim()}`;
                 });
         return _just.MDtoHTML.MDtoHTML(text, cssclass).replace(/~(.*?)~/g, '<sub>$1</sub>').replace(/\^(.*?)\^/g, '<sup>$1</sup>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\*(.*?)\*/g, '<em>$1</em>');
     }
-    const dividerRegex = /(\n\s*[*_-]{3,}\s*\n)+/g;
+    const dividerRegex = /(?<!\`{3}[\s\S]*)(\n\s*[*_-]{3,}\s*\n)+/g;
     function hbuoclpMDtoHTML(text, maxBlockquoteLevel = mbl) {
         for (let i = 6; i >= 1; i--) {
-            const regex = new RegExp(`^#{${i}}\\s+(.*?)\\s*$`, 'gm');
+            const regex = new RegExp(`${notFencedCodeBlock}^#{${i}}\\s+(.*?)\\s*$`, 'gm');
             text = text.replace(regex, (match, header) => `<h${i}>${MDtoHTML(header)}</h${i}>`);
         }
-        const smlregex = new RegExp(`^-#\\s+(.*?)\\s*$`, 'gm');
+        const smlregex = new RegExp(`${notFencedCodeBlock}^-#\\s+(.*?)\\s*$`, 'gm');
         text = text.replace(smlregex, (match, smol) => `<span class="${cssclass.small}">${MDtoHTML(smol)}</span>`);
         /*alternate headers currently disabled. they cause some bugs*///text = text.replace(/(?<=\s|^)(.*?)\n={3,}(?=\s|\n|$)/, MDtoHTML(`${_just.element(dataname[5])}<h1>$1</h1>`)).replace(/(?<=\s|^)(.*?)\n-{3,}(?=\s|\n|$)/, MDtoHTML(`${_just.element(dataname[6])}<h2>$1</h2>`));
 
         function processBlockquotes(inputText, level) {
-            const regex = new RegExp(`^(>\\s+){${level}}(.*?)\\s*$`, 'gm');
+            const regex = new RegExp(`${notFencedCodeBlock}^(>\\s+){${level}}(.*?)\\s*$`, 'gm');
             return MDtoHTML(inputText.replace(regex, (match, p1, p2) => {
                 const classAttr = (num) =>
                     p2.startsWith('[!NOTE]') ? (num ? 7 : ` class="${cssclass.note}"`) :
@@ -719,8 +721,8 @@ checkTLD(domain).then(tldvalid => {
             text = processBlockquotes(text, i);
         }
 
-        const ulRegex = /^(?:-\s+|\*\s+|\+\s+)(.*?)(?:\n(?:-\s+|\*\s+|\+\s+)(.*?))*$/gm;
-        const olRegex = /^(?:\d+\.\s+)(.*?)(?:\n(?:\d+\.\s+)(.*?))*$/gm;
+        const ulRegex = /(?<!\`{3}[\s\S]*)^(?:-\s+|\*\s+|\+\s+)(.*?)(?:\n(?:-\s+|\*\s+|\+\s+)(.*?))*$/gm;
+        const olRegex = /(?<!\`{3}[\s\S]*)^(?:\d+\.\s+)(.*?)(?:\n(?:\d+\.\s+)(.*?))*$/gm;
 
         text = text.replace(ulRegex, (match) => {
             const items = match.split('\n').map(item => item.replace(/^- \s*/, '').replace(/^\* \s*/, '').replace(/^\+ \s*/, ''));
@@ -734,7 +736,7 @@ checkTLD(domain).then(tldvalid => {
 
         text = text.replace(dividerRegex, `<div class="${cssclass.line}"></div><br>`);
 
-        const paragraphsRegex = /([^\n]+(?:\n(?![\*_-]{3}).*)*)/g;
+        const paragraphsRegex = /(?<!\`{3}[\s\S]*)([^\n]+(?:\n(?![\*_-]{3}).*)*)/g;
         
         let resultTextArray = [];
         
@@ -1058,7 +1060,7 @@ checkTLD(domain).then(tldvalid => {
             addEnd(content, '\n')
                 .replace(/> (.*?)\n\n> (.*?)\n/g, `> $1\n\n> ${_just.element(dataname[7])}$2\n`)
                 .replaceAll('\n>\n> ', '\n> ')
-                .replace(new RegExp(`(?<!\`{3}[\s\S]*)(?<=^|\n)([>|> ]{2,${mbl}}) `, 'g'), (match, bqs) => `\n${bqs.replaceAll(' ', '').split('').join(' ').trim()} `)
+                .replace(new RegExp(`${notFencedCodeBlock}(?<=^|\n)([>|> ]{2,${mbl}}) `, 'g'), (match, bqs) => `\n${bqs.replaceAll(' ', '').split('').join(' ').trim()} `)
         ).replace(/<(h1|h2|h3|h4)>(.*?)<\/\1>/g, (match, p1, p2) => {
             return `<${p1} id="${uniqueName(encodeURIComponent(p2))}">${p2}</${p1}>`;
         }).replace(/<(h1|h2|h3|h4) id="([^"]+)">(.*?)<\/\1>/g, (match, p1, p2, p3) => {headers.push(p2);return`<${p1} id="${p2}">${p3}</${p1}>`});
