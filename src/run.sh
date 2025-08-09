@@ -45,6 +45,8 @@ msg6=$(_justMessage "$_GREEN Compressing completed$_RESET")
 msg9=$(_justMessage "$_GREEN Generating completed$_RESET")
 echo -e "$msg1"
 
+COMPRESSJS="$GITHUB_ACTION_PATH/src/compress.mjs"
+
 chmod +x "$GITHUB_ACTION_PATH/src/time.py" # use python to get current time in ms cuz yes
 TIME0=$(python3 "$GITHUB_ACTION_PATH/src/time.py")
 installNodejs() {
@@ -172,7 +174,7 @@ if [ "$TYPE" == "postprocessor" ]; then
     bash $GITHUB_ACTION_PATH/src/postprocessor/modify_deployment.sh && \
     bash $GITHUB_ACTION_PATH/src/postprocessor/override_deployment.sh && \
     installNodejs && \
-    node $GITHUB_ACTION_PATH/src/compress.js "deploy" && \
+    node $COMPRESSJS "deploy" && \
     bash $GITHUB_ACTION_PATH/src/postprocessor/build_map.sh && \
     TIME3=$(python3 "$GITHUB_ACTION_PATH/src/time.py") && \
     DONEIN=$(node "$GITHUB_ACTION_PATH/src/time.js" "$TIME0" "$TIME3") && \
@@ -188,7 +190,7 @@ elif [ "$TYPE" == "redirect" ]; then
 elif [ "$TYPE" == "compress" ]; then
     mkdir -p deploy && \
     installNodejs && \
-    node $GITHUB_ACTION_PATH/src/compress.js "$INPUT_PATH" && \
+    node $COMPRESSJS "$INPUT_PATH" && \
     TIME3=$(python3 "$GITHUB_ACTION_PATH/src/time.py") && \
     DONEIN=$(node "$GITHUB_ACTION_PATH/src/time.js" "$TIME0" "$TIME3") && \
     echo -e "$msg6 ($DONEIN)"
@@ -228,7 +230,7 @@ elif [ "$TYPE" == "docs" ]; then
     LANGSTEXT=$(cat "$GITHUB_ACTION_PATH/data/langstext.json") && \
     DNC=$(node "$INDEXJS0" "$HTML" "$CSS" "$JS" "$INPUT_PATH" "$GITHUB_REPOSITORY" "$GITHUB_REPOSITORY_OWNER" "$CUSTOMCSS" "$HLJSLANGS" "$LANGS" "$HIGHLIGHTCSS" "$LANGSTEXT" "$VERSION" "$BUTTONSCSS" "$SEARCHCSS" "$HIGHLIGHTJSON" "$INPUT_FIXPATH" || jserr) && \
     echo "$DNC" > "_just/dnc.json" && \
-    node $GITHUB_ACTION_PATH/src/compress.js "$INPUT_PATH" "_just/dnc.json" && \
+    node $COMPRESSJS "$INPUT_PATH" "_just/dnc.json" && \
     node "$GITHUB_ACTION_PATH/src/documentation/logs.js" "$INPUT_PATH" && \
     TIME3=$(python3 "$GITHUB_ACTION_PATH/src/time.py") && \
     DONEIN=$(node "$GITHUB_ACTION_PATH/src/time.js" "$TIME0" "$TIME3") && \
