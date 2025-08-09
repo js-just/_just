@@ -1033,7 +1033,6 @@ checkTLD(domain).then(tldvalid => {
         if (getTitleFromMd(file)) {
             content = content.split('\n').slice(1).join('\n');
         }
-        fs.writeFileSync(`${file}.txt`, content);
         const fileNameWithoutExt = path.basename(file, path.extname(file));
         const outFilePath = (ext) => path.join(path.dirname(file), `${fileNameWithoutExt}.${ext}`);
         fileID++;
@@ -1052,6 +1051,7 @@ checkTLD(domain).then(tldvalid => {
         ).replace(/<(h1|h2|h3|h4)>(.*?)<\/\1>/g, (match, p1, p2) => {
             return `<${p1} id="${uniqueName(encodeURIComponent(p2))}">${p2}</${p1}>`;
         }).replace(/<(h1|h2|h3|h4) id="([^"]+)">(.*?)<\/\1>/g, (match, p1, p2, p3) => {headers.push(p2);return`<${p1} id="${p2}">${p3}</${p1}>`});
+        fs.writeFileSync(`${file}.txt`, '3t45tvg4veg\n\n\n'+content);
 
         const H1 = [...toHTML.matchAll(/<(h1|h2) id="([^"]+)">(.*?)<\/\1>/g)];
         const HT = [...toHTML.matchAll(/<(h3|h4) id="([^"]+)">(.*?)<\/\1>/g)];
