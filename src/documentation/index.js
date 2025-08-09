@@ -683,24 +683,6 @@ checkTLD(domain).then(tldvalid => {
     }
     const dividerRegex = /(\n\s*[*_-]{3,}\s*\n)+/g;
     function hbuoclpMDtoHTML(text, maxBlockquoteLevel = mbl) {
-        console.log(text);
-        text = text.replace(codeRegExp, (match, lang_, code_) => {
-            if (lang_ !== 'CODEID') {
-                codes0.push([lang_, code_]);
-                return `\`\`\`CODEID\n${codes0.length - 1}\n\`\`\``;
-            } else {
-                return `\`\`\`${lang_}\n${code_}\n\`\`\``;
-            }
-        }).replace(codeRegExp, (match, lang_, code_) => {
-            if (lang_ == 'CODEID') {
-                const codeid = parseInt(code_.trim(), 10);
-                if (isNaN(codeid) || !codes0[codeid]) {
-                    _just.error.errormessage('0128', `"${codeid}" is not a code id.`).then((errmsg)=>{throw new Error(errmsg)});
-                }
-            }
-            return `\`\`\`${lang_}\n${code_}\n\`\`\``;
-        });
-        debuglog('   C0: '+JSON.stringify(codes0));
         for (let i = 6; i >= 1; i--) {
             const regex = new RegExp(`^#{${i}}\\s+(.*?)\\s*$`, 'gm');
             text = text.replace(regex, (match, header) => `<h${i}>${MDtoHTML(header)}</h${i}>`);
@@ -1048,11 +1030,30 @@ checkTLD(domain).then(tldvalid => {
         }
 
         const headers = [];
-        let toHTML = hbuoclpMDtoHTML(
+
+        let toHTML = content.replace(codeRegExp, (match, lang_, code_) => {
+            if (lang_ !== 'CODEID') {
+                codes0.push([lang_, code_]);
+                return `\`\`\`CODEID\n${codes0.length - 1}\n\`\`\``;
+            } else {
+                return `\`\`\`${lang_}\n${code_}\n\`\`\``;
+            }
+        }).replace(codeRegExp, (match, lang_, code_) => {
+            if (lang_ == 'CODEID') {
+                const codeid = parseInt(code_.trim(), 10);
+                if (isNaN(codeid) || !codes0[codeid]) {
+                    _just.error.errormessage('0128', `"${codeid}" is not a code id.`).then((errmsg)=>{throw new Error(errmsg)});
+                }
+            }
+            return `\`\`\`${lang_}\n${code_}\n\`\`\``;
+        });
+        debuglog('   C0: '+JSON.stringify(codes0));
+
+        toHTML = hbuoclpMDtoHTML(
             addEnd(content, '\n')
-                //.replace(/> (.*?)\n\n> (.*?)\n/g, `> $1\n\n> ${_just.element(dataname[7])}$2\n`)
-                //.replaceAll('\n>\n> ', '\n> ')
-                //.replace(new RegExp(`(?<=^|\n)([>|> ]{2,${mbl}}) `, 'g'), (match, bqs) => `\n${bqs.replaceAll(' ', '').split('').join(' ').trim()} `)
+                .replace(/> (.*?)\n\n> (.*?)\n/g, `> $1\n\n> ${_just.element(dataname[7])}$2\n`)
+                .replaceAll('\n>\n> ', '\n> ')
+                .replace(new RegExp(`(?<=^|\n)([>|> ]{2,${mbl}}) `, 'g'), (match, bqs) => `\n${bqs.replaceAll(' ', '').split('').join(' ').trim()} `)
         ).replace(/<(h1|h2|h3|h4)>(.*?)<\/\1>/g, (match, p1, p2) => {
             return `<${p1} id="${uniqueName(encodeURIComponent(p2))}">${p2}</${p1}>`;
         }).replace(/<(h1|h2|h3|h4) id="([^"]+)">(.*?)<\/\1>/g, (match, p1, p2, p3) => {headers.push(p2);return`<${p1} id="${p2}">${p3}</${p1}>`});
