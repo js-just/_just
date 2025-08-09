@@ -57,6 +57,8 @@ _just.prevnext = require('./prevnext.js');
 const esc = '\x1B';
 _just.parseCSS = require('../modules/ast/css.js');
 
+const codeRegExp = /```([\w]*)\s*[\r\n]+([^]*?)```/g;
+
 const link = (text, link_, ext = false, extid = "ext", target = "_blank", title_) => `<a href="${link_}" target="${target}"${ext ? ` id="${extid}"` : ''}${title_ ? ` title="${title_}"` : ''}>${text}</a>`;
 const span = (text) => `<span>${text}</span>`;
 const template = {
@@ -610,7 +612,7 @@ checkTLD(domain).then(tldvalid => {
     const codes1 = [];
     const MDtoHTML = (input) => {
         let text = MDescape(input);
-        text = text.replace(/```([\w]*)\s*[\r\n]+([\s\S]*?)```/g, (match, lang_, code_) => {
+        text = text.replace(codeRegExp, (match, lang_, code_) => {
                         if (lang_ === 'CODEID') {
                             const codeid = parseInt(code_.trim(), 10);
                             debuglog(`  CID: "${codeid}"`);
@@ -681,14 +683,14 @@ checkTLD(domain).then(tldvalid => {
     }
     const dividerRegex = /(\n\s*[*_-]{3,}\s*\n)+/g;
     function hbuoclpMDtoHTML(text, maxBlockquoteLevel = mbl) {
-        text = text.replace(/```([\w]*)\s*[\r\n]+([\s\S]*?)```/g, (match, lang_, code_) => {
+        text = text.replace(codeRegExp, (match, lang_, code_) => {
             if (lang_ !== 'CODEID') {
                 codes0.push([lang_, code_]);
                 return `\`\`\`CODEID\n${codes0.length - 1}\n\`\`\``;
             } else {
                 return `\`\`\`${lang_}\n${code_}\n\`\`\``;
             }
-        }).replace(/```([\w]*)\s*[\r\n]+([\s\S]*?)```/g, (match, lang_, code_) => {
+        }).replace(codeRegExp, (match, lang_, code_) => {
             if (lang_ == 'CODEID') {
                 const codeid = parseInt(code_.trim(), 10);
                 if (isNaN(codeid) || !codes0[codeid]) {
