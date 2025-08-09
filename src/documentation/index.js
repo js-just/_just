@@ -614,8 +614,7 @@ checkTLD(domain).then(tldvalid => {
     let insertedcode = false;
     const codes0 = [];
     const codes1 = [];
-    let md2htmlrid = 0;
-    let cid = 0;
+    const codes00= [];
     const MDtoHTML = (input) => {
         let text = MDescape(input);
         text = text.replace(codeRegExp, (match, lang_, code_) => {
@@ -623,6 +622,7 @@ checkTLD(domain).then(tldvalid => {
                             const codeid = parseInt(code_.trim(), 10);
                             debuglog(`  CID: "${codeid}"`);
                             [lang_, code_] = codes0[codeid];
+                            code_ = codes00[codeid];
                         }
                         lang_ = lang_.toLowerCase();
                         const inputlang = lang_;
@@ -638,9 +638,7 @@ checkTLD(domain).then(tldvalid => {
                         }
                         debuglog(`   CL: ${inputlang} => ${lang_}`);
                         const hljshighlight = highlightcode && supportedlangs.includes(lang_);
-                        if (debug_) fs.writeFileSync(path.join(websitepath, '_just_data', `__page_${md2htmlrid}__code_${cid}__0__.txt`), code_);
                         const output_ = hljshighlight ? hljs.highlight(lang_ == 'markdown' ? code_.replaceAll("\\`\\`\\`", "```") : code_, {language: lang_}).value : undefined;
-                        if (debug_ && hljshighlight) fs.writeFileSync(path.join(websitepath, '_just_data', `__page_${md2htmlrid++}__code_${cid++}__1__.txt`), output_);
                         insertedcode = true;
                         codes1.push(`<code class="${cssclass.code}">${
                             hljshighlight ? 
@@ -1040,6 +1038,7 @@ checkTLD(domain).then(tldvalid => {
         let toHTML = content.replace(codeRegExp, (match, lang_, code_) => {
             if (lang_ !== 'CODEID') {
                 codes0.push([lang_, code_]);
+                codes00.push(code_);
                 return `\`\`\`CODEID\n${codes0.length - 1}\n\`\`\``;
             } else {
                 return `\`\`\`${lang_}\n${code_}\n\`\`\``;
