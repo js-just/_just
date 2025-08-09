@@ -51,6 +51,52 @@ module.exports = {
 ```
 > [!NOTE] `\\n` and tabs/4 spaces will be removed. Use `<br>` instead of `\\n`.
 
+Remember that your repository should have a `.github/workflows/WORKFLOW_NAME.yml` file.
+-# Template:
+```yml
+name: Website
+
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+      - name: Generate with _just
+        uses: js-just/latest@main
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+```
+
 ### Redirect paths
 You may add `paths[]` in `redirect_config{}` to create custom redirect paths.
 ```js
