@@ -1030,10 +1030,10 @@ checkTLD(domain).then(tldvalid => {
     const mdlogs = {};
     markdownFiles.forEach(file => {
         let content = fs.readFileSync(file, charset);
-        fs.writeFileSync(`${file}.txt`, content);
         if (getTitleFromMd(file)) {
             content = content.split('\n').slice(1).join('\n');
         }
+        fs.writeFileSync(`${file}.txt`, content);
         const fileNameWithoutExt = path.basename(file, path.extname(file));
         const outFilePath = (ext) => path.join(path.dirname(file), `${fileNameWithoutExt}.${ext}`);
         fileID++;
