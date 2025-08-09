@@ -56,6 +56,7 @@ _just.array = require('../modules/array.js');
 _just.prevnext = require('./prevnext.js');
 const esc = '\x1B';
 _just.parseCSS = require('../modules/ast/css.js');
+_just.dnc = [];
 
 const link = (text, link_, ext = false, extid = "ext", target = "_blank", title_) => `<a href="${link_}" target="${target}"${ext ? ` id="${extid}"` : ''}${title_ ? ` title="${title_}"` : ''}>${text}</a>`;
 const span = (text) => `<span>${text}</span>`;
@@ -1186,10 +1187,14 @@ checkTLD(domain).then(tldvalid => {
             }
         }));
         let codeid = 0;
+        const htmloutputbeforereplacingcodes = htmloutput;
         codes1.forEach(code1 => {
             htmloutput = htmloutput.replaceAll(_just.element(dataname2[19], codeid), code1.replaceAll('\n', '<br>').replace(/<br>( {1,})/g, (a,b)=>'<br>'+'&nbsp;'.repeat(b.length)));
             codeid++;
         });
+        if (htmloutputbeforereplacingcodes !== htmloutput) {
+            _just.dnc.push(pathh);
+        }
         const updated = _just.customCSS.highlightclasses(CSSHIGHLIGHTtemplate, CSS, htmloutput, dataname[8]);
         CSS = updated[0];
         htmloutput = updated[1];
@@ -1268,3 +1273,5 @@ checkTLD(domain).then(tldvalid => {
     }), template.charset);
     fs.writeFileSync(path.join(websitepath, '.', '.nojekyll'), '', template.charset);
 }, tldinvalid => {});
+
+console.log(JSON.stringify(_just.dnc));

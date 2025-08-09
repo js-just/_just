@@ -27,8 +27,17 @@ SOFTWARE.
 import { readFileSync, writeFileSync, readdirSync, statSync } from 'fs';
 import { join } from 'path';
 
-const deployDir = process.argv[2] || __dirname;
-import { JSON } from './modules/ast/css.js';
+let [deployDir, not_] = process.argv[2] || __dirname;
+import { JSON as css } from './modules/ast/css.js';
+
+const tryJSONparse = (str) => {
+    try {
+        return JSON.parse(str);
+    } catch (_e) {
+        return false;
+    }
+}
+not_ = not_ ? tryJSONparse(String(not_)) || false : false;
 
 async function serializeRules(rules) {
     let result = '';
@@ -62,7 +71,7 @@ async function serializeRules(rules) {
 async function compressFile(filePath) {
     let content = readFileSync(filePath, 'utf8');
     if (filePath.endsWith('.css')) {
-        content = JSON(content);
+        content = css(content);
         const compressed = await serializeRules(content.sort((a, b) => a.id - b.id));
         writeFileSync(filePath, compressed, 'utf8');
         return;
@@ -109,13 +118,17 @@ async function findAndCompressFiles(dir) {
         const stat = statSync(filePath);
         if (stat.isDirectory()) {
             await findAndCompressFiles(filePath);
-        } else if (
+        } else if ((
             file.endsWith('.html') || 
             file.endsWith('.svg') || 
             file.endsWith('.css') || 
             file.endsWith('.js') || 
             file.endsWith('.json') || 
-            file.endsWith('.webmanifest')
+            file.endsWith('.webmanifest')) &&
+            (
+                (Array.isArray(not_) && !not_.includes(file)) ||
+                !Array.isArray(not_)
+            )
         ) {
             await compressFile(filePath);
         }
