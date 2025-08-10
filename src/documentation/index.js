@@ -1233,7 +1233,7 @@ checkTLD(domain).then(tldvalid => {
         const outputlogs = `OUTPUT: ${_just.string.runnerPath(pathh)} (${_just.string.fileSize(fs.statSync(pathh).size)})`;
         logs += mdlogs[pathh] ? `${mdlogs[pathh]}${l[2]}${outputlogs}` : `${l[1]}ERROR:${l[2]}MESSAGE: NO LOGS FOUND FOR FILE ${_just.string.runnerPath(pathh)}${l[2]}FILE ${outputlogs}`;
     }
-    CSS = CSS.replace(new RegExp(`.${dataname[8]}6ibute`, 'g'), `.${dataname[8]}32`).replace("content: '_just';", `content: '_just ${_just.version}';`);
+    CSS = CSS.replace(new RegExp(`.${dataname[8]}6ibute`, 'g'), `.${dataname[8]}32`).replace("content: '_just' !important;", `content: '_just ${_just.version}' !important;`);
     
     const _justdir = docsUsePathInput ? `${PATH}/_just`: '_just';
     const _just_datadir = docsUsePathInput ? `${PATH}/_just_data`: '_just_data';
