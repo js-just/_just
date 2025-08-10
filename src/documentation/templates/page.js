@@ -31,11 +31,11 @@ const throwError = (code, doc = dcmnt) => {
     doc.body.classList.add('error');
     doc.documentElement.style.setProperty('--edata', `'${messages[code] || 'Just an Ultimate Site Tool: A client-side error has occurred.'} (${code})'`);
     throw new Error(`REPLACE_ERRORPREFIX ${code}. For more information, visit https://just.is-a.dev/errors/${code}`);
-}
+};
 
 if (!dcmnt || !dcmnt.documentElement || !dcmnt.body || !wndw_) {
     throwError('0303', document);
-}
+};
 
 const checkElement = (elements) => {
     elements.forEach(elem => {
@@ -43,7 +43,7 @@ const checkElement = (elements) => {
             throwError('0302');
         }
     });
-}
+};
 
 const convertbase =(str,fromBase,toBase,DIGITS="0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ+/")=>{
     const cbadd = (x, y, base) => {
