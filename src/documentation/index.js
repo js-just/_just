@@ -57,6 +57,7 @@ _just.prevnext = require('./prevnext.js');
 const esc = '\x1B';
 _just.parseCSS = require('../modules/ast/css.js');
 _just.errorprefix = 'Just an Ultimate Site Tool: Generated Content Error:';
+_just.compress = require('../modules/compress.js');
 
 const codeRegExp = /```([\w]*)\s*[\r\n]+([^]*?)```/g;
 const notFencedCodeBlock = (text, position) => {
@@ -1050,7 +1051,7 @@ checkTLD(domain).then(tldvalid => {
         mdlogs[outFilePath('html')] = `${l[1]}FILE #${fileID} "${_just.string.runnerPath(file)}":${l[2]}INPUT: ${_just.string.fileSize(fs.statSync(file).size)}`;
 
         if (pathtourl[file] || pathtourl[file] == '') {
-            mdjson[`${JSUsePathInput && docsUsePathInput ? `${PATH}/`.repeat(2) : JSUsePathInput ? PATH+'/' : ''}${pathtourl[file]}`] = toText(content);
+            mdjson[`${JSUsePathInput && docsUsePathInput ? `${PATH}/`.repeat(2) : JSUsePathInput ? PATH+'/' : ''}${pathtourl[file]}`] = _just.compress.low(toText(content));
         }
 
         const headers = [];
