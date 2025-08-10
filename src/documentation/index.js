@@ -56,6 +56,7 @@ _just.array = require('../modules/array.js');
 _just.prevnext = require('./prevnext.js');
 const esc = '\x1B';
 _just.parseCSS = require('../modules/ast/css.js');
+_just.errorprefix = 'Just an Ultimate Site Tool: Generated Content Error:';
 
 const codeRegExp = /```([\w]*)\s*[\r\n]+([^]*?)```/g;
 const notFencedCodeBlock = (text, position) => {
@@ -130,7 +131,7 @@ for (let i = 0; i <= 11; i++) {
 }
 HTML = HTML.replace('--hc:', `--${dataname[0].slice(0,-1)}:`);
 CSS = CSS.replaceAll('var(--hc)', `var(--${dataname[0].slice(0,-1)})`);
-JS = _just.js.fuck(JS).replace('\'--hc\'', `'--${dataname[0].slice(0,-1)}'`);
+JS = _just.js.fuck(JS).replace('\'--hc\'', `'--${dataname[0].slice(0,-1)}'`).replace('`REPLACE_ERRORPREFIX ${', `\`${_just.errorprefix} \${`);
 
 const predataname2 = [];
 const dataname2limit = 3843;
@@ -1254,7 +1255,7 @@ checkTLD(domain).then(tldvalid => {
     fs.writeFileSync(path.join(websitepath, _justdir, `${filename.css}.css`), CSS, template.charset);
 
     const JSdata = _just.js.get(JS);
-    const JSerr = `document.body.classList.add('${cssclass.error}');document.documentElement.style.setProperty('--${cssvar.edata}', \`'\${e_} (0300)'\`)`;
+    const JSerr = `document.body.classList.add('${cssclass.error}');document.documentElement.style.setProperty('--${cssvar.edata}', \`'\${e_} (0300)'\`);throw new Error('${_just.errorprefix} 0300. For more information, visit https://just.is-a.dev/errors/0300')`;
     fs.writeFileSync(
         path.join(websitepath, _justdir, `${filename.js}.js`),
         "try{"+_just.js.set(

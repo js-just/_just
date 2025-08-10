@@ -24,6 +24,27 @@ if (SETTINGS.publicOutput) {
     console.log(`_just output: ${wndw_.location.protocol}//${wndw_.location.hostname}/_just_data/output.txt`)
 };
 
+const throwError = (code, doc = dcmnt) => {
+    const messages = {
+        '0301': 'Wayback Machine detected.'
+    };
+    doc.body.classList.add('error');
+    doc.documentElement.style.setProperty('--edata', `'${messages[code] || 'Just an Ultimate Site Tool: A client-side error has occurred.'} (${code})'`);
+    throw new Error(`REPLACE_ERRORPREFIX ${code}. For more information, visit https://just.is-a.dev/errors/${code}`);
+}
+
+if (!dcmnt || !dcmnt.documentElement || !dcmnt.body || !wndw_) {
+    throwError('0303', document);
+}
+
+const checkElement = (elements) => {
+    elements.forEach(elem => {
+        if (elem === null) {
+            throwError('0302');
+        }
+    });
+}
+
 const convertbase =(str,fromBase,toBase,DIGITS="0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ+/")=>{
     const cbadd = (x, y, base) => {
         let z = [];
@@ -86,6 +107,7 @@ const convertbase =(str,fromBase,toBase,DIGITS="0123456789abcdefghijklmnopqrstuv
 };
 wndw_.addEventListener('scroll', () => {
     let headerIndex_=false;
+    checkElement([dcmnt.querySelector(".navbar")]);
     if (dcmnt.body.scrollTop > 150 || dcmnt.documentElement.scrollTop > 150) {
         dcmnt.querySelector(".navbar").classList.add("scroll");
     } else {
@@ -233,6 +255,7 @@ if (theme && theme == 'l') {
     getnsettheme()
 };
 
+checkElement([dcmnt.querySelector('.main')]);
 const updateMinHeight = () => {
     try {
         dcmnt.querySelector('.main').style.minHeight = `${wndw_.innerHeight-62*2-1}px`
@@ -375,8 +398,7 @@ dcmnt.addEventListener('DOMContentLoaded', () => {
     const wm = dcmnt.getElementById('wm-ipp-base');
     if(wm){wm.parentElement.removeChild(wm);}
     if((wndw_.location.hostname==='web.archive.org'||wm)&&'REPLACE_NOWEBARCHIVE'){
-        dcmnt.body.classList.add('error');
-        dcmnt.documentElement.style.setProperty('--edata', `'Wayback Machine detected. (0301)'`)
+        throwError('0301');
     }
 
     const sb = dcmnt.getElementById("searchbar");
@@ -384,6 +406,7 @@ dcmnt.addEventListener('DOMContentLoaded', () => {
     sb.disabled = false;
     const sd = dcmnt.querySelector('.search');
     const sk = dcmnt.getElementById("search");
+    checkElement([sb, sd, sk]);
     sk.style.cursor = 'pointer';
     const updateSD = (toggle = false) => {
         let run = true;
