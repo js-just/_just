@@ -28,6 +28,7 @@ const throwError = (code, doc = dcmnt) => {
     const messages = {
         '0301': 'Wayback Machine detected.'
     };
+    doc = doc || dcmnt || document;
     doc.body.classList.add('error');
     doc.documentElement.style.setProperty('--edata', `'${messages[code] || 'Just an Ultimate Site Tool: A client-side error has occurred.'} (${code})'`);
     throw new Error(`REPLACE_ERRORPREFIX ${code}. For more information, visit https://just.is-a.dev/errors/${code}`);
