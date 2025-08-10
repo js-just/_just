@@ -1256,7 +1256,7 @@ checkTLD(domain).then(tldvalid => {
     fs.writeFileSync(path.join(websitepath, _justdir, `${filename.css}.css`), CSS, template.charset);
 
     const JSdata = _just.js.get(JS);
-    const JSerr = `if(!/\\(03\\d{2}\\)$/.test(e_.message)){document.body.classList.add('${cssclass.error}');document.documentElement.style.setProperty('--${cssvar.edata}',\`'\${e_.message} (0300)'\`);throw new Error('${_just.errorprefix} 0300. For more information, visit https://just.is-a.dev/errors/0300')}`;
+    const JSerr = `if(!/\\(03\\d{2}\\)$/.test(e_.message)){document.body.classList.add('${cssclass.error}');document.documentElement.style.setProperty('--${cssvar.edata}',\`'\${e_.message} (0300)'\`);console.warn(e_);throw new Error('${_just.errorprefix} 0300. For more information, visit https://just.is-a.dev/errors/0300')}`;
     fs.writeFileSync(
         path.join(websitepath, _justdir, `${filename.js}.js`),
         "try{"+_just.js.set(
