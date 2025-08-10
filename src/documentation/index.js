@@ -1139,7 +1139,7 @@ checkTLD(domain).then(tldvalid => {
             .replace('REPLACE_LOGO', logo)
             .replace('REPLACE_NAME', filterText(name))
             .replace('REPLACE_PAGES', filterText(pages[0]))
-            .replace('REPLACE_CONTENTS', `<div>${pageHeaders.length > 0 ? `<span>On this page</span><ul id="${cssid.pageheaders}">${filterText(pageHeaders)}</ul><div class="${cssclass.search}"></div>` : ''}</div>`)
+            .replace('REPLACE_CONTENTS', `<div>${pageHeaders.length > 0 ? `<span>On this page</span><ul id="${cssid.pageheaders}">${filterText(pageHeaders)}</ul><div class="${cssclass.slider}"></div>` : ''}</div>`)
             .replace('REPLACE_FOOTER', docsConfig && docsConfig.footer ? span(filterText(footer)) : '')
             .replace('REPLACE_LINKS', htmlnav())
             .replace('REPLACE_BUTTONS', htmlnav(1));
