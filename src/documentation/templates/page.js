@@ -34,10 +34,6 @@ const throwError = (code, doc = dcmnt) => {
     throw new Error(`REPLACE_ERRORPREFIX ${code}. For more information, visit https://just.is-a.dev/errors/${code}`);
 };
 
-if (!dcmnt || !dcmnt.documentElement || !dcmnt.body || !wndw_) {
-    throwError('0303', document);
-};
-
 const checkElement = (elements) => {
     elements.forEach(elem => {
         if (elem === null) {
@@ -350,6 +346,10 @@ const cooldown = (timems, cdvarid) => {
 
 let searchurl = "/_just/search";
 dcmnt.addEventListener('DOMContentLoaded', () => {
+    if (!dcmnt || !dcmnt.documentElement || !dcmnt.body || !wndw_) {
+        throwError('0303', document);
+    };
+
     let ltb = dcmnt.getElementById('l');
     let dtb = dcmnt.getElementById('d');
     let atb = dcmnt.getElementById('a');
