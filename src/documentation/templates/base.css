@@ -460,7 +460,7 @@ nav.right {
 }
 nav.right div {
     width: calc(100% - 15px - var(--mn));
-    padding-top: 50px;
+    margin-top: 50px;
     translate: calc(var(--fr) + 15px);
 }
 nav.right div span {
@@ -492,7 +492,7 @@ nav.right div ul li:after, nav.right div ul li:before {
     background-color: var(--bg);
     width: 4px;
     position: fixed;
-    height: 32px;
+    height: 33px;
     z-index: -1;
     transition: 300ms;
 }
@@ -1235,6 +1235,6 @@ nav.left:not(:has(strong)) > ul {
 
 #contents {
     overflow-y: scroll;
-    height: calc(var(--contents) - 50px);
+    height: var(--contents);
     overflow-x: clip;
 }
