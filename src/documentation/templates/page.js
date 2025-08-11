@@ -251,7 +251,6 @@ if (theme && theme == 'l') {
     getnsettheme()
 };
 
-checkElement([dcmnt.querySelector('.main')]);
 const updateMinHeight = () => {
     try {
         dcmnt.querySelector('.main').style.minHeight = `${wndw_.innerHeight-62*2-1}px`
@@ -345,6 +344,8 @@ const cooldown = (timems, cdvarid) => {
 
 let searchurl = "/_just/search";
 dcmnt.addEventListener('DOMContentLoaded', () => {
+    checkElement([dcmnt.querySelector('.main')]);
+    
     let ltb = dcmnt.getElementById('l');
     let dtb = dcmnt.getElementById('d');
     let atb = dcmnt.getElementById('a');
