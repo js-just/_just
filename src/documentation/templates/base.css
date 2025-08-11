@@ -1232,3 +1232,9 @@ nav.left:not(:has(strong)) > ul {
     flex-direction: column;
     gap: 10px;
 }
+
+#contents {
+    overflow-y: scroll;
+    height: var(--contents);
+    overflow-x: clip;
+}

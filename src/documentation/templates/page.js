@@ -101,6 +101,12 @@ const convertbase =(str,fromBase,toBase,DIGITS="0123456789abcdefghijklmnopqrstuv
 
     return out;
 };
+let stb_ = false;
+const updateNavRight = () => {
+    const navright = dcmnt.getElementById('contents');
+    const offset = stb_ ? -136 : -74;
+    navright.style.setProperty('--contents', wndw_.innerHeight + offset);
+};
 wndw_.addEventListener('scroll', () => {
     let headerIndex_=false;
     checkElement([dcmnt.querySelector(".navbar")]);
@@ -136,12 +142,15 @@ wndw_.addEventListener('scroll', () => {
     const { scrollHeight, scrollTop, clientHeight } = dcmnt.documentElement;
     if (scrollTop + clientHeight >= scrollHeight) {
         dcmnt.body.classList.add('stb');
+        stb_ = true;
         headerIndex = headers;
     } else {
         dcmnt.body.classList.remove('stb');
+        stb_ = false;
     };
 
     dcmnt.body.style.setProperty('--hc', headerIndex_ ? 0 : headerIndex >= 0 ? headerIndex : 0);
+    updateNavRight();
 });
 
 if (scrll) {
@@ -275,6 +284,7 @@ wndw_.addEventListener('resize', ()=>{
         handleSwipeLeft();
     }
     updateWidth();
+    updateNavRight();
 });
 
 let fun_function = false;

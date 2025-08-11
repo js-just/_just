@@ -192,7 +192,8 @@ const cssid = {
     "searchbar": dataname2[3],
     "glass": dataname2[6],
     "search": dataname2[7],
-    "pageheaders": dataname2[22]
+    "pageheaders": dataname2[22],
+    "contents": dataname2[23],
 }
 const cssvar = {
     "bg": dataname[6]+randomChar(1),
@@ -209,7 +210,8 @@ const cssvar = {
     "edata": dataname2[5],
     "sdfix": dataname2[10],
     "liheight": dataname2[18],
-    "ft": dataname2[20]
+    "ft": dataname2[20],
+    "contents": dataname2[25],
 }
 addchars();
 cssvar["md"] = dataname[7]+randomChar(1);
@@ -284,7 +286,9 @@ JS = JS.replaceAll('trimmedStr', jstrimmedstrvar)
     .replace("setProperty('--edata'", `setProperty('--${cssvar.edata}'`)
     .replace('getElementById("search")', `getElementById("${cssid.search}")`)
     .replace("setProperty('--sdfix'", `setProperty('--${cssvar.sdfix}'`)
-    .replaceAll("('searchactive')", `('${cssclass.searchactive}')`);
+    .replaceAll("('searchactive')", `('${cssclass.searchactive}')`)
+    .replaceAll("'contents'", `'${cssid.contents}'`)
+    .replaceAll("'--contents'", `'--${cssvar.contents}'`);
 const lighthighlight = _just.parseCSS.JSON(JSON.parse(HIGHLIGHTJSON)["_just_light"]);
 lighthighlight.forEach(rule => {
     const props = [];
@@ -1123,6 +1127,9 @@ checkTLD(domain).then(tldvalid => {
         if (prevnext[1].next) {
             pagejs += btnjs(filename.css, prevnext[1].next)
         }
+        if (pageHeaders.length > 0) {
+            pagejs += `const ${dataname2[24]}=document.getElementById('${cssid.contents}');const ${dataname2[26]}=()=>{return(${dataname2[24]}.offsetTop+${dataname2[24]}.offsetHeight)>window.innerHeight};window.addEventListener('scroll',()=>{if(${dataname2[26]}()){const ${dataname2[24]}.scroll({top:document.body.style.getPropertyValue('--${dataname[0].slice(0,-1)}')*20/2,behavior:'smooth'})}});`;
+        }
 
         const pages = generateListItems(addFolderToPageList(pageList).sort((a, b) => a.title.localeCompare(b.title)));
         const start = pathtourl[file] == "" ? '' : '/';
@@ -1142,7 +1149,7 @@ checkTLD(domain).then(tldvalid => {
             .replace('REPLACE_LOGO', logo)
             .replace('REPLACE_NAME', filterText(name))
             .replace('REPLACE_PAGES', filterText(pages[0]))
-            .replace('REPLACE_CONTENTS', `<div>${pageHeaders.length > 0 ? `<span>On this page</span><ul id="${cssid.pageheaders}">${filterText(pageHeaders)}</ul><div class="${cssclass.slider}"></div>` : ''}</div>`)
+            .replace('REPLACE_CONTENTS', `<div id="${cssid.contents}">${pageHeaders.length > 0 ? `<span>On this page</span><ul id="${cssid.pageheaders}">${filterText(pageHeaders)}</ul><div class="${cssclass.slider}"></div>` : ''}</div>`)
             .replace('REPLACE_FOOTER', docsConfig && docsConfig.footer ? span(filterText(footer)) : '')
             .replace('REPLACE_LINKS', htmlnav())
             .replace('REPLACE_BUTTONS', htmlnav(1));
