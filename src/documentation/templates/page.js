@@ -104,7 +104,7 @@ const convertbase =(str,fromBase,toBase,DIGITS="0123456789abcdefghijklmnopqrstuv
 let stb_ = false;
 const updateNavRight = () => {
     const navright = dcmnt.getElementById('contents');
-    const offset = stb_ ? -136 : -74;
+    const offset = stb_ ? -136 : -84;
     navright.style.setProperty('--contents', `${wndw_.innerHeight + offset}px`);
 };
 wndw_.addEventListener('scroll', () => {
