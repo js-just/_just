@@ -35,6 +35,7 @@ const throwError = (code) => {
 
 const checkElement = (elements) => {
     elements.forEach(elem => {
+        console.log(elem);
         if (elem === null) {
             throwError('0302');
         }
@@ -345,7 +346,7 @@ const cooldown = (timems, cdvarid) => {
 let searchurl = "/_just/search";
 dcmnt.addEventListener('DOMContentLoaded', () => {
     checkElement([dcmnt.querySelector('.main')]);
-    
+
     let ltb = dcmnt.getElementById('l');
     let dtb = dcmnt.getElementById('d');
     let atb = dcmnt.getElementById('a');
