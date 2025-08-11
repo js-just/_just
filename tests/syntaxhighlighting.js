@@ -28,7 +28,7 @@ const fs = require('fs');
 const path = require('path');
 
 function findFiles(dir) {
-    let output = `${Math.floor(Math.random() * 2) + 1 === 1 ? '#' : '##'} test\n`;
+    let output = `${(Math.floor(Math.random() * 2) + 1) === 1 ? '#' : '##'} test\n`;
     const list = fs.readdirSync(dir);
     list.forEach(file => {
         file = path.join(dir, file);

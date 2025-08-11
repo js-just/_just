@@ -1235,6 +1235,6 @@ nav.left:not(:has(strong)) > ul {
 
 #contents {
     overflow-y: scroll;
-    height: var(--contents);
+    height: calc(var(--contents) - 50px);
     overflow-x: clip;
 }
