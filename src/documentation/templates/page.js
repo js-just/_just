@@ -107,6 +107,7 @@ const updateNavRight = () => {
     const offset = stb_ ? -136 : -84;
     navright.style.setProperty('--contents', `${wndw_.innerHeight + offset}px`);
 };
+let lhc = 0;
 wndw_.addEventListener('scroll', () => {
     let headerIndex_=false;
     checkElement([dcmnt.querySelector(".navbar")]);
@@ -149,7 +150,11 @@ wndw_.addEventListener('scroll', () => {
         stb_ = false;
     };
 
-    dcmnt.body.style.setProperty('--hc', headerIndex_ ? 0 : headerIndex >= 0 ? headerIndex : 0);
+    const hc_ = headerIndex_ ? 0 : headerIndex >= 0 ? headerIndex : 0;
+    const nr = 'REPLACE_NR';
+    const _hc = 'REPLACE_CHC';
+    dcmnt.body.style.setProperty('--hc', hc_);
+    try{dcmnt.getElementById(`${nr}${lhc}`).classList.remove(_hc);dcmnt.getElementById(`${nr}${hc_}`).classList.add(_hc);lhc = hc_;}catch(__e){};
     updateNavRight();
 });
 

@@ -605,7 +605,7 @@ main nav ul span strong {
 main nav ul a span {
     opacity: 0.75; 
 }
-main nav ul a span:hover {
+main nav ul a span:hover, .chc span {
     opacity: 1;
 }
 main nav ul ul {

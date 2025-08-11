@@ -180,7 +180,8 @@ const cssclass = {
     "linkspace": dataname2[15],
     "linkmark": dataname2[16],
     "linkdot": dataname2[17],
-    "secondary": dataname2[21]
+    "secondary": dataname2[21],
+    "chc": dataname2[27],
 }
 const cssid = {
     "l": dataname[5]+randomChar(1),
@@ -287,7 +288,9 @@ JS = JS.replaceAll('trimmedStr', jstrimmedstrvar)
     .replace("setProperty('--sdfix'", `setProperty('--${cssvar.sdfix}'`)
     .replaceAll("('searchactive')", `('${cssclass.searchactive}')`)
     .replaceAll("'contents'", `'${cssid.contents}'`)
-    .replaceAll("'--contents'", `'--${cssvar.contents}'`);
+    .replaceAll("'--contents'", `'--${cssvar.contents}'`)
+    .replace("'REPLACE_NR'", `'${cssid.pageheaders}'`)
+    .replace("'REPLACE_CHC'", `'${cssclass.chc}'`);
 const lighthighlight = _just.parseCSS.JSON(JSON.parse(HIGHLIGHTJSON)["_just_light"]);
 lighthighlight.forEach(rule => {
     const props = [];
