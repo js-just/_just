@@ -28,7 +28,7 @@ import { readFileSync, writeFileSync, readdirSync, statSync } from 'fs';
 import { join } from 'path';
 
 const deployDir = process.argv[2] || __dirname;
-import { JSON } from './modules/ast/css.js';
+import { JSON as css } from './modules/ast/css.js';
 
 async function serializeRules(rules) {
     let result = '';
@@ -61,10 +61,22 @@ async function serializeRules(rules) {
 
 async function compressFile(filePath) {
     let content = readFileSync(filePath, 'utf8');
+    let done = false;
     if (filePath.endsWith('.css')) {
-        content = JSON(content);
+        content = css(content);
         const compressed = await serializeRules(content.sort((a, b) => a.id - b.id));
         writeFileSync(filePath, compressed, 'utf8');
+        done = true;
+    } else if (filePath.endsWith('.json')) {
+        try {
+            content = JSON.parse(content);
+            const compressed = JSON.stringify(content);
+            writeFileSync(filePath, compressed, 'utf8');
+            done = true;
+        } catch (_e) {}
+    }
+
+    if (done) {
         return;
     }
 

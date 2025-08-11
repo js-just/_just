@@ -143,7 +143,9 @@ This mode generates client-side redirects that only support browsers!
 ## `module.exports` JSON Schema
 ```json
 {
+    "$id": "https://just.is-a.dev/schema/r.json",
     "$schema": "http://json-schema.org/draft-04/schema#",
+    "description": "_just just.config.js module.exports Redirector mode",
     "type": "object",
     "properties": {
         "type": {
