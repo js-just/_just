@@ -24,13 +24,12 @@ if (SETTINGS.publicOutput) {
     console.log(`_just output: ${wndw_.location.protocol}//${wndw_.location.hostname}/_just_data/output.txt`)
 };
 
-const throwError = (code, doc = dcmnt) => {
+const throwError = (code) => {
     const messages = {
         '0301': 'Wayback Machine detected.'
     };
-    doc = doc || dcmnt || document;
-    doc.body.classList.add('error');
-    doc.documentElement.style.setProperty('--edata', `'${messages[code] || 'Just an Ultimate Site Tool: A client-side error has occurred.'} (${code})'`);
+    dcmnt.body.classList.add('error');
+    dcmnt.documentElement.style.setProperty('--edata', `'${messages[code] || 'Just an Ultimate Site Tool: A client-side error has occurred.'} (${code})'`);
     throw new Error(`REPLACE_ERRORPREFIX ${code}. For more information, visit https://just.is-a.dev/errors/${code}`);
 };
 
@@ -346,10 +345,6 @@ const cooldown = (timems, cdvarid) => {
 
 let searchurl = "/_just/search";
 dcmnt.addEventListener('DOMContentLoaded', () => {
-    if (!dcmnt || !dcmnt.documentElement || !dcmnt.body || !wndw_) {
-        throwError('0303', document);
-    };
-
     let ltb = dcmnt.getElementById('l');
     let dtb = dcmnt.getElementById('d');
     let atb = dcmnt.getElementById('a');
