@@ -524,5 +524,5 @@ dcmnt.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    updateSD(false);updateMinHeight();updateWidth();fetch(searchurl);
+    updateSD(false);updateMinHeight();updateWidth();fetch(searchurl);updateNavRight();
 });
