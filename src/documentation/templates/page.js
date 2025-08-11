@@ -105,7 +105,7 @@ let stb_ = false;
 const updateNavRight = () => {
     const navright = dcmnt.getElementById('contents');
     const offset = stb_ ? -136 : -74;
-    navright.style.setProperty('--contents', wndw_.innerHeight + offset);
+    navright.style.setProperty('--contents', `${wndw_.innerHeight + offset}px`);
 };
 wndw_.addEventListener('scroll', () => {
     let headerIndex_=false;

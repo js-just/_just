@@ -57,7 +57,6 @@ _just.prevnext = require('./prevnext.js');
 const esc = '\x1B';
 _just.parseCSS = require('../modules/ast/css.js');
 _just.errorprefix = 'Just an Ultimate Site Tool: Generated Content Error:';
-_just.compress = require('../modules/compress.js');
 
 const codeRegExp = /```([\w]*)\s*[\r\n]+([^]*?)```/g;
 const notFencedCodeBlock = (text, position) => {
@@ -1056,7 +1055,7 @@ checkTLD(domain).then(tldvalid => {
         mdlogs[outFilePath('html')] = `${l[1]}FILE #${fileID} "${_just.string.runnerPath(file)}":${l[2]}INPUT: ${_just.string.fileSize(fs.statSync(file).size)}`;
 
         if (pathtourl[file] || pathtourl[file] == '') {
-            mdjson[`${JSUsePathInput && docsUsePathInput ? `${PATH}/`.repeat(2) : JSUsePathInput ? PATH+'/' : ''}${pathtourl[file]}`] = _just.compress.low(toText(content));
+            mdjson[`${JSUsePathInput && docsUsePathInput ? `${PATH}/`.repeat(2) : JSUsePathInput ? PATH+'/' : ''}${pathtourl[file]}`] = toText(content);
         }
 
         const headers = [];
@@ -1128,7 +1127,7 @@ checkTLD(domain).then(tldvalid => {
             pagejs += btnjs(filename.css, prevnext[1].next)
         }
         if (pageHeaders.length > 0) {
-            pagejs += `const ${dataname2[24]}=document.getElementById('${cssid.contents}');const ${dataname2[26]}=()=>{return(${dataname2[24]}.offsetTop+${dataname2[24]}.offsetHeight)>window.innerHeight};window.addEventListener('scroll',()=>{if(${dataname2[26]}()){const ${dataname2[24]}.scroll({top:document.body.style.getPropertyValue('--${dataname[0].slice(0,-1)}')*20/2,behavior:'smooth'})}});`;
+            pagejs += `const ${dataname2[24]}=document.getElementById('${cssid.contents}');const ${dataname2[26]}=()=>{return(${dataname2[24]}.offsetTop+${dataname2[24]}.offsetHeight)>window.innerHeight};window.addEventListener('scroll',()=>{if(${dataname2[26]}()){${dataname2[24]}.scroll({top:document.body.style.getPropertyValue('--${dataname[0].slice(0,-1)}')*20/2,behavior:'smooth'})}});`;
         }
 
         const pages = generateListItems(addFolderToPageList(pageList).sort((a, b) => a.title.localeCompare(b.title)));
