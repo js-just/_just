@@ -35,7 +35,6 @@ const throwError = (code) => {
 
 const checkElement = (elements) => {
     elements.forEach(elem => {
-        console.log(elem);
         if (elem === null) {
             throwError('0302');
         }
