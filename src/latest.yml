@@ -34,7 +34,7 @@ inputs:
     description: 'Fix file path (generate)'
     required: false
   postprocessor-version:
-    description: 'Postprocessor version ("24" || "26") (postprocessor)'
+    description: 'Postprocessor version ("24" || "26" || "32") (postprocessor)'
     required: false
 runs:
   using: 'composite'
