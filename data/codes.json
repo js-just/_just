@@ -122,6 +122,12 @@
             "message": "Error occurred during Node.js installation. Retrying to install Node.js... (Attempt #3)",
             "crashed": false,
             "link": ""
+        },
+        {
+            "code": "0210",
+            "message": "Error occurred during TypeScript compiler installation. Retrying to install TypeScript compiler... (Attempt #2)",
+            "crashed": false,
+            "link": ""
         }
     ],
     "postprocessor/checks.sh": [

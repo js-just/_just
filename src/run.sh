@@ -26,6 +26,7 @@ CONFIG_FILE="just.config.js"
 CONFIG_DATA="just.config.json"
 source $GITHUB_ACTION_PATH/lib/errmsg.sh
 source $GITHUB_ACTION_PATH/lib/color.sh
+source $GITHUB_ACTION_PATH/lib/runts.sh
 if [ "$INPUT_PATH" == ""]; then
   INPUT_PATH="."
 elif [ -z "$INPUT_PATH" ]; then
@@ -43,6 +44,8 @@ msg4=$(_justMessage "$_BLUE Redirecting...$_RESET")
 msg5=$(_justMessage "$_GREEN Generating completed$_RESET")
 msg6=$(_justMessage "$_GREEN Compressing completed$_RESET")
 msg9=$(_justMessage "$_GREEN Generating completed$_RESET")
+msg10=$(_justMessage "$_BLUE Installing TypeScript compiler$_RESET...")
+msg11=$(_justMessage "$_BLUE Installed TypeScript compiler$_RESET")
 echo -e "$msg1"
 
 chmod +x "$GITHUB_ACTION_PATH/src/time.py" # use python to get current time in ms cuz yes
@@ -83,6 +86,28 @@ installNodejs() {
     NODEVERSION=$(node --version)
     NODESECONDS=$(node "$GITHUB_ACTION_PATH/src/time.js" "$TIME1" "$TIME2") # use js to get nodejs installing duration cuz yes
     echo -e "$msg3 $NODEVERSION ($NODESECONDS)"
+}
+installTypeScriptCompiler() {
+    echo -e "$msg10"
+    local TIME1=$(python3 "$GITHUB_ACTION_PATH/src/time.py")
+    if ! command -v tsc > /dev/null; then # attempt 0: tsc installed before running _just
+        # attempt 1: install without logs
+        sudo apt remove -y typescript > /dev/null 2>&1 || true
+        sudo apt update -qq > /dev/null 2>&1 || true
+        sudo apt install -y typescript > /dev/null 2>&1
+        if ! command -v tsc > /dev/null; then
+            # attempt 2: install with logs
+            local ERROR_MESSAGE=$(ErrorMessage "run.sh" "0210")
+            echo -e "$ERROR_MESSAGE"
+            sudo apt remove -y typescript || true
+            sudo apt update -qq || true
+            sudo apt install -y typescript
+        fi
+    fi
+    local TIME2=$(python3 "$GITHUB_ACTION_PATH/src/time.py")
+    TSCVERSION=$(tsc --version 2>/dev/null)
+    TSCSECONDS=$(node "$GITHUB_ACTION_PATH/src/time.js" "$TIME1" "$TIME2")
+    echo -e "$msg11 $TSCVERSION ($TSCSECONDS)"
 }
 
 if [ -f "$CONFIG_DATA" ]; then
@@ -203,6 +228,8 @@ elif [ "$TYPE" == "docs" ]; then
     mkdir -p _just && \
     mkdir -p deploy && \
     installNodejs && \
+    installTypeScriptCompiler && \
+    runTS $GITHUB_ACTION_PATH/src/test && \
     bash $GITHUB_ACTION_PATH/src/documentation/checks.sh && \
     INDEXJS0="$GITHUB_ACTION_PATH/src/documentation/index.js"
     INDEXJS1=$(cat "$INDEXJS0") && \
