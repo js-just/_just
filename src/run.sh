@@ -160,6 +160,7 @@ if [ "$TYPE" != "postprocessor" ]; then
 fi
 
 if [ "$TYPE" == "postprocessor" ]; then
+    rm just.config.json && \
     echo "postprocessor=1" >> "$GITHUB_OUTPUT" && \
     echo -e "$msg4"
 elif [ "$TYPE" == "redirect" ]; then
