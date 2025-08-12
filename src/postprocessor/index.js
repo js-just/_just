@@ -28,6 +28,7 @@ const fs = require('fs');
 const path = require('path');
 const config = JSON.parse(fs.readFileSync('just.config.json', 'utf8'));
 const errmsg = require('../modules/errmsg.js');
+const cheerio = require('cheerio');
 
 const watermarkify = config.watermark ? config.watermark === true ? true : false : false;
 
@@ -51,41 +52,9 @@ function getFiles(dir) {
 }
 const files = getFiles('.');
 
-function fixHtmlString(str) {
-  const closingTag = "</body></html>";
-  const commentStart1 = "<!-- This website uses _just postprocessor /-->";
-  const commentStart2 = "<!-- Learn more here:(WEBSITE COMING SOON) /-->";
-
-  str = String(str);
-  const occurrences = str.match(new RegExp(closingTag, 'g')) || [];
-
-  if (occurrences.length > 1) {
-    for (let i = 0; i < 2; i++) {
-      const lastIndex = str.lastIndexOf(closingTag);
-      if (lastIndex !== -1) {
-        str = str.slice(0, lastIndex) + str.slice(lastIndex + closingTag.length);
-      }
-    }
-    str += closingTag;
-  }
-
-  function replaceLastOccurrence(text, searchStr, replaceStr) {
-    const lastIndex = text.lastIndexOf(searchStr);
-    if (lastIndex === -1) return text;
-    return (
-      text.slice(0, lastIndex) +
-      replaceStr +
-      text.slice(lastIndex + searchStr.length)
-    );
-  }
-
-  str = replaceLastOccurrence(str, commentStart1, watermarkify ? "<!--   This website uses Just an Ultimate Site Tool   /-->" : '');
-  str = replaceLastOccurrence(str, commentStart2, watermarkify ? "<!--   Learn more here:      https://just.is-a.dev/   /-->" : '');
-
-  return str;
-}
-
 files.forEach(file => {
     let content = fs.readFileSync(file);
-    fs.writeFileSync(file, fixHtmlString(content), 'utf8');
+    content = String(content);
+    const $ = cheerio.load(content);
+    fs.writeFileSync(file, $.root().text(), 'utf8');
 });

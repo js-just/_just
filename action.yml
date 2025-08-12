@@ -50,5 +50,5 @@ runs:
     - name: Postprocessor mode fix
       id: postprocessor-fix
       if: ${{ steps.just.outputs.postprocessor == 1 }}
-      run: node $GITHUB_ACTION_PATH/src/postprocessor/index.js
+      run: npm install cheerio && node $GITHUB_ACTION_PATH/src/postprocessor/index.js
       shell: bash
