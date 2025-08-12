@@ -33,6 +33,9 @@ inputs:
   fix-path:
     description: 'Fix file path (generate)'
     required: false
+  postprocessor-version:
+    description: 'Postprocessor version ("24" || "26") (postprocessor)'
+    required: false
 runs:
   using: 'composite'
   steps:
@@ -41,3 +44,4 @@ runs:
       with:
         path: ${{ inputs.path }}
         fix-path: ${{ inputs.fix-path }}
+        postprocessor-version: ${{ inputs.postprocessor-version }}

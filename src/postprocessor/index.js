@@ -28,11 +28,16 @@ const fs = require('fs');
 const path = require('path');
 const config = JSON.parse(fs.readFileSync('just.config.json', 'utf8'));
 const errmsg = require('../modules/errmsg.js');
+const [v] = process.argv.slice(2);
+console.log(v);
 
 const watermarkify = config.watermark ? config.watermark === true ? true : false : false;
 
 if (config.watermark && typeof(config.watermark) !== 'boolean') {
     errmsg.errormessage('', `Invalid property type: watermark should be boolean.`).then((e)=>{throw new Error(e)});
+}
+if (v != '24' && v != '26' && v != '32') {
+    errmsg.errormessage('', `Invalid input value: postprocessor-version should be one of: "24", "26", "32".`).then((e)=>{throw new Error(e)});
 }
 
 function getFiles(dir) {
@@ -59,11 +64,18 @@ function fixHtmlString(str) {
 
     function notag(tag) {
         const index = [str.lastIndexOf(tag)];
+        if (index[0] === -1) return;
         index.push(index[0] + tag.length);
         str = `${str.slice(0,index[0])}${str.slice(index[1])}`;
     }
-    notag('</body>');notag('</body>');
-    notag('</html>');notag('</html>');
+    function notags() {
+        notag('</body>');
+        notag('</html>');
+    }
+    notags();
+    if (v != '24') {
+        notags();
+    }
 
     function replaceLastOccurrence(text, searchStr, replaceStr) {
         const lastIndex = text.lastIndexOf(searchStr);
@@ -78,7 +90,30 @@ function fixHtmlString(str) {
     str = replaceLastOccurrence(str, commentStart1, watermarkify ? "<!--   This website uses Just an Ultimate Site Tool   /-->" : '');
     str = replaceLastOccurrence(str, commentStart2, watermarkify ? "<!--   Learn more here:      https://just.is-a.dev/   /-->" : '');
 
-    return `${str}</html></body>`;
+    function extractPaths(htmlString) {
+        const scriptRegex = /<script\s+[^>]*src=["'](?:\/_just|_just)\/([^"']+)["'][^>]*><\/script>/gi;
+        const linkRegex = /<link\s+[^>]*href=["'](?:\/_just|_just)\/([^"']+)["'][^>]*\s+rel=["']stylesheet["'][^>]*>/gi;
+
+        const matches = [];
+
+        let match;
+
+        while ((match = scriptRegex.exec(htmlString)) !== null) {
+            matches.push([0,match[1]]);
+        }
+
+        while ((match = linkRegex.exec(htmlString)) !== null) {
+            matches.push([1,match[1]]);
+        }
+
+        return matches;
+    }
+    let preload = '';
+    extractPaths(str).forEach(urlpath => {
+        preload += `<link rel="preload" href="/_just/${urlpath[1]}" as="${urlpath[0] === 0 ? 'script' : 'style'}">`;
+    });
+
+    return `${str.replace('<head>', `<head>${preload}`)}</html></body>`;
     }
 
 files.forEach(file => {
