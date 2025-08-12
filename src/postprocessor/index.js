@@ -32,12 +32,16 @@ const [v] = process.argv.slice(2);
 console.log(v);
 
 const watermarkify = config.watermark ? config.watermark === true ? true : false : false;
+const throwerror = (a,b) => {
+    console.log('::error::'+a+': '+b);
+    errmsg.errormessage(a, b).then((e)=>{throw new Error('::error::'+e)});
+}
 
 if (config.watermark && typeof(config.watermark) !== 'boolean') {
-    errmsg.errormessage('', `Invalid property type: watermark should be boolean.`).then((e)=>{throw new Error(e)});
+    throwerror('', `Invalid property type: watermark should be boolean.`);
 }
 if (v != '24' && v != '26' && v != '32') {
-    errmsg.errormessage('', `Invalid input value: postprocessor-version should be one of: "24", "26", "32".`).then((e)=>{throw new Error(e)});
+    throwerror('', `Invalid input value: postprocessor-version should be one of: "24", "26", "32".`);
 }
 
 function getFiles(dir) {
