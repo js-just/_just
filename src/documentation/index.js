@@ -1047,7 +1047,8 @@ checkTLD(domain).then(tldvalid => {
     }
     const htmlfiles = {};
     const mdlogs = {};
-    markdownFiles.forEach(file => {
+    let mdfilesdone = 0;
+    markdownFiles.forEach(async file => {
         let content = fs.readFileSync(file, charset);
         if (getTitleFromMd(file)) {
             content = content.split('\n').slice(1).join('\n');
@@ -1198,7 +1199,10 @@ checkTLD(domain).then(tldvalid => {
                 //.replaceAll(`${_just.element(dataname[6])}<h2 id=`, `<h2 class="${dataname[6]}" id=`)
                 .replace(new RegExp(`(?<=<code class="${cssclass.code}"><code>(${getlangs()})</code>)(.*?)(?=</code>)`, 'g'), (match, lng, cde) => cde.replace(/<br><br>/g, '<br>')),
             )
+        mdfilesdone++;
     });
+
+    while (mdfilesdone < markdownFiles.length) {};
 
     const CSSdata = _just.customCSS.customcss(CSS, customCSS == 'false' ? undefined : customCSS, CSSHIGHLIGHT, insertedcode, CSSBUTTONS, CSSSEARCH);
     CSS = CSSdata[0];
