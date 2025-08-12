@@ -50,22 +50,22 @@ runs:
 
     - name: Postprocessor mode (0.0.24)
       id: postprocessor-24
-      if: ${{ steps.just.outputs.postprocessor == 1 && inputs.postprocessor-version == "24" }}
+      if: ${{ steps.just.outputs.postprocessor == '1' && inputs.postprocessor-version == '24' }}
       uses: js-just/_just@v0.0.24
 
     - name: Postprocessor mode (0.0.26) # default
       id: postprocessor-26
-      if: ${{ steps.just.outputs.postprocessor == 1 && ( inputs.postprocessor-version == "26" || ( inputs.postprocessor-version != "24" && inputs.postprocessor-version != "32" ) ) }}
+      if: ${{ steps.just.outputs.postprocessor == '1' && ( inputs.postprocessor-version == '26' || ( inputs.postprocessor-version != '24' && inputs.postprocessor-version != '32' ) ) }}
       uses: js-just/_just@v0.0.26
 
     - name: Postprocessor mode (0.0.32)
       id: postprocessor-32
-      if: ${{ steps.just.outputs.postprocessor == 1 && inputs.postprocessor-version == "32" }}
+      if: ${{ steps.just.outputs.postprocessor == '1' && inputs.postprocessor-version == '32' }}
       uses: js-just/_just@v0.0.32
 
     - name: Postprocessor mode fix
       id: postprocessor-fix
-      if: ${{ steps.just.outputs.postprocessor == 1 }}
+      if: ${{ steps.just.outputs.postprocessor == '1' }}
       run: node $GITHUB_ACTION_PATH/src/postprocessor/index.js "$PPV"
       shell: bash
       env:
