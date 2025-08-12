@@ -29,6 +29,6 @@ rm -f "just.config.js" && \
 echo "$INPUT_CONFIG" > just.config.js && \
 echo "id=id/$DEMO_BUILT_ID" >> $GITHUB_OUTPUT && \
 mkdir -p demo-id && \
-source src/modules/tojson.sh && \
+source lib/tojson.sh && \
 CONTENT=$(toJSON "$DEMO_NEW_ID" "Last demo built ID") && \
 echo "$CONTENT" > demo-id/index.json

@@ -27,7 +27,7 @@ SOFTWARE.
 const fs = require('fs');
 const path = require('path');
 const config = JSON.parse(fs.readFileSync('just.config.json', 'utf8'));
-const errmsg = require('../modules/errmsg.js');
+const errmsg = require('../../lib/errmsg.js');
 const [v] = process.argv.slice(2);
 console.log(v);
 

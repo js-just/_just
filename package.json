@@ -1,6 +1,6 @@
 {
   "name": "just",
-  "version": "0.0.28",
+  "version": "0.0.33",
   "description": "Just an Ultimate Site Tool (W.I.P.)",
   "main": "index.sh",
   "scripts": {

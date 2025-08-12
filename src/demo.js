@@ -26,7 +26,7 @@ SOFTWARE.
 
 const fs = require('fs');
 const path = require('path');
-const num_ = require('./modules/number.js');
+const num_ = require('../lib/number.js');
 const [files, id] = process.argv.slice(2);
 const filess = JSON.parse(files);
 const types = [

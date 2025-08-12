@@ -31,6 +31,6 @@ YMLCONTENT=$(echo "$YMLTEMPLATE" | sed "s/@latest/@$LATEST/") && \
 YMLFIX=$(echo "$YMLCONTENT" | sed "s/@l/@latest/") && \
 echo "$YMLFIX" > "latest/action.yml" && \
 
-source src/modules/tojson.sh && \
+source lib/tojson.sh && \
 CONTENT=$(toJSON "$LATEST" "Latest version") && \
 echo "$CONTENT" > latest/index.json

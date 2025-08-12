@@ -22,6 +22,6 @@
 
 #!/bin/bash
 mkdir -p _lastcommit && \
-source src/modules/tojson.sh && \
+source lib/tojson.sh && \
 CONTENT=$(toJSON "$GITHUB_SHA" "Last commit SHA") && \
 echo "$CONTENT" > _lastcommit/index.json

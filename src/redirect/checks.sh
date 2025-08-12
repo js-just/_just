@@ -21,8 +21,8 @@
 # SOFTWARE.
 
 #!/bin/bash
-source $GITHUB_ACTION_PATH/src/modules/errmsg.sh
-source $GITHUB_ACTION_PATH/src/modules/color.sh
+source $GITHUB_ACTION_PATH/lib/errmsg.sh
+source $GITHUB_ACTION_PATH/lib/color.sh
 
 config=$(cat just.config.json)
 

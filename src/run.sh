@@ -24,8 +24,8 @@
 ERRORS_FILE="$GITHUB_ACTION_PATH/data/codes.json"
 CONFIG_FILE="just.config.js"
 CONFIG_DATA="just.config.json"
-source $GITHUB_ACTION_PATH/src/modules/errmsg.sh
-source $GITHUB_ACTION_PATH/src/modules/color.sh
+source $GITHUB_ACTION_PATH/lib/errmsg.sh
+source $GITHUB_ACTION_PATH/lib/color.sh
 if [ "$INPUT_PATH" == ""]; then
   INPUT_PATH="."
 elif [ -z "$INPUT_PATH" ]; then

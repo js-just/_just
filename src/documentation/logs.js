@@ -26,7 +26,7 @@ SOFTWARE.
 
 const _just = {};
 const [PATH] = process.argv.slice(2);
-_just.string = require('../modules/string.js');
+_just.string = require('../../lib/string.js');
 
 const charset = "utf-8";
 const fs = require('fs');
