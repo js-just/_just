@@ -43,7 +43,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Get
-        run: bash src/last-commit.sh
+        run: bash "src/last-commit.sh"
         shell: bash
       - name: Set
         uses: cpina/github-action-push-to-another-repository@main
