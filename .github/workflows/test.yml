@@ -1,4 +1,4 @@
-name: Test website
+name: Test website & Raw API
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: ${{ github.ref }}-test-website
+  group: ${{ github.ref }}-test-website-and-raw-api
   cancel-in-progress: true
 
 jobs:
@@ -39,7 +39,13 @@ jobs:
           destination-repository-name: test
           user-email: "support@juststudio.is-a.dev"
           target-branch: main
-      - name: Update last commit value
+  raw-api:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get
+        run: bash src/last-commit.sh
+        shell: bash
+      - name: Set
         uses: cpina/github-action-push-to-another-repository@main
         env:
           API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
