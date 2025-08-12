@@ -56,6 +56,7 @@ function fixHtmlString(str) {
   const commentStart1 = "<!-- This website uses _just postprocessor /-->";
   const commentStart2 = "<!-- Learn more here:(WEBSITE COMING SOON) /-->";
 
+  str = String(str);
   const occurrences = str.match(new RegExp(closingTag, 'g')) || [];
 
   if (occurrences.length > 1) {
@@ -88,6 +89,6 @@ function fixHtmlString(str) {
 }
 
 files.forEach(file => {
-    let content = fixHtmlString(fs.readFileSync(file));
-    fs.writeFileSync(file, content, 'utf8');
+    let content = fs.readFileSync(file);
+    fs.writeFileSync(file, fixHtmlString(content), 'utf8');
 });
