@@ -40,7 +40,7 @@ const throwerror = (a,b) => {
 if (config.watermark && typeof(config.watermark) !== 'boolean') {
     throwerror('', `Invalid property type: watermark should be boolean.`);
 }
-if (v != '24' && v != '26' && v != '32') {
+if (v != '24' && v != '26' && v != '32' && v != '') {
     throwerror('', `Invalid input value: postprocessor-version should be one of: "24", "26", "32".`);
 }
 
@@ -124,3 +124,5 @@ files.forEach(file => {
     let content = fs.readFileSync(file);
     fs.writeFileSync(file, fixHtmlString(content), 'utf8');
 });
+
+console.log('\x1B[2;45m\x1B[1;30m_just\x1B[0m:\x1B[0;36m INFO:\x1B[0m\x1B[0;32m Postprocessing completed\x1B[0m')
