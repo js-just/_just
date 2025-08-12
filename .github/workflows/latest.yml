@@ -21,7 +21,7 @@ jobs:
         env:
           GITHUB_ACTION_PATH: 
       - uses: actions/setup-node@v4
-      - name: Commit
+      - name: Commit to js-just/latest
         uses: cpina/github-action-push-to-another-repository@main
         env:
           API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
@@ -31,4 +31,16 @@ jobs:
           destination-repository-name: latest
           user-email: "support@juststudio.is-a.dev"
           target-branch: main
+      - name: Update latest ID
+        uses: cpina/github-action-push-to-another-repository@main
+        env:
+          API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
+        with:
+          source-directory: "latest"
+          destination-github-username: js-just
+          destination-repository-name: raw-api
+          user-email: "support@juststudio.is-a.dev"
+          target-branch: main
+          target-directory: "v1/latest"
+          commit-message: "Update latest version"
       

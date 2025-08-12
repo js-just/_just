@@ -39,4 +39,16 @@ jobs:
           destination-repository-name: test
           user-email: "support@juststudio.is-a.dev"
           target-branch: main
+      - name: Update last commit value
+        uses: cpina/github-action-push-to-another-repository@main
+        env:
+          API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
+        with:
+          source-directory: "_lastcommit"
+          destination-github-username: js-just
+          destination-repository-name: raw-api
+          user-email: "support@juststudio.is-a.dev"
+          target-branch: main
+          target-directory: "v1/last-commit"
+          commit-message: "Update last commit value"
       

@@ -21,16 +21,10 @@
 # SOFTWARE.
 
 #!/bin/bash
-mkdir -p latest && \
-cp "LICENSE" "latest/LICENSE" && \
-cp "README.md" "latest/README.md" && \
-YMLTEMPLATE=$(cat "src/latest.yml") && \
-chmod +x "src/latest.py" && \
-LATEST=$(python3 "src/latest.py") && \
-YMLCONTENT=$(echo "$YMLTEMPLATE" | sed "s/@latest/@$LATEST/") && \
-YMLFIX=$(echo "$YMLCONTENT" | sed "s/@l/@latest/") && \
-echo "$YMLFIX" > "latest/action.yml" && \
+toJSON() {
+    chmod +x "src/time.py" && \
+    TIME0=$(python3 "src/time.py") && \
+    echo "{\"success\":true,\"value\":\"$1\",\"message\":\"$2\",\"code\":200,\"last-updated\":{\"time\":$TIME0,\"commit\":\"$GITHUB_SHA\",\"initiator\":{\"name\":\"$GITHUB_ACTOR\",\"id\":$GITHUB_ACTOR_ID}}}"
+}
 
-source src/modules/tojson.sh && \
-CONTENT=$(toJSON "$LATEST" "Latest version") && \
-echo "$CONTENT" > latest/index.json
+export -f toJSON

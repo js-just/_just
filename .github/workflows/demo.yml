@@ -44,7 +44,7 @@ jobs:
           destination-repository-name: raw-api
           user-email: "support@juststudio.is-a.dev"
           target-branch: main
-          target-directory: "demo-id"
+          target-directory: "v1/demo-id"
           commit-message: "Update latest demo ID"
       - name: Commit
         uses: cpina/github-action-push-to-another-repository@main

@@ -21,16 +21,7 @@
 # SOFTWARE.
 
 #!/bin/bash
-mkdir -p latest && \
-cp "LICENSE" "latest/LICENSE" && \
-cp "README.md" "latest/README.md" && \
-YMLTEMPLATE=$(cat "src/latest.yml") && \
-chmod +x "src/latest.py" && \
-LATEST=$(python3 "src/latest.py") && \
-YMLCONTENT=$(echo "$YMLTEMPLATE" | sed "s/@latest/@$LATEST/") && \
-YMLFIX=$(echo "$YMLCONTENT" | sed "s/@l/@latest/") && \
-echo "$YMLFIX" > "latest/action.yml" && \
-
+mkdir -p _lastcommit && \
 source src/modules/tojson.sh && \
-CONTENT=$(toJSON "$LATEST" "Latest version") && \
-echo "$CONTENT" > latest/index.json
+CONTENT=$(toJSON "$GITHUB_SHA" "Last commit SHA") && \
+echo "$CONTENT" > _lastcommit/index.json
