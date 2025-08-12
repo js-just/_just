@@ -60,18 +60,15 @@ function fixHtmlString(str) {
   const occurrences = str.match(new RegExp(closingTag, 'g')) || [];
 
   if (occurrences.length > 1) {
-    let countToRemove = 2;
-    let index = str.length;
-
-    while (countToRemove > 0) {
-      index = str.lastIndexOf(closingTag, index - 1);
-      if (index === -1) break;
-      str = str.slice(0, index) + str.slice(index + closingTag.length);
-      countToRemove--;
+    for (let i = 0; i < 2; i++) {
+      const lastIndex = str.lastIndexOf(closingTag);
+      if (lastIndex !== -1) {
+        str = str.slice(0, lastIndex) + str.slice(lastIndex + closingTag.length);
+      }
     }
     str += closingTag;
   }
-  
+
   function replaceLastOccurrence(text, searchStr, replaceStr) {
     const lastIndex = text.lastIndexOf(searchStr);
     if (lastIndex === -1) return text;
