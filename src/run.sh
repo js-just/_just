@@ -39,7 +39,7 @@ fi
 msg1=$(_justMessage "$_BLUE Running$_LIGHTPURPLE Just an Ultimate Site Tool$_RESET $VERSION")
 msg2=$(_justMessage "$_BLUE Installing Node.js$_RESET...")
 msg3=$(_justMessage "$_BLUE Installed Node.js$_RESET")
-msg4=$(_justMessage "$_GREEN Postprocessing completed$_RESET")
+msg4=$(_justMessage "$_BLUE Redirecting...$_RESET")
 msg5=$(_justMessage "$_GREEN Generating completed$_RESET")
 msg6=$(_justMessage "$_GREEN Compressing completed$_RESET")
 msg9=$(_justMessage "$_GREEN Generating completed$_RESET")
@@ -155,28 +155,13 @@ hljsstyles() {
     echo "$(node $GITHUB_ACTION_PATH/src/documentation/hljscss.js "$(cat "$HLJSCSS/_just_default_light.css")")"
 }
 
+if [ "$TYPE" != "postprocessor" ]; then
+    echo "postprocessor=0" >> "$GITHUB_OUTPUT"
+fi
+
 if [ "$TYPE" == "postprocessor" ]; then
-    set -e
-    postprocessor_checks=$(bash $GITHUB_ACTION_PATH/src/postprocessor/checks.sh 2>&1) || {
-        error_code=$?
-        if [ $error_code -eq 1 ]; then
-            ERROR_MESSAGE=$(ErrorMessage "postprocessor/checks.sh" "0100" "$postprocessor_checks")
-            if [ "$postprocessor_checks" == "0101" ]; then 
-                ERROR_MESSAGE=$(ErrorMessage "postprocessor/checks.sh" "0101")
-            fi
-            echo -e "::error::$ERROR_MESSAGE" && exit 1
-        fi
-    } && \
-    bash $GITHUB_ACTION_PATH/src/postprocessor/prepare_deployment.sh && \
-    bash $GITHUB_ACTION_PATH/src/postprocessor/create_api_endpoints.sh && \
-    bash $GITHUB_ACTION_PATH/src/postprocessor/modify_deployment.sh && \
-    bash $GITHUB_ACTION_PATH/src/postprocessor/override_deployment.sh && \
-    installNodejs && \
-    node $GITHUB_ACTION_PATH/src/compress.js "deploy" && \
-    bash $GITHUB_ACTION_PATH/src/postprocessor/build_map.sh && \
-    TIME3=$(python3 "$GITHUB_ACTION_PATH/src/time.py") && \
-    DONEIN=$(node "$GITHUB_ACTION_PATH/src/time.js" "$TIME0" "$TIME3") && \
-    echo -e "$msg4 ($DONEIN)"
+    echo "postprocessor=1" >> "$GITHUB_OUTPUT" && \
+    echo -e "$msg4"
 elif [ "$TYPE" == "redirect" ]; then
     mkdir -p deploy/_just && \
     installNodejs && \

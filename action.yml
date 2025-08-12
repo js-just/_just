@@ -37,8 +37,18 @@ runs:
   using: 'composite'
   steps:
     - name: Run _just
+      id: just
       run: bash $GITHUB_ACTION_PATH/src/run.sh
       shell: bash
       env: 
         INPUT_PATH: ${{ inputs.path }}
         INPUT_FIXPATH: ${{ inputs.fix-path }}
+    - name: Postprocessor mode
+      id: postprocessor
+      if: ${{ steps.just.outputs.postprocessor == 1 }}
+      uses: js-just/_just@v0.0.26
+    - name: Postprocessor mode fix
+      id: postprocessor-fix
+      if: ${{ steps.just.outputs.postprocessor == 1 }}
+      run: node $GITHUB_ACTION_PATH/src/postprocessor/index.js
+      shell: bash
