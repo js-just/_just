@@ -52,38 +52,34 @@ function getFiles(dir) {
 const files = getFiles('.');
 
 function fixHtmlString(str) {
-  const closingTag = "</body></html>";
-  const commentStart1 = "<!-- This website uses _just postprocessor /-->";
-  const commentStart2 = "<!-- Learn more here:(WEBSITE COMING SOON) /-->";
+    const commentStart1 = "<!-- This website uses _just postprocessor /-->";
+    const commentStart2 = "<!-- Learn more here:(WEBSITE COMING SOON) /-->";
 
-  str = String(str);
-  const occurrences = str.match(new RegExp(closingTag, 'g')) || [];
+    str = String(str);
 
-  if (occurrences.length > 1) {
-    for (let i = 0; i < 2; i++) {
-      const lastIndex = str.lastIndexOf(closingTag);
-      if (lastIndex !== -1) {
-        str = str.slice(0, lastIndex) + str.slice(lastIndex + closingTag.length);
-      }
+    function notag(tag) {
+        const index = [str.lastIndexOf(tag)];
+        index.push(index[0] + tag.length);
+        str = `${str.slice(0,index[0])}${str.slice(index[1])}`;
     }
-    str += closingTag;
-  }
+    notag('</body>');notag('</body>');
+    notag('</html>');notag('</html>');
 
-  function replaceLastOccurrence(text, searchStr, replaceStr) {
-    const lastIndex = text.lastIndexOf(searchStr);
-    if (lastIndex === -1) return text;
-    return (
-      text.slice(0, lastIndex) +
-      replaceStr +
-      text.slice(lastIndex + searchStr.length)
-    );
-  }
+    function replaceLastOccurrence(text, searchStr, replaceStr) {
+        const lastIndex = text.lastIndexOf(searchStr);
+        if (lastIndex === -1) return text;
+        return (
+            text.slice(0, lastIndex) +
+            replaceStr +
+            text.slice(lastIndex + searchStr.length)
+        );
+    }
 
-  str = replaceLastOccurrence(str, commentStart1, watermarkify ? "<!--   This website uses Just an Ultimate Site Tool   /-->" : '');
-  str = replaceLastOccurrence(str, commentStart2, watermarkify ? "<!--   Learn more here:      https://just.is-a.dev/   /-->" : '');
+    str = replaceLastOccurrence(str, commentStart1, watermarkify ? "<!--   This website uses Just an Ultimate Site Tool   /-->" : '');
+    str = replaceLastOccurrence(str, commentStart2, watermarkify ? "<!--   Learn more here:      https://just.is-a.dev/   /-->" : '');
 
-  return str;
-}
+    return `${str}</html></body>`;
+    }
 
 files.forEach(file => {
     let content = fs.readFileSync(file);
