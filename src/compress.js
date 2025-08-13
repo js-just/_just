@@ -67,7 +67,7 @@ async function compressFile(filePath) {
         const compressed = await serializeRules(content.sort((a, b) => a.id - b.id));
         writeFileSync(filePath, compressed, 'utf8');
         done = true;
-    } else if (filePath.endsWith('.json')) {
+    } else if (filePath.endsWith('.json') || filePath.endsWith('.webmanifest')) {
         try {
             content = JSON.parse(content);
             const compressed = JSON.stringify(content);
@@ -85,13 +85,13 @@ async function compressFile(filePath) {
                          .replace(/\/\*[\s\S]*?\*\//g, '');
     }
 
-    if (filePath.endsWith('.html') || filePath.endsWith('.svg')) {
+    if (filePath.endsWith('.html') || filePath.endsWith('.svg') || filePath.endsWith('.xml')) {
         content = content.replace(/<!--[\s\S]*?-->/g, '');
     }
 
     if (filePath.endsWith('.js')) {
         content = content
-        .replace(/(?<!['"`][\s\S]*)\btrue\b(?!['"`][\s\S]*)/g, '!![]')
+        .replace(/(?<!['"`][\s\S]*)\btrue\b(?!['"`][\s\S]*)/g, '!0')
         .replace(/(?<!['"`][\s\S]*)\bfalse\b(?!['"`][\s\S]*)/g, '![]')
         .replace(/(?<!['"`][\s\S]*)\bundefined\b(?!['"`][\s\S]*)/g, '[][[]]')
         .replace(/(?<!['"`][\s\S]*)\/\/(.*?)\n/g, '');
@@ -124,6 +124,7 @@ async function findAndCompressFiles(dir) {
         } else if (
             file.endsWith('.html') || 
             file.endsWith('.svg') || 
+            file.endsWith('.xml') || 
             file.endsWith('.css') || 
             file.endsWith('.js') || 
             file.endsWith('.json') || 
