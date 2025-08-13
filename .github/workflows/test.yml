@@ -3,6 +3,8 @@ name: Test website & Raw API
 on:
   push:
     branches: [main]
+    paths-ignore:
+      - 'data/generated/**'
   workflow_dispatch:
 
 concurrency:
@@ -59,4 +61,24 @@ jobs:
           target-branch: main
           target-directory: "v1/last-commit"
           commit-message: "Update last commit value"
+  current-sha:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Get
+        run: bash "src/current-commit.sh"
+        shell: bash
+      - name: Set
+        uses: cpina/github-action-push-to-another-repository@main
+        env:
+          API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
+        with:
+          source-directory: "_lastcommit"
+          destination-github-username: js-just
+          destination-repository-name: _just
+          user-email: "support@juststudio.is-a.dev"
+          target-branch: main
+          target-directory: "data/generated"
+          commit-message: "Update current commit value"
       
