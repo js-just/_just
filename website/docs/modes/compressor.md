@@ -2,7 +2,7 @@ _just: title: Compressor Mode
 # Compressor mode
 **- Compresses your website.**
 
-> This mode compresses your static website's `.html`, `.js`, `.css`, `.xml`, `.svg`, `.json` and `.webmanifest` files.<br> It removes every comments, tabs and newlines. <br><br>For JavaScript it also compresses booleans and undefined: <br><ul><li> `true` -> `!0` </li><li> `false` -> `![]` </li><li> `undefined` -> `[][[]]` </li></ul>
+> This mode compresses your static website's `.html`, `.js`, `.css`, `.xml`, `.svg`, `.json` and `.webmanifest` files.<br> It removes every comments, tabs and newlines. <br><br>For JavaScript it also compresses booleans and undefined: <br><ul style="margin-bottom: -19px"><li> `true` -> `!0` </li><li> `false` -> `![]` </li><li> `undefined` -> `[][[]]` </li></ul>
 
 > [!WARNING] This mode is under development, and it may cause JavaScript and HTML errors! <br>To fix JavaScript, do not forget semicolons. <br>To fix HTML new lines, use \<br> instead. <br>Please [report any bugs](https://github.com/js-just/_just/issues/new?labels=bug&template=bug.md) you find.
 <br><br>
