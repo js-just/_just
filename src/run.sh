@@ -28,14 +28,19 @@ source $GITHUB_ACTION_PATH/lib/errmsg.sh
 source $GITHUB_ACTION_PATH/lib/color.sh
 source $GITHUB_ACTION_PATH/lib/runts.sh
 if [ "$INPUT_PATH" == ""]; then
-  INPUT_PATH="."
+    INPUT_PATH="."
 elif [ -z "$INPUT_PATH" ]; then
-  INPUT_PATH="."
+    INPUT_PATH="."
 fi
 
-VERSION=$(echo "$GITHUB_ACTION_PATH" | grep -oP '(?<=/v)[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9]+)?' || echo "$GITHUB_SHA")
-if [[ "$VERSION" != "$GITHUB_SHA" && "$VERSION" != v* ]]; then
-  VERSION="v$VERSION"
+chmod +x "$GITHUB_ACTION_PATH/src/last-commit.py"
+LAST_COMMIT=$(python3 "$GITHUB_ACTION_PATH/src/last-commit.py")
+COMMIT_SHA=$(cat "$GITHUB_ACTION_PATH/data/generated/sha.txt")
+VERSION=$(echo "$GITHUB_ACTION_PATH" | grep -oP '(?<=/v)[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9]+)?' || echo "$COMMIT_SHA")
+if [[ "$VERSION" != "$COMMIT_SHA" && "$VERSION" != v* ]]; then
+    VERSION="v$VERSION"
+elif [[ "$VERSION" == "$COMMIT_SHA" && "$COMMIT_SHA" == "$LAST_COMMIT" ]]
+    VERSION="@main $VERSION"
 fi
 msg1=$(_justMessage "$_BLUE Running$_LIGHTPURPLE Just an Ultimate Site Tool$_RESET $VERSION")
 msg2=$(_justMessage "$_BLUE Installing Node.js$_RESET...")
