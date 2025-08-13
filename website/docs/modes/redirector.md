@@ -1,7 +1,10 @@
 _just: title: Redirector Mode
 # Redirector mode
 **- Client-side redirect.**
-This mode requires only the just.config.js file, (except for the workflow file).
+
+> This mode redirects your static website, such as your `.github.io` website, to a specified URL.
+
+This mode requires only the `just.config.js` file, (except for the workflow file).
 `just.config.js`
 ```js
 module.exports = {
