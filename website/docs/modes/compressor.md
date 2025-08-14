@@ -69,6 +69,6 @@ Also it compresses booleans and undefined in JavaScript:
 !1     // false
 [][[]] // undefined
 ```
--# `[][[]]` (`undefined`) by [JSFuck](https://jsfuck.com/)
+-# `[][[]]` ( `undefined` ) by [JSFuck](https://jsfuck.com/)
 
 _just: prev: /docs/getting-started
