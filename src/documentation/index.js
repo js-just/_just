@@ -670,7 +670,7 @@ checkTLD(domain).then(tldvalid => {
         text = text.replace(/(?<=\s|^|[.,!?;:*_^~=])!\[(.*?)\]\((.*?) ("|')(.*?)\3\)(?=\s|[.,!?;:*_^~=]|$)/g, (match, text, link_, q, imgtitle, offset) => {return notFencedCodeBlock(text, offset) ? `<img src="${link_}" alt="${text}" title="${imgtitle}" loading="lazy">` : match});
         text = text.replace(/(?<=\s|^|[.,!?;:*_^~=])!\[(.*?)\]\((.*?)\)(?=\s|[.,!?;:*_^~=]|$)/g, (match, text, link_, offset) => {return notFencedCodeBlock(text, offset) ? `<img src="${link_}" alt="${text}" loading="lazy">` : match});
         text = text.replace(/(?<=\s|^|[.,!?;:*_^~=])\[(.*?)\]\((.*?) ("|')(.*?)\3\)(?=\s|[.,!?;:*_^~=]|$)/g, (match, text, link_, q, linktitle, offset) => {return notFencedCodeBlock(text, offset) ? link(text, link_, extlink(link_), cssid.ext, "_blank", linktitle) : match});
-        text = text.replace(linkregex, (match, text, link_, offset) => {return notFencedCodeBlock(text, offset) ? link(text, link_, extlink(link_), cssid.ext) : match});
+        text = text.replace(linkregex, (match, text, link_, offset) => {return notFencedCodeBlock(text, offset) ? link(text, link_, extlink(link_), cssid.ext, extlink(link_) ? '_blank' : '_self') : match});
         text = text.replace(/(?<=\s|^|[.,!?;:*_^~=])(http:\/\/|https:\/\/|data:)(.*?)(?=\s|[,!;:*^~`<>]|[.?=#%&+] |$)/g, (match, protocol_, link_, offset) => {
                         const link__ = `${protocol_.trim()}${link_.trim()}`;
                         const check_ = notFencedCodeBlock(text, offset);
@@ -680,7 +680,7 @@ checkTLD(domain).then(tldvalid => {
                             try {
                                 const linkurl = new URL(link__);
                                 if (linkurl.hostname.includes('xn--')) {
-                                    return link(link__, linkurl.href, extlink(linkurl.href), cssid.ext);
+                                    return link(link__, linkurl.href, extlink(linkurl.href), cssid.ext, extlink(linkurl.href) ? '_blank' : '_self');
                                 }
                             } catch (e__) {
                                 caughterrors.push(e__);
@@ -689,7 +689,7 @@ checkTLD(domain).then(tldvalid => {
                             return `<${link__}>`;
                         } else return `${protocol_}${link_}`;
                     });
-        text = text.replace(/(?<=\s|^|[.,!?;:*_^~=])<(http:\/\/|https:\/\/)(.*?)>(?=\s|[.,!?;:*_^~=]|$)/g, (match, protocol_, link_, offset) => {const link__=`${protocol_.trim()}${link_.trim()}`;return notFencedCodeBlock(text, offset) ? link(link__, link__, extlink(link__), cssid.ext) : match});
+        text = text.replace(/(?<=\s|^|[.,!?;:*_^~=])<(http:\/\/|https:\/\/)(.*?)>(?=\s|[.,!?;:*_^~=]|$)/g, (match, protocol_, link_, offset) => {const link__=`${protocol_.trim()}${link_.trim()}`;return notFencedCodeBlock(text, offset) ? link(link__, link__, extlink(link__), cssid.ext, extlink(link__) ? '_blank' : '_self') : match});
         text = text.replace(/(?<=\s|^|[.,!?;:*_^~=])<(.*?)@(.*?)>(?=\s|[.,!?;:*_^~=]|$)/g, (match, address, domain__, offset) => {
                         if (checkdomain(domain__, false) && notFencedCodeBlock(text, offset)) {
                             const mail = `${address.trim()}@${domain__.trim()}`;

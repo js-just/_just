@@ -6,7 +6,7 @@ const scrll = localStorage.getItem('s' + page_);
 const theme = localStorage.getItem('t');
 const main_ = 'html > body > main > div#main > article.main';
 const IsIOS=()=>{
-    return (/iPad|iPhone|iPod/.test(navigator.userAgent) && !wndw_.MSStream) || (/Mac/.test(navigator.userAgent) && wndw_.innerWidth <= 700);
+    return (/iPad|iPhone|iPod/.test(wndw_.navigator.userAgent) && !wndw_.MSStream) || (/Mac/.test(wndw_.navigator.userAgent) && wndw_.innerWidth <= 700);
 };
 const ISIOS=IsIOS();
 const isIOS=()=>ISIOS;
@@ -404,7 +404,7 @@ dcmnt.addEventListener('DOMContentLoaded', () => {
     }
 
     iosautotheme();
-    if (navigator.userAgent.toLowerCase().includes('firefox')) {
+    if (wndw_.navigator.userAgent.toLowerCase().includes('firefox')) {
         dcmnt.body.classList.add('firefox');
     };
     const wm = dcmnt.getElementById('wm-ipp-base');
@@ -512,8 +512,8 @@ dcmnt.addEventListener('DOMContentLoaded', () => {
                 setTimeout(()=>{updateSD(st)},301);
                 for (const [id, data_] of Object.entries(searchdata)) {
                     sd.innerHTML += SETTINGS.searchV2 ? 
-                        `<a href="${data_[0]}" target="_self"><strong>${('REPLACE_DATAARRAY'.find(item => item[0] === data_[0]) || [])[1] || data_[0]}</strong><span>${data_[1].replaceAll('/n',' ').replaceAll(' - ','')}</span></a>` : 
-                        `<a href="${data_[0]}" target="_self">${data_[1].replaceAll('/n',' ').replaceAll(' - ','')}</a>`;
+                        `<a href="${data_[0]}" target="_self"><strong>${('REPLACE_DATAARRAY'.find(item => item[0] === data_[0]) || [])[1] || data_[0]}</strong><span>${data_[1].replaceAll('\n',' ').replaceAll(' - ','')}</span></a>` : 
+                        `<a href="${data_[0]}" target="_self">${data_[1].replaceAll('\n',' ').replaceAll(' - ','')}</a>`;
                 }
             }
         } else {
