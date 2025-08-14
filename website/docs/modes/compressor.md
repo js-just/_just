@@ -2,9 +2,9 @@ _just: title: Compressor Mode
 # Compressor mode
 **- Compresses your website.**
 
-> This mode compresses your static website's `.html`, `.js`, `.css`, `.xml`, `.svg`, `.json` and `.webmanifest` files.<br> It removes every comments, tabs and newlines. <br><br>For JavaScript it also compresses booleans and undefined: <br><ul style="margin-bottom: -19px"><li> `true` -> `!0` </li><li> `false` -> `![]` </li><li> `undefined` -> `[][[]]` </li></ul>
+> This mode compresses your static website's `.html`, `.js`, `.css`, `.xml`, `.svg`, `.json` and `.webmanifest` files.<br> It removes every comments, tabs and newlines. <br><br>For JavaScript it also compresses booleans and undefined: <br><ul style="margin-bottom: -19px"><li> `true` -> `!0` </li><li> `false` -> `!1` </li><li> `undefined` -> `[][[]]` </li></ul>
 
-> [!WARNING] This mode is under development, and it may cause JavaScript and HTML errors! <br>To fix JavaScript, do not forget semicolons. <br>To fix HTML new lines, use \<br> instead. <br>Please [report any bugs](https://github.com/js-just/_just/issues/new?labels=bug&template=bug.md) you find.
+> [!WARNING] This mode is under development, and it may cause JavaScript and HTML errors! <br>To fix JavaScript, do not forget semicolons. <br>To fix HTML newlines, use `<br>` instead. <br>Please [report any bugs](https://github.com/js-just/_just/issues/new?labels=bug&template=bug.md) you find.
 <br><br>
 This mode requires only the `just.config.js` file and the workflow file.
 -# `just.config.js`
@@ -60,5 +60,15 @@ jobs:
         id: deployment
         uses: actions/deploy-pages@v4
 ```
+
+## How it works?
+It compresses files by removing tabs, newlines and comments.
+Also it compresses booleans and undefined in JavaScript:
+```js
+!0     // true
+!1     // false
+[][[]] // undefined
+```
+-# `[][[]]` (`undefined`) by [JSFuck](https://jsfuck.com/)
 
 _just: prev: /docs/getting-started

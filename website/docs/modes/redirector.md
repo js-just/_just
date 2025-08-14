@@ -131,7 +131,8 @@ module.exports = {
 ```
 
 ## How it works?
-Every HTML page has:
+It generates HTML pages based on your `module.exports` input.
+Every generated HTML page has:
 - `<meta http-equiv="refresh" content="0;url=...">` in `<head>`. This means that the user will be redirected to the destination URL in 0 seconds after the page has loaded.
 - Fallback #1 - `<script>...</script>` in `<body>` redirects the user to the destination URL.
 - Fallback #2 - Other elements in `<body>` ("Redirecting... <...>", "Didn't get redirected? `<a ...>` Click here! `</a>` ").
