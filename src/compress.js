@@ -92,7 +92,7 @@ async function compressFile(filePath) {
     if (filePath.endsWith('.js')) {
         content = content
         .replace(/(?<!['"`][\s\S]*)\btrue\b(?!['"`][\s\S]*)/g, '!0')
-        .replace(/(?<!['"`][\s\S]*)\bfalse\b(?!['"`][\s\S]*)/g, '![]')
+        .replace(/(?<!['"`][\s\S]*)\bfalse\b(?!['"`][\s\S]*)/g, '!1')
         .replace(/(?<!['"`][\s\S]*)\bundefined\b(?!['"`][\s\S]*)/g, '[][[]]')
         .replace(/(?<!['"`][\s\S]*)\/\/(.*?)\n/g, '');
     }    
