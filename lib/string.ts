@@ -29,7 +29,7 @@ SOFTWARE.
  * @param {string} removeThis 
  * @returns {string}
  */
-exports.removeLast = function (input, removeThis) {
+export function removeLast(input: string, removeThis: string): string {
     return `${input}`
         .split('').reverse().join('')
         .replace(
@@ -42,46 +42,63 @@ exports.removeLast = function (input, removeThis) {
  * @param {number} bytes 
  * @returns {string}
  */
-exports.fileSize =  function (bytes) {
+export function fileSize(bytes: number): string | void {
     if (bytes <= 1024) {
-        return `${bytes}B`;
+        return `${bytes}B`; // Byte
     } else if (bytes <= 1024**2) {
-        return `${Math.ceil(( bytes / 1024 ) * 100) / 100}KB`;
+        return `${Math.ceil(( bytes / 1024 ) * 100) / 100}KB`; // Kilobyte
     } else if (bytes <= 1024**3) {
-        return `${Math.ceil(( bytes / ( 1024**2 ) ) * 100) / 100}MB`;
+        return `${Math.ceil(( bytes / ( 1024**2 ) ) * 100) / 100}MB`; // Megabyte
     } else if (bytes <= 1024**4) {
-        return `${Math.ceil(( bytes / ( 1024**3 ) ) * 100) / 100}GB`;
+        return `${Math.ceil(( bytes / ( 1024**3 ) ) * 100) / 100}GB`; // Gigabyte
     } else if (bytes <= 1024**5) {
-        return `${Math.ceil(( bytes / ( 1024**4 ) ) * 100) / 100}TB`;
+        return `${Math.ceil(( bytes / ( 1024**4 ) ) * 100) / 100}TB`; // Terabyte
+    } else if (bytes <= 1024**6) {
+        return `${Math.ceil(( bytes / ( 1024**5 ) ) * 100) / 100}PB`; // Petabyte
+    } else if (bytes <= 1024**7) {
+        return `${Math.ceil(( bytes / ( 1024**6 ) ) * 100) / 100}EB`; // Exabyte
+    } else if (bytes <= 1024**8) {
+        return `${Math.ceil(( bytes / ( 1024**7 ) ) * 100) / 100}ZB`; // Zettabyte
+    } else if (bytes <= 1024**9) {
+        return `${Math.ceil(( bytes / ( 1024**8 ) ) * 100) / 100}YB`; // Yottabyte
+    } else if (bytes <= 1024**10) {
+        return `${Math.ceil(( bytes / ( 1024**9 ) ) * 100) / 100}RB`; // Ronnabyte
+    } else if (bytes <= 1024**11) {
+        return `${Math.ceil(( bytes / ( 1024**10 ) ) * 100) / 100}QB`; // Quettabyte
     }
 }
 
-exports.runnerPath = function (input = '') {
-    const GitHubRunner = '/home/runner/work'
+/**
+ * @param {string?} input
+ * @returns {string}
+ */
+export function runnerPath(input: string = ''): string {
+    const GitHubRunner = '/home/runner/work';
     if (input.startsWith(GitHubRunner)) {
-        input = input.replace(GitHubRunner, '_just')
+        input = input.replace(GitHubRunner, '_just');
     }
-    return input
+    return input;
 }
 
 /**
  * @param {string} str 
  * @returns {string}
  */
-exports.shuffleString = function (str) {
-  const arr = str.split('');
-  for (let i = arr.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [arr[i], arr[j]] = [arr[j], arr[i]];
-  }
-  return arr.join('');
+export function shuffleString(str: string): string {
+    const arr = str.split('');
+    for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr.join('');
 }
+
 
 /**
  * @param {string} str 
  * @returns {string}
  */
-exports.Aa = function (str) {
+export function Aa(str: string): string {
     return String(str).charAt(0).toUpperCase() + String(str).slice(1);
 }
 
@@ -90,7 +107,7 @@ exports.Aa = function (str) {
  * @param {boolean?} spaces
  * @returns {string}
  */
-exports.toText = function (str, spaces = false) {
+export function toText(str: string, spaces: boolean = false): string {
     if (str.endsWith(':')) str = str.slice(0,-1)
     else if (str.endsWith('?')) str = str.slice(0,-1);
     return spaces ? str.replaceAll('_', ' ').replaceAll('-', ' ') : str;
