@@ -233,8 +233,6 @@ elif [ "$TYPE" == "docs" ]; then
     mkdir -p _just && \
     mkdir -p deploy && \
     installNodejs && \
-    installTypeScriptCompiler && \
-    tsc lib/array.ts && \
     bash $GITHUB_ACTION_PATH/src/documentation/checks.sh && \
     INDEXJS0="$GITHUB_ACTION_PATH/src/documentation/index.js"
     INDEXJS1=$(cat "$INDEXJS0") && \
