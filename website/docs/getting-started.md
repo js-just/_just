@@ -148,4 +148,10 @@ module.exports = {
 - [Compressor](/docs/modes/compressor)
 - [Generator](/docs/modes/generator)
 
+## Reserved directories
+Your repository should not have these directories:
+- _just_data
+- deploy
+If your repository has any of these, _just will throw an error.
+
 _just: prev: /docs

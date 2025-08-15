@@ -6,7 +6,7 @@ Welcome to Just an Ultimate Site Tool documentation!
 ## What is _just?
 Just an Ultimate Site Tool is a GitHub Action for building static websites. 
 Currently it have 4 modes: 
-- `Postprocessor`: Modify and add your own files to generated Next.js website.
+- `Postprocessor`: Add your own files to generated Next.js website.
 - `Redirector`: Client-side redirect using JavaScript.
 - `Compressor`: Compresses your website.
 - `Generator`: Generates documentation website using Markdown.
