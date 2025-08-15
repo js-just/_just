@@ -1243,7 +1243,7 @@ checkTLD(domain).then(tldvalid => {
                 codedebug(code1.replace(/\n( {1,})/g, (a,b)=>`<br>${'&nbsp;'.repeat(b.length)}`)
                      .replaceAll('\n', '<br>')
                      .replace(/<\/code>( {1,})/, (a,b)=>`</code>${'&nbsp;'.repeat(b.length)}`)
-                     .replace(/<br><\/span>( {1,})/, (a,b)=>`<br></span>${'&nbsp;'.repeat(b.length)}`)
+                     .replace(/<br><\/span>( {1,})/g, (a,b)=>`<br></span>${'&nbsp;'.repeat(b.length)}`)
             ));
             codeid++;
         });
