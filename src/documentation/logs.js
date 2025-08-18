@@ -56,8 +56,16 @@ try {
         return results;
     }
     let fileID = 0;
+    let toobig = false;
     findMarkdownFiles(rootDirB).forEach(file => {
         fileID++;
+        if (newlogs.length >= 2 ** 28) {
+            if (!toobig) {
+                newlogs += '\n\n\nerror: logs are too big'
+            }
+            toobig = true;
+            return;
+        }
         newlogs += `${l[1]}FILE #${fileID} "${_just.string.removeLast(_just.string.runnerPath(file), 'md')}html":`;
         try {
             const fileNameWithoutExt = path.basename(file, path.extname(file));
