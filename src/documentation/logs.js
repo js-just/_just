@@ -66,25 +66,25 @@ try {
             toobig = true;
             return;
         }
-        newlogs += `${l[1]}FILE #${fileID} "${_just.string.removeLast(_just.string.runnerPath(file), 'md')}html":`;
+        newlogs += toobig ? '' : `${l[1]}FILE #${fileID} "${_just.string.removeLast(_just.string.runnerPath(file), 'md')}html":`;
         try {
             const fileNameWithoutExt = path.basename(file, path.extname(file));
             const outFilePath = (ext) => path.join(path.dirname(file), `${fileNameWithoutExt}.${ext}`);
             const htmlsize = _just.string.fileSize(fs.statSync(outFilePath('html')).size);
-            newlogs += `${l[2]}SIZE: ${htmlsize} (html output)`;
+            newlogs += toobig ? '' : `${l[2]}SIZE: ${htmlsize} (html output)`;
         } catch (err) {
-            newlogs += `${l[2]}ERROR: ${err}`;
+            newlogs += toobig ? '' : `${l[2]}ERROR: ${err}`;
         }
         let sl = false;
         let fd = false;
         try {
             fs.unlink(file, function(err) {
-                newlogs += err ? `${l[2]}MARKDOWN FILE DELETED: NO. (${err}) (fs)` : newlogs += `${l[2]}MARKDOWN FILE DELETED: YES.`;
+                if (!toobig) {newlogs += err ? `${l[2]}MARKDOWN FILE DELETED: NO. (${err}) (fs)` : newlogs += `${l[2]}MARKDOWN FILE DELETED: YES.`};
                 sl = true;
                 fd = true;
             })
         } catch (err) {
-            newlogs += sl ? '' : `${l[2]}MARKDOWN FILE DELETED: NO. (${err}) (tc)`; // tc here means try{}catch(){}
+            newlogs += sl || toobig ? '' : `${l[2]}MARKDOWN FILE DELETED: NO. (${err}) (tc)`; // tc here means try{}catch(){}
             fd = true;
         }
     });
