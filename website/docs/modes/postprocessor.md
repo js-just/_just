@@ -112,12 +112,12 @@ Within **`_just/dangerously-insert-files`**, you may include any files that you 
 
 > [!CAUTION] Inserting files via the **`_just/dangerously-insert-files`** directory may cause website errors or files may not be inserted if there is already a file with the same name in the `deploy` directory.
 
-The **`_just/404.html` file** is required and it'll become the `deploy/404.html` file (if the `deploy/404.html` file already exists, it will be overwritten).
+The **`_just/404.html` file** is required and it’ll become the `deploy/404.html` file (if the `deploy/404.html` file already exists, it will be overwritten).
 
 ## How it works?
 1. It creates a `deploy` directory and copies every file from the `.next/server/pages` and `.next/static` directories to it.
 2. If there is a `deploy/en.html` file, it will copies to the `deploy/index.html`.
-3. It copies `_just/404.html` to `deploy/404.html` (if it exists, it'll be overwritten).
+3. It copies `_just/404.html` to `deploy/404.html` (if it exists, it’ll be overwritten).
 4. Every `_just/js/*.js` copies into `deploy/_just`; Every `_just/style/*.css` copies into `deploy/_just`; Every `_just/dangerously-insert-files/*` copies into `deploy`.
 5. Every JavaScript and CSS file in `deploy/_just` are inserted into every HTML page as HTML tags.
 

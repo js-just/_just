@@ -102,7 +102,7 @@ module.exports = {
     }
 }
 ```
-- Read the documentation for the mode that you've chosen.
+- Read the documentation for the mode that you’ve chosen.
 ---
 ### Pro installation
 - Create or modify your `.github/workflows/github_pages_workflow_name.yml`:
@@ -140,7 +140,7 @@ module.exports = {
   type: ["docs", "compress"]
 }
 ```
-- Read the documentation for the mode/modes that you've chosen.
+- Read the documentation for the mode/modes that you’ve chosen.
 
 ## Modes documentation
 - [Postprocessor](/docs/modes/postprocessor)

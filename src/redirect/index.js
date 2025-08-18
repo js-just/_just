@@ -126,7 +126,7 @@ const generatePage = (url, params, path_) => {
         `<h1>${title}</h1>` +
         '<div>' +
             `<span class="r">${text1 || `Redirecting...<br><small>to ${link}${URL}</a></small>`}</span>` +
-            `<span class="d">${text2 || "Didn't get redirected?"} ${link}${text3 || 'Click here!'}</a></span>` +
+            `<span class="d">${text2 || "Didn’t get redirected?"} ${link}${text3 || 'Click here!'}</a></span>` +
         '</div>' +
         `<script>window.location.replace('${URL}')</script><script>window.location.href='${URL}'</script><script>window.location.assign('${URL}')</script>` +
     '</body>' +

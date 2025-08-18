@@ -727,7 +727,7 @@ checkTLD(domain).then(tldvalid => {
 
         function processBlockquotes(inputText, level) {
             const regex = new RegExp(`^(>\\s+){${level}}(.*?)\\s*$`, 'gm');
-            return MDtoHTML(inputText.replace(regex, (match, p1, p2) => {
+            return MDtoHTML(inputText.replace(regex, (match, p1, p2, offset) => {
                 const classAttr = (num) =>
                     p2.startsWith('[!NOTE]') ? (num ? 7 : ` class="${cssclass.note}"`) :
                     p2.startsWith('[!TIP]') ? (num ? 6 : ` class="${cssclass.ntip}"`) :
@@ -739,7 +739,7 @@ checkTLD(domain).then(tldvalid => {
                     p2.trim().slice(classAttr(true)).trim(), 
                     level + 1
                 );
-                return `<blockquote${classAttr()}>${(level > 1 ? '<br>' : '')}${innerBlockquote}</blockquote>`;
+                return notFencedCodeBlock(inputText, offset) ? `<blockquote${classAttr()}>${(level > 1 ? '<br>' : '')}${innerBlockquote}</blockquote>` : match;
             }));
         }
 
