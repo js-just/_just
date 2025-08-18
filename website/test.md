@@ -58,6 +58,9 @@ No code here
 
 > \[!NOTE] A blockquote, but not a note.
 
+\https://example.com - escaped link
+`https://example.com` - disabled auto linking
+
 # Links test
 [a link](https://just.is-a.dev/ "link title")
 <https://just.is-a.dev/>
