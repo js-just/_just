@@ -1238,3 +1238,7 @@ nav.left:not(:has(strong)) > ul {
     height: calc(var(--contents) - 50px);
     overflow-x: clip;
 }
+
+input[type="checkbox"] {
+    height: 13px;
+}
