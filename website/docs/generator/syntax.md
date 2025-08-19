@@ -30,6 +30,7 @@ _just: title: Supported markdown syntax
 - [Footnotes](https://www.markdownguide.org/extended-syntax/#footnotes)
 - [Definition Lists](https://www.markdownguide.org/extended-syntax/#definition-lists)
 - Abbreviation
+- [Tables](https://www.markdownguide.org/extended-syntax/#tables)
 
 ### Planned
 - [Emoji (shortcodes)](https://www.markdownguide.org/extended-syntax/#using-emoji-shortcodes)
