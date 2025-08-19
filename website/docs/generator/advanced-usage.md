@@ -8,7 +8,7 @@ _just: title: This is text will be page title
 ```
 
 You can also specify the previous and next pages:
-```md
+```
 _just: prev: /path/to/previous/page
 _just: next: /path/to/next/page
 ```
