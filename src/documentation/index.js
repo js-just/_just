@@ -699,7 +699,7 @@ checkTLD(domain).then(tldvalid => {
         text = text.replace(/(?<=\s|^)([-+*])\s\[( {0,}x {0,}| {0,}X {0,}| {1,})\]\s(.*?)(?=\s|\n|$)/g, (match, prefix, type_, text_, offset) => {
                     const isChecked = type_.trim().toLowerCase() === 'x';
                     const checkedAttr = isChecked ? ' checked' : '';
-                    return notFencedCodeBlock(text, offset) ? `<input type="checkbox" id="${dataname[10]}${taskid++}" ${checkedAttr} title="${MDcode(text_.trim(), true)}"> ${text_.trim()}` : match;
+                    return notFencedCodeBlock(text, offset) ? `<input type="checkbox" id="${dataname[10]}${taskid++}" ${checkedAttr} title="${MDcode(text_.trim(), true)}" style="height:13px;"> ${text_.trim()}` : match;
                 });
         return _just.MDtoHTML.MDtoHTML(text, cssclass).replace(/~(.*?)~/g, '<sub>$1</sub>').replace(/\^(.*?)\^/g, '<sup>$1</sup>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\*(.*?)\*/g, '<em>$1</em>');
     }
