@@ -16,7 +16,7 @@ Required directories are:
 -# `just.config.js`
 ```js
 module.exports = {
-    type: "postprocessor"
+  type: "postprocessor"
 }
 ```
 -# `.github/workflows/WORKFLOW_NAME.yml`
@@ -131,5 +131,9 @@ You can try fixing them by switching the postprocessor version in your workflow 
           postprocessor-version: "26"
 ```
 Available postprocessor versions are: `"24"`, `"26"` (default), `"32"`.
+
+---
+
+-# You can support Just an Ultimate Site Tool by setting the `watermark` to `true` in the `module.exports` of the `just.config.js` file. This will add two comments about the Just an Ultimate Site Tool to every HTML file. Thank you.
 
 _just: prev: /docs/getting-started

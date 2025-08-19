@@ -6,7 +6,7 @@ This documentation assumes some familiarity with
 - GitHub Actions
 - GitHub Pages
 And some familiarity with these languages
-- JavaScript
+- JavaScript and JSON
 - YAML
 - HTML
 - CSS
@@ -97,7 +97,7 @@ Using `Generator` mode:
 module.exports = {
     type: "docs",
     docs_config: {
-        metatitle: "Documentation title", // Required. Replace with your documentation title.
+        title: "Documentation title", // Required. Replace with your documentation title.
         domain: "example.com" // Required. Replace with your domain name. Domain name should be valid.
     }
 }

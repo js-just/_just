@@ -18,5 +18,8 @@ Just an Ultimate Site Tool will automatically get the title of the previous and/
 The output should look like this:
 ![Output](/img/generator-adv-prevnext.png)
 
+### The `just.config.js` file
+
+
 _just: prev: /docs/generator/syntax
 _just: next: /docs/generator/troubleshooting
