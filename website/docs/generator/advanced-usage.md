@@ -13,6 +13,10 @@ _just: prev: /path/to/previous/page
 _just: next: /path/to/next/page
 ```
 > The path to the page should start with a slash (/). <br>This path is a relative path from the root directory of your website, which you’ve specified in the workflow file. <br>The path to the page should not end with a file extension name (e.g., `.md`).
+This will add buttons to the end of the page.
+Just an Ultimate Site Tool will automatically get the title of the previous and/or next pages and insert it into the generated button output.
+The output should look like this:
+![Output](/img/generator-adv-prevnext.png)
 
 _just: prev: /docs/generator/syntax
 _just: next: /docs/generator/troubleshooting
