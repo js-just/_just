@@ -32,6 +32,20 @@ Some code here
 
 > [!NOTE] `[!NOTE]`, `[!TIP]`, `[!IMPORTANT]`, `[!WARNING]` and `[!CAUTION]` are should be in one line. You can add \<br> tags to break the line for HTML. <br> > `[!NOTE]`, `[!TIP]`, `[!IMPORTANT]`, `[!WARNING]` and `[!CAUTION]` cannot have nested blockquotes.
 
+> Multi <br>Line <br>(\<br>)
+
+> Multi
+> 
+> Line
+>
+> (\\n + > + space + \\n)
+
+> Multi
+>
+> Line
+>
+> (\\n + > + \\n)
+
 # Headers test (h1)
 ## h2
 ### h3

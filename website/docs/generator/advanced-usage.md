@@ -1,5 +1,18 @@
 _just: title: Advanced usage
 # Advanced usage
+### Markdown files
+You can specify the page title by adding `_just: title: ...` in the first line of the Markdown file.
+-# Example:
+```
+_just: title: This is text will be page title
+```
+
+You can also specify the previous and next pages:
+```
+_just: prev: /path/to/previous/page
+_just: next: /path/to/next/page
+```
+> The path to the page should start with a slash (/). <br>This path is a relative path from the root directory of your website, which you’ve specified in the workflow file. <br>The path to the page should not end with a file extension name (e.g., `.md`).
 
 _just: prev: /docs/generator/syntax
 _just: next: /docs/generator/troubleshooting
