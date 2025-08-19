@@ -197,7 +197,7 @@ a#ext {
     padding-right: 10px;
 }
 a#ext:after {
-    content: '↗';
+    content: '\2197';
     position: fixed;
     top: 0%;
     font-family: 'Murecho', var(--tf), monospace, sans-serif;
