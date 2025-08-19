@@ -64,7 +64,7 @@ jobs:
 ```
 
 After generating the documentation, this mode uses the [Compressor mode](/docs/modes/compressor) to compress the generated website.
-Use Markdown (`.md`) files for documentation. You can also use HTML/CSS/JavaScript for custom pages, but remember that they will be compressed using the [Compressor mode](/docs/modes/compressor)!
+Use Markdown ( `.md` ) files for documentation. You can also use HTML/CSS/JavaScript for custom pages, but remember that they will be compressed using the [Compressor mode](/docs/modes/compressor)!
 
 ## How it works?
 It processes every Markdown file and generates HTML page for each of them.
