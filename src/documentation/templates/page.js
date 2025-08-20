@@ -109,21 +109,25 @@ const updateNavRight = () => {
 };
 let lhc = 0;
 wndw_.addEventListener('scroll', () => {
-    let headerIndex_=false;
+    let headerIndex_ = false;
     checkElement([dcmnt.querySelector(".navbar")]);
-    if (dcmnt.body.scrollTop > 150 || dcmnt.documentElement.scrollTop > 150) {
+
+    const scrollPosition = wndw_.scrollY || dcmnt.documentElement.scrollTop;
+
+    if (scrollPosition > 150) {
         dcmnt.querySelector(".navbar").classList.add("scroll");
     } else {
         headerIndex_ = true;
         dcmnt.querySelector(".navbar").classList.remove("scroll");
     };
 
-    localStorage.setItem('s' + page_, convertbase(dcmnt.documentElement.scrollTop.toString(10),10,64));
+    localStorage.setItem('s' + page_, convertbase(scrollPosition.toString(10), 10, 64));
 
     const elements = dcmnt.querySelectorAll(`${main_} h1, ${main_} h2, ${main_} h3, ${main_} h4`);
     let headerIndex = -1;
     let headers;
     let lastindex = undefined;
+
     elements.forEach((element, index_) => {
         const rect = element.getBoundingClientRect();
         const isInView = (rect.top + rect.height / 2) <= (wndw_.innerHeight / 2);
@@ -154,7 +158,11 @@ wndw_.addEventListener('scroll', () => {
     const nr = 'REPLACE_NR';
     const _hc = 'REPLACE_CHC';
     dcmnt.body.style.setProperty('--hc', hc_);
-    try{dcmnt.getElementById(`${nr}${lhc}`).classList.remove(_hc);dcmnt.getElementById(`${nr}${hc_}`).classList.add(_hc);lhc = hc_;}catch(__e){};
+    try {
+        dcmnt.getElementById(`${nr}${lhc}`).classList.remove(_hc);
+        dcmnt.getElementById(`${nr}${hc_}`).classList.add(_hc);
+        lhc = hc_;
+    } catch (__e) {}
     updateNavRight();
 });
 
