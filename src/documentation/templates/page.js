@@ -124,19 +124,19 @@ wndw_.addEventListener('scroll', () => {
     let headerIndex = -1;
     let headers;
     let lastindex = undefined;
-    elements.forEach((element, index) => {
+    elements.forEach((element, index_) => {
         const rect = element.getBoundingClientRect();
         const isInView = (rect.top + rect.height / 2) <= (wndw_.innerHeight / 2);
 
         if (lastindex === undefined) {
-            lastindex = index;
-        } else if (index > lastindex) {
-            lastindex = index;
-            headers = index;
+            lastindex = index_;
+        } else if (index_ > lastindex) {
+            lastindex = index_;
+            headers = index_;
         }
 
         if (isInView) {
-            headerIndex = index;
+            headerIndex = index_;
         }
     });
 
