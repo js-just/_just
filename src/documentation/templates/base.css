@@ -1061,6 +1061,7 @@ mark {
 }
 .main img {
     max-width: 100%;
+    border-radius: 5px;
 }
 
 input[type="checkbox"] {

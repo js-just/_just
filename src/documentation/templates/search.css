@@ -52,9 +52,13 @@
     top: 0px;
     width: 5px;
     height: 3px;
-    background-color: var(--cl);
+    background-color: #f0f0f0;
     translate: 10px 10px;
 }
 .searchactive .search a span strong:after {
     display: none;
+}
+
+.search span {
+    color: #f0f0f0 !important;
 }

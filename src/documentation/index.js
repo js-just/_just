@@ -290,7 +290,9 @@ JS = JS.replaceAll('trimmedStr', jstrimmedstrvar)
     .replaceAll("'contents'", `'${cssid.contents}'`)
     .replaceAll("'--contents'", `'--${cssvar.contents}'`)
     .replace("'REPLACE_NR'", `'${cssid.pageheaders}'`)
-    .replace("'REPLACE_CHC'", `'${cssclass.chc}'`);
+    .replace("'REPLACE_CHC'", `'${cssclass.chc}'`)
+    .replace("'.left'", `'.${cssclass.left}'`)
+    .replace("'REPLACE_NLCSSHV'", `'--${cssvar.liheight}'`);
 const lighthighlight = _just.parseCSS.JSON(JSON.parse(HIGHLIGHTJSON)["_just_light"]);
 lighthighlight.forEach(rule => {
     const props = [];
