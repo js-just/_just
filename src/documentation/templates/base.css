@@ -1248,3 +1248,15 @@ input[type="checkbox"] {
 main nav.left li {
     overflow-y: hidden;
 }
+
+.copycode {
+    position: fixed;
+    translate: calc(var(--codewidth) - 34px) calc(calc(0px - var(--codeheight)) + 32px);
+    display: inline-block;
+    height: 34px;
+    border-radius: 10px;
+    overflow: hidden
+}
+.copycode svg {
+    padding: 5px;
+}

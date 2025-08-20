@@ -515,7 +515,7 @@ dcmnt.addEventListener('DOMContentLoaded', () => {
                 setTimeout(()=>{updateSD(st)},301);
                 for (const [id, data_] of Object.entries(searchdata)) {
                     sd.innerHTML += SETTINGS.searchV2 ? 
-                        `<a href="${data_[0]}" target="_self"><strong>${('REPLACE_DATAARRAY'.find(item => item[0] === data_[0]) || [])[1] || data_[0]}</strong><span>${data_[1].replaceAll('\n',' ').replaceAll(' - ','').replaceAll('<br>',' ')}</span></a>` : 
+                        `<a href="${data_[0]}" target="_self"><strong>${('REPLACE_DATAARRAY'.find(item => item[0] === data_[0]) || [])[1] || data_[0]}</strong><span>${data_[1].replaceAll('\n',' ').replaceAll(' - ',' ').replaceAll('<br>',' ')}</span></a>` : 
                         `<a href="${data_[0]}" target="_self">${data_[1].replaceAll('\n',' ').replaceAll(' - ','')}</a>`;
                 }
             }
@@ -542,6 +542,60 @@ dcmnt.addEventListener('DOMContentLoaded', () => {
             });
         }
     },100);
+
+
+
+    const removeTimeouts = new WeakMap();
+    document.addEventListener('mouseover', (event) => {
+        const target = event.target;
+        
+        if (target.closest('code.code')) {
+            const codeEl = target.closest('code.code');
+
+            let div = codeEl.querySelector('.copycode');
+            if (!div) {
+                div = document.createElement('div');
+                div.className = 'copycode';
+                div.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24px" viewBox="0 0 24 24" width="24px" fill="#f0f0f0" alt="Copy" title="Click to copy"><g><rect fill="none" height="24" width="24"/></g><g><path d="M15,20H5V7c0-0.55-0.45-1-1-1h0C3.45,6,3,6.45,3,7v13c0,1.1,0.9,2,2,2h10c0.55,0,1-0.45,1-1v0C16,20.45,15.55,20,15,20z M20,16V4c0-1.1-0.9-2-2-2H9C7.9,2,7,2.9,7,4v12c0,1.1,0.9,2,2,2h9C19.1,18,20,17.1,20,16z M18,16H9V4h9V16z"/></g></svg>';
+
+                div.style.opacity = '0';
+
+                codeEl.appendChild(div);
+
+                requestAnimationFrame(() => {
+                    div.style.opacity = '1';
+                });
+            } else {
+                clearTimeout(removeTimeouts.get(div));
+                div.style.opacity = '1';
+            }
+        }
+    });
+    document.addEventListener('mouseout', (event) => {
+        const target = event.target;
+        const codeEl = target.closest('code.code');
+        if (codeEl) {
+            const related = event.relatedTarget;
+            if (related && codeEl.contains(related)) {
+                return;
+            }
+
+            const div = codeEl.querySelector('.copycode');
+            if (div) {
+                div.style.opacity = '0';
+
+                const timeoutId = setTimeout(() => {
+                    if (div.parentNode) {
+                        div.remove();
+                    }
+                    removeTimeouts.delete(div);
+                }, 300);
+                removeTimeouts.set(div, timeoutId);
+            }
+        }
+    });
+
+
 
     updateSD(false);updateMinHeight();updateWidth();fetch(searchurl);updateNavRight();
 });

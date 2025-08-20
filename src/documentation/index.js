@@ -182,6 +182,7 @@ const cssclass = {
     "linkdot": dataname2[17],
     "secondary": dataname2[21],
     "chc": dataname2[27],
+    "copycode": dataname2[28]
 }
 const cssid = {
     "l": dataname[5]+randomChar(1),
@@ -292,7 +293,10 @@ JS = JS.replaceAll('trimmedStr', jstrimmedstrvar)
     .replace("'REPLACE_NR'", `'${cssid.pageheaders}'`)
     .replace("'REPLACE_CHC'", `'${cssclass.chc}'`)
     .replace("'.left'", `'.${cssclass.left}'`)
-    .replace("'REPLACE_NLCSSHV'", `'--${cssvar.liheight}'`);
+    .replace("'REPLACE_NLCSSHV'", `'--${cssvar.liheight}'`)
+    .replaceAll("('code.code')", `('code.${cssclass.code}')`)
+    .replace("('.copycode')", `('.${cssclass.copycode}')`)
+    .replace("'copycode'", `'${cssclass.copycode}'`);
 const lighthighlight = _just.parseCSS.JSON(JSON.parse(HIGHLIGHTJSON)["_just_light"]);
 lighthighlight.forEach(rule => {
     const props = [];
@@ -1226,12 +1230,13 @@ checkTLD(domain).then(tldvalid => {
             .replace(fixlinkregex('(.|,|_)'), (match, href_, title_, text_, char_) => `<a href="${href_}" target="_blank" id="${cssid.ext}"${title_} class="${cssclass.linkdot}">${text_}</a>${char_}`)
             .replace(fixlinkregex('( {1,}.)'), (match, href_, title_, text_) => `<a href="${href_}" target="_blank" id="${cssid.ext}"${title_} class="${cssclass.linkdot}">${text_}</a>.`)
             .replace(fixlinkregex('( {1,},)'), (match, href_, title_, text_) => `<a href="${href_}" target="_blank" id="${cssid.ext}"${title_} class="${cssclass.linkdot}">${text_}</a>,`);
-        const charss=["!", "?", ":", ";", "#", "$", "%", "^", "&", "*", "\\(", "\\)", "-", "=", "+", '"', "'", '`', "\\[", "\\]", "\\{", "\\}", "\\\\", "\\|", "/", "~", "@", "№"];
+        const charss=["!", "\\?", ":", ";", "#", "\\$", "%", "\\^", "&", "\\*", "\\(", "\\)", "-", "=", "\\+", '"', "'", '`', "\\[", "\\]", "\\{", "\\}", "\\\\", "\\|", "/", "~", "@", "№"];
         charss.forEach(charrr => {
             htmloutput = htmloutput
                 .replace(fixlinkregex(charrr), (match, href_, title_, text_) => `<a href="${href_}" target="_blank" id="${cssid.ext}"${title_} class="${cssclass.linkmark}">${text_}</a>${charrr == "\\\\" ? '\\' : charrr.replaceAll('\\', '')}`);
         });
         htmloutput = htmloutput.replace(/<a href="(.*?)" target="_blank" id="(.*?)"(.*?)>(.*?)<\/a>\+\*\?/g, (match, hreff, idd, titleclass, textt) => {
+            return match; // test
             if (idd == cssid.ext) {
                 return `<a href="${hreff}" target="_blank" id="${idd}"${titleclass}>${textt}</a>`;
             } else {
