@@ -551,12 +551,14 @@ dcmnt.addEventListener('DOMContentLoaded', () => {
         
         if (target_.closest('code.code')) {
             const codeEl = target_.closest('code.code');
+            codeEl.style.setProperty('--codewidth', codeEl.offsetWidth + 'px');
+            codeEl.style.setProperty('--codeheight', codeEl.offsetHeight + 'px');
 
             let div = codeEl.querySelector('.copycode');
             if (!div) {
                 div = document.createElement('div');
                 div.className = 'copycode';
-                div.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24px" viewBox="0 0 24 24" width="24px" fill="#f0f0f0" alt="Copy" title="Click to copy"><g><rect fill="none" height="24" width="24"/></g><g><path d="M15,20H5V7c0-0.55-0.45-1-1-1h0C3.45,6,3,6.45,3,7v13c0,1.1,0.9,2,2,2h10c0.55,0,1-0.45,1-1v0C16,20.45,15.55,20,15,20z M20,16V4c0-1.1-0.9-2-2-2H9C7.9,2,7,2.9,7,4v12c0,1.1,0.9,2,2,2h9C19.1,18,20,17.1,20,16z M18,16H9V4h9V16z"/></g></svg>';
+                div.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="15px" viewBox="0 0 24 24" width="15px" fill="#f0f0f0" alt="Copy" title="Click to copy"><g><rect fill="none" height="24" width="24"/></g><g><path d="M15,20H5V7c0-0.55-0.45-1-1-1h0C3.45,6,3,6.45,3,7v13c0,1.1,0.9,2,2,2h10c0.55,0,1-0.45,1-1v0C16,20.45,15.55,20,15,20z M20,16V4c0-1.1-0.9-2-2-2H9C7.9,2,7,2.9,7,4v12c0,1.1,0.9,2,2,2h9C19.1,18,20,17.1,20,16z M18,16H9V4h9V16z"/></g></svg>';
 
                 div.style.opacity = '0';
 

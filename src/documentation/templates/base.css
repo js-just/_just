@@ -1251,11 +1251,11 @@ main nav.left li {
 
 .copycode {
     position: fixed;
-    translate: calc(var(--codewidth) - 34px) calc(calc(0px - var(--codeheight)) + 32px);
+    translate: calc(var(--codewidth) - 26px) calc(calc(0px - var(--codeheight)) + 4px);
     display: inline-block;
-    height: 34px;
+    height: 25px;
     border-radius: 10px;
-    overflow: hidden
+    overflow: hidden;
 }
 .copycode svg {
     padding: 5px;
