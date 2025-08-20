@@ -537,8 +537,8 @@ dcmnt.addEventListener('DOMContentLoaded', () => {
         if (container) {
             const listItems = container.querySelectorAll('li');
             listItems.forEach(li => {
-                const height = li.offsetHeight;
-                li.style.setProperty('REPLACE_NLCSSHV', `${height - 10}px`);
+                const height_ = li.offsetHeight;
+                li.style.setProperty('REPLACE_NLCSSHV', `${height_ - 10}px`);
             });
         }
     },100);
