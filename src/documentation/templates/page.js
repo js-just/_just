@@ -549,8 +549,8 @@ dcmnt.addEventListener('DOMContentLoaded', () => {
     document.addEventListener('mouseover', (event) => {
         const target_ = event.target;
         
-        if (target_.closest('code.code')) {
-            const codeEl = target_.closest('code.code');
+        const codeEl = target_.closest('code.code');
+        if (codeEl) {
             codeEl.style.setProperty('--codewidth', codeEl.offsetWidth + 'px');
             codeEl.style.setProperty('--codeheight', codeEl.offsetHeight + 'px');
 
@@ -568,7 +568,11 @@ dcmnt.addEventListener('DOMContentLoaded', () => {
                     div.style.opacity = '1';
                 });
             } else {
-                clearTimeout(removeTimeouts.get(div));
+                const timeoutId = removeTimeouts.get(div);
+                if (timeoutId) {
+                    clearTimeout(timeoutId);
+                    removeTimeouts.delete(div);
+                }
                 div.style.opacity = '1';
             }
         }
