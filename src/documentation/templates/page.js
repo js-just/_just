@@ -524,14 +524,16 @@ dcmnt.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    const container = document.querySelector('.left');
-    if (container) {
-        const listItems = container.querySelectorAll('li');
-        listItems.forEach(li => {
-            const height = li.offsetHeight;
-            li.style.setProperty('REPLACE_NLCSSHV', `${height - 10}px`);
-        });
-    }
+    setTimeout(()=>{
+        const container = document.querySelector('.left');
+        if (container) {
+            const listItems = container.querySelectorAll('li');
+            listItems.forEach(li => {
+                const height = li.offsetHeight;
+                li.style.setProperty('REPLACE_NLCSSHV', `${height - 10}px`);
+            });
+        }
+    },100);
 
     updateSD(false);updateMinHeight();updateWidth();fetch(searchurl);updateNavRight();
 });

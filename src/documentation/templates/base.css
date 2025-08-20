@@ -1224,6 +1224,7 @@ main nav li ul li:has(strong) {
         border-radius: 50px;
         opacity: 0.5;
         margin-bottom: calc(0px - var(--liheight));
+        transition: 300ms;
     }
 }
 
