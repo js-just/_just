@@ -1113,8 +1113,19 @@ checkTLD(domain).then(tldvalid => {
         });
         let pageHeaders = '';
         let pageHeaderID= 0;
+        const insertclass = (hd2, hID) => {
+            const classoutput = [];
+            if (hd2) {
+                classoutput.push(cssclass.secondary);
+            }
+            if (hID === 0) {
+                classoutput.push(cssclass.chc)
+            }
+            return classoutput.join(' ');
+        }
         for (const [idk, headerdata] of Object.entries(contents)) {
-            pageHeaders += `<li${ headerdata[2] ? ` class="${cssclass.secondary}"` : '' } id="${cssid.pageheaders}${pageHeaderID++}">
+            const classoutput = insertclass(headerdata[2], pageHeaderID);
+            pageHeaders += `<li${ classoutput.length > 0 ? ` class="${classoutput}"` : '' } id="${cssid.pageheaders}${pageHeaderID++}">
                                 <a href="#${headerdata[1]}">
                                     ${span(_just.string.toText(headerdata[0]))}
                                 </a>

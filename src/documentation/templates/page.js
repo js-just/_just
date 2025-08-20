@@ -212,12 +212,7 @@ const autotheme = () => {
                     dcmnt.documentElement.classList.remove('l');
                 }
             break;
-            case 'light':
-                if (checkTheme() == 'a') {
-                    dcmnt.documentElement.classList.add('l');
-                }
-            break;
-            default:
+            case 'light': default:
                 if (checkTheme() == 'a') {
                     dcmnt.documentElement.classList.add('l');
                 }
@@ -512,7 +507,7 @@ dcmnt.addEventListener('DOMContentLoaded', () => {
                 setTimeout(()=>{updateSD(st)},301);
                 for (const [id, data_] of Object.entries(searchdata)) {
                     sd.innerHTML += SETTINGS.searchV2 ? 
-                        `<a href="${data_[0]}" target="_self"><strong>${('REPLACE_DATAARRAY'.find(item => item[0] === data_[0]) || [])[1] || data_[0]}</strong><span>${data_[1].replaceAll('\n',' ').replaceAll(' - ','')}</span></a>` : 
+                        `<a href="${data_[0]}" target="_self"><strong>${('REPLACE_DATAARRAY'.find(item => item[0] === data_[0]) || [])[1] || data_[0]}</strong><span>${data_[1].replaceAll('\n',' ').replaceAll(' - ','').replaceAll('<br>',' ')}</span></a>` : 
                         `<a href="${data_[0]}" target="_self">${data_[1].replaceAll('\n',' ').replaceAll(' - ','')}</a>`;
                 }
             }

@@ -1243,3 +1243,7 @@ nav.left:not(:has(strong)) > ul {
 input[type="checkbox"] {
     height: 13px;
 }
+
+main nav.left li {
+    overflow-y: hidden;
+}

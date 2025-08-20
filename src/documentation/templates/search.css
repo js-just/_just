@@ -59,6 +59,6 @@
     display: none;
 }
 
-.search span {
+.search span, .search strong {
     color: #f0f0f0 !important;
 }
