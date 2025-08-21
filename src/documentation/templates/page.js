@@ -584,7 +584,7 @@ dcmnt.addEventListener('DOMContentLoaded', () => {
             const related = event.relatedTarget;
             if (related && codeEl.contains(related)) {
                 return;
-            }
+            };
 
             const div = codeEl.querySelector('.copycode');
             if (div) {
@@ -593,7 +593,7 @@ dcmnt.addEventListener('DOMContentLoaded', () => {
                 const timeoutId = setTimeout(() => {
                     if (div.parentNode) {
                         div.remove();
-                    }
+                    };
                     removeTimeouts.delete(div);
                 }, 300);
                 removeTimeouts.set(div, timeoutId);
