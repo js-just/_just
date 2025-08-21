@@ -295,7 +295,7 @@ JS = JS.replaceAll('trimmedStr', jstrimmedstrvar)
     .replace("'.left'", `'.${cssclass.left}'`)
     .replace("'REPLACE_NLCSSHV'", `'--${cssvar.liheight}'`)
     .replaceAll("('code.code')", `('code.${cssclass.code}')`)
-    .replace("('.copycode')", `('.${cssclass.copycode}')`)
+    .replaceAll("('.copycode')", `('.${cssclass.copycode}')`)
     .replace("'copycode'", `'${cssclass.copycode}'`);
 const lighthighlight = _just.parseCSS.JSON(JSON.parse(HIGHLIGHTJSON)["_just_light"]);
 lighthighlight.forEach(rule => {
