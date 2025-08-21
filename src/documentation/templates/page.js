@@ -572,7 +572,7 @@ dcmnt.addEventListener('DOMContentLoaded', () => {
                 if (timeoutId) {
                     clearTimeout(timeoutId);
                     removeTimeouts.delete(div);
-                }
+                };
                 div.style.opacity = '1';
             }
         }
