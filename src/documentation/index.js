@@ -213,6 +213,8 @@ const cssvar = {
     "liheight": dataname2[18],
     "ft": dataname2[20],
     "contents": dataname2[25],
+    "codewidth": dataname2[29],
+    "codeheight": dataname2[30],
 }
 addchars();
 cssvar["md"] = dataname[7]+randomChar(1);
@@ -296,7 +298,9 @@ JS = JS.replaceAll('trimmedStr', jstrimmedstrvar)
     .replace("'REPLACE_NLCSSHV'", `'--${cssvar.liheight}'`)
     .replaceAll("('code.code')", `('code.${cssclass.code}')`)
     .replaceAll("('.copycode')", `('.${cssclass.copycode}')`)
-    .replace("'copycode'", `'${cssclass.copycode}'`);
+    .replace("'copycode'", `'${cssclass.copycode}'`)
+    .replace("'--codewidth'", `'--${cssvar.codewidth}'`)
+    .replace("'--codeheight'", `'--${cssvar.codeheight}'`);
 const lighthighlight = _just.parseCSS.JSON(JSON.parse(HIGHLIGHTJSON)["_just_light"]);
 lighthighlight.forEach(rule => {
     const props = [];
@@ -661,9 +665,10 @@ checkTLD(domain).then(tldvalid => {
                         code_ = hljshighlight ? code_.replace(/&#(x?)([0-9A-Fa-f]+);/g, (match, _code) => String.fromCharCode(parseInt(_code, 10))) : code_;
                         const output_ = hljshighlight ? hljs.highlight(lang_ == 'markdown' ? code_.replaceAll("\\`\\`\\`", "```") : code_, {language: lang_}).value : undefined;
                         insertedcode = true;
-                        codes1.push(`<code class="${cssclass.code}">${
+                        const datalang = inputlang == 'html' ? 'HTML' : inputlang == 'svg' ? 'SVG' : langstext[lang_];
+                        codes1.push(`<code class="${cssclass.code}"${hljshighlight ? ` data-lang="${datalang}"` : ''}>${
                             hljshighlight ? 
-                            `<code>${inputlang == 'html' ? 'HTML' : inputlang == 'svg' ? 'SVG' : langstext[lang_]}</code>${
+                            `<code>${datalang}</code>${
                                 filter_(
                                     `${lang_ == 'css' ? _just.highlight.css(output_) : output_}`
                                 )
@@ -1235,14 +1240,7 @@ checkTLD(domain).then(tldvalid => {
             htmloutput = htmloutput
                 .replace(fixlinkregex(charrr), (match, href_, title_, text_) => `<a href="${href_}" target="_blank" id="${cssid.ext}"${title_} class="${cssclass.linkmark}">${text_}</a>${charrr == "\\\\" ? '\\' : charrr.replaceAll('\\', '')}`);
         });
-        htmloutput = htmloutput.replace(/<a href="(.*?)" target="_blank" id="(.*?)"(.*?)>(.*?)<\/a>\+\*\?/g, (match, hreff, idd, titleclass, textt) => {
-            return match; // test
-            if (idd == cssid.ext) {
-                return `<a href="${hreff}" target="_blank" id="${idd}"${titleclass}>${textt}</a>`;
-            } else {
-                return `<a href="${hreff}" target="_blank" id="${idd}"${titleclass}>${textt}</a>+*?`;
-            }
-        }).replace(/(?<=<code>)(.*?)(?=<\/code>)/g, (match, cde) => cde.replace(/&&#35;(.*?);/g, (match, num_) => {
+        htmloutput = htmloutput.replace(/(?<=<code>)(.*?)(?=<\/code>)/g, (match, cde) => cde.replace(/&&#35;(.*?);/g, (match, num_) => {
             if (/\d/.test(num_)) {
                 return `&#${num_};`;
             } else {
