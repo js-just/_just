@@ -1260,3 +1260,25 @@ main nav.left li {
 .copycode svg {
     padding: 5px;
 }
+
+@keyframes s-shake {
+    10%, 90% {
+        transform: translateX(-0.5px)
+    }
+
+    20%, 80% {
+        transform: translateX(1px)
+    }
+
+    30%, 50%, 70% {
+        transform: translateX(-2px)
+    }
+
+    40%, 60% {
+        transform: translateX(2px)
+    }
+}
+
+.s-shake {
+    animation: s-shake 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55) both
+}

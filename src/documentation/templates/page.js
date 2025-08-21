@@ -600,6 +600,15 @@ dcmnt.addEventListener('DOMContentLoaded', () => {
                 }, 150);
             };
             wndw_.navigator.clipboard.writeText(outputText).then(()=>{changeColor('#2A8C2E')}).catch((_ee)=>{console.warn(_ee);changeColor('#8C2A2A')});
+        } else {
+            div_.style.backgroundColor = '#8C2A2A';
+            div_.classList.add('s-shake');
+            setTimeout(()=>{
+                if (div_) {
+                    div_.style.backgroundColor = null;
+                    div_.classList.remove('s-shake');
+                }
+            }, 150);
         }
     };
     dcmnt.addEventListener('mouseover', (event) => {
