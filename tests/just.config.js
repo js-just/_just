@@ -1,7 +1,7 @@
 const three = 3;
-
+/*
 module.exports = {
-    //type: "docs",
+    type: "docs",
     docs_config: {
         metatitle: "Just an Ultimate Site Tool",
         domain: "test.just.is-a.dev",
