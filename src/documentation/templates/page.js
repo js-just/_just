@@ -559,11 +559,13 @@ dcmnt.addEventListener('DOMContentLoaded', () => {
     const copyCode = (event) => {
         const div_ = event.currentTarget;
         const codeEl = div_.closest('code.code');
+        div_.style.cursor = null;
         if (codeEl && !cooldown1.includes(codeEl)) {
             cooldown1.push(codeEl);
             const outputText = codeEl.innerText.replace(codeEl.getAttribute('data-lang') || '', '').trim();
             const unpush = () => {
                 cooldown1 = cooldown1.filter(item => item !== codeEl);
+                div_.style.cursor = 'pointer';
             };
             const runfunc = (checkthis, func, timeouts) => {
                 if (checkthis) {
@@ -583,7 +585,7 @@ dcmnt.addEventListener('DOMContentLoaded', () => {
                 const to1 = setTimeout(()=>{
                     runfunc(div_, ()=>{
                         div_.innerHTML = copySVG();
-                        unpush()
+                        unpush();
                     }, undefined)
                 }, 600);
                 const to0 = setTimeout(()=>{
@@ -607,6 +609,7 @@ dcmnt.addEventListener('DOMContentLoaded', () => {
                 if (div_) {
                     div_.style.backgroundColor = null;
                     div_.classList.remove('s-shake');
+                    div_.style.cursor = 'pointer';
                 }
             }, 150);
         }
@@ -624,6 +627,7 @@ dcmnt.addEventListener('DOMContentLoaded', () => {
                 div = dcmnt.createElement('div');
                 div.className = 'copycode';
                 div.innerHTML = copySVG();
+                div.style.cursor = 'pointer';
 
                 div.style.opacity = '0';
                 div.addEventListener('click', copyCode);
@@ -639,6 +643,7 @@ dcmnt.addEventListener('DOMContentLoaded', () => {
                     removeTimeouts.delete(div);
                 };
                 div.style.opacity = '1';
+                div.style.cursor = 'pointer';
             }
         }
     });
@@ -655,6 +660,7 @@ dcmnt.addEventListener('DOMContentLoaded', () => {
             if (div) {
                 div.removeEventListener('click', copyCode);
                 div.style.opacity = '0';
+                div.style.cursor = null;
 
                 const timeoutId = setTimeout(() => {
                     if (div.parentNode) {
