@@ -1,3 +1,5 @@
+const three = 3;
+
 module.exports = {
     type: "docs",
     docs_config: {
@@ -11,5 +13,9 @@ module.exports = {
             ["a button", "https://just.is-a.dev/", "_blank"],
         ] // comment test
     },
-    debug: false
+    debug: false,
+    tests: [
+        1+1, 2*2,
+        three
+    ]
 }
