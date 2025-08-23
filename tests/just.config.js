@@ -1,6 +1,6 @@
 const three = 3;
 
-module.exports = null/*{
+module.exports = {
     type: "docs",
     docs_config: {
         metatitle: "Just an Ultimate Site Tool",
@@ -18,4 +18,4 @@ module.exports = null/*{
         1+1, 2*2,
         three
     ]
-}*/
+}
