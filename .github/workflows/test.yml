@@ -18,7 +18,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Prepare
-        run: rm -f "website/index.html" && cp "website/test.md" "website/index.md" && rm -f "website/test.md" && rm -f "just.config.js" && cp "tests/just.config.js" "just.config.js" && echo "test" > "website/noheadertest.md" && cp "website/test.justc" "website/index.justc" && rm -f "website/test.justc"
+        run: rm -f "website/index.html" && cp "website/test.md" "website/index.md" && rm -f "website/test.md" && rm -f "just.config.js" && cp "tests/just.config.js" "just.config.js" && echo "test" > "website/noheadertest.md" && cp "website/test.justc" "website/index.justc" && rm -f "website/test.justc" && bash "website/prepare.sh" && rm -f -v "website/prepare.sh"
         shell: bash
       - uses: actions/setup-node@v4
       - name: Make syntax highlighting test markdown file

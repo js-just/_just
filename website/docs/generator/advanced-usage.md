@@ -52,5 +52,14 @@ module.exports = {
 }
 ```
 
+You can enable debug logs:
+-# `just.config.js`:
+```js
+module.exports = {
+  // ...
+  debug: true
+}
+```
+
 _just: prev: /docs/generator/syntax
 _just: next: /docs/generator/troubleshooting

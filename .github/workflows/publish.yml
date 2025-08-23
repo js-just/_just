@@ -28,7 +28,7 @@ jobs:
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Remove test pages
-        run: rm -f -v website/test.md && rm -f -v website/mattcone.md && rm -f -v website/langs.md && rm -f -v website/test.justc
+        run: rm -f -v website/test.md && rm -f -v website/mattcone.md && rm -f -v website/langs.md && rm -f -v website/test.justc && bash "website/prepare.sh" && rm -f -v "website/prepare.sh"
         shell: bash
       - name: Generate with _just
         uses: js-just/latest@main

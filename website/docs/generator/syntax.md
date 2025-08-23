@@ -8,7 +8,7 @@ _just: title: Supported markdown syntax
 - [Blockquotes](https://www.markdownguide.org/basic-syntax/#blockquotes-1)
 - [Ordered Lists](https://www.markdownguide.org/basic-syntax/#ordered-lists) (Nested lists aren’t supported.)
 - [Unordered Lists](https://www.markdownguide.org/basic-syntax/#unordered-lists) (Nested lists aren’t supported.)
-- [Code](https://www.markdownguide.org/basic-syntax/#code) (To escape backticks (\`) use backslash (\\))
+- [Code](https://www.markdownguide.org/basic-syntax/#code) (To escape backticks (\`) use backslash (\\). Double backticks (\`\`) aren’t supported.)
 - [Horizontal Rules](https://www.markdownguide.org/basic-syntax/#horizontal-rules)
 - [Links](https://www.markdownguide.org/basic-syntax/#links)
 - [Images](https://www.markdownguide.org/basic-syntax/#images-1)
