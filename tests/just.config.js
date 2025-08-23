@@ -11,5 +11,5 @@ module.exports = {
             ["a button", "https://just.is-a.dev/", "_blank"],
         ]
     },
-    debug: false
+    debug: true
 }
