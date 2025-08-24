@@ -155,6 +155,11 @@ function checkFirstLetterCase(text) {
     async function codecmd(cmd) {
         if (cmd.length===4&&(await getCodes()).nums.includes(cmd)) {
             window.location.search = `?c=${cmd}`;
+        } else {
+            elem('d').innerText = 'No code found and unknown command.';
+            setTimeout(()=>{
+                animateTyping('d', 'Enter the code...');
+            }, 1000)
         }
     };
     /**
@@ -186,23 +191,21 @@ function checkFirstLetterCase(text) {
                 updInp()
             } else if (event.key.toLowerCase() === 'Enter'.toLowerCase()) {
                 event.preventDefault();
+                clearInterval(interval);
+                input = '';
+                updInp();
                 if (closecmds.includes(input.toLowerCase()) && !onlyYorN) {
                     close_();
                 } else if (onlyYorN) {
                     if (yescmds.includes(input.toLowerCase())) {
                         oncommand();
                     } else {
-                        clearInterval(interval);
-                        input = '';
-                        updInp();
                         animateTyping('d', 'Enter the code...', 25, ()=>{animElemE(codecmd)});
-                        return
                     }
                 } else {
                     oncommand(input.toLowerCase());
                 };
-                input = '';
-                updInp()
+                return
             } else if (event.key.toLowerCase() === 'Backspace'.toLowerCase()) {
                 event.preventDefault();
                 input = input.slice(0,-1);
