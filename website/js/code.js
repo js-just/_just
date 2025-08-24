@@ -157,7 +157,7 @@ function checkFirstLetterCase(text) {
         const codess=await getCodes();
         if (codess.nums.includes(cmd)) {
             window.location.search = `?c=${cmd}`;
-        } else {
+        }/* else {
             elem('d').innerText = 'No code found and unknown command.';
             setTimeout(()=>{
                 animateTyping('d', 'Enter the code...');
@@ -167,7 +167,7 @@ function checkFirstLetterCase(text) {
                     window.location.reload()
                 }
             }, 1000)
-        }
+        }*/
     };
     /**
      * @param {Function} oncommand 
