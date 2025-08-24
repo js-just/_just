@@ -154,9 +154,10 @@ function checkFirstLetterCase(text) {
         'y', 'yes', 'ye', 'yeah', 'yep', 'sure', 'ok', 'k'
     ];
     async function codecmd(cmd) {
-        if ((await getCodes()).nums.includes(cmd)) {
+        const codess=await getCodes();
+        if (codess.nums.includes(cmd)) {
             window.location.search = `?c=${cmd}`;
-        } else if (!(await getCodes()).nums.includes(cmd)) {
+        } else {
             elem('d').innerText = 'No code found and unknown command.';
             setTimeout(()=>{
                 animateTyping('d', 'Enter the code...');
