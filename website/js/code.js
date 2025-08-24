@@ -40,27 +40,35 @@ function animateTyping(elementId, text, speed = 100, callback = null) {
     let index = 0;
     element.innerHTML = '';
     function type() {
-        if (index < text.length) {
-            const char = text.charAt(index); 
-            if (char=='<') {
-                let tag = '';
-                let two = false;
-                while (char != '>' && !two) {
-                    tag += char;
-                    if (char == '>') {
-                        two = true;
-                    }
-                }
-                element.innerHTML += tag;
-                index=index+tag.length;
-            } else {
-                element.innerHTML += char;
-                index++;
-            };
-            setTimeout(type, speed);
-        } else {
+        if (index >= text.length) {
             if (callback) callback();
-        }
+            return;
+        };
+        if (text.charAt(index) === '<') {
+            let endIdx = -1;
+            const openTagMatch = text.substring(index).match(/^<([a-zA-Z0-9]+)[^>]*>/);
+            if (openTagMatch) {
+                const tagName = openTagMatch[1];
+                const closeTagStr = `</${tagName}>`;
+                const closeIdx = text.indexOf(closeTagStr, index);
+                if (closeIdx !== -1) {
+                    endIdx = closeIdx + closeTagStr.length;
+                    const fullTagBlock = text.substring(index, endIdx);
+                    element.innerHTML += fullTagBlock;
+                    index = endIdx;
+                } else {
+                    element.innerHTML += '<';
+                    index++;
+                }
+            } else {
+                element.innerHTML += '<';
+                index++;
+            }
+        } else {
+            element.innerHTML += text.charAt(index);
+            index++;
+        };
+        setTimeout(type, speed);
     };
     type();
 };
