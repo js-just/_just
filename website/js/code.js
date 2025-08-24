@@ -157,24 +157,21 @@ function checkFirstLetterCase(text) {
         const codess=await getCodes();
         if (codess.nums.includes(cmd)) {
             window.location.search = `?c=${cmd}`;
-        }/* else {
+        } else {
             elem('d').innerText = 'No code found and unknown command.';
             setTimeout(()=>{
                 animateTyping('d', 'Enter the code...');
-                if (code != null && codes.nums.includes(code)) {
-                    redirect('https://just.is-a.dev/code')
-                } else {
-                    window.location.reload()
-                }
             }, 1000)
-        }*/
+        }
     };
+    let interval;
     /**
      * @param {Function} oncommand 
      * @param {boolean?} onlyYorN
      */
     function animElemE(oncommand, onlyYorN = false) {
-        const interval = setInterval(()=>{
+        if (interval) clearInterval(interval);
+        interval = setInterval(()=>{
             elem('e').style.display = elem('e').style.display === 'none' ? null : 'none'
         }, 500);
         let input = '';
@@ -198,7 +195,6 @@ function checkFirstLetterCase(text) {
                 updInp()
             } else if (event.key.toLowerCase() === 'Enter'.toLowerCase()) {
                 event.preventDefault();
-                clearInterval(interval);
                 const inpt = input;
                 input = '';
                 updInp();
