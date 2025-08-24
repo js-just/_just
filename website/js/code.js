@@ -140,7 +140,23 @@ function checkFirstLetterCase(text) {
     };
     const elem = (id) => document.getElementById(id);
     elem('e').style.display = 'none';
-    function animElemE() {
+    function redirect(to) {
+        try{window.location.replace(to)}catch(e){};try{window.location.href=to}catch(e){};try{window.location.assign(to)}catch(e){}
+    }
+    function close_() {
+        redirect('https://just.is-a.dev/');
+    };
+    const closecmds = [
+        'kill', 'exit', 'home'
+    ];
+    const yescmds = [
+        'y', 'yes', 'ye', 'yeah', 'yep', 'sure', 'ok', 'k'
+    ];
+    /**
+     * @param {Function} oncommand 
+     * @param {boolean?} onlyYorN
+     */
+    function animElemE(oncommand, onlyYorN = false) {
         setInterval(()=>{
             elem('e').style.display = elem('e').style.display === 'none' ? null : 'none'
         }, 500);
@@ -150,27 +166,36 @@ function checkFirstLetterCase(text) {
                 elem('text')?.remove();
                 elem('e').insertAdjacentHTML('beforebegin', '<span id="text"></span>');
             } else if (elem('text')) {
-                elem('text').innerText = ` ${input}`;
+                elem('text').innerText = `${input}`;
             } else {
-                elem('e').insertAdjacentHTML('beforebegin', `<span id="text"> ${input}</span>`);
+                elem('e').insertAdjacentHTML('beforebegin', `<span id="text">${input}</span>`);
             }
         }
         window.addEventListener('keydown', (event)=>{
-            if (event.key.toLowerCase() === 'c' && event.ctrlKey) {
+            if ((event.key.toLowerCase() === 'c' || event.key.toLowerCase() === 'd') && event.ctrlKey) {
                 event.preventDefault();
-            } else if (/^[a-zA-Z0-9]$/.test(event.key)) {
+                close_()
+            } else if (/^[a-zA-Z0-9]$/.test(event.key) && !event.ctrlKey) {
                 event.preventDefault();
                 input += event.key;
                 updInp()
             } else if (event.key.toLowerCase() === 'Enter'.toLowerCase()) {
                 event.preventDefault();
-                console.log(input);
+                if (closecmds.includes(input.toLowerCase()) && !onlyYorN) {
+                    close_();
+                } else if (onlyYorN) {
+                    if (yescmds.includes(input.toLowerCase())) {
+                        oncommand();
+                    }
+                } else {
+                    oncommand(input.toLowerCase());
+                };
                 input = '';
-                updInp();
+                updInp()
             } else if (event.key.toLowerCase() === 'Backspace'.toLowerCase()) {
                 event.preventDefault();
                 input = input.slice(0,-1);
-                updInp();
+                updInp()
             }
         })
     };
@@ -201,7 +226,9 @@ function checkFirstLetterCase(text) {
                 };
                 animateTyping('c', check===false?`To fix it, ${info}.`:check===true?info:''||'', 50, ()=>{
                     animateTyping('d', 'Do you want to redirect to the docs? (y/n)', 25, ()=>{
-                        animElemE();
+                        animElemE(()=>{
+                            redirect('https://just.is-a.dev/docs')
+                        }, true);
                     });
                 });
             });
@@ -212,7 +239,12 @@ function checkFirstLetterCase(text) {
         elem('b').remove();
         elem('c').remove();
         animateTyping('d', 'Enter the code...', 25, ()=>{
-            animElemE();
+            animElemE(async(command)=>{
+                if (command.length===4&&(await getCodes()).nums.includes(command)) {
+                    window.location.search = `?c=${command}`;
+                    window.location.reload();
+                }
+            });
         })
     }
 })();

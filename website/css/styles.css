@@ -206,6 +206,7 @@ pre {
 }
 pre span {
     margin-left: 4px;
+    white-space: normal;
 }
 pre div {
     margin-inline: 1rem;
@@ -215,4 +216,9 @@ pre div {
     height: 100vh;
     display: flex;
     flex-direction: column;
+}
+
+pre #text {
+    margin-right: -7px;
+    padding-left: 3px;
 }
