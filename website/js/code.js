@@ -25,6 +25,7 @@ SOFTWARE.
 */
 
 const APIURL = 'https://test.just.is-a.dev/data/codes.json';
+const none = 'none';
 /**
  * @param {string} elementId 
  * @param {string} text 
@@ -140,7 +141,7 @@ function checkFirstLetterCase(text) {
         h1.classList.add('code');
     };
     const elem = (id) => document.getElementById(id);
-    elem('e').style.display = 'none';
+    elem('e').style.display = none;
     function redirect(to) {
         try{window.location.replace(to)}catch(e){};try{window.location.href=to}catch(e){};try{window.location.assign(to)}catch(e){}
     }
@@ -199,7 +200,7 @@ function checkFirstLetterCase(text) {
     function animElemE(oncommand, onlyYorN = false) {
         if (interval) clearInterval(interval);
         interval = setInterval(()=>{
-            elem('e').style.display = elem('e').style.display === 'none' ? null : 'none'
+            elem('e').style.display = elem('e').style.display === none ? null : none
         }, 500);
         let input = '';
         function updInp() {
