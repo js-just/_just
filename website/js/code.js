@@ -152,6 +152,11 @@ function checkFirstLetterCase(text) {
     const yescmds = [
         'y', 'yes', 'ye', 'yeah', 'yep', 'sure', 'ok', 'k'
     ];
+    async function codecmd(cmd) {
+        if (cmd.length===4&&(await getCodes()).nums.includes(cmd)) {
+            window.location.search = `?c=${cmd}`;
+        }
+    };
     /**
      * @param {Function} oncommand 
      * @param {boolean?} onlyYorN
@@ -186,6 +191,9 @@ function checkFirstLetterCase(text) {
                 } else if (onlyYorN) {
                     if (yescmds.includes(input.toLowerCase())) {
                         oncommand();
+                    } else {
+                        animateTyping('d', 'Enter the code...', 25, ()=>{animElemE(codecmd)});
+                        return;
                     }
                 } else {
                     oncommand(input.toLowerCase());
@@ -239,12 +247,7 @@ function checkFirstLetterCase(text) {
         elem('b').remove();
         elem('c').remove();
         animateTyping('d', 'Enter the code...', 25, ()=>{
-            animElemE(async(command)=>{
-                if (command.length===4&&(await getCodes()).nums.includes(command)) {
-                    window.location.search = `?c=${command}`;
-                    window.location.reload();
-                }
-            });
+            animElemE(codecmd);
         })
     }
 })();

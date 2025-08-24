@@ -66,6 +66,7 @@ h1 {
     -webkit-animation: g var(--a);
     animation-delay: 0.2s;
     -webkit-animation-delay: 0.2s;
+    white-space: nowrap;
 }
 .demo::after {
     content: 'Demo';
