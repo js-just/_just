@@ -68,6 +68,7 @@ function animateTyping(elementId, text, speed = 100, callback = null) {
             element.innerHTML += text.charAt(index);
             index++;
         };
+        element.innerHTML = element.innerHTML.replaceAll('\n', '<br>');
         setTimeout(type, speed);
     };
     type();
@@ -153,12 +154,17 @@ function checkFirstLetterCase(text) {
         'y', 'yes', 'ye', 'yeah', 'yep', 'sure', 'ok', 'k'
     ];
     async function codecmd(cmd) {
-        if (cmd.length===4&&(await getCodes()).nums.includes(cmd)) {
+        if ((await getCodes()).nums.includes(cmd)) {
             window.location.search = `?c=${cmd}`;
-        } else {
+        } else if (!(await getCodes()).nums.includes(cmd)) {
             elem('d').innerText = 'No code found and unknown command.';
             setTimeout(()=>{
                 animateTyping('d', 'Enter the code...');
+                if (code != null && codes.nums.includes(code)) {
+                    redirect('https://just.is-a.dev/code')
+                } else {
+                    window.location.reload()
+                }
             }, 1000)
         }
     };
