@@ -72,6 +72,19 @@ function animateTyping(elementId, text, speed = 100, callback = null) {
     };
     type();
 };
+function checkFirstLetterCase(text) {
+    if (!text || typeof text !== 'string') {
+        return undefined;
+    }
+    const firstChar = text.charAt(0);
+    if (firstChar === firstChar.toUpperCase() && firstChar !== firstChar.toLowerCase()) {
+        return true;
+    } else if (firstChar === firstChar.toLowerCase() && firstChar !== firstChar.toUpperCase()) {
+        return false;
+    } else {
+        return null;
+    }
+};
 
 (async()=>{
     /**
@@ -130,9 +143,16 @@ function animateTyping(elementId, text, speed = 100, callback = null) {
         } else {
             elem('a').classList.add('ok');
         };
-        animateTyping('a', code, 100, ()=>{
-            animateTyping('b', !codedata.data.mg?codedata.message:'', 100, ()=>{
-                animateTyping('c', codedata.data.i||'', 100, ()=>{
+        const info = codedata.data.i||'';
+        const check = checkFirstLetterCase(info);
+        animateTyping('a', code, 200, ()=>{
+            animateTyping('b', !codedata.data.mg?codedata.message:'', 50, ()=>{
+                if (check===true) {
+                    elem('c').classList.add('tip');
+                } else {
+                    elem('c').classList.add('info');
+                }
+                animateTyping('c', check===false?`To fix it, ${info}.`:check===true?info:''||'', 50, ()=>{
                     animateTyping('d', 'Do you want to redirect to the docs? (y/n)');
                 });
             });
