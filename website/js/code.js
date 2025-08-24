@@ -170,7 +170,7 @@ function checkFirstLetterCase(text) {
             window.location.search = `?c=${cmd}`;
         } else {
             disableD();
-            elem('f')?.innerText = 'No code found and unknown command.';
+            elem('f').innerText = 'No code found and unknown command.';
             setTimeout(enableD, 1000)
         }
     };
