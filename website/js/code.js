@@ -199,18 +199,19 @@ function checkFirstLetterCase(text) {
             } else if (event.key.toLowerCase() === 'Enter'.toLowerCase()) {
                 event.preventDefault();
                 clearInterval(interval);
+                const inpt = input;
                 input = '';
                 updInp();
-                if (closecmds.includes(input.toLowerCase()) && !onlyYorN) {
+                if (closecmds.includes(inpt.toLowerCase()) && !onlyYorN) {
                     close_();
                 } else if (onlyYorN) {
-                    if (yescmds.includes(input.toLowerCase())) {
+                    if (yescmds.includes(inpt.toLowerCase())) {
                         oncommand();
                     } else {
                         animateTyping('d', 'Enter the code...', 25, ()=>{animElemE(codecmd)});
                     }
                 } else {
-                    oncommand(input.toLowerCase());
+                    oncommand(inpt.toLowerCase());
                 };
                 return
             } else if (event.key.toLowerCase() === 'Backspace'.toLowerCase()) {
