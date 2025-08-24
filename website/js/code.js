@@ -26,6 +26,7 @@ SOFTWARE.
 
 const APIURL = 'https://test.just.is-a.dev/data/codes.json';
 const none = 'none';
+const entr = 'Enter the code or command, or type "help" and press "Enter"...';
 /**
  * @param {string} elementId 
  * @param {string} text 
@@ -163,7 +164,7 @@ function checkFirstLetterCase(text) {
     function enableD() {
         elem('f')?.remove();
         elem('d').style.display = null;
-        animateTyping('d', 'Enter the code...');
+        animateTyping('d', entr);
     };
     async function codecmd(cmd) {
         const codess=await getCodes();
@@ -232,7 +233,7 @@ function checkFirstLetterCase(text) {
                     if (yescmds.includes(inpt)) {
                         oncommand();
                     } else {
-                        animateTyping('d', 'Enter the code...', 25, ()=>{animElemE(codecmd)});
+                        animateTyping('d', entr, 25, ()=>{animElemE(codecmd)});
                     }
                 } else if (helpcmds.includes(inpt)) {
                     helpcmd();
@@ -288,7 +289,7 @@ function checkFirstLetterCase(text) {
         elem('a').remove();
         elem('b').remove();
         elem('c').remove();
-        animateTyping('d', 'Enter the code...', 25, ()=>{
+        animateTyping('d', entr, 25, ()=>{
             animElemE(codecmd);
         })
     }
