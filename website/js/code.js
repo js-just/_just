@@ -148,21 +148,48 @@ function checkFirstLetterCase(text) {
         redirect('https://just.is-a.dev/');
     };
     const closecmds = [
-        'kill', 'exit', 'home'
+        'kill', 'exit', 'home', 'e'
     ];
     const yescmds = [
         'y', 'yes', 'ye', 'yeah', 'yep', 'sure', 'ok', 'k'
     ];
+    function disableD() {
+        const f = elem('d').cloneNode();
+        f.id = 'f';
+        elem('d').after(f);
+        elem('d').style.display = none;
+    };
+    function enableD() {
+        elem('f')?.remove();
+        elem('d').style.display = null;
+        animateTyping('d', 'Enter the code...');
+    };
     async function codecmd(cmd) {
         const codess=await getCodes();
         if (codess.nums.includes(cmd)) {
             window.location.search = `?c=${cmd}`;
         } else {
-            elem('d').innerText = 'No code found and unknown command.';
-            setTimeout(()=>{
-                animateTyping('d', 'Enter the code...');
-            }, 1000)
+            disableD();
+            elem('f')?.innerText = 'No code found and unknown command.';
+            setTimeout(enableD, 1000)
         }
+    };
+    const helpcmds = [
+        'help', 'h'
+    ];
+    const listcmds = [
+        'list', 'l'
+    ];
+    function timeoutED() {
+        setTimeout(enableD, 3000)
+    };
+    function helpcmd() {
+        disableD();
+        animateTyping('f', '<strong>Command list:</strong>\nhelp - help command / command list\nhome - redirect to home page\nlist - list of codes', 30, timeoutED)
+    };
+    function listcmd() {
+        disableD();
+        animateTyping('f', `<strong>Command list:</strong>\n${codes.nums.join('\n')}`, 40, timeoutED)
     };
     let interval;
     /**
@@ -195,19 +222,23 @@ function checkFirstLetterCase(text) {
                 updInp()
             } else if (event.key.toLowerCase() === 'Enter'.toLowerCase()) {
                 event.preventDefault();
-                const inpt = input;
+                const inpt = input.trim().toLowerCase();
                 input = '';
                 updInp();
-                if (closecmds.includes(inpt.toLowerCase()) && !onlyYorN) {
+                if (closecmds.includes(inpt) && !onlyYorN) {
                     close_();
                 } else if (onlyYorN) {
-                    if (yescmds.includes(inpt.toLowerCase())) {
+                    if (yescmds.includes(inpt)) {
                         oncommand();
                     } else {
                         animateTyping('d', 'Enter the code...', 25, ()=>{animElemE(codecmd)});
                     }
+                } else if (helpcmds.includes(inpt)) {
+                    helpcmd();
+                } else if (listcmds.includes(inpt)) {
+                    listcmd();
                 } else {
-                    oncommand(inpt.toLowerCase());
+                    oncommand(inpt);
                 };
                 return
             } else if (event.key.toLowerCase() === 'Backspace'.toLowerCase()) {
