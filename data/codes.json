@@ -82,7 +82,7 @@
             "link": "",
             "data": {
                 "mg": true,
-                "i": "Invalid domain name: Invalid TLD. <br>Please check your <code>module.exports</code> of the <code>just.config.js</code> file."
+                "i": "Invalid domain name: Invalid TLD. \nPlease check your <code>module.exports</code> of the <code>just.config.js</code> file."
             }
         }
     ],
@@ -122,7 +122,7 @@
             "link": "",
             "data": {
                 "mg": false,
-                "i": "The <code>module.exports</code> is missing or the property <code>type</code> either has an invalid value or is missing. <br>Please read the <a href=\"https://just.is-a.dev/docs\" target=\"_self\">documentation</a>."
+                "i": "The <code>module.exports</code> is missing or the property <code>type</code> either has an invalid value or is missing. \nPlease read the <a href=\"https://just.is-a.dev/docs\" target=\"_self\">documentation</a>."
             }
         },
         {
@@ -132,7 +132,7 @@
             "link": "",
             "data": {
                 "mg": false,
-                "i": "_0110"
+                "i": "The <code>module.exports</code> is missing or the property <code>type</code> either has an invalid value or is missing. \nPlease read the <a href=\"https://just.is-a.dev/docs\" target=\"_self\">documentation</a>."
             }
         },
         {
@@ -356,7 +356,7 @@
             "link": "",
             "data": {
                 "mg": true,
-                "i": "Invalid domain name. <br>Please check your <code>module.exports</code> of the <code>just.config.js</code> file."
+                "i": "Invalid domain name. \nPlease check your <code>module.exports</code> of the <code>just.config.js</code> file."
             }
         },
         {
@@ -366,7 +366,7 @@
             "link": "",
             "data": {
                 "mg": true,
-                "i": "Invalid domain name: Invalid <a href=\"https://is-a.dev/\" target=\"_blank\"><code>.is-a.dev</code></a> subdomain. <br>The subdomain you specified does not exist. Please register it first."
+                "i": "Invalid domain name: Invalid <a href=\"https://is-a.dev/\" target=\"_blank\"><code>.is-a.dev</code></a> subdomain. \nThe subdomain you specified does not exist. Please register it first."
             }
         },
         {

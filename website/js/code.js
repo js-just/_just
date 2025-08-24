@@ -148,9 +148,9 @@ function checkFirstLetterCase(text) {
         animateTyping('a', code, 200, ()=>{
             animateTyping('b', !codedata.data.mg?codedata.message:'', 50, ()=>{
                 if (check===true) {
-                    elem('c').classList.add('tip');
-                } else {
                     elem('c').classList.add('info');
+                } else {
+                    elem('c').classList.add('tip');
                 }
                 animateTyping('c', check===false?`To fix it, ${info}.`:check===true?info:''||'', 50, ()=>{
                     animateTyping('d', 'Do you want to redirect to the docs? (y/n)');
