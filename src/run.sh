@@ -34,13 +34,18 @@ elif [ -z "$INPUT_PATH" ]; then
 fi
 
 chmod +x "$GITHUB_ACTION_PATH/src/last-commit.py"
+chmod +x "$GITHUB_ACTION_PATH/src/latest.py"
 LAST_COMMIT=$(python3 "$GITHUB_ACTION_PATH/src/last-commit.py")
+LATEST_VER=$(python3 "$GITHUB_ACTION_PATH/src/latest.py")
 COMMIT_SHA=$(cat "$GITHUB_ACTION_PATH/data/generated/sha.txt")
 VERSION=$(echo "$GITHUB_ACTION_PATH" | grep -oP '(?<=/v)[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9]+)?' || echo "$COMMIT_SHA")
 if [[ "$VERSION" != "$COMMIT_SHA" && "$VERSION" != v* ]]; then
     VERSION="v$VERSION"
 elif [[ "$VERSION" == "$COMMIT_SHA" && "$COMMIT_SHA" == "$LAST_COMMIT" ]]; then
     VERSION="@main $VERSION"
+fi
+if [[ "$VERSION" == v* && "$VERSION" == "$LATEST_VER" ]]; then
+    VERSION="/latest $VERSION"
 fi
 msg1=$(_justMessage "$_BLUE Running$_LIGHTPURPLE Just an Ultimate Site Tool$_RESET $VERSION")
 msg2=$(_justMessage "$_BLUE Installing Node.js$_RESET...")

@@ -21,4 +21,6 @@
 # SOFTWARE.
 
 #!/bin/bash
-cp "data/codes.json" "website/codes.json"
+mkdir -p "website/data" && \
+cp "data/codes.json" "website/data/codes.json" && \
+cp "data/langstext.json" "website/data/langs.json"
