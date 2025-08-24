@@ -1039,7 +1039,7 @@ h1, h2, h3 {
 }
 .firefox .search, .ios .search {
     backdrop-filter: blur(4px) brightness(0.3) !important;
-    -wenkit-backdrop-filter: blur(4px) brightness(0.3) !important;
+    -webkit-backdrop-filter: blur(4px) brightness(0.3) !important;
 }
 .ios .search {
     background-color: var(--bg);

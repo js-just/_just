@@ -23,9 +23,40 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 */
+
+const APIURL = 'https://test.just.is-a.dev/data/codes.json';
+/**
+ * @param {string} elementId 
+ * @param {string} text 
+ * @param {number?} speed 
+ * @param {Function?} callback 
+ * @returns {void}
+ */
+function animateTyping(elementId, text, speed = 100, callback = null) {
+    const element = document.getElementById(elementId);
+    if (!element) {
+        return;
+    };
+    let index = 0;
+    element.innerHTML = '';
+    function type() {
+        if (index < text.length) {
+            element.innerHTML += text.charAt(index);
+            index++;
+            setTimeout(type, speed);
+        } else {
+            if (callback) callback();
+        }
+    };
+    type();
+};
+
 (async()=>{
+    /**
+     * @returns {Promise<{data:any[],nums:any[]}>}
+     */
     async function getCodes() {
-        const responce = await fetch('https://test.just.is-a.dev/data/codes.json').then((r)=>{
+        const responce = await fetch(APIURL).then((r)=>{
             return r.json();
         });
         let[data,nums]=[[],[]];
@@ -48,6 +79,11 @@ SOFTWARE.
             })
         }
     }
+    /**
+     * @param {text} code 
+     * @param {any[]} data 
+     * @returns {{code: String, message: String, crashed: Boolean, data?: {mg: boolean, i: string | null}} | null}
+     */
     function getCodeData(code, data) {
         let output = null;
         data.forEach((item)=>{
@@ -64,8 +100,13 @@ SOFTWARE.
 
     if (code != null && codes.nums.includes(code)) {
         const codedata = getCodeData(code, codes.data);
-        document.getElementById('a').innerText=code;
-        document.getElementById('b').innerText=!codedata.data.mg?codedata.message:'';
-        document.getElementById('c').innerHTML=codedata.data.i||'';
+        const elem = (id) => document.getElementById(id);
+        animateTyping(elem('a'), code, 100, ()=>{
+            animateTyping(elem('b'), !codedata.data.mg?codedata.message:'', 100, ()=>{
+                animateTyping(elem('c'), codedata.data.i||'', 100, ()=>{
+                    animateTyping(elem('d'), 'Do you want to redirect to the docs? (y/n)');
+                });
+            });
+        });
     }
 })();

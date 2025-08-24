@@ -37,6 +37,10 @@ switch (abc) {
         document.body.classList.add('a');
         break;
 }
+/**
+ * @param {number} b
+ * @returns {number}
+ */
 function a (b) {
     return b + 1;
 }
