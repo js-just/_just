@@ -162,7 +162,7 @@ function checkFirstLetterCase(text) {
      * @param {boolean?} onlyYorN
      */
     function animElemE(oncommand, onlyYorN = false) {
-        setInterval(()=>{
+        const interval = setInterval(()=>{
             elem('e').style.display = elem('e').style.display === 'none' ? null : 'none'
         }, 500);
         let input = '';
@@ -192,8 +192,11 @@ function checkFirstLetterCase(text) {
                     if (yescmds.includes(input.toLowerCase())) {
                         oncommand();
                     } else {
+                        clearInterval(interval);
+                        input = '';
+                        updInp();
                         animateTyping('d', 'Enter the code...', 25, ()=>{animElemE(codecmd)});
-                        return;
+                        return
                     }
                 } else {
                     oncommand(input.toLowerCase());
