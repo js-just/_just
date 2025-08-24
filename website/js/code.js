@@ -25,7 +25,7 @@ SOFTWARE.
 */
 (async()=>{
     async function getCodes() {
-        const responce = await fetch('https://test.just.is-a.dev/codes.json').then((r)=>{
+        const responce = await fetch('https://test.just.is-a.dev/data/codes.json').then((r)=>{
             return r.json();
         });
         let[data,nums]=[[],[]];
