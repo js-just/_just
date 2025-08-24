@@ -23,48 +23,49 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 */
-
-async function getCodes() {
-    const responce = await fetch('https://test.just.is-a.dev/codes.json').then((r)=>{
-        return r.json();
-    });
-    let[data,nums]=[[],[]];
-    for (const[key,val]of Object.entries(responce)) {
-        if (key !== 'README') {
-            val.forEach((item)=>{
-                data.push(item);
-                nums.push(item.code);
-            });
+(async()=>{
+    async function getCodes() {
+        const responce = await fetch('https://test.just.is-a.dev/codes.json').then((r)=>{
+            return r.json();
+        });
+        let[data,nums]=[[],[]];
+        for (const[key,val]of Object.entries(responce)) {
+            if (key !== 'README') {
+                val.forEach((item)=>{
+                    data.push(item);
+                    nums.push(item.code);
+                });
+            }
+        };
+        data = data.filter(item=>item.data);
+        return {
+            data,nums:nums.filter((item)=>{
+                let output = false;
+                data.forEach((code)=>{
+                    output=!output?code.code===item:output;
+                });
+                return output;
+            })
         }
-    };
-    data = data.filter(item=>item.data);
-    return {
-        data,nums:nums.filter((item)=>{
-            let output = false;
-            data.forEach((code)=>{
-                output=!output?code.code===item:output;
-            });
-            return output;
-        })
     }
-}
-function getCodeData(code, data) {
-    let output = null;
-    data.forEach((item)=>{
-        if (item.code === code) {
-            output = item;
-        }
-    });
-    return output;
-}
+    function getCodeData(code, data) {
+        let output = null;
+        data.forEach((item)=>{
+            if (item.code === code) {
+                output = item;
+            }
+        });
+        return output;
+    }
 
-const params = new URLSearchParams(window.location.search);
-const code = params.get('c');
-const codes = await getCodes();
+    const params = new URLSearchParams(window.location.search);
+    const code = params.get('c');
+    const codes = await getCodes();
 
-if (code != null && codes.nums.includes(code)) {
-    const codedata = getCodeData(code, codes.data);
-    document.getElementById('a').innerText=code;
-    document.getElementById('b').innerText=!codedata.data.mg?codedata.message:'';
-    document.getElementById('c').innerHTML=codedata.data.i||'';
-}
+    if (code != null && codes.nums.includes(code)) {
+        const codedata = getCodeData(code, codes.data);
+        document.getElementById('a').innerText=code;
+        document.getElementById('b').innerText=!codedata.data.mg?codedata.message:'';
+        document.getElementById('c').innerHTML=codedata.data.i||'';
+    }
+})();
