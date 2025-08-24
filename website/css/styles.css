@@ -204,6 +204,7 @@ pre {
     background-color: black;
     height: 100%;
     border-radius: 10px;
+    overflow: auto;
 }
 pre span {
     margin-left: 4px;
@@ -222,4 +223,24 @@ pre div {
 pre #text {
     margin-right: -7px;
     padding-left: 3px;
+}
+
+::-webkit-scrollbar {
+    width: 7px;
+    height: 7px
+}
+
+::-webkit-scrollbar-button {
+    width: 0;
+    height: 0
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0)
+}
+
+::-webkit-scrollbar-thumb {
+    background: #f0f0f0;
+    border: 2px solid #121212;
+    border-radius: 10px
 }

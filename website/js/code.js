@@ -190,7 +190,7 @@ function checkFirstLetterCase(text) {
     };
     function listcmd() {
         disableD();
-        animateTyping('f', `<strong>Command list:</strong>\n${codes.nums.join('\n')}`, 40, timeoutED)
+        animateTyping('f', `<strong>List of codes:</strong>\n${codes.nums.join('\n')}`, 40, timeoutED)
     };
     let interval;
     /**
