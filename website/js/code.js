@@ -41,8 +41,22 @@ function animateTyping(elementId, text, speed = 100, callback = null) {
     element.innerHTML = '';
     function type() {
         if (index < text.length) {
-            element.innerHTML += text.charAt(index);
-            index++;
+            const char = text.charAt(index); 
+            if (char=='<') {
+                let tag = '';
+                let two = false;
+                while (char != '>' && !two) {
+                    tag += char;
+                    if (char == '>') {
+                        two = true;
+                    }
+                }
+                element.innerHTML += tag;
+                index=index+tag.length;
+            } else {
+                element.innerHTML += char;
+                index++;
+            };
             setTimeout(type, speed);
         } else {
             if (callback) callback();
@@ -101,10 +115,17 @@ function animateTyping(elementId, text, speed = 100, callback = null) {
     if (code != null && codes.nums.includes(code)) {
         const codedata = getCodeData(code, codes.data);
         const elem = (id) => document.getElementById(id);
-        animateTyping(elem('a'), code, 100, ()=>{
-            animateTyping(elem('b'), !codedata.data.mg?codedata.message:'', 100, ()=>{
-                animateTyping(elem('c'), codedata.data.i||'', 100, ()=>{
-                    animateTyping(elem('d'), 'Do you want to redirect to the docs? (y/n)');
+        if (codedata.crashed || code.startsWith('03')) {
+            elem('a').classList.add('error');
+        } else if (code.startsWith('02')) {
+            elem('a').classList.add('warn');
+        } else {
+            elem('a').classList.add('ok');
+        };
+        animateTyping('a', code, 100, ()=>{
+            animateTyping('b', !codedata.data.mg?codedata.message:'', 100, ()=>{
+                animateTyping('c', codedata.data.i||'', 100, ()=>{
+                    animateTyping('d', 'Do you want to redirect to the docs? (y/n)');
                 });
             });
         });
