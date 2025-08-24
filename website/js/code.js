@@ -143,7 +143,36 @@ function checkFirstLetterCase(text) {
     function animElemE() {
         setInterval(()=>{
             elem('e').style.display = elem('e').style.display === 'none' ? null : 'none'
-        }, 500)
+        }, 500);
+        let input = '';
+        function updInp() {
+            if (input === '') {
+                elem('text')?.remove();
+                elem('e').insertAdjacentHTML('beforebegin', '<span id="text"></span>');
+            } else if (elem('text')) {
+                elem('text').innerText = ` ${input}`;
+            } else {
+                elem('e').insertAdjacentHTML('beforebegin', `<span id="text"> ${input}</span>`);
+            }
+        }
+        window.addEventListener('keydown', (event)=>{
+            if (event.key.toLowerCase() === 'c' && event.ctrlKey) {
+                event.preventDefault();
+            } else if (/^[a-zA-Z0-9]$/.test(event.key)) {
+                event.preventDefault();
+                input += event.key;
+                updInp()
+            } else if (event.key.toLowerCase() === 'Enter'.toLowerCase()) {
+                event.preventDefault();
+                console.log(input);
+                input = '';
+                updInp();
+            } else if (event.key.toLowerCase() === 'Backspace'.toLowerCase()) {
+                event.preventDefault();
+                input = input.slice(0,-1);
+                updInp();
+            }
+        })
     };
     if (code != null && codes.nums.includes(code)) {
         const codedata = getCodeData(code, codes.data);
