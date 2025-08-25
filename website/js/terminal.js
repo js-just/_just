@@ -138,6 +138,7 @@ function checkFirstLetterCase(text) {
 
     const params = new URLSearchParams(window.location.search);
     const code = params.get('c');
+    const init = params.get('i') === 'y';
     const codes = await getCodes();
 
     const elem = (id) => document.getElementById(id);
@@ -170,7 +171,7 @@ function checkFirstLetterCase(text) {
     async function codecmd(cmd) {
         const codess=await getCodes();
         if (codess.nums.includes(cmd)) {
-            window.location.search = `?c=${cmd}`;
+            window.location.search = `?c=${cmd}&i=y`;
         } else {
             disableD();
             elem('f').innerText = 'No code found and unknown command.';
@@ -269,7 +270,7 @@ function checkFirstLetterCase(text) {
         listener=keydownListener;
         window.addEventListener('keydown',keydownListener)
     };
-    animateTyping('loader', `<small>Initializing</small> Just an Ultimate Site Tool helper terminal <small>...</small>\n${' '.repeat(20)}\n${loadingerr ? 'Error' : 'Done.'}`, 50, ()=>{
+    animateTyping('loader', `<small>Initializing</small> Just an Ultimate Site Tool helper terminal <small>...</small>\n${' '.repeat(20)}\n${loadingerr ? 'Error' : 'Done.'}`, init ? 0 : 50, ()=>{
         setTimeout(()=>{
             if (code != null && codes.nums.includes(code) && !loadingerr) {
                 elem('loader').innerText = `> ${code}\n\n`;
@@ -325,7 +326,7 @@ function checkFirstLetterCase(text) {
                     animElemE(codecmd);
                 })
             }
-        }, 234)
+        }, init ? 0 : 234)
     });
     window.addEventListener('keydown',(event)=>{
         if (event.key.toLowerCase()==='Enter'.toLowerCase()) {
