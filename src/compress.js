@@ -48,6 +48,8 @@ async function serializeRules(rules) {
                 props.push(`${key}:${value}`);
             }
             return `${rule.selectors.join(',')}{${props.join(';')}}`;
+        } else if (rule.type === 'insert') {
+            return rule.text;
         }
         return '';
     };
