@@ -249,3 +249,78 @@ pre #text {
     content: 'Fatal';
     background-color: #ff2b1b
 }
+
+pre a {
+    color: #2ad2ff;
+    text-decoration-color: black;
+}
+
+
+.t {
+    padding-bottom: 100px;
+    box-shadow: inset 0px -50px 50px #00000082;
+    width: calc(100%);
+    position: fixed;
+    translate: -50px 0px;
+    padding-inline: 50px;
+}
+@property --1 {
+    syntax: '<percentage>';
+    initial-value: -60%;
+    inherits: false
+}
+@property --2 {
+    syntax: '<percentage>';
+    initial-value: -50%;
+    inherits: false
+}
+@property --3 {
+    syntax: '<percentage>';
+    initial-value: 0%;
+    inherits: false
+}
+.t::before {
+    content: '';
+    position: fixed;
+    top: calc(100% - 50px);
+    left: 0px;
+    width: 100%;
+    height: 3px;
+    background-color: #ffffff14;
+        background: RGBA(255, 255, 255, 20);
+        background: -webkit-linear-gradient(148deg, rgba(255, 255, 255, 0.2) var(--1), rgba(255, 255, 255, 1) var(--2), rgba(255, 255, 255, 0.2) var(--3));
+        background: -moz-linear-gradient(148deg, rgba(255, 255, 255, 0.2) var(--1), rgba(255, 255, 255, 1) var(--2), rgba(255, 255, 255, 0.2) var(--3));
+        background: linear-gradient(148deg, rgba(255, 255, 255, 0.2) var(--1), rgba(255, 255, 255, 1) var(--2), rgba(255, 255, 255, 0.2) var(--3));
+        filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#FFFFFF", endColorstr="#FFFFFF14", GradientType=0);
+    animation: t var(--a);
+    animation-timing-function: linear;
+    animation-duration: 2s;
+    opacity: 0.5;
+}
+@keyframes t {
+    0% {
+        --1: -60%;
+        --2: -50%;
+        --3: 0%;
+    }
+    25% {
+        --1: -50%;
+        --2: 0%;
+        --3: 50%;
+    }
+    50% {
+        --1: 0%;
+        --2: 50%;
+        --3: 100%;
+    }
+    75% {
+        --1: 50%;
+        --2: 100%;
+        --3: 110%;
+    }
+    100% {
+        --1: 100%;
+        --2: 150%;
+        --3: 160%;
+    }
+}
