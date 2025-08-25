@@ -196,11 +196,14 @@ function checkFirstLetterCase(text) {
     };
     let interval;
     let enterKeyCooldown = false;
+    let listener;
+    let aEEid=0;
     /**
      * @param {Function} oncommand 
      * @param {boolean?} onlyYorN
      */
     function animElemE(oncommand, onlyYorN = false) {
+        const runid = aEEid++;
         if (interval) clearInterval(interval);
         interval = setInterval(()=>{
             elem('e').style.display = elem('e').style.display === none ? null : none
@@ -217,50 +220,53 @@ function checkFirstLetterCase(text) {
             }
         }
         const keydownListener=(event)=>{
-            if ((event.key.toLowerCase() === 'c' || event.key.toLowerCase() === 'd') && event.ctrlKey) {
-                event.preventDefault();
-                close_()
-            } else if (/^[a-zA-Z0-9]$/.test(event.key) && !event.ctrlKey) {
-                event.preventDefault();
-                input += event.key;
-                updInp()
-            } else if (event.key.toLowerCase() === 'Enter'.toLowerCase() && !enterKeyCooldown) {
-                event.preventDefault();
-                enterKeyCooldown = true;
-                const uncooldown=()=>{setTimeout(()=>{enterKeyCooldown=false},300)};
-                const inpt = input.trim().toLowerCase();
-                input = '';
-                updInp();
-                if (closecmds.includes(inpt) && !onlyYorN) {
-                    close_();
-                    uncooldown()
-                } else if (onlyYorN) {
-                    if (yescmds.includes(inpt)) {
-                        oncommand();
+            if (runid === aEEid - 1) {
+                if ((event.key.toLowerCase() === 'c' || event.key.toLowerCase() === 'd') && event.ctrlKey) {
+                    event.preventDefault();
+                    close_()
+                } else if (/^[a-zA-Z0-9]$/.test(event.key) && !event.ctrlKey) {
+                    event.preventDefault();
+                    input += event.key;
+                    updInp()
+                } else if (event.key.toLowerCase() === 'Enter'.toLowerCase() && !enterKeyCooldown) {
+                    event.preventDefault();
+                    enterKeyCooldown = true;
+                    const uncooldown=()=>{setTimeout(()=>{enterKeyCooldown=false},300)};
+                    const inpt = input.trim().toLowerCase();
+                    input = '';
+                    updInp();
+                    if (closecmds.includes(inpt) && !onlyYorN) {
+                        close_();
+                        uncooldown()
+                    } else if (onlyYorN) {
+                        if (yescmds.includes(inpt)) {
+                            oncommand();
+                            uncooldown()
+                        } else {
+                            animateTyping('d', entr, 25, () => {
+                                animElemE((cmd)=>{codecmd(cmd);uncooldown()});
+                            })
+                        }
+                    } else if (helpcmds.includes(inpt)) {
+                        helpcmd();
+                        uncooldown()
+                    } else if (listcmds.includes(inpt)) {
+                        listcmd();
                         uncooldown()
                     } else {
-                        animateTyping('d', entr, 25, () => {
-                            animElemE((cmd)=>{codecmd(cmd);uncooldown()});
-                        })
-                    }
-                } else if (helpcmds.includes(inpt)) {
-                    helpcmd();
-                    uncooldown()
-                } else if (listcmds.includes(inpt)) {
-                    listcmd();
-                    uncooldown()
-                } else {
-                    oncommand(inpt);
-                    uncooldown()
-                };
-                return
-            } else if (event.key.toLowerCase() === 'Backspace'.toLowerCase()) {
-                event.preventDefault();
-                input = input.slice(0,-1);
-                updInp()
+                        oncommand(inpt);
+                        uncooldown()
+                    };
+                    return
+                } else if (event.key.toLowerCase() === 'Backspace'.toLowerCase()) {
+                    event.preventDefault();
+                    input = input.slice(0,-1);
+                    updInp()
+                }
             }
         };
-        window.removeEventListener('keydown',keydownListener);
+        window.removeEventListener('keydown',listener);
+        listener=keydownListener;
         window.addEventListener('keydown',keydownListener)
     };
     animateTyping('loader', `<small>Initializing</small> Just an Ultimate Site Tool helper terminal <small>...</small>\n${' '.repeat(20)}\n${loadingerr ? 'Error' : 'Done.'}`, 50, ()=>{
