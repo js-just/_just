@@ -50,7 +50,7 @@ function animateTyping(elementId, text, speed = 100, callback = null) {
             cooldown = false;
             if (element.innerHTML !== text) {
                 aTerr = true;
-                return
+                console.warn(`"${element.innerHTML}" !== "${text}"`)
             };
             if (callback) callback();
             return;
