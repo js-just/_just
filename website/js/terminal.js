@@ -48,9 +48,9 @@ function animateTyping(elementId, text, speed = 100, callback = null) {
     function type() {
         if (index >= text.length) {
             cooldown = false;
-            if (element.innerHTML !== text) {
+            if (element.innerHTML !== text.replaceAll('\n', '<br>')) {
                 aTerr = true;
-                console.warn(`"${element.innerHTML}" !== "${text}"`)
+                console.warn(`"${element.innerHTML}" !== "${text.replaceAll('\n', '<br>')}"`)
             };
             if (callback) callback();
             return;
@@ -215,7 +215,7 @@ function checkFirstLetterCase(text) {
     }
     function animErr() {
         if (aTerr) {
-            fatal('Something went wrong.')
+            fatal('Unexpected behavior')
         }
     }
     function helpcmd() {
@@ -343,7 +343,7 @@ function checkFirstLetterCase(text) {
                     });
                 });
             } else if (loadingerr) {
-                fatal('Failed to fetch codes.')
+                fatal('Failed to fetch codes')
             } else {
                 elem('loader').remove();
                 elem('a').remove();
