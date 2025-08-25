@@ -203,8 +203,8 @@ pre {
     color: white;
     background-color: black;
     height: 100%;
-    border-radius: 10px;
     overflow: auto;
+    margin: 0;
 }
 pre span {
     margin-left: 4px;

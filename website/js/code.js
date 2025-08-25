@@ -255,8 +255,8 @@ function checkFirstLetterCase(text) {
     };
     animateTyping('loader', `<small>Initializing</small> Just an Ultimate Site Tool helper terminal <small>...</small>\n${' '.repeat(20)}\nDone.`, 50, ()=>{
         setTimeout(()=>{
-            elem('loader').remove();
             if (code != null && codes.nums.includes(code)) {
+                elem('loader').innerText = `> ${code}\n\n`;
                 const codedata = getCodeData(code, codes.data);
                 if (codedata.crashed || code.startsWith('03')) {
                     elem('a').classList.add('error');
@@ -287,6 +287,7 @@ function checkFirstLetterCase(text) {
                     });
                 });
             } else {
+                elem('loader').remove();
                 elem('a').remove();
                 elem('b').remove();
                 elem('c').remove();
