@@ -216,7 +216,7 @@ function checkFirstLetterCase(text) {
                 elem('e').insertAdjacentHTML('beforebegin', `<span id="text">${input}</span>`);
             }
         }
-        window.addEventListener('keydown', (event)=>{
+        const keydownListener=(event)=>{
             if ((event.key.toLowerCase() === 'c' || event.key.toLowerCase() === 'd') && event.ctrlKey) {
                 event.preventDefault();
                 close_()
@@ -259,9 +259,10 @@ function checkFirstLetterCase(text) {
                 input = input.slice(0,-1);
                 updInp()
             }
-        })
+        };
+        window.addEventListener('keydown',keydownListener)
     };
-    animateTyping('loader', `<small>Initializing</small> Just an Ultimate Site Tool helper terminal <small>...</small>\n${' '.repeat(20)}\nDone.`, 50, ()=>{
+    animateTyping('loader', `<small>Initializing</small> Just an Ultimate Site Tool helper terminal <small>...</small>\n${' '.repeat(20)}\n${loadingerr ? 'Error' : 'Done.'}`, 50, ()=>{
         setTimeout(()=>{
             if (code != null && codes.nums.includes(code) && !loadingerr) {
                 elem('loader').innerText = `> ${code}\n\n`;
@@ -297,6 +298,8 @@ function checkFirstLetterCase(text) {
                     });
                 });
             } else if (loadingerr) {
+                elem('loader').classList.add('fatal');
+                elem('loader').innerText = 'Failed to fetch codes';
                 elem('a').remove();
                 elem('b').remove();
                 elem('c').remove();
@@ -316,5 +319,10 @@ function checkFirstLetterCase(text) {
                 })
             }
         }, 234)
+    });
+    window.addEventListener('keydown',(event)=>{
+        if (event.key.toLowerCase()==='Enter'.toLowerCase()) {
+            setTimeout(()=>{enterKeyCooldown=false},350)
+        }
     })
 })();
