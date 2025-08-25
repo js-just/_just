@@ -59,8 +59,8 @@ h1 {
 .demo::after, .beta::after, .code::after, .exit::after {
     margin-left: 20px;
     padding: 0px 10px;
-    background-color: white;
-    color: black;
+    background-color: #fff;
+    color: #000;
     border-radius: 15px;
     animation: g var(--a);
     -webkit-animation: g var(--a);
@@ -82,10 +82,10 @@ h1 {
 }
 
 .cw { /* Color - White */
-    color: white;
+    color: #fff;
 }
 .bb { /* Background - Black */
-    background-color: black;
+    background-color: #000;
 }
 .fi { /* Filter - Invert */
     filter: invert(1);
@@ -160,12 +160,12 @@ h1 {
     padding-inline: 5px;
     margin-right: 5px;
     border-radius: 6px;
-    color: white;
+    color: #fff;
 }
 .ok::before {
     content: 'OK';
     background-color: #63ff9b;
-    color: black;
+    color: #000;
 }
 .warn::before {
     content: 'Warning';
@@ -189,7 +189,7 @@ h1 {
 
 code {
     background-color: #dbdbdb;
-    color: black;
+    color: #000;
     font-family: var(--scp);
     padding-inline: 5px;
     border-radius: 10px;
@@ -200,8 +200,8 @@ pre {
     padding-top: 2rem;
     padding-bottom: 2rem;
     font-family: var(--scp);
-    color: white;
-    background-color: black;
+    color: #fff;
+    background-color: #000;
     height: 100%;
     overflow: auto;
     margin: 0;
@@ -252,11 +252,11 @@ pre #text {
 
 pre a {
     color: #2ad2ff;
-    text-decoration-color: black;
+    text-decoration-color: #000;
 }
 
 
-.t {
+.t { /* Transition */
     padding-bottom: 100px;
     box-shadow: inset 0px -50px 50px #00000082;
     width: calc(100%);
@@ -323,4 +323,20 @@ pre a {
         --2: 150%;
         --3: 160%;
     }
+}
+
+.b { /* Blur */
+    z-index: 1;
+    filter: blur(50px);
+    top: 19px;
+}
+
+.z { /* idk */
+    z-index: 2;
+    -webkit-mask-image: linear-gradient(to bottom, #000000 70%, transparent);
+    mask-image: linear-gradient(to bottom, #000000 70%, transparent);
+}
+
+.bgb { /* bg - black */
+    background-color: #000000;
 }
