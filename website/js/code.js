@@ -260,6 +260,7 @@ function checkFirstLetterCase(text) {
                 updInp()
             }
         };
+        window.removeEventListener('keydown',keydownListener);
         window.addEventListener('keydown',keydownListener)
     };
     animateTyping('loader', `<small>Initializing</small> Just an Ultimate Site Tool helper terminal <small>...</small>\n${' '.repeat(20)}\n${loadingerr ? 'Error' : 'Done.'}`, 50, ()=>{
