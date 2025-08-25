@@ -202,9 +202,9 @@ function checkFirstLetterCase(text) {
     function fatal(err) {
         elem('loader').classList.add('fatal');
         elem('loader').innerText = err;
-        elem('a').remove();
-        elem('b').remove();
-        elem('c').remove();
+        elem('a')?.remove();
+        elem('b')?.remove();
+        elem('c')?.remove();
         animateTyping('d', 'Press any key to retry...', 25, ()=>{
             window.addEventListener('keydown', ()=>{
                 elem('d').innerHTML = 'Reloading window... <small>The window didn\'t reload? Check your internet connection and try to reload the window manually.</small>';
