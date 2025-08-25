@@ -139,11 +139,6 @@ function checkFirstLetterCase(text) {
     const code = params.get('c');
     const codes = await getCodes();
 
-    const h1 = document.querySelector('.exit');
-    function updh1() {
-        h1.classList.remove('exit');
-        h1.classList.add('code');
-    };
     const elem = (id) => document.getElementById(id);
     elem('e').style.display = none;
     function redirect(to) {
@@ -226,7 +221,7 @@ function checkFirstLetterCase(text) {
                 event.preventDefault();
                 input += event.key;
                 updInp()
-            } else if (event.key.toLowerCase() === 'Enter'.toLowerCase() && !enterKeyCooldown) {
+            } else if (event.key.toLowerCase() === 'Enter'.toLowerCase() && enterKeyCooldown === false) {
                 event.preventDefault();
                 enterKeyCooldown = true;
                 const inpt = input.trim().toLowerCase();
@@ -258,47 +253,47 @@ function checkFirstLetterCase(text) {
             }
         })
     };
-    if (code != null && codes.nums.includes(code)) {
-        const codedata = getCodeData(code, codes.data);
-        if (codedata.crashed || code.startsWith('03')) {
-            elem('a').classList.add('error');
-        } else if (code.startsWith('02')) {
-            updh1();
-            elem('a').classList.add('warn');
-        } else {
-            elem('a').classList.add('ok');
-        };
-        if (code.startsWith('03')) {
-            updh1();
-        };
-        const info = codedata.data.i||'';
-        const check = checkFirstLetterCase(info);
-        animateTyping('a', code, 200, ()=>{
-            animateTyping('b', !codedata.data.mg?codedata.message:'', 50, ()=>{
-                if (codedata.data.mg) {
-                    elem('b').remove();
-                };
-                if (check===true) {
-                    elem('c').classList.add('info');
+    animateTyping('loader', `<small>Initializing</small> Just an Ultimate Site Tool helper terminal <small>...</small>\n${' '.repeat(20)}\nDone.`, 50, ()=>{
+        setTimeout(()=>{
+            elem('loader').remove();
+            if (code != null && codes.nums.includes(code)) {
+                const codedata = getCodeData(code, codes.data);
+                if (codedata.crashed || code.startsWith('03')) {
+                    elem('a').classList.add('error');
+                } else if (code.startsWith('02')) {
+                    elem('a').classList.add('warn');
                 } else {
-                    elem('c').classList.add('tip');
+                    elem('a').classList.add('ok');
                 };
-                animateTyping('c', check===false?`To fix it, ${info}.`:check===true?info:''||'', 50, ()=>{
-                    animateTyping('d', 'Do you want to redirect to the docs? (y/n)', 25, ()=>{
-                        animElemE(()=>{
-                            redirect('https://just.is-a.dev/docs')
-                        }, true);
+                const info = codedata.data.i||'';
+                const check = checkFirstLetterCase(info);
+                animateTyping('a', code, 200, ()=>{
+                    animateTyping('b', !codedata.data.mg?codedata.message:'', 50, ()=>{
+                        if (codedata.data.mg) {
+                            elem('b').remove();
+                        };
+                        if (check===true) {
+                            elem('c').classList.add('info');
+                        } else {
+                            elem('c').classList.add('tip');
+                        };
+                        animateTyping('c', check===false?`To fix it, ${info}.`:check===true?info:''||'', 50, ()=>{
+                            animateTyping('d', 'Do you want to redirect to the docs? (y/n)', 25, ()=>{
+                                animElemE(()=>{
+                                    redirect('https://just.is-a.dev/docs')
+                                }, true);
+                            });
+                        });
                     });
                 });
-            });
-        });
-    } else {
-        updh1();
-        elem('a').remove();
-        elem('b').remove();
-        elem('c').remove();
-        animateTyping('d', entr, 25, ()=>{
-            animElemE(codecmd);
-        })
-    }
+            } else {
+                elem('a').remove();
+                elem('b').remove();
+                elem('c').remove();
+                animateTyping('d', entr, 25, ()=>{
+                    animElemE(codecmd);
+                })
+            }
+        }, 234)
+    })
 })();
