@@ -257,7 +257,7 @@ function checkFirstLetterCase(text) {
         }
         const keydownListener=(event)=>{
             if (aTerr) {
-                s
+                animErr();
             } else if (runid === aEEid - 1) {
                 if ((event.key.toLowerCase() === 'c' || event.key.toLowerCase() === 'd') && event.ctrlKey) {
                     event.preventDefault();
