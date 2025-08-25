@@ -197,6 +197,7 @@ function checkFirstLetterCase(text) {
         animateTyping('f', `<strong>List of codes:</strong>\n${codes.nums.join('\n')}`, 40, timeoutED)
     };
     let interval;
+    let enterKeyCooldown = false;
     /**
      * @param {Function} oncommand 
      * @param {boolean?} onlyYorN
@@ -225,18 +226,21 @@ function checkFirstLetterCase(text) {
                 event.preventDefault();
                 input += event.key;
                 updInp()
-            } else if (event.key.toLowerCase() === 'Enter'.toLowerCase()) {
+            } else if (event.key.toLowerCase() === 'Enter'.toLowerCase() && !enterKeyCooldown) {
                 event.preventDefault();
+                enterKeyCooldown = true;
                 const inpt = input.trim().toLowerCase();
                 input = '';
                 updInp();
                 if (closecmds.includes(inpt) && !onlyYorN) {
                     close_();
+                    enterKeyCooldown = false;
                 } else if (onlyYorN) {
                     if (yescmds.includes(inpt)) {
                         oncommand();
+                        enterKeyCooldown = false;
                     } else {
-                        animateTyping('d', entr, 25, ()=>{animElemE(codecmd)});
+                        animateTyping('d', entr, 25, ()=>{animElemE((cmd)=>{codecmd(cmd); enterKeyCooldown = false})});
                     }
                 } else if (helpcmds.includes(inpt)) {
                     helpcmd();
@@ -244,6 +248,7 @@ function checkFirstLetterCase(text) {
                     listcmd();
                 } else {
                     oncommand(inpt);
+                    enterKeyCooldown = false;
                 };
                 return
             } else if (event.key.toLowerCase() === 'Backspace'.toLowerCase()) {
