@@ -101,6 +101,11 @@ function checkFirstLetterCase(text) {
         return null;
     }
 };
+function exitFullscreen() {
+    if (document.fullscreenElement) {
+        document.exitFullscreen().catch(e=>{console.warn(e)})
+    }
+};
 
 (async()=>{
     /**
@@ -158,6 +163,7 @@ function checkFirstLetterCase(text) {
     const redirecting = (to) => `Redirecting to "<a href="${to}" target="_self">${to}</a>"...`;
     function close_() {
         const url_ = 'https://just.is-a.dev/';
+        exitFullscreen();
         elem('d').innerHTML = redirecting(to);
         redirect(url_)
     };
@@ -207,6 +213,7 @@ function checkFirstLetterCase(text) {
         elem('c')?.remove();
         animateTyping('d', 'Press any key to retry...', 25, ()=>{
             window.addEventListener('keydown', ()=>{
+                exitFullscreen();
                 elem('d').innerHTML = 'Reloading window... <small>The window didn\'t reload? Check your internet connection and try to reload the window manually.</small>';
                 window.location.reload()
             })
@@ -221,7 +228,7 @@ function checkFirstLetterCase(text) {
     function helpcmd() {
         animErr();
         disableD();
-        animateTyping('f', '<strong>Command list:</strong>\nhelp - help command / command list\nhome - redirect to home page\nlist - list of codes', 30, timeoutED)
+        animateTyping('f', '<strong>Command list:</strong>\nhelp - help command / command list\nhome - redirect to home page\nlist - list of codes\nexit - exit this terminal, same as <code>home</code> command', 30, timeoutED)
     };
     function listcmd() {
         animErr();
@@ -358,6 +365,13 @@ function checkFirstLetterCase(text) {
     window.addEventListener('keydown',(event)=>{
         if (event.key.toLowerCase()==='Enter'.toLowerCase()) {
             setTimeout(()=>{enterKeyCooldown=false},350)
+        } else if (event.key.toLowerCase()==='F11'.toLowerCase()) {
+            event.preventDefault();
         }
-    })
+    });
+    setTimeout(()=>{
+        if (document.fullscreenEnabled && document.fullscreenElement !== document.documentElement) {
+            document.documentElement.requestFullscreen().catch(e=>{console.warn(e)})
+        }
+    }, init ? 0 : 555);
 })();
