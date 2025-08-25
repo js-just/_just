@@ -27,6 +27,7 @@ SOFTWARE.
 const APIURL = 'https://test.just.is-a.dev/data/codes.json';
 const none = 'none';
 const entr = 'Enter the code or command, or type "help" and press "Enter"...';
+let cooldown = false;
 /**
  * @param {string} elementId 
  * @param {string} text 
@@ -36,13 +37,15 @@ const entr = 'Enter the code or command, or type "help" and press "Enter"...';
  */
 function animateTyping(elementId, text, speed = 100, callback = null) {
     const element = document.getElementById(elementId);
-    if (!element) {
+    if (!element || (text === entr && cooldown)) {
         return;
     };
+    cooldown = true;
     let index = 0;
     element.innerHTML = '';
     function type() {
         if (index >= text.length) {
+            cooldown = false;
             if (callback) callback();
             return;
         };
