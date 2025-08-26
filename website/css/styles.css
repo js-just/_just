@@ -354,12 +354,14 @@ pre a {
     background-color: #47474770;
     border-radius: 20px;
     border: 2px solid #3f3f3f;
+    z-index: 0;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
 }
 
 .p .top, .p .btm {
     position: absolute;
     right: calc(50% + 52px);
-    z-index: -1;
     width: 515px;
 }
 .p .top {
@@ -416,6 +418,10 @@ pre a {
     width: max-content;
     position: absolute;
     color: #fff;
+}
+
+.p *:not(.l) {
+    z-index: -2;
 }
 
 .pjs { /* Processor - JavaScript */

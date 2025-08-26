@@ -35,7 +35,7 @@ const outputs = [
 ];
 const label = processor.querySelector('span');
 
-function createCenter() {
+function createCenter(t1, t2) {
     const element = document.createElement('div');
     const screen = {x: window.innerWidth, y: window.innerHeight};
     const offset = processor.offsetHeight / 2 + 4;
@@ -48,7 +48,7 @@ function createCenter() {
         element.style.translate = `${screen.x / 4}px ${y}`;
     }, 100);
     const span = document.createElement('span');
-    span.innerText = 'file';
+    span.innerText = t1;
     span.style.opacity = '0';
     element.appendChild(span);
     setTimeout(()=>{
@@ -57,10 +57,57 @@ function createCenter() {
     setTimeout(()=>{
         span.style.opacity = '0';
     },3000);
+    let time = 0;
+    if (t2) {
+        setTimeout(()=>{
+            span.innerText = t2;
+            span.style.opacity = '1';
+        },3100);
+        setTimeout(()=>{
+            span.style.opacity = '0';
+        },5100);
+        time = 2100;
+    }
     setTimeout(()=>{
         element.style.translate = `${screen.x / 4 * 3}px ${y}`;
-    },3200);
+    },3200+time);
     setTimeout(()=>{
         element.remove();
-    },3450);
+    },3450+time);
+}
+
+let _labelAnim;
+function labelAnim(switch_) {
+    const s = '&nbsp;';
+    const d = '.';
+    switch(switch_) {
+        case true:
+            _labelAnim = setInterval(()=>{
+                switch(label.innerHTML) {
+                    case d+s.repeat(2):
+                        label.innerHTML = d.repeat(2)+s;
+                        break;
+                    case d.repeat(2)+s:
+                        label.innerHTML = d.repeat(3);
+                        break;
+                    case d.repeat(3):
+                        label.innerHTML = s+d.repeat(2);
+                        break;
+                    case s+d.repeat(2):
+                        label.innerHTML = s.repeat(2)+d;
+                        break;
+                    case s.repeat(2)+d:
+                        label.innerHTML = s.repeat(3);
+                        break;
+                    default:
+                        label.innerHTML = d+s.repeat(2);
+                        break;
+                }
+            },200);
+            break;
+        default:
+            clearInterval(_labelAnim);
+            label.innerHTML = s.repeat(3);
+            break;
+    }
 }
