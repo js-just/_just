@@ -356,17 +356,17 @@ pre a {
     border: 2px solid #3f3f3f;
 }
 
-.p .t, .p .b {
+.p .top, .p .btm {
     position: absolute;
     right: calc(50% + 52px);
     z-index: -1;
     width: 515px;
 }
-.p .t {
+.p .top {
     top: 0px;
     transform: rotateX(60deg);
 }
-.p .b {
+.p .btm {
     top: -50px;
     transform: rotateX(240deg);
 }
@@ -383,4 +383,5 @@ pre a {
 .p .r {
     position: absolute;
     translate: 0px -58.5px;
+    right: 0px;
 }
