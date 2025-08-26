@@ -37,10 +37,26 @@ const label = processor.querySelector('span');
 
 function create() {
     const element = document.createElement('div');
+    const screen = {x: window.innerWidth, y: window.innerHeight};
+    const y = `${inputs[0].offsetTop + inputs[0].offsetHeight / 2 + 1}px`;
     element.id = 'abc';
-    element.style.top = `${inputs[0].offsetTop + inputs[0].offsetHeight / 2}px`;
-    element.style.left = '2px';
     element.style.backgroundColor = 'white';
-    element.style.position = 'absolute';
+    element.style.translate = `-${screen.x / 4}px ${y}`;
     box.appendChild(element);
+    setTimeout(()=>{
+        element.style.translate = `${screen.x / 4}px ${y}`;
+    }, 100);
+    const span = document.createElement('span');
+    span.innerText = 'file';
+    span.style.opacity = '0';
+    element.appendChild(span);
+    setTimeout(()=>{
+        span.style.opacity = '1';
+    }, 600);
+    setTimeout(()=>{
+        span.style.opacity = '0';
+    }, 800);
+    setTimeout(()=>{
+        element.style.translate = `${screen.x / 4 * 3}px ${y}`;
+    },1000);
 }

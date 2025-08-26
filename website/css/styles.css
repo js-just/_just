@@ -422,6 +422,14 @@ pre a {
     height: 5px;
     width: 5px;
     border-radius: 50%;
+    transition: 500ms;
+    transition-timing-function: cubic-bezier(0.65, 0.05, 0.36, 1);
+    top: 0px;
+    left: 0px;
+    position: absolute;
+}
+.pjs span {
+    transition: 200ms;
 }
 
 @media (max-width: 900px) {
