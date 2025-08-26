@@ -385,3 +385,47 @@ pre a {
     translate: 0px -58.5px;
     right: 0px;
 }
+
+.p .tl {
+    translate: 0px -125px;
+}
+.p .bl {
+    translate: 0px 11px;
+}
+.p .tl, .p .bl {
+    position: absolute;
+    width: calc(50% - 52px - 515px);
+}
+
+.p .d {
+    width: 2px !important;
+    height: 20px !important;
+    position: absolute;
+    left: 50%;
+    translate: -50% -6px;
+}
+.p span {
+    font-family: var(--scp);
+    padding-inline: 5px;
+    background-color: #47474770;
+    border-radius: 5px;
+    border: 2px solid #3f3f3f;
+    left: 50%;
+    translate: -50% 13px;
+    display: block;
+    width: max-content;
+    position: absolute;
+    color: #fff;
+}
+
+.pjs div {
+    height: 5px;
+    width: 5px;
+    border-radius: 50%;
+}
+
+@media (max-width: 900px) {
+    .p, .pjs {
+        display: none;
+    }
+}
