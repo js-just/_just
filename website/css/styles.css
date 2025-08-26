@@ -357,6 +357,7 @@ pre a {
     z-index: 0;
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
+    transition: 300ms;
 }
 
 .p .top, .p .btm {
@@ -438,6 +439,7 @@ pre a {
     top: 0px;
     left: 0px;
     position: absolute;
+    z-index: -1;
 }
 .pjs span {
     transition: 200ms;
