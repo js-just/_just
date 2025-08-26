@@ -355,3 +355,32 @@ pre a {
     border-radius: 20px;
     border: 2px solid #3f3f3f;
 }
+
+.p .t, .p .b {
+    position: absolute;
+    right: calc(50% + 52px);
+    z-index: -1;
+    width: 515px;
+}
+.p .t {
+    top: 0px;
+    transform: rotateX(60deg);
+}
+.p .b {
+    top: -50px;
+    transform: rotateX(240deg);
+}
+
+.p div {
+    width: calc(50% - 52px);
+    height: 2px;
+    background-color: #3f3f3f;
+}
+.p .c {
+    position: relative;
+    translate: 0px -56.5px;
+}
+.p .r {
+    position: absolute;
+    translate: 0px -58.5px;
+}
