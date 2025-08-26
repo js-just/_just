@@ -142,7 +142,7 @@
             "link": "",
             "data": {
                 "mg": false,
-                "i": null
+                "i": "Just an Ultimate Site Tool is unable to parse <code>module.exports</code> of the <code>just.config.js</code> file in the root directory. \nPlease check your <code>module.exports</code> of the <code>just.config.js</code> file."
             }
         },
         {
@@ -169,25 +169,41 @@
             "code": "0205",
             "message": "Error occurred during Node.js installation. Retrying to install Node.js with console output enabled... (Attempt #4)",
             "crashed": false,
-            "link": ""
+            "link": "",
+            "data": {
+                "mg": false,
+                "i": "Just an Ultimate Site Tool is unable to install Node.js."
+            }
         },
         {
             "code": "0207",
             "message": "Error occurred during Node.js installation. Retrying to install Node.js with console output enabled... (Attempt #2)",
             "crashed": false,
-            "link": ""
+            "link": "",
+            "data": {
+                "mg": false,
+                "i": "Just an Ultimate Site Tool is unable to install Node.js."
+            }
         },
         {
             "code": "0208",
             "message": "Error occurred during Node.js installation. Retrying to install Node.js... (Attempt #3)",
             "crashed": false,
-            "link": ""
+            "link": "",
+            "data": {
+                "mg": false,
+                "i": "Just an Ultimate Site Tool is unable to install Node.js."
+            }
         },
         {
             "code": "0210",
             "message": "Error occurred during TypeScript compiler installation. Retrying to install TypeScript compiler... (Attempt #2)",
             "crashed": false,
-            "link": ""
+            "link": "",
+            "data": {
+                "mg": false,
+                "i": "Just an Ultimate Site Tool is unable to install TypeScript compiler."
+            }
         }
     ],
     "postprocessor/checks.sh": [

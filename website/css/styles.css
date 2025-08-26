@@ -340,3 +340,18 @@ pre a {
 .bgb { /* bg - black */
     background-color: #000000;
 }
+.xh {
+    overflow-x: hidden;
+}
+
+.p { /* Processor */
+    margin-top: -10px;
+}
+.p .l { /* Logo */
+    left: 50%;
+    translate: -50% 0%;
+    position: relative;
+    background-color: #47474770;
+    border-radius: 20px;
+    border: 2px solid #3f3f3f;
+}

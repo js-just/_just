@@ -1,6 +1,6 @@
 _just: title: Advanced usage
 # Advanced usage
-### Markdown files
+## Markdown files
 You can specify the page title by adding `_just: title: ...` in the first line of the Markdown file.
 -# Example:
 ```md
@@ -18,7 +18,7 @@ Just an Ultimate Site Tool will automatically get the title of the previous and/
 The output should look like this:
 ![Output](/img/generator-adv-prevnext.png)
 
-### The `just.config.js` file
+## The `just.config.js` file
 You can change search key: (slash (/) by default)
 -# `just.config.js`:
 ```js
@@ -59,6 +59,28 @@ module.exports = {
   // ...
   debug: true
 }
+```
+
+## Custom HTML, CSS, JavaScript files
+### Theme
+Just an Ultimate Site Tool saves some data in `localStorage`. Please do not modify any variable with key that starts with `sp`, as these variables store scroll information in BASE-64.
+You can use the `t` (theme) variable to synchronize the theme between your custom pages and the generated documentation pages.
+```js
+localStorage.getItem('t');
+```
+You can set the `t` variable to update the theme, but the value must be one of: `l` (light), `d` (dark), `a` (auto / sync with device).
+```js
+localStorage.setItem('t', 'a');
+```
+
+### Search
+You can make custom documentation search in your custom pages:
+1. Fetch `/_just/` or `/_just/index.json`, it’ll return a JSON that has a `"json"` key.
+2. Fetch `/_just/( put the "json" value here ).json`, this will return a JSON, where the key is the page URL and the value is the content of the page.
+-# Example:
+```js
+const _just_data = await fetch('/_just/').then(r=>r.json());
+const docssearch = await fetch(`/_just/${_just_data.json}.json`).then(r=>r.json());
 ```
 
 _just: prev: /docs/generator/syntax

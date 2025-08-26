@@ -10,7 +10,7 @@ This mode requires only the `just.config.js` file and the workflow file.
 -# `just.config.js`
 ```js
 module.exports = {
-    type: "compress"
+  type: "compress"
 }
 ```
 

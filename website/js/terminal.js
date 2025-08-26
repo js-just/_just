@@ -233,7 +233,16 @@ function exitFullscreen() {
     function listcmd() {
         animErr();
         disableD();
-        animateTyping('f', `<strong>List of codes:</strong>\n${codes.nums.join('\n')}`, 40, timeoutED)
+        animateTyping('f', `<strong>List of codes:</strong>\n${
+            codes.nums.sort((a,b)=>{
+                a = parseInt(a);
+                b = parseInt(b);
+                if (isNaN(a) || isNaN(b)) {
+                    return -1
+                };
+                return a > b ? 1 : -1
+            }).join('\n')
+        }`, 40, timeoutED)
     };
     let interval;
     let enterKeyCooldown = false;

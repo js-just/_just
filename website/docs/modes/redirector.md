@@ -2,7 +2,7 @@ _just: title: Redirector Mode
 # Redirector mode
 **- Client-side redirect.**
 
-> This mode redirects your static website, such as your `.github.io` website, to a specified URL.
+> This mode redirects your static website, such as your `.github.io` website, to a specified URL. <br>This mode creates the `deploy` directory and outputs files into it.
 
 This mode requires only the `just.config.js` file, (except for the workflow file).
 `just.config.js`
@@ -87,7 +87,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: .
+          path: deploy
 
   deploy:
     environment:
