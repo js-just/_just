@@ -418,6 +418,11 @@ pre a {
     color: #fff;
 }
 
+.pjs { /* Processor - JavaScript */
+    position: absolute;
+    top: 0px;
+    left: 0px;
+}
 .pjs div {
     height: 5px;
     width: 5px;
@@ -430,6 +435,13 @@ pre a {
 }
 .pjs span {
     transition: 200ms;
+    color: #fff;
+    font-family: var(--scp);
+    translate: -50% 10px;
+    left: 50%;
+    position: relative;
+    display: block;
+    width: max-content;
 }
 
 @media (max-width: 900px) {

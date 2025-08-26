@@ -35,10 +35,11 @@ const outputs = [
 ];
 const label = processor.querySelector('span');
 
-function create() {
+function createCenter() {
     const element = document.createElement('div');
     const screen = {x: window.innerWidth, y: window.innerHeight};
-    const y = `${inputs[0].offsetTop + inputs[0].offsetHeight / 2 + 1}px`;
+    const offset = processor.offsetHeight / 2 + 4;
+    const y = `${(inputs[0].offsetTop + inputs[0].offsetHeight / 2 + 1) - offset - 1.5}px`;
     element.id = 'abc';
     element.style.backgroundColor = 'white';
     element.style.translate = `-${screen.x / 4}px ${y}`;
@@ -52,11 +53,14 @@ function create() {
     element.appendChild(span);
     setTimeout(()=>{
         span.style.opacity = '1';
-    }, 600);
+    },1000);
     setTimeout(()=>{
         span.style.opacity = '0';
-    }, 800);
+    },3000);
     setTimeout(()=>{
         element.style.translate = `${screen.x / 4 * 3}px ${y}`;
-    },1000);
+    },3200);
+    setTimeout(()=>{
+        element.remove();
+    },3450);
 }
