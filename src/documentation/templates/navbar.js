@@ -12,4 +12,6 @@
     navbar.innerHTML = 'REPLACE_NAVBAR';
 
     'REPLACE_THEME';
+    
+    'REPLACE_BUTTONS';
 })()

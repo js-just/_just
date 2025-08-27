@@ -343,6 +343,9 @@ pre a {
 .xh {
     overflow-x: hidden;
 }
+.t50 { /* padding Top - 50px */
+    padding-top: 50px;
+}
 
 .p { /* Processor */
     margin-top: -10px;
