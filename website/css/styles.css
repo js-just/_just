@@ -343,8 +343,9 @@ pre a {
 .xh {
     overflow-x: hidden;
 }
-.t50 { /* padding Top - 50px */
+.h { /* Home */
     padding-top: 50px;
+    padding-bottom: 25px;
 }
 
 .p { /* Processor */
@@ -458,7 +459,7 @@ pre a {
 
 @media (max-width: 900px) {
     .p, .pjs, h2 {
-        display: none;
+        display: none !important;
     }
 }
 
@@ -543,3 +544,36 @@ h2 span {
     color: #000;
 }
 
+.c { /* Copyright */
+    opacity: 1;
+    position: fixed;
+    bottom: 0px;
+    display: block;
+    width: 100%;
+    text-align: center;
+    backdrop-filter: blur(8px) brightness(0.25);
+    z-index: 2;
+    padding-block: 5px;
+}
+.c a {
+    opacity: 0.5;
+}
+
+/* Updates */
+.u0 {
+    position: absolute;
+    top: calc(50vh - 110px - 2rem);
+}
+.u1 {
+    position: absolute;
+    top: 50vh;
+    translate: 0% 50%;
+}
+.u2 {
+    position: absolute;
+    top: calc(100vh - 50px);
+    translate: 0% -100%;
+}
+.u3 {
+    margin-top: 100vh;
+}

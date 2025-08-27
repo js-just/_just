@@ -25,7 +25,7 @@ SOFTWARE.
 */
 
 const _just = {};
-const [HTMLtemplate, CSStemplate, JStemplate, PATH, repo, owner, customCSS, hljslangs, langs__, CSSHIGHLIGHTtemplate, langstext_, vrsn, CSSBUTTONStemplate, CSSSEARCHtemplate, HIGHLIGHTJSON, fixpathh, THEME, THEMEJS, NAVBARJS] = process.argv.slice(2);
+const [HTMLtemplate, CSStemplate, JStemplate, PATH, repo, owner, customCSS, hljslangs, langs__, CSSHIGHLIGHTtemplate, langstext_, vrsn, CSSBUTTONStemplate, CSSSEARCHtemplate, HIGHLIGHTJSON, fixpathh, THEME, THEMEJS, NAVBARJS, THEMECLASS] = process.argv.slice(2);
 let HTML = HTMLtemplate;
 let CSS = CSStemplate;
 let JS = JStemplate;
@@ -133,8 +133,8 @@ HTML = HTML.replace('--hc:', `--${dataname[0].slice(0,-1)}:`);
 CSS = CSS.replaceAll('var(--hc)', `var(--${dataname[0].slice(0,-1)})`);
 JS = _just.js.fuck(JS).replace('\'--hc\'', `'--${dataname[0].slice(0,-1)}'`).replace('`REPLACE_ERRORPREFIX ${', `\`${_just.errorprefix} \${`).replace("'REPLACE_THEME';", THEME);
 
-let TJS = THEMEJS.replace("'REPLACE_THEME';", THEME);
-let NJS = NAVBARJS.replace("'REPLACE_THEME';", THEME).replace('REPLACE_CSS', filename.css);
+let TJS = THEMEJS.replace("'REPLACE_THEME';", THEME)+THEMECLASS;
+let NJS = NAVBARJS.replace("'REPLACE_THEME';", THEME).replace('REPLACE_CSS', filename.css)+THEMECLASS;
 
 const predataname2 = [];
 const dataname2limit = 3843;
@@ -304,6 +304,14 @@ JS = JS.replaceAll('trimmedStr', jstrimmedstrvar)
     .replace("'copycode'", `'${cssclass.copycode}'`)
     .replace("'--codewidth'", `'--${cssvar.codewidth}'`)
     .replace("'--codeheight'", `'--${cssvar.codeheight}'`);
+NJS = NJS.replaceAll(".add('l')", `.add('${cssclass.l}','_just_theme_light')`)
+    .replaceAll(".remove('l')", `.remove('${cssclass.l}','_just_theme_light')`)
+    .replaceAll(".add('a')", `.add('${cssclass.a}','_just_theme_auto')`)
+    .replaceAll(".remove('a')", `.remove('${cssclass.a}','_just_theme_auto')`);
+TJS = TJS.replaceAll(".add('l')", `.add('_just_theme_light')`)
+    .replaceAll(".remove('l')", `.remove('_just_theme_light')`)
+    .replaceAll(".add('a')", `.add('_just_theme_auto')`)
+    .replaceAll(".remove('a')", `.remove('_just_theme_auto')`);
 const lighthighlight = _just.parseCSS.JSON(JSON.parse(HIGHLIGHTJSON)["_just_light"]);
 lighthighlight.forEach(rule => {
     const props = [];
