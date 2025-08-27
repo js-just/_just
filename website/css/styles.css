@@ -457,7 +457,7 @@ pre a {
 }
 
 @media (max-width: 900px) {
-    .p, .pjs {
+    .p, .pjs, h2 {
         display: none;
     }
 }
@@ -470,6 +470,7 @@ h2 {
     color: transparent;
     text-align: center;
     height: 30px;
+    white-space: nowrap;
 }
 h2 span {
     background-image: linear-gradient(148deg, rgba(255, 255, 255, 0) var(--1), rgba(255, 255, 255, 0.4) var(--2), rgba(255, 255, 255, 0) var(--3));

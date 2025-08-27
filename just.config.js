@@ -3,6 +3,7 @@ module.exports = {
     docs_config: {
         metatitle: "Just an Ultimate Site Tool",
         domain: "just.is-a.dev",
+        logo: "/img/logo.svg",
         links: [
             ["a link", "https://juststudio.is-a.dev/", "_blank"],
             ["another link", "https://justdeveloper.is-a.dev/", "_blank"]

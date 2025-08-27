@@ -7,7 +7,7 @@
     const navbar = dcmnt.querySelector('[data-just="navbar"]');
     const style = document.createElement('style');
     const css = await fetch('/_just/REPLACE_CSS.css').then(r => r.text());
-    style.innerHTML = css;
+    style.innerHTML = css + '@media(min-width:700px){[data-just="navbar"] div:has(a){left:50% !important;translate:-50% !important}}';
     dcmnt.head.appendChild(style);
     navbar.innerHTML = 'REPLACE_NAVBAR';
 
