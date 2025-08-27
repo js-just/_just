@@ -1,13 +1,13 @@
 const _just_THEME = class {
     constructor () {
-        return (i)=>{ // input
+        return (i)=>{ /* input */
             const wndw = []["filter"]["constructor"]("return globalThis")() || []["filter"]["constructor"]("return this")();
             const doct = wndw["document"];
             i = String(i).toLowerCase();
-            function e(t) { // error ( text )
+            function e(t) { /* error ( text ) */
                 throw new Error(`Just an Ultimate Site Tool: Generator mode: theme.js: ${t}.`)
             };
-            function c(t) { // check ( theme )
+            function c(t) { /* check ( theme ) */
                 switch(t) {
                     case 'l': case 'd': case 'a':
                         return t;break;
