@@ -8,19 +8,31 @@
         <title>Just an Ultimate Site Tool</title>
     </head>
     <body class="bgb xh">
-        <h1 class="bg lz cw beta agt t z" style="position: relative;">Just an Ultimate Site Tool</h1><h1 class="bg lz cw beta agt t b">Beta</h1>
+        <div data-just="navbar"></div>
+        <script src="/_just/static/navbar.js"></script>
+
+        <h1 class="bg lz cw beta agt t z" style="position:relative">Just an Ultimate Site Tool</h1><h1 class="bg lz cw beta agt t b" style="position: absolute">Beta</h1>
+        
+        <h2 class="lz">A GitHub action to <span>enhance</span> your static website.</h2>
+
         <div class="p">
             <img class="l" src="/img/logo.svg" height="100" width="100">
-            <img class="top" src="/img/line.svg">
-            <img class="btm" src="/img/line.svg">
+            <img class="top" src="/img/line.svg" style="display:none">
+            <img class="btm" src="/img/line.svg" style="display:none">
             <div class="c"></div>
             <div class="r"></div>
-            <div class="tl"></div>
-            <div class="bl"></div>
+            <div class="tl" style="display:none"></div>
+            <div class="bl" style="display:none"></div>
             <div class="d"></div>
             <span></span>
         </div>
         <div class="pjs"></div>
+
+        <div class="btns">
+            <a href="/docs/getting-started" target="_self" class="bg">Get Started</a>
+            <a href="https://github.com/js-just/_just" target="_blank" class="gh">Repository</a>
+        </div>
+        
         <script src="/js/p.js" defer></script>
     </body>
 </html>

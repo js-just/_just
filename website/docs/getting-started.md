@@ -133,14 +133,8 @@ module.exports = {
   type: "(postprocessor/redirect/compress/docs)"
 }
 ```
-Using multiple modes:
--# Currently available only combining generator and compressor.
-```js
-module.exports = {
-  type: ["docs", "compress"]
-}
-```
-- Read the documentation for the mode/modes that you’ve chosen.
+
+- Read the documentation for the mode that you’ve chosen.
 
 ## Modes documentation
 - [Postprocessor](/docs/modes/postprocessor)

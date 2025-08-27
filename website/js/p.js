@@ -28,7 +28,9 @@ const box = document.querySelector('.pjs');
 const processor = document.querySelector('.p');
 const process = processor.querySelector('.l');
 const inputs = [
-    processor.querySelector('.c')
+    processor.querySelector('.c'),
+    processor.querySelector('.tl'),
+    processor.querySelector('.bl'),
 ];
 const outputs = [
     processor.querySelector('.r'),

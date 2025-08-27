@@ -25,7 +25,7 @@ SOFTWARE.
 */
 
 const _just = {};
-const [HTMLtemplate, CSStemplate, JStemplate, PATH, repo, owner, customCSS, hljslangs, langs__, CSSHIGHLIGHTtemplate, langstext_, vrsn, CSSBUTTONStemplate, CSSSEARCHtemplate, HIGHLIGHTJSON, fixpathh] = process.argv.slice(2);
+const [HTMLtemplate, CSStemplate, JStemplate, PATH, repo, owner, customCSS, hljslangs, langs__, CSSHIGHLIGHTtemplate, langstext_, vrsn, CSSBUTTONStemplate, CSSSEARCHtemplate, HIGHLIGHTJSON, fixpathh, THEME, THEMEJS, NAVBARJS] = process.argv.slice(2);
 let HTML = HTMLtemplate;
 let CSS = CSStemplate;
 let JS = JStemplate;
@@ -131,7 +131,10 @@ for (let i = 0; i <= 11; i++) {
 }
 HTML = HTML.replace('--hc:', `--${dataname[0].slice(0,-1)}:`);
 CSS = CSS.replaceAll('var(--hc)', `var(--${dataname[0].slice(0,-1)})`);
-JS = _just.js.fuck(JS).replace('\'--hc\'', `'--${dataname[0].slice(0,-1)}'`).replace('`REPLACE_ERRORPREFIX ${', `\`${_just.errorprefix} \${`);
+JS = _just.js.fuck(JS).replace('\'--hc\'', `'--${dataname[0].slice(0,-1)}'`).replace('`REPLACE_ERRORPREFIX ${', `\`${_just.errorprefix} \${`).replace("'REPLACE_THEME';", THEME);
+
+let TJS = THEMEJS.replace("'REPLACE_THEME';", THEME);
+let NJS = NAVBARJS.replace("'REPLACE_THEME';", THEME).replace('REPLACE_CSS', filename.css);
 
 const predataname2 = [];
 const dataname2limit = 3843;
@@ -1335,4 +1338,10 @@ checkTLD(domain).then(tldvalid => {
         "json": dataname[9]
     }), template.charset);
     fs.writeFileSync(path.join(websitepath, '.', '.nojekyll'), '', template.charset);
+
+    NJS = NJS.replace("'REPLACE_NAVBAR'", `'<header><nav class="${cssclass.navbar}"><div class="${cssclass.heading}">${logo}${filterText(name)}</div><div class="${cssclass.links}">${htmlnav()}</div><div class="${cssclass.buttons}">${htmlnav(1)}<input placeholder="Search documentation" id="${cssid.searchbar}" disabled><span id="${cssid.search}">${searchkey}</span><div class="${cssclass.search}"></div></div></nav></header>'`)
+    fs.mkdirSync(path.join(websitepath, _justdir, 'static'));
+    fs.writeFileSync(path.join(websitepath, _justdir, 'static', 'theme.js'), TJS, template.charset);
+    fs.writeFileSync(path.join(websitepath, _justdir, 'static', 'navbar.js'), NJS, charset);
+
 }, tldinvalid => {});
