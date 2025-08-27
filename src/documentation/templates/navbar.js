@@ -14,4 +14,4 @@
     'REPLACE_THEME';
 
     'REPLACE_BUTTONS';
-})()
+})();

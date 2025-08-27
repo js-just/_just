@@ -5,4 +5,4 @@
     const theme = localStorage.getItem('t');
 
     'REPLACE_THEME';
-})()
+})();
