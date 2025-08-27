@@ -973,7 +973,7 @@ checkTLD(domain).then(tldvalid => {
     csstouniquenames(cssclass);
     csstouniquenames(cssid);
     let htmlnavrunid = 0;
-    let btnsjs;
+    let btnsjs = '';
     const htmlnav = (type = 0) => {
         let output = '';
         let addcss = '';
