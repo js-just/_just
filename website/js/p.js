@@ -50,13 +50,22 @@ function centerDot() {
 }
 
 /**
+ * @param {HTMLElement} track 
+ * @param {number} offset 
+ * @returns {string}
+ */
+function yPos(track, offset) {
+    return `${(track.offsetTop + track.offsetHeight / 2 + 1) - offset - 1.5 + processor.offsetTop}px`;
+}
+
+/**
  * @param {String} c 
  * @param {String} t1 
  * @param {String?} t2 
  */
 function centerInput(c, t1, t2) {
     const [element, screen, offset] = centerDot();
-    const y = `${(inputs[0].offsetTop + inputs[0].offsetHeight / 2 + 1) - offset - 1.5}px`;
+    const y = yPos(inputs[0], offset);
     element.style.backgroundColor = c;
     element.style.boxShadow = `0px 0px 3px ${c}`;
     element.style.translate = `-${screen.x / 4}px ${y}`;
@@ -105,7 +114,7 @@ function output(c, t1, t2) {
     _outputs++;
     const offset2 = ((_outputs % 2 == 0 ? _outputs : -_outputs) - 1) * 35 - (_outputs % 2 == 0 ? 35 : 0);
     const [element, screen, offset] = centerDot();
-    const y = `${(inputs[0].offsetTop + inputs[0].offsetHeight / 2 + 1) - offset - 1.5}px`;
+    const y = yPos(inputs[0], offset);
     element.style.backgroundColor = 'transparent';
     element.style.translate = `${screen.x / 4}px ${y}`;
     box.appendChild(element);
