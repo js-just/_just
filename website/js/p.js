@@ -55,7 +55,7 @@ function centerDot() {
  * @returns {string}
  */
 function yPos(track, offset) {
-    return `${(track.offsetTop + track.offsetHeight / 2 + 1) - offset - 1.5 + processor.offsetTop + 60}px`;
+    return `${(track.offsetTop + track.offsetHeight / 2 + 1) - offset - 1.5 + processor.offsetTop + 55}px`;
 }
 
 /**
@@ -249,7 +249,14 @@ function animateTyping(elementId, text, speed = 100, callback = null) {
     type();
 };
 
+function time(ms) {
+    return ms > 999 ? `${Math.floor(ms/100)/10}s` : `${ms}ms`;
+};
+
+let canAnimate = true;
+
 function compressor() {
+    canAnimate = false;
     const variations = [
         ['white', '.html', '2kB', '0.9kB'],
         ['white', '.html', '14kB', '0.5kB'],
@@ -276,10 +283,17 @@ function compressor() {
     setTimeout(()=>{
         labelAnim();
         output(data[0], data[1], data[3]);
+        animateTyping(label.id, `Compressing completed (${time(offset)})`, 50, ()=>{
+            setTimeout(()=>{
+                labelAnim();
+                canAnimate = true
+            },1200)
+        })
     }, 5050+offset+1200);
 }
 
 function redirector() {
+    canAnimate = false;
     const offset = Math.random() / 2 + 0.700;
     labelAnim();
     label.id = `r${offset}`;
@@ -293,5 +307,11 @@ function redirector() {
         output('white', '.css');
         output('white', '.js');
         output('white', '.html');
+        animateTyping(label.id, `Generating completed (${time(offset)})`, 50, ()=>{
+            setTimeout(()=>{
+                labelAnim();
+                canAnimate = true
+            },1200)
+        })
     }, 2950+offset+1200);
 }
