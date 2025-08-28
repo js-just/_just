@@ -55,7 +55,7 @@ function centerDot() {
  * @returns {string}
  */
 function yPos(track, offset) {
-    return `${(track.offsetTop + track.offsetHeight / 2 + 1) - offset - 1.5 + processor.offsetTop + 50}px`;
+    return `${(track.offsetTop + track.offsetHeight / 2 + 1) - offset - 1.5 + processor.offsetTop + 60}px`;
 }
 
 /**

@@ -580,3 +580,7 @@ h2 span {
 .u3 {
     margin-top: 100vh;
 }
+
+h2, .p, .p *, .btns, .copy {
+    outline: none !important;
+}
