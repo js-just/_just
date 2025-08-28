@@ -346,7 +346,7 @@ function animate() {
     setInterval(()=>{
         if (canAnimate) {
             canAnimate = false;
-            const animation = shuffleArray([compressor, redirector, generator].filter(animation != lastanimation))[0];
+            const animation = shuffleArray([compressor, redirector, generator].filter(anim != lastanimation))[0];
             lastanimation = animation;
             setTimeout(animation, 500)
         }
