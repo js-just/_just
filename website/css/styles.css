@@ -424,6 +424,9 @@ pre a {
     width: max-content;
     position: absolute;
     color: #fff;
+    height: 25px;
+    min-width: 200px;
+    text-align: center;
 }
 
 .p *:not(.l) {
@@ -544,7 +547,7 @@ h2 span {
     color: #000;
 }
 
-.c { /* Copyright */
+.copy { /* Copyright */
     opacity: 1;
     position: fixed;
     bottom: 0px;
@@ -555,7 +558,7 @@ h2 span {
     z-index: 2;
     padding-block: 5px;
 }
-.c a {
+.copy a {
     opacity: 0.5;
 }
 
