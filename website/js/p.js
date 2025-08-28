@@ -340,11 +340,15 @@ function generator() {
     }, 2950+offset+1200);
 }
 
+let lastanimation = undefined;
 function animate() {
     labelAnim();
     setInterval(()=>{
         if (canAnimate) {
-            shuffleArray([compressor, redirector, generator])[0]()
+            canAnimate = false;
+            const animation = shuffleArray([compressor, redirector, generator].filter(animation != lastanimation))[0];
+            lastanimation = animation;
+            setTimeout(animation, 500)
         }
     },100)
 };
