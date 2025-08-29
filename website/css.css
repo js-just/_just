@@ -282,7 +282,7 @@ pre #text {
 }
 
 ::-webkit-scrollbar-track {
-    background: rgba(0, 0, 0, 0)
+    background: rgb(0 0 0) !important
 }
 
 ::-webkit-scrollbar-thumb {
@@ -395,6 +395,7 @@ pre a {
 
 .bgb { /* bg - black */
     background-color: #000000;
+    background: radial-gradient(circle at 10% 65%, rgb(21 12 41) 0%, #000 30%);
 }
 .xh {
     overflow-x: hidden;
@@ -449,12 +450,16 @@ pre a {
     position: relative;
     translate: 0px -56.5px;
     overflow: hidden;
+    mask-image: linear-gradient(to left, #000000 70%, transparent);
+    -webkit-mask-image: linear-gradient(to left, #000000 70%, transparent);
 }
 .p .r {
     position: absolute;
     translate: 0px -58.5px;
     right: 0px;
     overflow: hidden;
+    mask-image: linear-gradient(to right, #000000 70%, transparent);
+    -webkit-mask-image: linear-gradient(to right, #000000 70%, transparent);
 }
 
 .p .tl {
@@ -488,7 +493,7 @@ pre a {
     position: absolute;
     color: #fff;
     height: 25px;
-    min-width: 200px;
+    min-width: 300px;
     text-align: center;
 }
 
@@ -661,7 +666,7 @@ h2 span {
     margin-bottom: 40vh;
 }
 
-h2, .p, .p *, .btns, .copy {
+h2, .p, .p *, .btns, .copy, h2 span {
     outline: none !important;
 }
 
