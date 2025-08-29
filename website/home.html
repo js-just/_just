@@ -49,5 +49,14 @@
         <small class="copy"><span onclick="javascript:window.open('https://github.com/js-just/_just/blob/main/LICENSE','_blank')">Copyright &copy; 2025 &#171;<a href="https://juststudio.is-a.dev/" target="_blank" class="jslink">JustStudio.</a>&#187;</span></small>
 
         <script src="/js/p.js" defer></script>
+        <svg xmlns="http://www.w3.org/2000/svg" width="0" height="0" style="position:absolute;overflow:hidden;">
+            <defs>
+                <filter id="glass" x="0%" y="0%" width="100%" height="100%">
+                    <feTurbulence type="fractalNoise" baseFrequency="10 10" numOctaves="2" seed="92" result="noise"></feTurbulence>
+                    <feGaussianBlur in="noise" stdDeviation="20" result="blurred"></feGaussianBlur>
+                    <feDisplacementMap in="SourceGraphic" in2="blurred" scale="8000" xChannelSelector="R" yChannelSelector="G"></feDisplacementMap>
+                </filter>
+            </defs>
+        </svg>
     </body>
 </html>
