@@ -802,7 +802,7 @@ h1, h2, h3, a, strong, span, .p .l, .jslogo {
 ._just_theme_light .p .l, ._just_theme_light .p span {
     background-color: #ffffff4a;
 }
-._just_theme_light .p span, ._just_theme_light .copy span:has(.jslink:hover), .pjs * {
+._just_theme_light .p span, ._just_theme_light .copy span:has(.jslink:hover), ._just_theme_light .pjs * {
     color: #000 !important;
 }
 ._just_theme_light .copy {
