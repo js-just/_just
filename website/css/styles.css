@@ -387,11 +387,13 @@ pre a {
 .p .c {
     position: relative;
     translate: 0px -56.5px;
+    overflow: hidden;
 }
 .p .r {
     position: absolute;
     translate: 0px -58.5px;
     right: 0px;
+    overflow: hidden;
 }
 
 .p .tl {
@@ -438,7 +440,7 @@ pre a {
     top: 0px;
     left: 0px;
 }
-.pjs div {
+.pjs div, .p .c div, .p .r div {
     height: 5px;
     width: 5px;
     border-radius: 50%;
@@ -583,4 +585,8 @@ h2 span {
 
 h2, .p, .p *, .btns, .copy {
     outline: none !important;
+}
+
+.p .c div {
+    filter: drop-shadow(0px 0px 5px red);
 }

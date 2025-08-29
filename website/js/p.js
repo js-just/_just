@@ -70,8 +70,12 @@ function centerInput(c, t1, t2) {
     element.style.boxShadow = `0px 0px 3px ${c}`;
     element.style.translate = `-${screen.x / 4}px ${y}`;
     box.appendChild(element);
+    const element2 = element.cloneNode();
+    inputs[0].appendChild(element2);
     setTimeout(()=>{
-        element.style.translate = `${screen.x / 4}px ${y}`;
+        const pos=`${screen.x / 4}px ${y}`;
+        element.style.translate = translatee;
+        element2.style.translate = translatee;
     }, 100);
     const span = document.createElement('span');
     span.innerText = t1;
@@ -95,10 +99,13 @@ function centerInput(c, t1, t2) {
         time += 2100;
     }
     setTimeout(()=>{
-        element.style.translate = `${screen.x / 4 * 3}px ${y}`;
+        const pos = `${screen.x / 4 * 3}px ${y}`;
+        element.style.translate = pos;
+        element2.style.translate = pos;
     },3200+time);
     setTimeout(()=>{
         element.remove();
+        element2.remove();
         process.style.borderColor = '#6e3bf3';
         process.style.filter = 'drop-shadow(0px 0px 8px #6e3bf3)';
     },3450+time);
@@ -340,14 +347,15 @@ function generator() {
     }, 2950+offset+1200);
 }
 
-let lastanimation = undefined;
+let lastanimation = -1;
+const animations = [compressor, redirector, generator];
 function animate() {
     labelAnim();
     setInterval(()=>{
         if (canAnimate) {
             canAnimate = false;
-            const animation = shuffleArray([compressor, redirector, generator].filter(anim => anim != lastanimation))[0];
-            lastanimation = animation;
+            const animation = animations[shuffleArray([0, 1, 2].filter(anim => anim != lastanimation))[0]];
+            lastanimation = animations.indexOf(animation) || -1;
             setTimeout(animation, 500)
         }
     },100)
