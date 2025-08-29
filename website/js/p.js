@@ -141,6 +141,7 @@ function output(c, t1, t2) {
     const element2 = element.cloneNode();
     element2.style.boxShadow = `0px 0px 20px 5px ${c}`;
     outputs[0].appendChild(element2);
+    element.style.borderColor = 'transparent';
     setTimeout(()=>{
         const pos = screen.x / 4 * 3 + offset2;
         element.style.translate = `${pos}px ${y}`;
@@ -154,6 +155,7 @@ function output(c, t1, t2) {
         element.style.backgroundColor = c;
         element2.style.backgroundColor = c;
         element.style.boxShadow = `0px 0px 3px ${c}`;
+        element.style.borderColor = '#000';
     }, 200);
     const span = document.createElement('span');
     span.innerText = t1;
