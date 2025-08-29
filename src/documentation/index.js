@@ -903,6 +903,7 @@ checkTLD(domain).then(tldvalid => {
         ${desc}
         ${ogtitl}
         ${ogdesc}
+        <meta name="generator" content="Just an Ultimate Site Tool (Generator) ${_just.version}">
         ${prefetch}
         <link rel="preload" href="${fixpathh ? "/"+fixpathh : `${start}${fixpath}`}_just/${dataname[9]}.json" as="fetch" type="application/json" crossorigin="anonymous">
         <meta property="og:type" content="website">

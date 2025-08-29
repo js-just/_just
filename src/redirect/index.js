@@ -34,6 +34,8 @@ const path = require('path');
 const compress = (string) => string.replaceAll(`\n`,'').replaceAll('    ','');
 const filter = (input) => input ? input.replace(/[^a-zA-Z0-9]/g, (char) => `&#${char.charCodeAt(0)};`) : undefined;
 
+const vrsn = process.argv.slice(2);
+
 const config = JSON.parse(fs.readFileSync('just.config.json', 'utf-8'));
 const redirectConfig = config.redirect_config;
 
@@ -121,6 +123,7 @@ const generatePage = (url, params, path_) => {
         `${meta}"og:title" content="${ogTitle}">` +
         `${ogDescription ? `${meta}"og:description" content="${ogDescription}">` : ''}` +
         `${meta}"og:url" content="${URL}">${optionalstuff()}` +
+        `<meta name="generator" content="Just an Ultimate Site Tool (Redirector) ${vrsn}">` +
     '</head>' +
     '<body>' +
         `<h1>${title}</h1>` +

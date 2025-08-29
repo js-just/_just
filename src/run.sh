@@ -203,7 +203,7 @@ elif [ "$TYPE" == "redirect" ]; then
     mkdir -p deploy/_just && \
     installNodejs && \
     bash $GITHUB_ACTION_PATH/src/redirect/checks.sh && \
-    node $GITHUB_ACTION_PATH/src/redirect/index.js && \
+    node $GITHUB_ACTION_PATH/src/redirect/index.js "$VERSION" && \
     TIME3=$(python3 "$GITHUB_ACTION_PATH/src/time.py") && \
     DONEIN=$(node "$GITHUB_ACTION_PATH/src/time.js" "$TIME0" "$TIME3") && \
     echo -e "$msg5 ($DONEIN)"
