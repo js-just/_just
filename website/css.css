@@ -389,12 +389,12 @@ pre a {
 
 .z { /* idk */
     z-index: 2;
-    -webkit-mask-image: linear-gradient(to bottom, #000000 70%, transparent);
-    mask-image: linear-gradient(to bottom, #000000 70%, transparent);
+    -webkit-mask-image: linear-gradient(to bottom, #000 70%, transparent);
+    mask-image: linear-gradient(to bottom, #000 70%, transparent);
 }
 
 .bgb { /* bg - black */
-    background-color: #000000;
+    background-color: #000;
     background: radial-gradient(circle at 10% 65%, rgb(21 12 41) 0%, #000 30%);
 }
 .xh {
@@ -450,16 +450,16 @@ pre a {
     position: relative;
     translate: 0px -56.5px;
     overflow: hidden;
-    mask-image: linear-gradient(to left, #000000 70%, transparent);
-    -webkit-mask-image: linear-gradient(to left, #000000 70%, transparent);
+    mask-image: linear-gradient(to left, #000 70%, transparent);
+    -webkit-mask-image: linear-gradient(to left, #000 70%, transparent);
 }
 .p .r {
     position: absolute;
     translate: 0px -58.5px;
     right: 0px;
     overflow: hidden;
-    mask-image: linear-gradient(to right, #000000 70%, transparent);
-    -webkit-mask-image: linear-gradient(to right, #000000 70%, transparent);
+    mask-image: linear-gradient(to right, #000 70%, transparent);
+    -webkit-mask-image: linear-gradient(to right, #000 70%, transparent);
 }
 
 .p .tl {
@@ -793,4 +793,18 @@ h1, h2, h3, a, strong, span, .p .l, .jslogo {
         top: 40px;
         left: calc(50% + 20px);
     }
+}
+
+._just_theme_light .bgb {
+    background-color: #f3f3f3;
+    background: radial-gradient(circle at 10% 65%, rgb(230 219 255) 0%, #f3f3f3 30%);
+}
+._just_theme_light .p .l, ._just_theme_light .p span {
+    background-color: #ffffff4a;
+}
+._just_theme_light .p span, ._just_theme_light .copy span:has(.jslink:hover), .pjs * {
+    color: #000;
+}
+._just_theme_light .copy {
+    background-color: #ffffffeb;
 }
