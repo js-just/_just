@@ -145,7 +145,7 @@ function output(c, t1, t2) {
         const pos = screen.x / 4 * 3 + offset2;
         element.style.translate = `${pos}px ${y}`;
         setTimeout(()=>{
-            element2.style.translate =`${pos - screen.x / 2}px -25%`
+            element2.style.translate =`${pos - screen.x / 2 - 52}px -25%`
         },20)
     }, 100);
     setTimeout(()=>{
@@ -179,7 +179,7 @@ function output(c, t1, t2) {
         const pos = screen.x / 4 * 5;
         element.style.translate = `${pos}px ${y}`;
         setTimeout(()=>{
-            element2.style.translate =`${pos - screen.x / 2}px -25%`
+            element2.style.translate =`${pos - screen.x / 2 - 52}px -25%`
         },20)
     },3200+time);
     setTimeout(()=>{
@@ -241,9 +241,6 @@ function animateTyping(elementId, text, speed = 100, callback = null) {
     element.innerHTML = '';
     function type() {
         if (index >= text.length) {
-            if (element.innerHTML !== text.replaceAll('\n', '<br>')) {
-                console.warn(`"${element.innerHTML}" !== "${text.replaceAll('\n', '<br>')}"`)
-            };
             if (callback) callback();
             return;
         };
@@ -318,7 +315,9 @@ function compressor() {
         animateTyping(label.id, `Compressing completed (${time(offset)})`, 50, ()=>{
             setTimeout(()=>{
                 labelAnim();
-                canAnimate = true
+                setTimeout(()=>{
+                    canAnimate = true
+                },2100)
             },1200)
         })
     }, 5050+offset+1200);
