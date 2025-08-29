@@ -803,8 +803,14 @@ h1, h2, h3, a, strong, span, .p .l, .jslogo {
     background-color: #ffffff4a;
 }
 ._just_theme_light .p span, ._just_theme_light .copy span:has(.jslink:hover), .pjs * {
-    color: #000;
+    color: #000 !important;
 }
 ._just_theme_light .copy {
     background-color: #ffffffeb;
+}
+._just_theme_light .u0 {
+    text-shadow: 0 0 10px #00000038;
+}
+._just_theme_light .pjs div {
+    border: 1px solid #000;
 }
