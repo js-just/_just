@@ -814,3 +814,18 @@ h1, h2, h3, a, strong, span, .p .l, .jslogo {
 ._just_theme_light .pjs div {
     border: 1px solid #000;
 }
+
+@media (max-width: 900px) {
+    html {
+        overflow-x: hidden;
+    }
+    .btns.u2 {
+        top: 382px;
+    }
+    .u3 {
+        margin-top: 20vh;
+    }
+    .u4 {
+        margin-bottom: 15vh;
+    }
+}
