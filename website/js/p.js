@@ -84,7 +84,9 @@ function centerInput(c, t1, t2) {
     setTimeout(()=>{
         const pos=`${screen.x / 4}px `;
         element.style.translate = `${pos}${y}`;
-        element2.style.translate =`${pos}-25%`;
+        setTimeout(()=>{
+            element2.style.translate =`${pos}-25%`
+        }, 20)
     }, 100);
     const span = document.createElement('span');
     span.innerText = t1;
@@ -110,7 +112,9 @@ function centerInput(c, t1, t2) {
     setTimeout(()=>{
         const pos = `${screen.x / 4 * 3}px `;
         element.style.translate = `${pos}${y}`;
-        element2.style.translate =`${pos}-25%`;
+        setTimeout(()=>{
+            element2.style.translate =`${pos}-25%`
+        }, 20)
     },3200+time);
     setTimeout(()=>{
         element.remove();
@@ -138,9 +142,11 @@ function output(c, t1, t2) {
     element2.style.boxShadow = `0px 0px 20px 5px ${c}`;
     outputs[0].appendChild(element2);
     setTimeout(()=>{
-        const pos = `${screen.x / 4 * 3 + offset2}px `;
-        element.style.translate = `${pos}${y}`;
-        element2.style.translate =`${pos}-25%`;
+        const pos = screen.x / 4 * 3 + offset2;
+        element.style.translate = `${pos}px ${y}`;
+        setTimeout(()=>{
+            element2.style.translate =`${pos - screen.x / 2}px -25%`
+        },20)
     }, 100);
     setTimeout(()=>{
         process.style.borderColor = '#3f3f3f';
@@ -170,9 +176,11 @@ function output(c, t1, t2) {
         time += 2100;
     }
     setTimeout(()=>{
-        const pos = `${screen.x / 4 * 5}px `;
-        element.style.translate = `${pos}${y}`;
-        element2.style.translate =`${pos}-25%`;
+        const pos = screen.x / 4 * 5;
+        element.style.translate = `${pos}px ${y}`;
+        setTimeout(()=>{
+            element2.style.translate =`${pos - screen.x / 2}px -25%`
+        },20)
     },3200+time);
     setTimeout(()=>{
         element.remove();
