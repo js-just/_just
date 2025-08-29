@@ -73,9 +73,9 @@ function centerInput(c, t1, t2) {
     const element2 = element.cloneNode();
     inputs[0].appendChild(element2);
     setTimeout(()=>{
-        const pos=`${screen.x / 4}px ${y}`;
-        element.style.translate = translatee;
-        element2.style.translate = translatee;
+        const pos=`${screen.x / 4}px `;
+        element.style.translate = `${pos}${y}`;
+        element2.style.translate = `${pos}0px`;
     }, 100);
     const span = document.createElement('span');
     span.innerText = t1;
@@ -99,9 +99,9 @@ function centerInput(c, t1, t2) {
         time += 2100;
     }
     setTimeout(()=>{
-        const pos = `${screen.x / 4 * 3}px ${y}`;
-        element.style.translate = pos;
-        element2.style.translate = pos;
+        const pos = `${screen.x / 4 * 3}px `;
+        element.style.translate = `${pos}${y}`;
+        element2.style.translate = `${pos}0px`;
     },3200+time);
     setTimeout(()=>{
         element.remove();
