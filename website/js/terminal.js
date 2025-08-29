@@ -48,9 +48,12 @@ function animateTyping(elementId, text, speed = 100, callback = null) {
     function type() {
         if (index >= text.length) {
             cooldown = false;
-            if (element.innerHTML !== text.replaceAll('\n', '<br>')) {
+            function filter(txt) {
+                return txt.replaceAll('\n', '<br>').replaceAll('<br>', '').replace(/\s/g, '');
+            };
+            if (filter(element.innerHTML) !== filter(text)) {
                 aTerr = true;
-                console.warn(`"${element.innerHTML}" !== "${text.replaceAll('\n', '<br>')}"`)
+                console.warn(`"${filter(element.innerHTML)}" !== "${filter(text)}"`)
             };
             if (callback) callback();
             return;

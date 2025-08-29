@@ -44,7 +44,7 @@ const colors = {
     "js": "#f0db4f",
     "just.config.js": "#6c3cf4",
     "md": "#fff",
-}
+};
 
 /**
  * @returns {[HTMLDivElement, {x: number, y: number}, number]}

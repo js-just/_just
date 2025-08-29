@@ -364,6 +364,9 @@ pre a {
     -webkit-backdrop-filter: blur(8px);
     transition: 300ms;
 }
+.p .l, .jslogo {
+    -webkit-user-drag: none;
+}
 
 .p .top, .p .btm {
     position: absolute;
@@ -560,8 +563,9 @@ h2 span {
     z-index: 2;
     padding-block: 5px;
 }
-.copy a {
+.copy a:not(.jslink) {
     opacity: 0.5;
+    cursor: default;
 }
 
 /* Updates */
@@ -582,6 +586,9 @@ h2 span {
 .u3 {
     margin-top: 100vh;
 }
+.u4 {
+    margin-bottom: 40vh;
+}
 
 h2, .p, .p *, .btns, .copy {
     outline: none !important;
@@ -589,4 +596,33 @@ h2, .p, .p *, .btns, .copy {
 
 .p .c div, .p .r div {
     filter: drop-shadow(0px 0px 5px #fff);
+}
+
+.jslogo {
+    border-radius: 25px;
+    height: 100px;
+    width: 100px;
+}
+.js {
+    margin-bottom: -100px;
+    z-index: 1;
+}
+.jsblur {
+    margin-bottom: 10vh;
+    filter: blur(50px);
+    opacity: 0.5;
+}
+
+h1, h2, h3, a, strong, span, .p .l, .jslogo {
+    user-select: none;
+}
+
+.jslink {
+    color: transparent;
+    background-clip: text;
+    background-image: linear-gradient(45deg, #fff, #fff);
+}
+.jslink:hover {
+    filter: drop-shadow(0px 0px 6px #6e3bf385);
+    background-image: linear-gradient(45deg, #6e3bf3, #1437f3);
 }
