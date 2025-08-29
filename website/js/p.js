@@ -145,13 +145,14 @@ function output(c, t1, t2) {
         const pos = screen.x / 4 * 3 + offset2;
         element.style.translate = `${pos}px ${y}`;
         setTimeout(()=>{
-            element2.style.translate =`${pos - screen.x / 2 - 52}px -25%`
+            element2.style.translate =`${pos - screen.x / 2 - 52 + 4}px -25%`
         },20)
     }, 100);
     setTimeout(()=>{
         process.style.borderColor = '#3f3f3f';
         process.style.filter = 'none';
         element.style.backgroundColor = c;
+        element2.style.backgroundColor = c;
         element.style.boxShadow = `0px 0px 3px ${c}`;
     }, 200);
     const span = document.createElement('span');
@@ -179,7 +180,7 @@ function output(c, t1, t2) {
         const pos = screen.x / 4 * 5;
         element.style.translate = `${pos}px ${y}`;
         setTimeout(()=>{
-            element2.style.translate =`${pos - screen.x / 2 - 52}px -25%`
+            element2.style.translate =`${pos - screen.x / 2 - 52 + 4}px -25%`
         },20)
     },3200+time);
     setTimeout(()=>{
