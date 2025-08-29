@@ -38,6 +38,14 @@ const outputs = [
 ];
 const label = processor.querySelector('span');
 
+const colors = {
+    "html": "#f06529",
+    "css": "#2965f1",
+    "js": "#f0db4f",
+    "just.config.js": "#6c3cf4",
+    "md": "#fff",
+}
+
 /**
  * @returns {[HTMLDivElement, {x: number, y: number}, number]}
  */
@@ -55,7 +63,7 @@ function centerDot() {
  * @returns {string}
  */
 function yPos(track, offset) {
-    return `${(track.offsetTop + track.offsetHeight / 2 + 1) - offset - 1.5 + processor.offsetTop + 55}px`;
+    return `${(track.offsetTop + track.offsetHeight / 2 + 1) - offset - 1.5 + processor.offsetTop + 55 + 0.5}px`;
 }
 
 /**
@@ -71,11 +79,12 @@ function centerInput(c, t1, t2) {
     element.style.translate = `-${screen.x / 4}px ${y}`;
     box.appendChild(element);
     const element2 = element.cloneNode();
+    element2.style.boxShadow = `0px 0px 20px 5px ${c}`;
     inputs[0].appendChild(element2);
     setTimeout(()=>{
         const pos=`${screen.x / 4}px `;
         element.style.translate = `${pos}${y}`;
-        element2.style.translate = `${pos}0px`;
+        element2.style.translate =`${pos}-25%`;
     }, 100);
     const span = document.createElement('span');
     span.innerText = t1;
@@ -101,13 +110,13 @@ function centerInput(c, t1, t2) {
     setTimeout(()=>{
         const pos = `${screen.x / 4 * 3}px `;
         element.style.translate = `${pos}${y}`;
-        element2.style.translate = `${pos}0px`;
+        element2.style.translate =`${pos}-25%`;
     },3200+time);
     setTimeout(()=>{
         element.remove();
         element2.remove();
-        process.style.borderColor = '#6e3bf3';
-        process.style.filter = 'drop-shadow(0px 0px 8px #6e3bf3)';
+        process.style.borderColor = '#6c3cf4';
+        process.style.filter = 'drop-shadow(0px 0px 8px #6c3cf4)';
     },3450+time);
 }
 
@@ -125,8 +134,13 @@ function output(c, t1, t2) {
     element.style.backgroundColor = 'transparent';
     element.style.translate = `${screen.x / 4}px ${y}`;
     box.appendChild(element);
+    const element2 = element.cloneNode();
+    element2.style.boxShadow = `0px 0px 20px 5px ${c}`;
+    outputs[0].appendChild(element2);
     setTimeout(()=>{
-        element.style.translate = `${screen.x / 4 * 3 + offset2}px ${y}`;
+        const pos = `${screen.x / 4 * 3 + offset2}px `;
+        element.style.translate = `${pos}${y}`;
+        element2.style.translate =`${pos}-25%`;
     }, 100);
     setTimeout(()=>{
         process.style.borderColor = '#3f3f3f';
@@ -156,10 +170,13 @@ function output(c, t1, t2) {
         time += 2100;
     }
     setTimeout(()=>{
-        element.style.translate = `${screen.x / 4 * 5}px ${y}`;
+        const pos = `${screen.x / 4 * 5}px `;
+        element.style.translate = `${pos}${y}`;
+        element2.style.translate =`${pos}-25%`;
     },3200+time);
     setTimeout(()=>{
         element.remove();
+        element2.remove();
         _outputs--;
     },3450+time);
 }
@@ -265,18 +282,18 @@ let canAnimate = true;
 function compressor() {
     canAnimate = false;
     const variations = [
-        ['white', '.html', '2kB', '0.9kB'],
-        ['white', '.html', '14kB', '0.5kB'],
-        ['white', '.html', '25kB', '6.8kB'],
-        ['white', '.html', '18kB', '5.6kB'],
-        ['white', '.js', '7kB', '0.8kB'],
-        ['white', '.js', '15kB', '3.2kB'],
-        ['white', '.js', '25kB', '6.1kB'],
-        ['white', '.js', '20kB', '5.9kB'],
-        ['white', '.css', '10kB', '2kB'],
-        ['white', '.css', '22kB', '4.2kB'],
-        ['white', '.css', '19kB', '2.6kB'],
-        ['white', '.css', '24kB', '4.2kB'],
+        [colors.html, '.html', '2kB', '0.9kB'],
+        [colors.html, '.html', '14kB', '0.5kB'],
+        [colors.html, '.html', '25kB', '6.8kB'],
+        [colors.html, '.html', '18kB', '5.6kB'],
+        [colors.js, '.js', '7kB', '0.8kB'],
+        [colors.js, '.js', '15kB', '3.2kB'],
+        [colors.js, '.js', '25kB', '6.1kB'],
+        [colors.js, '.js', '20kB', '5.9kB'],
+        [colors.css, '.css', '10kB', '2kB'],
+        [colors.css, '.css', '22kB', '4.2kB'],
+        [colors.css, '.css', '19kB', '2.6kB'],
+        [colors.css, '.css', '24kB', '4.2kB'],
     ];
     const data = shuffleArray(variations)[0];
     const offset = Math.ceil((Math.random() / 2 + 0.700) * 1000);
@@ -305,15 +322,15 @@ function redirector() {
     labelAnim();
     label.id = `r${offset}`;
     animateTyping(label.id, 'Redirector', 75);
-    centerInput('white', 'just.config.js');
+    centerInput(colors["just.config.js"], 'just.config.js');
     setTimeout(()=>{
         labelAnim(true)
     }, 2950);
     setTimeout(()=>{
         labelAnim();
-        output('white', '.css');
-        output('white', '.js');
-        output('white', '.html');
+        output(colors.css, '.css');
+        output(colors.js, '.js');
+        output(colors.html, '.html');
         animateTyping(label.id, `Generating completed (${time(offset)})`, 50, ()=>{
             setTimeout(()=>{
                 labelAnim();
@@ -329,15 +346,15 @@ function generator() {
     labelAnim();
     label.id = `g${offset}`;
     animateTyping(label.id, 'Generator', 75);
-    centerInput('white', '.md');
+    centerInput(colors.md, '.md');
     setTimeout(()=>{
         labelAnim(true)
     }, 2950);
     setTimeout(()=>{
         labelAnim();
-        output('white', '.css');
-        output('white', '.js');
-        output('white', '.html');
+        output(colors.css, '.css');
+        output(colors.js, '.js');
+        output(colors.html, '.html');
         animateTyping(label.id, `Generating completed (${time(offset)})`, 50, ()=>{
             setTimeout(()=>{
                 labelAnim();

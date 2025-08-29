@@ -587,6 +587,6 @@ h2, .p, .p *, .btns, .copy {
     outline: none !important;
 }
 
-.p .c div {
-    filter: drop-shadow(0px 0px 5px red);
+.p .c div, .p .r div {
+    filter: drop-shadow(0px 0px 5px #fff);
 }
