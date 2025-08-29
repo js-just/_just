@@ -1,14 +1,14 @@
 {
   "name": "just",
-  "version": "0.0.33",
-  "description": "Just an Ultimate Site Tool (W.I.P.)",
+  "version": "0.1.0",
+  "description": "Just an Ultimate Site Tool",
   "main": "index.sh",
   "scripts": {
-    "test": "echo \"https://github.com/js-just/_just#readme\" && exit 1",
-    "about": "echo \"https://github.com/js-just/_just#readme\" && exit 1",
-    "info": "echo \"https://github.com/js-just/_just#readme\" && exit 1",
-    "repo": "echo \"https://github.com/js-just/_just#readme\" && exit 1",
-    "help": "echo \"https://github.com/js-just/_just#readme\" && exit 1"
+    "test": "echo \"https://just.is-a.dev/docs\" && exit 1",
+    "about": "echo \"https://just.is-a.dev/docs\" && exit 1",
+    "info": "echo \"https://just.is-a.dev/docs\" && exit 1",
+    "repo": "echo \"https://just.is-a.dev/docs\" && exit 1",
+    "help": "echo \"https://just.is-a.dev/docs\" && exit 1"
   },
   "repository": {
     "type": "git",
@@ -17,7 +17,7 @@
   "keywords": [
     "postprocessor",
     "_just",
-    "justdeveloper",
+    "juststudio",
     "web",
     "backend",
     "back-end",
@@ -41,12 +41,16 @@
     "reactjs",
     "redirect",
     "compress",
-    "minify"
+    "minify",
+    "markdown",
+    "generator",
+    "docs",
+    "documentation"
   ],
   "author": "JustStudio.",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/js-just/_just/issues"
   },
-  "homepage": "https://github.com/js-just/_just#readme"
+  "homepage": "https://just.is-a.dev/"
 }

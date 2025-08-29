@@ -20,6 +20,6 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-# DO NOT USE THIS. READ THE DOCS (coming soon). USE ACTION.YML.
-echo "Warning: Attempt to use the \"Just an Ultimate Site Tool\" in the wrond way. This may not work correctly. Please read the documentation (coming soon)."
+# DO NOT USE THIS. READ THE DOCS https://just.is-a.dev/docs . USE ACTION.YML.
+echo "Warning: Attempt to use the \"Just an Ultimate Site Tool\" in the wrond way. This may not work correctly. Please read the documentation - https://just.is-a.dev/docs ."
 bash $GITHUB_ACTION_PATH/src/run.sh
