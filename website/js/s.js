@@ -24,6 +24,7 @@ SOFTWARE.
 
 */
 
+/*
 let itWas = window.scrollY;
 
 window.addEventListener('scroll', () => {
@@ -37,3 +38,4 @@ window.addEventListener('scroll', () => {
 
     itWas = currentScrollY;
 });
+*/
