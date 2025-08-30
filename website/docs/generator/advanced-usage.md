@@ -16,7 +16,7 @@ _just: next: /path/to/next/page
 This will add buttons to the end of the page.
 Just an Ultimate Site Tool will automatically get the title of the previous and/or next pages and insert it into the generated button output.
 The output should look like this:
-![Output](/img/generator-adv-prevnext.png)
+![Output](/img/docs/generator-adv-prevnext.png)
 
 ## The `just.config.js` file
 You can change search key: (slash (/) by default)

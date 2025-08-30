@@ -23,7 +23,7 @@ module.exports = {
 ### Couldn’t load the website. (0302)
 <div id="0302"></div>
 This error looks like this:
-![Error](/img/0302.png)
+![Error](/img/code/0302.png)
 
 This error can be caused by various reasons:
 - Poor Internet connection.

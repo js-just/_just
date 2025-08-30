@@ -2,7 +2,7 @@ module.exports = {
     type: "docs",
     docs_config: {
         metatitle: "Just an Ultimate Site Tool",
-        domain: "just.is-a.dev",
+        domain: "just.js.org",
         logo: "/img/logo.svg",
         links: [
             ["Documentation", "/docs", "_self"],
