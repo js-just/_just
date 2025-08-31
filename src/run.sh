@@ -39,10 +39,25 @@ LAST_COMMIT=$(python3 "$GITHUB_ACTION_PATH/src/last-commit.py")
 LATEST_VER=$(python3 "$GITHUB_ACTION_PATH/src/latest.py")
 COMMIT_SHA=$(cat "$GITHUB_ACTION_PATH/data/generated/sha.txt")
 VERSION=$(echo "$GITHUB_ACTION_PATH" | grep -oP '(?<=/v)[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9]+)?' || echo "$COMMIT_SHA")
+checkPermissions() {
+    chmod +x "$GITHUB_ACTION_PATH/src/current-commit.py" && \
+    local ACCESS=$(python3 "$GITHUB_ACTION_PATH/src/current-commit.py") && \
+    if [ "$ACCESS" != "Y" ]; then
+        local ERROR_MESSAGE=$(ErrorMessage "run.sh" "0129")
+        echo -e "::error::$ERROR_MESSAGE" && exit 1
+    fi
+}
 if [[ "$VERSION" != "$COMMIT_SHA" && "$VERSION" != v* ]]; then
     VERSION="v$VERSION"
 elif [[ "$VERSION" == "$COMMIT_SHA" && "$COMMIT_SHA" == "$LAST_COMMIT" ]]; then
     VERSION="@main $VERSION"
+    chmod +x "$GITHUB_ACTION_PATH/src/check-last-commit.py" && \
+    CLC_OUTPUT=$(python3 "$GITHUB_ACTION_PATH/src/check-last-commit.py") && \
+    if [ "$CLC_OUTPUT" != "Y" ]; then
+        checkPermissions
+    fi
+elif [[ "$VERSION" == "$COMMIT_SHA" ]]; then
+    checkPermissions
 fi
 if [[ "$VERSION" == v* && "$VERSION" == "$LATEST_VER" ]]; then
     VERSION="/latest $VERSION"

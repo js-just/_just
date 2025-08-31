@@ -166,6 +166,16 @@
             }
         },
         {
+            "code": "0129",
+            "message": "Commit access denied.",
+            "crashed": true,
+            "link": "",
+            "data": {
+                "mg": false,
+                "i": "Please use @version or /latest."
+            }
+        },
+        {
             "code": "0205",
             "message": "Error occurred during Node.js installation. Retrying to install Node.js with console output enabled... (Attempt #4)",
             "crashed": false,
