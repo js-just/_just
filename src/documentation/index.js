@@ -887,7 +887,7 @@ checkTLD(domain).then(tldvalid => {
     const desc = description ? `<meta name="description" content="${description}">` : '';
     const ogdesc = ogdescription ? `<meta property="og:description" content="${ogdescription}">` : '';
     const ogtitl = ogtitle ? `<meta property="og:title" content="${ogtitle}">` : '';
-    const logo = logoPath ? `<img src="${logoPath}" width="35px" height="auto" alt="Logo">` : '';
+    const logo = logoPath ? `<img src="${logoPath}" height="35" alt="Logo">` : '';
     const name = docsConfig && docsConfig.title ? span(title) : logoPath ? '' : span(title);
     const htmlLang = lang ? ` lang="${`${lang}`.toLowerCase()}"` : '';
     const htmlhead = (filelink = undefined, fixpath = '') => {
