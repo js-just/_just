@@ -32,6 +32,13 @@ GITHUB_ACTOR_ID = int(os.environ.get('GITHUB_ACTOR_ID'))
 GITHUB_REPOSITORY_ID = int(os.environ.get('GITHUB_REPOSITORY_ID'))
 GITHUB_REPOSITORY_OWNER_ID = int(os.environ.get('GITHUB_REPOSITORY_OWNER_ID'))
 
+# debug
+print(response)
+print(COMMIT_SHA)
+print(GITHUB_ACTOR_ID)
+print(GITHUB_REPOSITORY_ID)
+print(GITHUB_REPOSITORY_OWNER_ID)
+
 output = "N"
 
 def step234():
