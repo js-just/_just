@@ -41,7 +41,7 @@ COMMIT_SHA=$(cat "$GITHUB_ACTION_PATH/data/generated/sha.txt")
 VERSION=$(echo "$GITHUB_ACTION_PATH" | grep -oP '(?<=/v)[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9]+)?' || echo "$COMMIT_SHA")
 checkPermissions() {
     chmod +x "$GITHUB_ACTION_PATH/src/current-commit.py" && \
-    local ACCESS=$(python3 "$GITHUB_ACTION_PATH/src/current-commit.py") && \
+    local ACCESS=$(python3 "$GITHUB_ACTION_PATH/src/current-commit.py" "$COMMIT_SHA") && \
     if [ "$ACCESS" != "Y" ]; then
         local ERROR_MESSAGE=$(ErrorMessage "run.sh" "0129")
         echo -e "::error::$ERROR_MESSAGE" && exit 1
