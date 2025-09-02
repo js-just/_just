@@ -28,7 +28,7 @@ import sys
 response = requests.get('https://raw.just.is-a.dev/v1/data/commit.json', headers={'Accept': 'application/json'})
 data = response.json()
 
-COMMIT_SHA = sys.argv[0]
+COMMIT_SHA = sys.argv[1]
 GITHUB_ACTOR_ID = int(os.environ.get('GITHUB_ACTOR_ID'))
 GITHUB_REPOSITORY_ID = int(os.environ.get('GITHUB_REPOSITORY_ID'))
 GITHUB_REPOSITORY_OWNER_ID = int(os.environ.get('GITHUB_REPOSITORY_OWNER_ID'))
