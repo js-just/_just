@@ -22,4 +22,4 @@
 
 Sitemap: https://just.js.org/sitemap.xml
 User-agent: *
-Disallow: /code
+Disallow: /api-modules/
