@@ -30,7 +30,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const aElement = li.getElementsByTagName('a')[0];
         if (aElement) {
             const spanElement = aElement.getElementsByTagName('span')[0];
-            if (spanElement && spanElement.innerHTML === "Just an Ultimate Site Tool - Helper terminal") {
+            if (
+                spanElement && (
+                spanElement.innerHTML === "Just an Ultimate Site Tool - Helper terminal" ||
+                spanElement.innerHTML === "_just"
+            )){
                 li.parentNode.removeChild(li)
             }
         }
