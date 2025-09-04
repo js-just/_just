@@ -700,7 +700,7 @@ h1, h2, h3, a, strong, span, .p .l, .jslogo {
     transition: 500ms;
 }
 .jslink:hover {
-    color: transparent;
+    color: transparent !important;
     filter: drop-shadow(0px 0px 6px #6e3bf385);
     -webkit-filter: drop-shadow(0px 0px 6px #6e3bf385);
     background-image: linear-gradient(45deg, #6e3bf3, #1437f3);
@@ -828,4 +828,31 @@ h1, h2, h3, a, strong, span, .p .l, .jslogo {
     .u4 {
         margin-bottom: 15vh;
     }
+}
+
+.rd { /* Redirect */
+    padding-top: 0% !important;
+}
+.rd .u0, .rd .u2, body:not(.jse) .u0, body:not(.jse) .u2 {
+    width: 100%;
+}
+.rd .u0 {
+    top: 50%;
+    translate: 0% -50%;
+}
+.rd .u2 a span {
+    text-decoration: underline;
+    text-decoration-color: #ffffffa6;
+    text-decoration-thickness: 1px;
+    transition: 300ms;
+}
+.rd .u2 a:hover span {
+    text-decoration-color: #000000a6;
+}
+
+.rd, body:not(.jse) { /* JavaScript Disabled */
+    background: #000 !important;
+}
+body:not(.jse) .p, body:not(.jse) .u3, body:not(.jse) .u4, body:not(.jse) .jslogo, body:not(.jse) h3 {
+    display: none;
 }
