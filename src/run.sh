@@ -71,46 +71,54 @@ msg6=$(_justMessage "$_GREEN Compressing completed$_RESET")
 msg9=$(_justMessage "$_GREEN Generating completed$_RESET")
 msg10=$(_justMessage "$_BLUE Installing TypeScript compiler$_RESET...")
 msg11=$(_justMessage "$_BLUE Installed TypeScript compiler$_RESET")
+msg12=$(_justMessage "$_BLUE Installing Homebrew$_RESET...")
+msg13=$(_justMessage "$_BLUE Installed Homebrew$_RESET")
+msg14=$(_justMessage "$_BLUE Installing Dart Sass$_RESET...")
+msg15=$(_justMessage "$_BLUE Installed Dart Sass$_RESET")
 echo -e "$msg1"
 
 chmod +x "$GITHUB_ACTION_PATH/src/time.py" # use python to get current time in ms cuz yes
 TIME0=$(python3 "$GITHUB_ACTION_PATH/src/time.py")
+NODEJSINSTALLED="n"
 installNodejs() {
-    echo -e "$msg2"
-    local TIME1=$(python3 "$GITHUB_ACTION_PATH/src/time.py")
-    if ! command -v node > /dev/null; then # attempt 0: nodejs installed before running _just
-        # attempt 1: install via curl
-        sudo apt-get remove -y nodejs npm > /dev/null 2>&1 || true
-        sudo apt-get update -qq > /dev/null 2>&1
-        curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash - > /dev/null 2>&1
-        sudo apt-get install -y nodejs > /dev/null 2>&1
-        if ! command -v node > /dev/null; then
-            # attempt 2: install via curl with logs
-            local ERROR_MESSAGE=$(ErrorMessage "run.sh" "0207")
-            echo -e "$ERROR_MESSAGE"
-            sudo apt-get remove -y nodejs npm || true
-            sudo apt-get update -qq
-            curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
-            sudo apt-get install -y nodejs
+    if [ "$NODEJSINSTALLED" != "y" ]; then
+        echo -e "$msg2"
+        local TIME1=$(python3 "$GITHUB_ACTION_PATH/src/time.py")
+        if ! command -v node > /dev/null; then # attempt 0: nodejs installed before running _just
+            # attempt 1: install via curl
+            sudo apt-get remove -y nodejs npm > /dev/null 2>&1 || true
+            sudo apt-get update -qq > /dev/null 2>&1
+            curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash - > /dev/null 2>&1
+            sudo apt-get install -y nodejs > /dev/null 2>&1
             if ! command -v node > /dev/null; then
-                # attempt 3: install via sudo apt install
-                local ERROR_MESSAGE=$(ErrorMessage "run.sh" "0208")
+                # attempt 2: install via curl with logs
+                local ERROR_MESSAGE=$(ErrorMessage "run.sh" "0207")
                 echo -e "$ERROR_MESSAGE"
-                sudo apt update -qq && sudo apt install -y nodejs npm > /dev/null 2>&1
-                if [ $? -ne 0 ]; then
-                    # attempt 4: install via sudo apt install with logs
-                    local ERROR_MESSAGE=$(ErrorMessage "run.sh" "0205")
-                    echo -e "::error::$ERROR_MESSAGE"
-                    sudo apt update
-                    sudo apt install -y nodejs npm
+                sudo apt-get remove -y nodejs npm || true
+                sudo apt-get update -qq
+                curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+                sudo apt-get install -y nodejs
+                if ! command -v node > /dev/null; then
+                    # attempt 3: install via sudo apt install
+                    local ERROR_MESSAGE=$(ErrorMessage "run.sh" "0208")
+                    echo -e "$ERROR_MESSAGE"
+                    sudo apt update -qq && sudo apt install -y nodejs npm > /dev/null 2>&1
+                    if [ $? -ne 0 ]; then
+                        # attempt 4: install via sudo apt install with logs
+                        local ERROR_MESSAGE=$(ErrorMessage "run.sh" "0205")
+                        echo -e "::error::$ERROR_MESSAGE"
+                        sudo apt update
+                        sudo apt install -y nodejs npm
+                    fi
                 fi
             fi
         fi
+        NODEJSINSTALLED="y"
+        local TIME2=$(python3 "$GITHUB_ACTION_PATH/src/time.py")
+        NODEVERSION=$(node --version)
+        NODESECONDS=$(node "$GITHUB_ACTION_PATH/src/time.js" "$TIME1" "$TIME2") # use js to get nodejs installing duration cuz yes
+        echo -e "$msg3 $NODEVERSION ($NODESECONDS)"
     fi
-    local TIME2=$(python3 "$GITHUB_ACTION_PATH/src/time.py")
-    NODEVERSION=$(node --version)
-    NODESECONDS=$(node "$GITHUB_ACTION_PATH/src/time.js" "$TIME1" "$TIME2") # use js to get nodejs installing duration cuz yes
-    echo -e "$msg3 $NODEVERSION ($NODESECONDS)"
 }
 installTypeScriptCompiler() {
     echo -e "$msg10"
@@ -133,6 +141,48 @@ installTypeScriptCompiler() {
     TSCVERSION=$(tsc --version 2>/dev/null)
     TSCSECONDS=$(node "$GITHUB_ACTION_PATH/src/time.js" "$TIME1" "$TIME2")
     echo -e "$msg11 $TSCVERSION ($TSCSECONDS)"
+}
+installHomebrew() {
+    installNodejs
+    echo -e "$msg12"
+    local TIME1=$(python3 "$GITHUB_ACTION_PATH/src/time.py")
+    if ! command -v brew &> /dev/null; then # attempt 0: homebrew installed before running _just
+        # attempt 1: install without logs
+        NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" > /dev/null 2>&1
+        if [ -f "/home/linuxbrew/.linuxbrew/bin/brew" ]; then
+            echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"' >> ~/.bashrc 2>/dev/null
+            eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)" 2>/dev/null
+        fi
+        if ! command -v brew &> /dev/null; then
+            # attempt 2: install with logs
+            local ERROR_MESSAGE=$(ErrorMessage "run.sh" "0211")
+            echo -e "$ERROR_MESSAGE"
+            /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+            echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"' >> ~/.bashrc
+            eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+        fi
+    fi
+    local TIME2=$(python3 "$GITHUB_ACTION_PATH/src/time.py")
+    HBVERSION=$(brew --version)
+    HBSECONDS=$(node "$GITHUB_ACTION_PATH/src/time.js" "$TIME1" "$TIME2")
+    echo -e "$msg13 $HBVERSION ($HBSECONDS)"
+}
+installDartSass() {
+    echo -e "$msg14"
+    local TIME1=$(python3 "$GITHUB_ACTION_PATH/src/time.py")
+    if ! command -v sass &> /dev/null; then # attempt 0: dart sass installed before running _just
+        # attempt 1: install without logs
+        brew install sass/sass/sass > /dev/null 2>&1
+        if ! command -v sass &> /dev/null; then
+            # attempt 2: install with logs
+            local ERROR_MESSAGE=$(ErrorMessage "run.sh" "0212")
+            echo -e "$ERROR_MESSAGE"
+            brew install sass/sass/sass
+        fi
+    fi
+    local TIME2=$(python3 "$GITHUB_ACTION_PATH/src/time.py")
+    DSSECONDS=$(node "$GITHUB_ACTION_PATH/src/time.js" "$TIME1" "$TIME2")
+    echo -e "$msg15 ($DSSECONDS)"
 }
 
 if [ -f "$CONFIG_DATA" ]; then
@@ -169,12 +219,7 @@ if [[ "${USESASS,,}" == "true" ]]; then
         ERROR_MESSAGE=$(ErrorMessage "important_dirs" "0106")
         echo -e "::error::$ERROR_MESSAGE" && exit 1
     fi
-    
-    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-    echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"' >> ~/.bashrc
-    eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-
-    brew install sass/sass/sass
+    installHomebrew && installDartSass
 fi
 
 if [[ "$TYPE" != "postprocessor" && "$TYPE" != "redirect" && "$TYPE" != "compress" && "$TYPE" != "docs" ]]; then

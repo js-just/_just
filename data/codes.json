@@ -65,9 +65,13 @@
         },
         {
             "code": "0130",
-            "message": "",
+            "message": "Your repository has a _just_temp directory in the root directory. Please remove it.",
             "crashed": true,
-            "link": ""
+            "link": "",
+            "data": {
+                "mg": false,
+                "i": "remove the <code>_just_temp</code> directory from the root directory"
+            }
         }
     ],
     "global": [
@@ -219,6 +223,26 @@
             "data": {
                 "mg": false,
                 "i": "Just an Ultimate Site Tool is unable to install TypeScript compiler."
+            }
+        },
+        {
+            "code": "0211",
+            "message": "Error occurred during Homebrew installation. Retrying to install Homebrew... (Attempt #2)",
+            "crashed": false,
+            "link": "",
+            "data": {
+                "mg": false,
+                "i": "Just an Ultimate Site Tool is unable to install Homebrew."
+            }
+        },
+        {
+            "code": "0212",
+            "message": "Error occurred during Dart Sass installation. Retrying to install Dart Sass... (Attempt #2)",
+            "crashed": false,
+            "link": "",
+            "data": {
+                "mg": false,
+                "i": "Just an Ultimate Site Tool is unable to install Dart Sass."
             }
         }
     ],
@@ -419,6 +443,28 @@
             "data": {
                 "mg": true,
                 "i": "Just an Ultimate Site Tool is unable to fetch <a href=\"https://raw.is-a.dev/v2.json\" target=\"_blank\"><code>https://raw.is-a.dev/v2.json</code></a>."
+            }
+        }
+    ],
+    "ast/css.js": [
+        {
+            "code": "0131",
+            "message": "Invalid value of property \"css\" in \"parser\" in module.exports of just.config.js. It must be one of: \"CSS\", \"SCSS\", \"SASS\".",
+            "crashed": true,
+            "link": "",
+            "data": {
+                "mg": false,
+                "i": "The CSS parser you choose does not exist."
+            }
+        },
+        {
+            "code": "0132",
+            "message": "Dart Sass compilation error.",
+            "crashed": true,
+            "link": "",
+            "data": {
+                "mg": false,
+                "i": "look up for Dart Sass error in your terminal/console output and fix your .scss or .sass file"
             }
         }
     ]
