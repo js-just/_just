@@ -79,5 +79,6 @@
     "gss": "gauss",
     "golang": "go",
     "gololang": "golo",
-    "svg": "xml"
+    "svg": "xml",
+    "webmanifest": "json"
 }

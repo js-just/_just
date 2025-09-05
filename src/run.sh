@@ -209,10 +209,17 @@ if [ -z "$(echo "$CONFIG_JSON" | jq -r '.module.exports')" ]; then
 fi
 
 TYPE=$(echo "$CONFIG_JSON" | jq -r '.type')
-USE_SASS=$(echo "$CONFIG_JSON" | jq -r '.install.sass')
+USE_TSC=$(echo "$CONFIG_JSON" | jq -r '.install.typescript_compiler')
+USE_SASS=$(echo "$CONFIG_JSON" | jq -r '.install.dart_sass')
+COMPILE_TS=$(echo "$CONFIG_JSON" | jq -r '.compile.ts')
+COMPILE_SASS=$(echo "$CONFIG_JSON" | jq -r '.compile.sass')
+COMPILE_SCSS=$(echo "$CONFIG_JSON" | jq -r '.compile.scss')
 if [ -z "$TYPE" ]; then
     ERROR_MESSAGE=$(ErrorMessage "run.sh" "0110")
     echo -e "::error::$ERROR_MESSAGE" && exit 1
+fi
+if [[ "${USE_TSC,,}" == "true" ]]; then
+    installTypeScriptCompiler
 fi
 if [[ "${USE_SASS,,}" == "true" ]]; then
     if [ -d "_just_temp" ]; then
@@ -220,6 +227,18 @@ if [[ "${USE_SASS,,}" == "true" ]]; then
         echo -e "::error::$ERROR_MESSAGE" && exit 1
     fi
     installHomebrew && installDartSass
+fi
+if [[ "${COMPILE_TS,,}" == "true" ]]; then
+    source $GITHUB_ACTION_PATH/lib/compile.sh
+    tojs "$INPUT_PATH"
+fi
+if [[ "${COMPILE_SASS,,}" == "true" ]]; then
+    source $GITHUB_ACTION_PATH/lib/compile.sh
+    tocss "$INPUT_PATH" "sass"
+fi
+if [[ "${COMPILE_SCSS,,}" == "true" ]]; then
+    source $GITHUB_ACTION_PATH/lib/compile.sh
+    tocss "$INPUT_PATH" "scss"
 fi
 
 if [[ "$TYPE" != "postprocessor" && "$TYPE" != "redirect" && "$TYPE" != "compress" && "$TYPE" != "docs" ]]; then
