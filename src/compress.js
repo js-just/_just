@@ -30,7 +30,7 @@ import { join } from 'path';
 const deployDir = process.argv[2] || __dirname;
 import { JSON as css, SASS } from '../lib/ast/css.js';
 
-const config = JSON.parse(readFileSync('just.config.json', template.charset));
+const config = JSON.parse(readFileSync('just.config.json', 'utf8'));
 if (config.sass) {
     SASS();
 }
