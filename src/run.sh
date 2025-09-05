@@ -209,12 +209,12 @@ if [ -z "$(echo "$CONFIG_JSON" | jq -r '.module.exports')" ]; then
 fi
 
 TYPE=$(echo "$CONFIG_JSON" | jq -r '.type')
-USESASS=$(echo "$CONFIG_JSON" | jq -r '.sass')
+USE_SASS=$(echo "$CONFIG_JSON" | jq -r '.install.sass')
 if [ -z "$TYPE" ]; then
     ERROR_MESSAGE=$(ErrorMessage "run.sh" "0110")
     echo -e "::error::$ERROR_MESSAGE" && exit 1
 fi
-if [[ "${USESASS,,}" == "true" ]]; then
+if [[ "${USE_SASS,,}" == "true" ]]; then
     if [ -d "_just_temp" ]; then
         ERROR_MESSAGE=$(ErrorMessage "important_dirs" "0106")
         echo -e "::error::$ERROR_MESSAGE" && exit 1

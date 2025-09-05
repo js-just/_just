@@ -65,7 +65,7 @@ async function compressFile(filePath) {
     let content = readFileSync(filePath, 'utf8');
     let done = false;
     if (filePath.endsWith('.css')) {
-        content = css(content);
+        content = await css(content);
         const compressed = await serializeRules(content.sort((a, b) => a.id - b.id));
         writeFileSync(filePath, compressed, 'utf8');
         done = true;

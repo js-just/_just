@@ -312,16 +312,21 @@ TJS = TJS.replaceAll(".add('l')", `.add('_just_theme_light')`)
     .replaceAll(".remove('l')", `.remove('_just_theme_light')`)
     .replaceAll(".add('a')", `.add('_just_theme_auto')`)
     .replaceAll(".remove('a')", `.remove('_just_theme_auto')`);
-const lighthighlight = _just.parseCSS.JSON(JSON.parse(HIGHLIGHTJSON)["_just_light"]);
-lighthighlight.forEach(rule => {
-    const props = [];
-    for (const [keyy, valme] of Object.entries(rule.properties)) {
-        props.push(`${keyy}:${valme}`);
-    }
-    const outstr = (addclass) => `${rule.selectors.map(s => `.${addclass} ${s}`).join(',')}{${props.join(';')}}`;
-    CSSHIGHLIGHT += outstr(cssclass.l);
-    CSSHIGHLIGHT += `@media (prefers-color-scheme: light) {${outstr(cssclass.a)}}`;
-});
+let lhldone = false;
+async function lhl() {
+    const lighthighlight = await _just.parseCSS.JSON(JSON.parse(HIGHLIGHTJSON)["_just_light"]);
+    lighthighlight.forEach(rule => {
+        const props = [];
+        for (const [keyy, valme] of Object.entries(rule.properties)) {
+            props.push(`${keyy}:${valme}`);
+        }
+        const outstr = (addclass) => `${rule.selectors.map(s => `.${addclass} ${s}`).join(',')}{${props.join(';')}}`;
+        CSSHIGHLIGHT += outstr(cssclass.l);
+        CSSHIGHLIGHT += `@media (prefers-color-scheme: light) {${outstr(cssclass.a)}}`;
+    });
+    lhldone = true;
+}
+lhl();
 
 const charset = docsConfig ? docsConfig.charset || template.charset : template.charset;
 
@@ -1239,7 +1244,7 @@ checkTLD(domain).then(tldvalid => {
         mdfilesdone++;
     });
 
-    while (mdfilesdone < markdownFiles.length) {};
+    while (mdfilesdone < markdownFiles.length || !lhldone) {};
 
     const CSSdata = _just.customCSS.customcss(CSS, customCSS == 'false' ? undefined : customCSS, CSSHIGHLIGHT, insertedcode, CSSBUTTONS, CSSSEARCH);
     CSS = CSSdata[0];
