@@ -28,7 +28,12 @@ import { readFileSync, writeFileSync, readdirSync, statSync } from 'fs';
 import { join } from 'path';
 
 const deployDir = process.argv[2] || __dirname;
-import { JSON as css } from '../lib/ast/css.js';
+import { JSON as css, SASS } from '../lib/ast/css.js';
+
+const config = JSON.parse(readFileSync('just.config.json', template.charset));
+if (config.sass) {
+    SASS();
+}
 
 async function serializeRules(rules) {
     let result = '';
