@@ -32,6 +32,25 @@
                 html > body > main > div > small {
                     display: none !important;
                 }
+
+                article div[data-link]::before {
+                    content: attr(data-link);
+                    text-decoration: underline;
+                }
+                article div[data-link]::before, article div[data-link]::after {
+                    color: var(--kb);
+                }
+                article div[data-link]::after {
+                    content: '\2197';
+                    position: relative;
+                    display: inline-block;
+                    top: 0%;
+                    font-family: 'Murecho', var(--tf), monospace, sans-serif;
+                    font-weight: 900;
+                    font-size: 11px;
+                    translate: 2px -20%;
+                    opacity: 0.5;
+                }
             </style>
         </noscript>
         <style>

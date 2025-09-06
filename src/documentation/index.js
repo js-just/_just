@@ -270,7 +270,9 @@ HTML = HTML
     .replace('<span id="search">', `<span id="${cssid.search}">`)
     .replace('var(--cb)', `var(--${cssvar.cb})`)
     .replace('var(--ct)', `var(--${cssvar.ct})`)
-    .replace('<div class="search"></div>', `<div class="${cssclass.search}"></div>`);
+    .replace('<div class="search"></div>', `<div class="${cssclass.search}"></div>`)
+    .replace('var(--kb)', `var(--${cssvar.kb})`)
+    .replace('var(--tf)', `var(--${cssvar.tf})`);
 const jstrimmedstrvarbasestr = _just.number.convertbasedigits.replace(/[0-9\/+]/g, '');
 const jstrimmedstrvar = _just.number.convertbase(Math.floor(Math.random()*1000).toString(10), 10, jstrimmedstrvarbasestr.length, jstrimmedstrvarbasestr+'0123456789+/')
 JS = JS.replaceAll('trimmedStr', jstrimmedstrvar)
@@ -725,7 +727,7 @@ checkTLD(domain).then(tldvalid => {
             const link__ = `${protocol_.trim()}${link_.trim()}`;
             const check_ = notFencedCodeBlock(text, offset);
             if (checklink(link__) && check_) {
-                return `<div data-link="${link__}" onclick="javascript:window.open(\'${link__}\',\'\_blank\')"></div>`;
+                return `<div data-link="${link__}" onclick="window.open(\'${link__}\',\'\_blank\')"></div>`;
             } else return `${protocol_}${link_}`;
         })
         text = text.replace(/(?<=\s|^|[.,!?;:*_^~=])(http:\/\/|https:\/\/|data:)(.*?)(?=\s|[,!;:*^~`<>]|[.?=#%&+]\s|$)/g, (match, protocol_, link_, offset) => {
