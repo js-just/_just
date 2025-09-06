@@ -25,7 +25,7 @@ SOFTWARE.
 */
 
 const _just = {};
-const [HTMLtemplate, CSStemplate, JStemplate, PATH, repo, owner, customCSS, hljslangs, langs__, CSSHIGHLIGHTtemplate, langstext_, vrsn, CSSBUTTONStemplate, CSSSEARCHtemplate, HIGHLIGHTJSON, fixpathh, THEME, THEMEJS, NAVBARJS, THEMECLASS] = process.argv.slice(2);
+const [HTMLtemplate, CSStemplate, JStemplate, PATH, repo, owner, customCSS, hljslangs, langs__, CSSHIGHLIGHTtemplate, langstext_, vrsn, CSSBUTTONStemplate, CSSSEARCHtemplate, HIGHLIGHTJSON, fixpathh, THEME, THEMEJS, NAVBARJS, THEMECLASS, EMBEDJS] = process.argv.slice(2);
 let HTML = HTMLtemplate;
 let CSS = CSStemplate;
 let JS = JStemplate;
@@ -1214,7 +1214,7 @@ checkTLD(domain).then(tldvalid => {
             .replace('<html>', `<html${htmlLang}>`)
             .replaceAll('="/_just/', fixpathh ? `="/${fixpathh}/_just/` : `="${start}${fixpath}_just/`)
             .replace("content: '_just';", `content: '_just ${_just.version}';`)
-            .replace('REPLACE_SCRIPT', `const ${dataname2[11]}=${JSON.stringify(pages[1])};${pagejs ? `document.addEventListener('DOMContentLoaded',()=>{${pagejs}});` : ''}`)
+            .replace('REPLACE_SCRIPT', `const ${dataname2[11]}=${JSON.stringify(pages[1])};${pagejs ? `document.addEventListener('DOMContentLoaded',()=>{${pagejs}});` : ''}${toHTML.includes('<div data-link="')?EMBEDJS:''}`)
             .replaceAll('REPLACE_CSS', filename.css)
             .replaceAll('REPLACE_JS', filename.js)
             .replace('REPLACE_CHARSET', charset)
