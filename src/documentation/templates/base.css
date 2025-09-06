@@ -1333,3 +1333,41 @@ th {
 tbody > tr:first-of-type td {
     padding-top: 1em;
 }
+
+article div[data-link]:not(:has(a)) {
+    max-width: 500px;
+    padding: 20px;
+    border: 2px solid var(--nseMJ);
+    border-radius: 20px;
+    cursor: pointer;
+    width: fit-content;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    background-color: color-mix(in srgb, attr(data-color type(<color>), transparent) 10%, transparent);
+}
+article div[data-link]:not(:has(a)):hover {
+    background-color: color-mix(in srgb, attr(data-color type(<color>), transparent) 30%, transparent);
+    box-shadow: 0px 0px 45px 5px color-mix(in srgb, attr(data-color type(<color>), transparent) 10%, transparent);
+}
+article div[data-link] strong,
+article div[data-link] span, 
+article div[data-link] small {
+    display: block !important;
+}
+article div[data-link]:has(span) strong,
+article div[data-link]:has(img) strong,
+article div[data-link]:has(img) span,
+article div[data-link]:has(strong) small, 
+article div[data-link]:has(span) small, 
+article div[data-link]:has(img) small {
+    margin-bottom: 5px;
+}
+article div[data-link] span {
+    font-size: 0.9rem;
+}
+article div[data-link] img {
+    object-fit: cover;
+}
+article div[data-link] small {
+    text-align: left !important;
+}
