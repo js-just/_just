@@ -25,7 +25,7 @@ import requests
 import os
 import sys
 
-response = requests.get('https://raw.just.is-a.dev/v1/data/commit.json', headers={'Accept': 'application/json'})
+response = requests.get('https://api.just.js.org/v1/data/commit.json', headers={'Accept': 'application/json'})
 data = response.json()
 
 COMMIT_SHA = sys.argv[1]

@@ -22,7 +22,7 @@
 
 #!/bin/bash
 mkdir -p demo && \
-DEMO_LATEST_ID=$(node -e "await fetch('https://raw.just.is-a.dev/v1/demo-id/').then(async resp => {return await resp.json()}).then(resp => {console.log(resp.value)})") && \
+DEMO_LATEST_ID=$(node -e "await fetch('https://api.just.js.org/v1/demo-id/').then(async resp => {return await resp.json()}).then(resp => {console.log(resp.value)})") && \
 DEMO_BUILT_ID=$(node "src/demo.js" "$INPUT_FILES" "$DEMO_LATEST_ID") && \
 DEMO_NEW_ID=$(node -e "console.log($DEMO_LATEST_ID + 1)") && \
 rm -f "just.config.js" && \

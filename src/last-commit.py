@@ -22,6 +22,6 @@
 
 #!/usr/bin/env python3
 import requests
-response = requests.get('https://raw.just.is-a.dev/v1/last-commit/', headers={'Accept': 'application/json'})
+response = requests.get('https://api.just.js.org/v1/last-commit/', headers={'Accept': 'application/json'})
 data = response.json()
 print(data['value'])

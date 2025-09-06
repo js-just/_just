@@ -23,7 +23,7 @@
 #!/usr/bin/env python3
 import requests
 
-response = requests.get('https://raw.just.is-a.dev/v1/data/lastCommit.json', headers={'Accept': 'application/json'})
+response = requests.get('https://api.just.js.org/v1/data/lastCommit.json', headers={'Accept': 'application/json'})
 data = response.json()
 
 output = "N"
