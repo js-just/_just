@@ -24,10 +24,17 @@
     }
     const elems = document.querySelectorAll('div[data-link]');
     let embedid = 0;
+    function extlink(url) {
+        let output = false;
+        try {
+            output = (new URL(url)).hostname === window.location.hostname
+        } catch (_e) {};
+        return !output
+    };
     elems.forEach(async(elem)=>{
         const link = elem.getAttribute('data-link');
         function linkify() {
-            elem.innerHTML = `<a href="${link}" target="_blank" id="ext"></a>`;
+            elem.innerHTML = `<a href="${link}" target="_blank"${extlink(link)?` id="REPLACE_EXT"`:''}></a>`;
             return;
         }
         const metaTags = await fetchMetaTags(link).catch(linkify);

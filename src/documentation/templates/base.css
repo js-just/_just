@@ -1337,7 +1337,7 @@ tbody > tr:first-of-type td {
 article div[data-link]:not(:has(a)) {
     max-width: 500px;
     padding: 20px;
-    border: 2px solid var(--nseMJ);
+    border: 2px solid var(--md);
     border-radius: 20px;
     cursor: pointer;
     width: fit-content;

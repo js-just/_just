@@ -96,6 +96,11 @@ https://just.is-a.dev
 ## v0.1.1 features:
 #### Embeds:
 {https://juststudio.is-a.dev/}
+{https://is-a.dev/}
+{https://discord.com/app}
+{invalidlink}
+{https://invaliddomain}
+{https://example.invalidtld/}
 
 _just: prev: /docs/getting-started
 _just: next: /docs/getting-started

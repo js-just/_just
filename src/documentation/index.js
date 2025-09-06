@@ -1214,7 +1214,12 @@ checkTLD(domain).then(tldvalid => {
             .replace('<html>', `<html${htmlLang}>`)
             .replaceAll('="/_just/', fixpathh ? `="/${fixpathh}/_just/` : `="${start}${fixpath}_just/`)
             .replace("content: '_just';", `content: '_just ${_just.version}';`)
-            .replace('REPLACE_SCRIPT', `const ${dataname2[11]}=${JSON.stringify(pages[1])};${pagejs ? `document.addEventListener('DOMContentLoaded',()=>{${pagejs}});` : ''}${toHTML.includes('<div data-link="')?EMBEDJS:''}`)
+            .replace('REPLACE_SCRIPT', `const ${dataname2[11]}=${JSON.stringify(pages[1])};${pagejs ? `document.addEventListener('DOMContentLoaded',()=>{${pagejs}});` : ''}${
+                toHTML.includes('<div data-link="') ? 
+                EMBEDJS
+                    .replace('"REPLACE_EXT"', `"${cssid.ext}"`)
+                : ''
+            }`)
             .replaceAll('REPLACE_CSS', filename.css)
             .replaceAll('REPLACE_JS', filename.js)
             .replace('REPLACE_CHARSET', charset)
