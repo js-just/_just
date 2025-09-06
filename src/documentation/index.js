@@ -660,12 +660,6 @@ checkTLD(domain).then(tldvalid => {
         text = text.replace(/\*\[(.*?)\]: (.*?)(?=\n|$)/g, (match, abbr, definition) => {
             return `<abbr title="${MDcode(definition, true)}">${abbr}</abbr>`;
         });
-        text = text.replace(/\[\^(\d+)\]:? (.*?)(?=\n\[\^|\n\n|$)/gs, (match, num, note) => {
-            return `<div class="footnote" id="fn${num}"><sup>${num}</sup>. ${MDtoHTML(note, currentFile)}</div>`;
-        });
-        text = text.replace(/\[\^(\d+)\]/g, (match, num) => {
-            return `<sup><a href="#fn${num}" id="fnref${num}">${num}</a></sup>`;
-        });
         text = text.replace(/^([^\n:]+)\n: (.*?)(?=\n[^\n:]|\n\n|$)/gms, (match, term, definition) => {
             return `<dl><dt>${MDtoHTML(term, currentFile)}</dt><dd>${MDtoHTML(definition, currentFile)}</dd></dl>`;
         });
@@ -1268,7 +1262,8 @@ checkTLD(domain).then(tldvalid => {
                 .replace(/<br><blockquote><blockquote>((?:(?!<h[1-6][^>]*>.*?<\/h[1-6]>).)*?)<\/blockquote><\/blockquote>/g, '<blockquote>$1</blockquote>')
                 //.replaceAll(`${_just.element(dataname[5])}<h1 id=`, `<h1 class="${dataname[5]}" id=`)
                 //.replaceAll(`${_just.element(dataname[6])}<h2 id=`, `<h2 class="${dataname[6]}" id=`)
-                .replace(new RegExp(`(?<=<code class="${cssclass.code}"><code>(${getlangs()})</code>)(.*?)(?=</code>)`, 'g'), (match, lng, cde) => cde.replace(/<br><br>/g, '<br>')),
+                .replace(new RegExp(`(?<=<code class="${cssclass.code}"><code>(${getlangs()})</code>)(.*?)(?=</code>)`, 'g'), (match, lng, cde) => cde.replace(/<br><br>/g, '<br>'))
+                .replace(/(<br\s*\/?>)+(\s*)<table/gi, '$2<table').replace(/(<br\s*\/?>)+(\s*)<dl/gi, '$2<dl'),
             )
         mdfilesdone++;
     });
