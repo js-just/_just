@@ -93,5 +93,9 @@ https://just.is-a.dev
 ## v0.0.29 features:
 -# small text
 
+## v0.1.1 features:
+#### Embeds:
+{https://juststudio.is-a.dev/}
+
 _just: prev: /docs/getting-started
 _just: next: /docs/getting-started

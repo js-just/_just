@@ -665,19 +665,19 @@ checkTLD(domain).then(tldvalid => {
             return `<dl><dt>${MDtoHTML(term, currentFile)}</dt><dd>${MDtoHTML(definition, currentFile)}</dd></dl>`;
         });
         text = text.replace(/\n(\|.*\|)\n(\|.*\|)\n((?:\|.*\|\n)+)/g, (match, header, alignment, rows) => {
-            let table = '<table>\n<thead>\n<tr>';
+            let table = '<table><thead><tr>';
             header.split('|').filter(cell => cell.trim()).forEach(cell => {
                 table += `<th>${MDtoHTML(cell.trim(), currentFile)}</th>`;
             });
-            table += '</tr>\n</thead>\n<tbody>';
+            table += '</tr></thead><tbody>';
             rows.split('\n').filter(row => row.trim()).forEach(row => {
-                table += '\n<tr>';
+                table += '<tr>';
                 row.split('|').filter(cell => cell.trim()).forEach(cell => {
                     table += `<td>${MDtoHTML(cell.trim(), currentFile)}</td>`;
                 });
                 table += '</tr>';
             });
-            table += '\n</tbody>\n</table>';
+            table += '</tbody></table>';
             return table;
         });
         text = text.replace(codeRegExp, (match, lang_, code_) => {
@@ -721,7 +721,14 @@ checkTLD(domain).then(tldvalid => {
         text = text.replace(/(?<=\s|^|[.,!?;:*_^~=])!\[(.*?)\]\((.*?)\)(?=\s|[.,!?;:*_^~=]|$)/g, (match, text, link_, offset) => {return notFencedCodeBlock(text, offset) ? `<img src="${link_}" alt="${text}" loading="lazy">` : match});
         text = text.replace(/(?<=\s|^|[.,!?;:*_^~=])\[(.*?)\]\((.*?) ("|')(.*?)\3\)(?=\s|[.,!?;:*_^~=]|$)/g, (match, text, link_, q, linktitle, offset) => {return notFencedCodeBlock(text, offset) ? link(text, link_, extlink(link_), cssid.ext, "_blank", linktitle) : match});
         text = text.replace(linkregex, (match, text, link_, offset) => {return notFencedCodeBlock(text, offset) ? link(text, link_, extlink(link_), cssid.ext, extlink(link_) ? '_blank' : '_self') : match});
-        text = text.replace(/(?<=\s|^|[.,!?;:*_^~=])(http:\/\/|https:\/\/|data:)(.*?)(?=\s|[,!;:*^~`<>]|[.?=#%&+] |$)/g, (match, protocol_, link_, offset) => {
+        text = text.replace(/(?<=\s|^|[.,!?;;*_^~=]){(http:\/\/|https:\/\/)(.*?)}(?=\s|[.,!&;:*_^~=]|$)/g, (match, protocol_, link_, offset) => {
+            const link__ = `${protocol_.trim()}${link_.trim()}`;
+            const check_ = notFencedCodeBlock(text, offset);
+            if (checklink(link__) && check_) {
+                return `<div data-link="${link__}" onclick="javascript:window.open(\'${link__}\',\'\_blank\')"></div>`;
+            } else return `${protocol_}${link_}`;
+        })
+        text = text.replace(/(?<=\s|^|[.,!?;:*_^~=])(http:\/\/|https:\/\/|data:)(.*?)(?=\s|[,!;:*^~`<>]|[.?=#%&+]\s|$)/g, (match, protocol_, link_, offset) => {
                         const link__ = `${protocol_.trim()}${link_.trim()}`;
                         const check_ = notFencedCodeBlock(text, offset);
                         if (protocol_.trim() === 'data:' && check_) {
@@ -802,12 +809,12 @@ checkTLD(domain).then(tldvalid => {
 
         text = text.replace(ulRegex, (match, offset) => {
             const items = match.split('\n').map(item => item.replace(/^- \s*/, '').replace(/^\* \s*/, '').replace(/^\+ \s*/, ''));
-            return notFencedCodeBlock(text, offset) ? `<ul>${items.map(item => `<li>${MDtoHTML(item.trim(), currentFile)}</li>`).join('')}</ul>` : match;
+            return notFencedCodeBlock(text, offset) ? `<ul>${items.map(item => `<li>${hbuoclpMDtoHTML(item.trim(), currentFile)}</li>`).join('')}</ul>` : match;
         });
 
         text = text.replace(olRegex, (match, offset) => {
             const items = match.split('\n').map(item => item.replace(/^\d+\.\s*/, ''));
-            return notFencedCodeBlock(text, offset) ? `<ol>${items.map(item => `<li>${MDtoHTML(item.trim(), currentFile)}</li>`).join('')}</ol>` : match;
+            return notFencedCodeBlock(text, offset) ? `<ol>${items.map(item => `<li>${hbuoclpMDtoHTML(item.trim(), currentFile)}</li>`).join('')}</ol>` : match;
         });
 
         text = text.replace(dividerRegex, (match, offset) => notFencedCodeBlock(text, offset) ? `<div class="${cssclass.line}"></div><br>` : match);
@@ -1305,10 +1312,12 @@ checkTLD(domain).then(tldvalid => {
         });
         const updated = _just.customCSS.highlightclasses(CSSHIGHLIGHTtemplate, CSS, htmloutput, dataname[8]);
         CSS = updated[0];
-        htmloutput = updated[1];
+        htmloutput = updated[1]
+            .replace(/(<br>){1,}<table>/g, '<table>')
+            .replace(/(<br>){1,}<table class="/g, '<table class="');
         fs.writeFileSync(
             pathh,
-            htmloutput.replace(/(<br\s*\/?>)+(\s*)<table/gi, '$2<table').replace(/(<br\s*\/?>)+(\s*)<dl/gi, '$2<dl'),
+            htmloutput,
             charset
         );
         const outputlogs = `OUTPUT: ${_just.string.runnerPath(pathh)} (${_just.string.fileSize(fs.statSync(pathh).size)})`;
