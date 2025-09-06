@@ -186,6 +186,26 @@
             }
         },
         {
+            "code": "0133",
+            "message": "TypeScript compiler is not installed. Unable to compile TypeScript.",
+            "crashed": true,
+            "link": "",
+            "data": {
+                "mg": false,
+                "i": "install TypeScript compiler via <code>just.config.js</code> or manually before running Just an Ultimate Site Tool"
+            }
+        },
+        {
+            "code": "0134",
+            "message": "Dart Sass is not installed. Unable to compile SCSS/SASS.",
+            "crashed": true,
+            "link": "",
+            "data": {
+                "mg": false,
+                "i": "install Dart Sass via <code>just.config.js</code> or manually before running Just an Ultimate Site Tool"
+            }
+        },
+        {
             "code": "0205",
             "message": "Error occurred during Node.js installation. Retrying to install Node.js with console output enabled... (Attempt #4)",
             "crashed": false,

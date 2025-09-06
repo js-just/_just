@@ -208,35 +208,48 @@ if [ -z "$(echo "$CONFIG_JSON" | jq -r '.module.exports')" ]; then
     echo -e "::error::$ERROR_MESSAGE" && exit 1
 fi
 
+checkForDartSass() {
+    if ! command -v sass &> /dev/null; then
+        local ERROR_MESSAGE=$(ErrorMessage "run.sh" "0134")
+        echo -e "::error::$ERROR_MESSAGE" && exit 1
+    fi
+}
 TYPE=$(echo "$CONFIG_JSON" | jq -r '.type')
 USE_TSC=$(echo "$CONFIG_JSON" | jq -r '.install.typescript_compiler')
 USE_SASS=$(echo "$CONFIG_JSON" | jq -r '.install.dart_sass')
 COMPILE_TS=$(echo "$CONFIG_JSON" | jq -r '.compile.ts')
 COMPILE_SASS=$(echo "$CONFIG_JSON" | jq -r '.compile.sass')
 COMPILE_SCSS=$(echo "$CONFIG_JSON" | jq -r '.compile.scss')
+Y="true"
 if [ -z "$TYPE" ]; then
     ERROR_MESSAGE=$(ErrorMessage "run.sh" "0110")
     echo -e "::error::$ERROR_MESSAGE" && exit 1
 fi
-if [[ "${USE_TSC,,}" == "true" ]]; then
+if [[ "${USE_TSC,,}" == "$Y" ]]; then
     installTypeScriptCompiler
 fi
-if [[ "${USE_SASS,,}" == "true" ]]; then
+if [[ "${USE_SASS,,}" == "$Y" ]]; then
     if [ -d "_just_temp" ]; then
-        ERROR_MESSAGE=$(ErrorMessage "important_dirs" "0106")
+        ERROR_MESSAGE=$(ErrorMessage "important_dirs" "0130")
         echo -e "::error::$ERROR_MESSAGE" && exit 1
     fi
     installHomebrew && installDartSass
 fi
-if [[ "${COMPILE_TS,,}" == "true" ]]; then
+if [[ "${COMPILE_TS,,}" == "$Y" ]]; then
+    if ! command -v tsc > /dev/null; then
+        ERROR_MESSAGE=$(ErrorMessage "run.sh" "0133")
+        echo -e "::error::$ERROR_MESSAGE" && exit 1
+    fi
     source $GITHUB_ACTION_PATH/lib/compile.sh
     tojs "$INPUT_PATH"
 fi
-if [[ "${COMPILE_SASS,,}" == "true" ]]; then
+if [[ "${COMPILE_SASS,,}" == "$Y" ]]; then
+    checkForDartSass
     source $GITHUB_ACTION_PATH/lib/compile.sh
     tocss "$INPUT_PATH" "sass"
 fi
-if [[ "${COMPILE_SCSS,,}" == "true" ]]; then
+if [[ "${COMPILE_SCSS,,}" == "$Y" ]]; then
+    checkForDartSass
     source $GITHUB_ACTION_PATH/lib/compile.sh
     tocss "$INPUT_PATH" "scss"
 fi
