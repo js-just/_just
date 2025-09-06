@@ -61,7 +61,7 @@
         elem.innerHTML=`${
             output.name?`<small>${output.name}</small>`:''
         }${
-            output.title?`<strong">${output.title}</strong>`:''
+            output.title?`<strong>${output.title}</strong>`:''
         }${
             output.desc?`<span>${output.desc}</span>`:''
         }${
