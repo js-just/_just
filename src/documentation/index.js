@@ -1266,8 +1266,7 @@ checkTLD(domain).then(tldvalid => {
                 .replace(/<br><blockquote><blockquote>((?:(?!<h[1-6][^>]*>.*?<\/h[1-6]>).)*?)<\/blockquote><\/blockquote>/g, '<blockquote>$1</blockquote>')
                 //.replaceAll(`${_just.element(dataname[5])}<h1 id=`, `<h1 class="${dataname[5]}" id=`)
                 //.replaceAll(`${_just.element(dataname[6])}<h2 id=`, `<h2 class="${dataname[6]}" id=`)
-                .replace(new RegExp(`(?<=<code class="${cssclass.code}"><code>(${getlangs()})</code>)(.*?)(?=</code>)`, 'g'), (match, lng, cde) => cde.replace(/<br><br>/g, '<br>'))
-                .replace(/(<br\s*\/?>)+(\s*)<table/gi, '$2<table').replace(/(<br\s*\/?>)+(\s*)<dl/gi, '$2<dl'),
+                .replace(new RegExp(`(?<=<code class="${cssclass.code}"><code>(${getlangs()})</code>)(.*?)(?=</code>)`, 'g'), (match, lng, cde) => cde.replace(/<br><br>/g, '<br>')),
             )
         mdfilesdone++;
     });
@@ -1312,7 +1311,7 @@ checkTLD(domain).then(tldvalid => {
         htmloutput = updated[1];
         fs.writeFileSync(
             pathh,
-            htmloutput,
+            htmloutput.replace(/(<br\s*\/?>)+(\s*)<table/gi, '$2<table').replace(/(<br\s*\/?>)+(\s*)<dl/gi, '$2<dl'),
             charset
         );
         const outputlogs = `OUTPUT: ${_just.string.runnerPath(pathh)} (${_just.string.fileSize(fs.statSync(pathh).size)})`;
