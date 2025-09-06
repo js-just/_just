@@ -218,6 +218,10 @@ const cssvar = {
     "contents": dataname2[25],
     "codewidth": dataname2[29],
     "codeheight": dataname2[30],
+    "td": dataname2[31],
+    "tg": dataname2[32],
+    "tc": dataname2[33],
+    "tw": dataname2[34],
 }
 addchars();
 cssvar["md"] = dataname[7]+randomChar(1);
