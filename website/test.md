@@ -98,9 +98,21 @@ https://just.is-a.dev
 {https://juststudio.is-a.dev/}
 {https://is-a.dev/}
 {https://discord.com/app}
-{invalidlink}
-{https://invaliddomain}
-{https://example.invalidtld/}
+#### Tables:
+| Syntax      | Description |
+| ----------- | ----------- |
+| Header      | Title       |
+| Paragraph   | Text        |
+
+| Syntax | Description |
+| --- | ----------- |
+| Header | Title |
+| Paragraph | Text |
+
+| Syntax      | Description | Test Text     |
+| :---        |    :----:   |          ---: |
+| Header      | Title       | Here's this   |
+| Paragraph   | Text        | And more      |
 
 _just: prev: /docs/getting-started
 _just: next: /docs/getting-started
