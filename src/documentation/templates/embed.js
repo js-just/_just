@@ -33,7 +33,7 @@
     elems.forEach(async(elem)=>{
         const link = elem.getAttribute('data-link');
         function linkify() {
-            elem.innerHTML = `<a href="${link}" target="_blank"${extlink(link)?` id="REPLACE_EXT"`:''}></a>`;
+            elem.innerHTML = `<a href="${link}" target="_blank"${extlink(link)?` id="REPLACE_EXT"`:''}>${link}</a>`;
             return;
         }
         const metaTags = await fetchMetaTags(link).catch(linkify);
