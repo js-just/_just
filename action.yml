@@ -112,7 +112,7 @@ runs:
     - name: Postprocessor mode fix
       id: postprocessor-fix
       if: ${{ steps.just.outputs.postprocessor == '1' }}
-      run: node $GITHUB_ACTION_PATH/src/postprocessor/index.js "$PPV"
+      run: echo "::group::Post-postprocessor" && node $GITHUB_ACTION_PATH/src/postprocessor/index.js "$PPV" && echo "::endgroup::"
       shell: bash
       env:
         PPV: ${{ inputs.postprocessor-version }}

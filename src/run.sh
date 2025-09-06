@@ -75,7 +75,7 @@ msg12=$(_justMessage "$_BLUE Installing Homebrew$_RESET...")
 msg13=$(_justMessage "$_BLUE Installed Homebrew$_RESET")
 msg14=$(_justMessage "$_BLUE Installing Dart Sass$_RESET...")
 msg15=$(_justMessage "$_BLUE Installed Dart Sass$_RESET")
-echo -e "::notice::$msg1"
+echo -e "$msg1"
 
 chmod +x "$GITHUB_ACTION_PATH/src/time.py" # use python to get current time in ms cuz yes
 TIME0=$(python3 "$GITHUB_ACTION_PATH/src/time.py")
@@ -303,21 +303,25 @@ if [ "$TYPE" == "postprocessor" ]; then
     rm -f just.config.json && \
     rm -rf deploy _just_data && \
     echo "postprocessor=1" >> "$GITHUB_OUTPUT" && \
-    echo -e "::notice::$msg4"
+    echo -e "$msg4"
 elif [ "$TYPE" == "redirect" ]; then
     mkdir -p deploy/_just && \
     installNodejs && \
+    echo "::group::Redirector mode" && \
     bash $GITHUB_ACTION_PATH/src/redirect/checks.sh && \
     node $GITHUB_ACTION_PATH/src/redirect/index.js "$VERSION" && \
     TIME3=$(python3 "$GITHUB_ACTION_PATH/src/time.py") && \
     DONEIN=$(node "$GITHUB_ACTION_PATH/src/time.js" "$TIME0" "$TIME3") && \
+    echo "::endgroup::" && \
     echo -e "$msg5 ($DONEIN)"
 elif [ "$TYPE" == "compress" ]; then
     mkdir -p deploy && \
     installNodejs && \
+    echo "::group::Compressor mode" && \
     node $GITHUB_ACTION_PATH/src/compress.js "$INPUT_PATH" && \
     TIME3=$(python3 "$GITHUB_ACTION_PATH/src/time.py") && \
     DONEIN=$(node "$GITHUB_ACTION_PATH/src/time.js" "$TIME0" "$TIME3") && \
+    echo "::endgroup::" && \
     echo -e "$msg6 ($DONEIN)"
 elif [ "$TYPE" == "docs" ]; then
     HTML=$(cat "$GITHUB_ACTION_PATH/src/documentation/templates/page.html") && \
