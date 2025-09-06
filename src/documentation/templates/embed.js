@@ -23,7 +23,6 @@
         }
     }
     const elems = document.querySelectorAll('div[data-link]');
-    let embedid = 0;
     function extlink(url) {
         let output = false;
         try {
@@ -72,7 +71,7 @@
         }${
             output.desc?`<span>${output.desc}</span>`:''
         }${
-            output.img?`<img src="${output.img}" alt="${output.imgAlt||output.title||link}" id="${embedid}" onerror="javascript:document.getElementById('${embedid++}').remove()"${output.imgX||output.imgY?
+            output.img?`<img src="${output.img}" alt="${output.imgAlt||output.title||link}" onerror="this.remove()"${output.imgX||output.imgY?
                 ` style="${output.imgX?`max-width:${output.imgX}px;width:100%${output.imgY?';':''}`:''}${output.imgY?`max-height:${output.imgY}px`:''}"`
             :''}></img>`:''
         }`;
