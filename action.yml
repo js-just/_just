@@ -43,6 +43,10 @@ runs:
 
     # Cache
     
+    - id: justgroup
+      run: echo "::group::Cache"
+      shell: bash
+
     - name: Setup Node.js
       uses: actions/setup-node@v3
       with:
@@ -65,6 +69,10 @@ runs:
         key: ${{ runner.os }}-sass-${{ hashFiles('**/just.config.js') }}
         restore-keys: |
           ${{ runner.os }}-sass-
+
+    - id: justendgroup
+      run: echo "::endgroup::"
+      shell: bash
 
     # Main
 
