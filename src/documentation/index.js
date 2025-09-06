@@ -87,7 +87,7 @@ const debuglog = (text) => {if (debug_) console.log(`${_just.error.prefix}${esc}
 const configmbl = docsConfig ? docsConfig.mbl || undefined : undefined;
 const JSUsePathInput = docsConfig ? docsConfig.usePathInputInJS || false : false;
 if (configmbl && (configmbl > 4 || configmbl < 1)) {
-    const warningg = `${_just.error.prefix}${esc}[0;33mWarning 0209${esc}[0m: ${esc}[0;33mUnstable config: mbl: ${esc}[0m${configmbl}`;
+    const warningg = `::warning file=just.config.js::${_just.error.prefix}${esc}[0;33mWarning 0209${esc}[0m: ${esc}[0;33mUnstable config: mbl: ${esc}[0m${configmbl}`;
     console.warn(warningg);
 }
 const mbl = configmbl ? configmbl : 4;
@@ -655,7 +655,7 @@ checkTLD(domain).then(tldvalid => {
     const codes0 = [];
     const codes1 = [];
     const codes00= [];
-    const MDtoHTML = (input) => {
+    const MDtoHTML = (input, currentFile) => {
         let text = MDescape(input);
         text = text.replace(codeRegExp, (match, lang_, code_) => {
                         if (lang_ === 'CODEID') {
@@ -669,7 +669,7 @@ checkTLD(domain).then(tldvalid => {
                         const filter_ = (inpt) => inpt.replaceAll('\n\n', '\n');
                         const highlightcode = lang_ && lang_ != '';
                         if (highlightcode && !supportedlangs.includes(lang_) && !langaliases[lang_]) {
-                            const warningg = `${_just.error.prefix}${esc}[0;33mWarning 0209${esc}[0m: ${esc}[0;33mUnsuppotred language: hljs: ${esc}[0m${lang_}`;
+                            const warningg = `::warning file=${currentFile}::${_just.error.prefix}${esc}[0;33mWarning 0209${esc}[0m: ${esc}[0;33mUnsuppotred language: hljs: ${esc}[0m${lang_}`;
                             errorlogs += `${l[1]}AT LINE ${_just.line.line() || '-1'} (__REPLACE_LINE__): ${_just.line.err(warningg)}`;
                             console.warn(warningg);
                         }
@@ -731,12 +731,12 @@ checkTLD(domain).then(tldvalid => {
         return _just.MDtoHTML.MDtoHTML(text, cssclass).replace(/~(.*?)~/g, '<sub>$1</sub>').replace(/\^(.*?)\^/g, '<sup>$1</sup>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\*(.*?)\*/g, '<em>$1</em>');
     }
     const dividerRegex = /(\n\s*[*_-]{3,}\s*\n)+/g;
-    function hbuoclpMDtoHTML(text, maxBlockquoteLevel = mbl) {
+    function hbuoclpMDtoHTML(text, maxBlockquoteLevel = mbl, currentFile) {
         for (let i = 6; i >= 1; i--) {
             const regex = new RegExp(`^#{${i}}\\s+(.*?)\\s*$`, 'gm');
             text = text.replace(regex, (match, header, offset) => {
                 if (notFencedCodeBlock(text, offset)) {
-                    return `<h${i}>${MDtoHTML(header)}</h${i}>`;
+                    return `<h${i}>${MDtoHTML(header, currentFile)}</h${i}>`;
                 } else {
                     return match;
                 }
@@ -745,7 +745,7 @@ checkTLD(domain).then(tldvalid => {
         const smlregex = new RegExp(`^-#\\s+(.*?)\\s*$`, 'gm');
         text = text.replace(smlregex, (match, smol, offset) => {
             if (notFencedCodeBlock(text, offset)) {
-                return `<span class="${cssclass.small}">${MDtoHTML(smol)}</span>`;
+                return `<span class="${cssclass.small}">${MDtoHTML(smol, currentFile)}</span>`;
             } else {
                 return match;
             }
@@ -767,7 +767,7 @@ checkTLD(domain).then(tldvalid => {
                     level + 1
                 );
                 return notFencedCodeBlock(inputText, offset) ? `<blockquote${classAttr()}>${(level > 1 ? '<br>' : '')}${innerBlockquote}</blockquote>` : match;
-            }));
+            }), currentFile);
         }
 
         for (let i = 1; i <= maxBlockquoteLevel; i++) {
@@ -779,12 +779,12 @@ checkTLD(domain).then(tldvalid => {
 
         text = text.replace(ulRegex, (match, offset) => {
             const items = match.split('\n').map(item => item.replace(/^- \s*/, '').replace(/^\* \s*/, '').replace(/^\+ \s*/, ''));
-            return notFencedCodeBlock(text, offset) ? `<ul>${items.map(item => `<li>${MDtoHTML(item.trim())}</li>`).join('')}</ul>` : match;
+            return notFencedCodeBlock(text, offset) ? `<ul>${items.map(item => `<li>${MDtoHTML(item.trim(), currentFile)}</li>`).join('')}</ul>` : match;
         });
 
         text = text.replace(olRegex, (match, offset) => {
             const items = match.split('\n').map(item => item.replace(/^\d+\.\s*/, ''));
-            return notFencedCodeBlock(text, offset) ? `<ol>${items.map(item => `<li>${MDtoHTML(item.trim())}</li>`).join('')}</ol>` : match;
+            return notFencedCodeBlock(text, offset) ? `<ol>${items.map(item => `<li>${MDtoHTML(item.trim(), currentFile)}</li>`).join('')}</ol>` : match;
         });
 
         text = text.replace(dividerRegex, (match, offset) => notFencedCodeBlock(text, offset) ? `<div class="${cssclass.line}"></div><br>` : match);
@@ -799,7 +799,7 @@ checkTLD(domain).then(tldvalid => {
             let paragraphContent = match[0].trim();
             
             if (paragraphContent) {
-                resultTextArray.push(`<p>${MDtoHTML(paragraphContent)}</p>`);
+                resultTextArray.push(`<p>${MDtoHTML(paragraphContent, currentFile)}</p>`);
             }
             
             text = text.slice(match.index + match[0].length);
@@ -814,7 +814,7 @@ checkTLD(domain).then(tldvalid => {
             }
             
             if (text.length > 0) {
-                resultTextArray.push(`<p>${MDtoHTML(text.trim())}</p>`);
+                resultTextArray.push(`<p>${MDtoHTML(text.trim(), currentFile)}</p>`);
                 break;
             }
             
@@ -1119,7 +1119,8 @@ checkTLD(domain).then(tldvalid => {
             .replaceAll('\n>\n> ', '\n> ');
         toHTML = hbuoclpMDtoHTML(
             preToHTML
-                .replace(new RegExp(`(?<=^|\n)([>|> ]{2,${mbl}}) `, 'g'), (match, bqs, offset) => notFencedCodeBlock(preToHTML, offset) ? `\n${bqs.replaceAll(' ', '').split('').join(' ').trim()} ` : match)
+                .replace(new RegExp(`(?<=^|\n)([>|> ]{2,${mbl}}) `, 'g'), (match, bqs, offset) => notFencedCodeBlock(preToHTML, offset) ? `\n${bqs.replaceAll(' ', '').split('').join(' ').trim()} ` : match),
+            mbl, file
         ).replace(/<(h1|h2|h3|h4)>(.*?)<\/\1>/g, (match, p1, p2) => {
             return `<${p1} id="${uniqueName(encodeURIComponent(p2))}">${p2}</${p1}>`;
         }).replace(/<(h1|h2|h3|h4) id="([^"]+)">(.*?)<\/\1>/g, (match, p1, p2, p3) => {headers.push(p2);return`<${p1} id="${p2}">${p3}</${p1}>`});

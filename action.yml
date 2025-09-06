@@ -39,6 +39,40 @@ inputs:
 runs:
   using: 'composite'
   steps:
+    - uses: actions/checkout@v4
+
+    # Cache
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '20.x'
+    
+    - name: Cache Homebrew
+      uses: actions/cache@v3
+      with:
+        path: |
+          ~/.cache/Homebrew
+          /home/linuxbrew/.linuxbrew
+        key: ${{ runner.os }}-homebrew-${{ hashFiles('**/just.config.js') }}
+        restore-keys: |
+          ${{ runner.os }}-homebrew-
+    
+    - name: Cache Dart Sass
+      uses: actions/cache@v3
+      with:
+        path: ~/.cache/sass
+        key: ${{ runner.os }}-sass-${{ hashFiles('**/just.config.js') }}
+        restore-keys: |
+          ${{ runner.os }}-sass-
+
+    # Main
+
+    - name: checkout
+      id: justcheckout
+      run: bash $GITHUB_ACTION_PATH/src/index.sh
+      shell: bash
+
     - name: Run _just
       id: just
       run: bash $GITHUB_ACTION_PATH/src/run.sh
@@ -47,6 +81,7 @@ runs:
         INPUT_PATH: ${{ inputs.path }}
         INPUT_FIXPATH: ${{ inputs.fix-path }}
 
+    # Run Postprocessor mode
 
     - name: Postprocessor mode (0.0.24)
       id: postprocessor-24
@@ -70,3 +105,4 @@ runs:
       shell: bash
       env:
         PPV: ${{ inputs.postprocessor-version }}
+

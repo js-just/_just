@@ -75,7 +75,7 @@ msg12=$(_justMessage "$_BLUE Installing Homebrew$_RESET...")
 msg13=$(_justMessage "$_BLUE Installed Homebrew$_RESET")
 msg14=$(_justMessage "$_BLUE Installing Dart Sass$_RESET...")
 msg15=$(_justMessage "$_BLUE Installed Dart Sass$_RESET")
-echo -e "$msg1"
+echo -e "::notice::$msg1"
 
 chmod +x "$GITHUB_ACTION_PATH/src/time.py" # use python to get current time in ms cuz yes
 TIME0=$(python3 "$GITHUB_ACTION_PATH/src/time.py")
@@ -187,7 +187,7 @@ installDartSass() {
 
 if [ -f "$CONFIG_DATA" ]; then
     ERROR_MESSAGE=$(ErrorMessage "run.sh" "0113")
-    echo -e "::error::$ERROR_MESSAGE" && exit 1
+    echo -e "::error file=just.config.json::$ERROR_MESSAGE" && exit 1
 fi
 
 if [ ! -f "$CONFIG_FILE" ]; then
@@ -198,9 +198,9 @@ fi
 CONFIG_JSON=$(node -e "console.log(JSON.stringify(require('./just.config.js')));")
 if [ $? -ne 0 ]; then
     ERROR_MESSAGE=$(ErrorMessage "run.sh" "0109")
-    echo -e "::error::$ERROR_MESSAGE" && exit 1
+    echo -e "::error file=just.config.js::$ERROR_MESSAGE" && exit 1
 fi
-echo "Parsed just.config.js module.exports: $CONFIG_JSON" # debug
+echo "::debug::Parsed just.config.js module.exports: $CONFIG_JSON"
 echo "$CONFIG_JSON" > "$CONFIG_DATA"
 
 if [ -z "$(echo "$CONFIG_JSON" | jq -r '.module.exports')" ]; then
@@ -254,9 +254,9 @@ if [[ "${COMPILE_SCSS,,}" == "$Y" ]]; then
     tocss "$INPUT_PATH" "scss"
 fi
 
-if [[ "$TYPE" != "postprocessor" && "$TYPE" != "redirect" && "$TYPE" != "compress" && "$TYPE" != "docs" ]]; then
+if [[ "$TYPE" != "postprocessor" && "$TYPE" != "redirect" && "$TYPE" != "compress" && "$TYPE" != "docs" && "$TYPE" != "void" ]]; then
     ERROR_MESSAGE=$(ErrorMessage "run.sh" "0111")
-    echo -e "::error::$ERROR_MESSAGE" && exit 1
+    echo -e "::error file=just.config.js::$ERROR_MESSAGE" && exit 1
 fi
 
 _just_d="no" && \
@@ -303,7 +303,7 @@ if [ "$TYPE" == "postprocessor" ]; then
     rm -f just.config.json && \
     rm -rf deploy _just_data && \
     echo "postprocessor=1" >> "$GITHUB_OUTPUT" && \
-    echo -e "$msg4"
+    echo -e "::notice::$msg4"
 elif [ "$TYPE" == "redirect" ]; then
     mkdir -p deploy/_just && \
     installNodejs && \
@@ -342,11 +342,12 @@ elif [ "$TYPE" == "docs" ]; then
     fi && \
     if [ -f "_just_error" ]; then 
         ERROR_MESSAGE=$(ErrorMessage "run.sh" "0127")
-        echo -e "::error::$ERROR_MESSAGE" && exit 1
+        echo -e "::error file=_just_error::$ERROR_MESSAGE" && exit 1
     fi && \
     mkdir -p _just && \
     mkdir -p deploy && \
     installNodejs && \
+    echo "::group::Generator mode" && \
     bash $GITHUB_ACTION_PATH/src/documentation/checks.sh && \
     INDEXJS0="$GITHUB_ACTION_PATH/src/documentation/index.js"
     INDEXJS1=$(cat "$INDEXJS0") && \
@@ -362,5 +363,6 @@ elif [ "$TYPE" == "docs" ]; then
     node "$GITHUB_ACTION_PATH/src/documentation/logs.js" "$INPUT_PATH" && \
     TIME3=$(python3 "$GITHUB_ACTION_PATH/src/time.py") && \
     DONEIN=$(node "$GITHUB_ACTION_PATH/src/time.js" "$TIME0" "$TIME3") && \
+    echo "::endgroup::" && \
     echo -e "$msg9 ($DONEIN)"
 fi

@@ -98,6 +98,16 @@
     ],
     "index.sh": [
         {
+            "code": "0135",
+            "message": "Invalid execution context.",
+            "crashed": true,
+            "link": "",
+            "data": {
+                "mg": false,
+                "i": "This action can only run within GitHub Actions ecosystem. \nDetected running outside of GitHub Actions environment."
+            }
+        },
+        {
             "code": "0204",
             "message": "Attempt to use \"Just an Ultimate Site Tool\" as a postprocessor in the wrond way. This may not work correctly. Please read the documentation (coming soon).",
             "crashed": false,

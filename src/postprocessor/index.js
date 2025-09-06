@@ -32,13 +32,13 @@ const [v] = process.argv.slice(2);
 console.log(v);
 
 const watermarkify = config.watermark ? config.watermark === true ? true : false : false;
-const throwerror = (a,b) => {
-    console.log('::error::'+a+': '+b);
-    errmsg.errormessage(a, b).then((e)=>{throw new Error('::error::'+e)});
+const throwerror = (a,b,c='') => {
+    console.log(`::error${c}::`+a+': '+b);
+    errmsg.errormessage(a, b).then((e)=>{throw new Error(`::error${c}::`+e)});
 }
 
 if (config.watermark && typeof(config.watermark) !== 'boolean') {
-    throwerror('', `Invalid property type: watermark should be boolean.`);
+    throwerror('', `Invalid property type: watermark should be boolean.`, ' file=just.config.js');
 }
 if (v != '24' && v != '26' && v != '32' && v != '') {
     throwerror('', `Invalid input value: postprocessor-version should be one of: "24", "26", "32".`);
