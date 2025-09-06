@@ -661,9 +661,6 @@ checkTLD(domain).then(tldvalid => {
     const codes00= [];
     const MDtoHTML = (input, currentFile) => {
         let text = MDescape(input);
-        text = text.replace(/\*\[(.*?)\]: (.*?)(?=\n|$)/g, (match, abbr, definition) => {
-            return `<abbr title="${MDcode(definition, true)}">${abbr}</abbr>`;
-        });
         text = text.replace(/^([^\n:]+)\n: (.*?)(?=\n[^\n:]|\n\n|$)/gms, (match, term, definition) => {
             return `<dl><dt>${MDtoHTML(term, currentFile)}</dt><dd>${MDtoHTML(definition, currentFile)}</dd></dl>`;
         });
