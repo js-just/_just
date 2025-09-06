@@ -657,6 +657,34 @@ checkTLD(domain).then(tldvalid => {
     const codes00= [];
     const MDtoHTML = (input, currentFile) => {
         let text = MDescape(input);
+        text = text.replace(/\*\[(.*?)\]: (.*?)(?=\n|$)/g, (match, abbr, definition) => {
+            return `<abbr title="${MDcode(definition, true)}">${abbr}</abbr>`;
+        });
+        text = text.replace(/\[\^(\d+)\]:? (.*?)(?=\n\[\^|\n\n|$)/gs, (match, num, note) => {
+            return `<div class="footnote" id="fn${num}"><sup>${num}</sup>. ${MDtoHTML(note, currentFile)}</div>`;
+        });
+        text = text.replace(/\[\^(\d+)\]/g, (match, num) => {
+            return `<sup><a href="#fn${num}" id="fnref${num}">${num}</a></sup>`;
+        });
+        text = text.replace(/^([^\n:]+)\n: (.*?)(?=\n[^\n:]|\n\n|$)/gms, (match, term, definition) => {
+            return `<dl><dt>${MDtoHTML(term, currentFile)}</dt><dd>${MDtoHTML(definition, currentFile)}</dd></dl>`;
+        });
+        text = text.replace(/\n(\|.*\|)\n(\|.*\|)\n((?:\|.*\|\n)+)/g, (match, header, alignment, rows) => {
+            let table = '<table>\n<thead>\n<tr>';
+            header.split('|').filter(cell => cell.trim()).forEach(cell => {
+                table += `<th>${MDtoHTML(cell.trim(), currentFile)}</th>`;
+            });
+            table += '</tr>\n</thead>\n<tbody>';
+            rows.split('\n').filter(row => row.trim()).forEach(row => {
+                table += '\n<tr>';
+                row.split('|').filter(cell => cell.trim()).forEach(cell => {
+                    table += `<td>${MDtoHTML(cell.trim(), currentFile)}</td>`;
+                });
+                table += '</tr>';
+            });
+            table += '\n</tbody>\n</table>';
+            return table;
+        });
         text = text.replace(codeRegExp, (match, lang_, code_) => {
                         if (lang_ === 'CODEID') {
                             const codeid = parseInt(code_.trim(), 10);
