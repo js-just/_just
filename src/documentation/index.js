@@ -795,10 +795,10 @@ checkTLD(domain).then(tldvalid => {
                             for (const sc of scds) {
                                 output = findEmoji2(sc);
                                 if (output) {
-                                    break;
+                                    return output;
                                 }
                             }
-                            return output;
+                            return null;
                         } else {
                             return findEmoji2(shortcode);
                         }
