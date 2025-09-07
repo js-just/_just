@@ -763,60 +763,62 @@ checkTLD(domain).then(tldvalid => {
                     const checkedAttr = isChecked ? ' checked' : '';
                     return notFencedCodeBlock(text, offset) ? `<input type="checkbox" id="${dataname[10]}${taskid++}" ${checkedAttr} title="${MDcode(text_.trim(), true)}" disabled> ${text_.trim()}` : match;
                 });
+        function addEmoji(match, emojishortcode, offset)  {
+            if (notFencedCodeBlock(text, offset)) {
+                if (!EMOJI) {
+                    EMOJI = _just.emoji.jsonEmoji();
+                }
+                const shortcode = emojishortcode.toLowerCase();
+                function findEmoji2(shortcode) {
+                    const output = _just.emoji.findEmoji(EMOJI, shortcode)
+                    return output === null ? _just.emoji.findEmoji(EMOJI, JSON.parse(fs.readFileSync(path.join(__dirname, '../../data/emoji.json'), 'utf8'))[shortcode]) : output;
+                }
+                function findEmoji3(shortcode) {
+                    if (shortcode.includes(' ') || shortcode.includes('-') || shortcode.includes('_')) {
+                        const a = shortcode.replaceAll(' ','-');
+                        const b = shortcode.replaceAll(' ','_');
+                        const c = shortcode.replaceAll('-','_');
+                        const d = shortcode.replaceAll('_','-');
+                        const e = a.replaceAll('-','_');
+                        const f = a.replaceAll('_','-');
+                        const g = b.replaceAll('_','-');
+                        const h = b.replaceAll('-','_');
+                        const scds = [a, b, c, d, e, f, g, h];
+                        
+                        let output = findEmoji2(shortcode);
+                        if (output) {
+                            return output;
+                        }
+                        
+                        for (const sc of scds) {
+                            output = findEmoji2(sc);
+                            if (output) {
+                                return output;
+                            }
+                        }
+                        return null;
+                    } else {
+                        return findEmoji2(shortcode);
+                    }
+                }
+                const em0ji = findEmoji2(shortcode);
+                const emoji = em0ji === null ? findEmoji3(shortcode) : em0ji;
+                if (emoji&&emoji!=null) {
+                    return emoji
+                } else {
+                    return match
+                }
+            } else {
+                return match
+            }
+        }
         return _just.MDtoHTML.MDtoHTML(text, cssclass)
             .replace(/~(.*?)~/g, '<sub>$1</sub>')
             .replace(/\^(.*?)\^/g, '<sup>$1</sup>')
             .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
             .replace(/\*(.*?)\*/g, '<em>$1</em>')
-            .replace(/:(.*?):/g, (match, emojishortcode, offset) => {
-                if (notFencedCodeBlock(text, offset)) {
-                    if (!EMOJI) {
-                        EMOJI = _just.emoji.jsonEmoji();
-                    }
-                    const shortcode = emojishortcode.toLowerCase();
-                    function findEmoji2(shortcode) {
-                        const output = _just.emoji.findEmoji(EMOJI, shortcode)
-                        return output === null ? _just.emoji.findEmoji(EMOJI, JSON.parse(fs.readFileSync(path.join(__dirname, '../../data/emoji.json'), 'utf8'))[shortcode]) : output;
-                    }
-                    function findEmoji3(shortcode) {
-                        if (shortcode.includes(' ') || shortcode.includes('-') || shortcode.includes('_')) {
-                            const a = shortcode.replaceAll(' ','-');
-                            const b = shortcode.replaceAll(' ','_');
-                            const c = shortcode.replaceAll('-','_');
-                            const d = shortcode.replaceAll('_','-');
-                            const e = a.replaceAll('-','_');
-                            const f = a.replaceAll('_','-');
-                            const g = b.replaceAll('_','-');
-                            const h = b.replaceAll('-','_');
-                            const scds = [a, b, c, d, e, f, g, h];
-                            
-                            let output = findEmoji2(shortcode);
-                            if (output) {
-                                return output;
-                            }
-                            
-                            for (const sc of scds) {
-                                output = findEmoji2(sc);
-                                if (output) {
-                                    return output;
-                                }
-                            }
-                            return null;
-                        } else {
-                            return findEmoji2(shortcode);
-                        }
-                    }
-                    const em0ji = findEmoji2(shortcode);
-                    const emoji = em0ji === null ? findEmoji3(shortcode) : em0ji;
-                    if (emoji&&emoji!=null) {
-                        return `&#x${emoji};`
-                    } else {
-                        return match
-                    }
-                } else {
-                    return match
-                }
-            });
+            .replace(/:(?!\s)([^:\s]+)(?!\s):/g, addEmoji)
+            .replace(/:(.*?):/g, addEmoji);
     }
     const dividerRegex = /(\n\s*[*_-]{3,}\s*\n)+/g;
     function hbuoclpMDtoHTML(text, maxBlockquoteLevel = mbl, currentFile) {
