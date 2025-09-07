@@ -40,13 +40,11 @@ runs:
   using: 'composite'
   steps:
     - uses: actions/checkout@v4
-      if: ${{ inputs.postprocessor-version != '24' &&  inputs.postprocessor-version != '26' && inputs.postprocessor-version != '32' }}
 
     # Cache
 
     - name: Setup Node.js
       uses: actions/setup-node@v3
-      if: ${{ inputs.postprocessor-version != '24' &&  inputs.postprocessor-version != '26' && inputs.postprocessor-version != '32' }}
       with:
         node-version: '20.x'
       env:
@@ -55,7 +53,6 @@ runs:
     
     - name: Cache Homebrew
       uses: actions/cache@v3
-      if: ${{ inputs.postprocessor-version != '24' &&  inputs.postprocessor-version != '26' && inputs.postprocessor-version != '32' }}
       with:
         path: |
           ~/.cache/Homebrew
@@ -70,7 +67,6 @@ runs:
     
     - name: Cache Dart Sass
       uses: actions/cache@v3
-      if: ${{ inputs.postprocessor-version != '24' &&  inputs.postprocessor-version != '26' && inputs.postprocessor-version != '32' }}
       with:
         path: ~/.cache/sass
         key: ${{ runner.os }}-sass-${{ hashFiles('**/just.config.js') }}
