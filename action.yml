@@ -60,7 +60,7 @@ runs:
         path: |
           ~/.cache/Homebrew
           /home/linuxbrew/.linuxbrew
-        key: ${{ runner.os }}-homebrew-${{ hashFiles('**/just.config.js') }}
+        key: ${{ runner.os }}-homebrew-
         restore-keys: |
           ${{ runner.os }}-homebrew-
       env:
@@ -73,7 +73,7 @@ runs:
       if: ${{ inputs.postprocessor-version != '24' &&  inputs.postprocessor-version != '26' && inputs.postprocessor-version != '32' }}
       with:
         path: ~/.cache/sass
-        key: ${{ runner.os }}-sass-${{ hashFiles('**/just.config.js') }}
+        key: ${{ runner.os }}-sass-
         restore-keys: |
           ${{ runner.os }}-sass-
       env:
