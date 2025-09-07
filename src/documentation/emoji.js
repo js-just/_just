@@ -24,6 +24,9 @@ SOFTWARE.
 
 */
 
+const fs = require('fs');
+const path = require('path');
+
 /**
  * @param {{unified:string,non_qualified:string|null,short_name:string,short_names:string[]|null}[]} data 
  * @param {string} searchName 
@@ -59,4 +62,12 @@ exports.findEmoji = function (data, searchName) {
     }
 
     return null;
+}
+
+/**
+ * 
+ * @returns {{unified:string,non_qualified:string|null,short_name:string,short_names:string[]|null}[]}
+ */
+exports.jsonEmoji = function () {
+    return JSON.parse(fs.readFileSync(path.join(__dirname, '../third-party/emoji-data.json'), 'utf8'));
 }

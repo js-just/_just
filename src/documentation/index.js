@@ -25,7 +25,7 @@ SOFTWARE.
 */
 
 const _just = {};
-const [HTMLtemplate, CSStemplate, JStemplate, PATH, repo, owner, customCSS, hljslangs, langs__, CSSHIGHLIGHTtemplate, langstext_, vrsn, CSSBUTTONStemplate, CSSSEARCHtemplate, HIGHLIGHTJSON, fixpathh, THEME, THEMEJS, NAVBARJS, THEMECLASS, EMBEDJS, EMOJI] = process.argv.slice(2);
+const [HTMLtemplate, CSStemplate, JStemplate, PATH, repo, owner, customCSS, hljslangs, langs__, CSSHIGHLIGHTtemplate, langstext_, vrsn, CSSBUTTONStemplate, CSSSEARCHtemplate, HIGHLIGHTJSON, fixpathh, THEME, THEMEJS, NAVBARJS, THEMECLASS, EMBEDJS] = process.argv.slice(2);
 let HTML = HTMLtemplate;
 let CSS = CSStemplate;
 let JS = JStemplate;
@@ -59,6 +59,7 @@ const esc = '\x1B';
 _just.parseCSS = require('../../lib/ast/css.js');
 _just.errorprefix = 'Just an Ultimate Site Tool: Generated Content Error:';
 _just.emoji = require('./emoji.js');
+let EMOJI;
 
 const codeRegExp = /```([\w]*)\s*[\r\n]+([^]*?)```/g;
 const notFencedCodeBlock = (text, position) => {
@@ -769,6 +770,9 @@ checkTLD(domain).then(tldvalid => {
             .replace(/\*(.*?)\*/g, '<em>$1</em>')
             .replace(/:(.*?):/g, (match, emojishortcode, offset) => {
                 if (notFencedCodeBlock(text, offset)) {
+                    if (!EMOJI) {
+                        EMOJI = _just.emoji.jsonEmoji();
+                    }
                     const emoji = _just.emoji.findEmoji(EMOJI, emojishortcode);
                     if (emoji) {
                         return emoji
