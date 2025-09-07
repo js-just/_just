@@ -775,10 +775,11 @@ checkTLD(domain).then(tldvalid => {
                     }
                     const shortcode = emojishortcode.toLowerCase();
                     function findEmoji2(shortcode) {
-                        return _just.emoji.findEmoji(EMOJI, shortcode) || _just.emoji.findEmoji(EMOJI, JSON.parse(fs.readFileSync(path.join(__dirname, '../../data/emoji.json'), 'utf8'))[shortcode]);
+                        const output = _just.emoji.findEmoji(EMOJI, shortcode)
+                        return output === null ? _just.emoji.findEmoji(EMOJI, JSON.parse(fs.readFileSync(path.join(__dirname, '../../data/emoji.json'), 'utf8'))[shortcode]) : output;
                     }
                     function findEmoji3(shortcode) {
-                        if (shortcode.includes(' ')||shortcode.includes('-')||shortcode.includes('_')) {
+                        if (shortcode.includes(' ') || shortcode.includes('-') || shortcode.includes('_')) {
                             const a = shortcode.replaceAll(' ','-');
                             const b = shortcode.replaceAll(' ','_');
                             const c = shortcode.replaceAll('-','_');
@@ -787,11 +788,13 @@ checkTLD(domain).then(tldvalid => {
                             const f = a.replaceAll('_','-');
                             const g = b.replaceAll('_','-');
                             const h = b.replaceAll('-','_');
-                            const scds = [a,b,c,d,e,f,g,h];
+                            const scds = [a, b, c, d, e, f, g, h];
+                            
                             let output = findEmoji2(shortcode);
                             if (output) {
                                 return output;
                             }
+                            
                             for (const sc of scds) {
                                 output = findEmoji2(sc);
                                 if (output) {
@@ -803,8 +806,9 @@ checkTLD(domain).then(tldvalid => {
                             return findEmoji2(shortcode);
                         }
                     }
-                    const emoji = findEmoji3(shortcode);
-                    if (emoji) {
+                    const em0ji = findEmoji2(shortcode);
+                    const emoji = em0ji === null ? findEmoji3(shortcode) : em0ji;
+                    if (emoji&&emoji!=null) {
                         return `&#x${emoji};`
                     } else {
                         return match
