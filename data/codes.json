@@ -137,22 +137,22 @@
         },
         {
             "code": "0110",
-            "message": "Unable to get value of property \"type\" in just.config.js.",
+            "message": "Unable to get value of property \"mode\" in just.config.js.",
             "crashed": true,
             "link": "",
             "data": {
                 "mg": false,
-                "i": "The <code>module.exports</code> is missing or the property <code>type</code> either has an invalid value or is missing. \nPlease read the <a href=\"https://just.is-a.dev/docs\" target=\"_self\">documentation</a>."
+                "i": "The <code>module.exports</code> is missing or the property <code>mode</code> either has an invalid value or is missing. \nPlease read the <a href=\"https://just.is-a.dev/docs\" target=\"_self\">documentation</a>."
             }
         },
         {
             "code": "0111",
-            "message": "Invalid value of property \"type\" in just.config.js. It must be one of: \"postprocessor\", \"redirect\", \"compress\", \"docs\".",
+            "message": "Invalid value of property \"mode\" in just.config.js. It must be one of: \"postprocessor\", \"redirector\", \"compressor\", \"generator\", \"void\".",
             "crashed": true,
             "link": "",
             "data": {
                 "mg": false,
-                "i": "The <code>module.exports</code> is missing or the property <code>type</code> either has an invalid value or is missing. \nPlease read the <a href=\"https://just.is-a.dev/docs\" target=\"_self\">documentation</a>."
+                "i": "The <code>module.exports</code> is missing or the property <code>mode</code> either has an invalid value or is missing. \nPlease read the <a href=\"https://just.is-a.dev/docs\" target=\"_self\">documentation</a>."
             }
         },
         {
@@ -273,6 +273,16 @@
             "data": {
                 "mg": false,
                 "i": "Just an Ultimate Site Tool is unable to install Dart Sass."
+            }
+        },
+        {
+            "code": "0213",
+            "message": "Postprocessor mode will soon be deprecated.",
+            "crashed": false,
+            "link": "",
+            "data": {
+                "mg": false,
+                "i": "Post processor mode will be deprecated after v0.1.1."
             }
         }
     ],

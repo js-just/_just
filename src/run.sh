@@ -214,7 +214,7 @@ checkForDartSass() {
         echo -e "::error::$ERROR_MESSAGE" && exit 1
     fi
 }
-TYPE=$(echo "$CONFIG_JSON" | jq -r '.type')
+TYPE=$(echo "$CONFIG_JSON" | jq -r '.mode')
 USE_TSC=$(echo "$CONFIG_JSON" | jq -r '.install.typescript_compiler')
 USE_SASS=$(echo "$CONFIG_JSON" | jq -r '.install.dart_sass')
 COMPILE_TS=$(echo "$CONFIG_JSON" | jq -r '.compile.ts')
@@ -254,13 +254,13 @@ if [[ "${COMPILE_SCSS,,}" == "$Y" ]]; then
     tocss "$INPUT_PATH" "scss"
 fi
 
-if [[ "$TYPE" != "postprocessor" && "$TYPE" != "redirect" && "$TYPE" != "compress" && "$TYPE" != "docs" && "$TYPE" != "void" ]]; then
+if [[ "$TYPE" != "postprocessor" && "$TYPE" != "redirector" && "$TYPE" != "compressor" && "$TYPE" != "generator" && "$TYPE" != "void" ]]; then
     ERROR_MESSAGE=$(ErrorMessage "run.sh" "0111")
     echo -e "::error file=just.config.js::$ERROR_MESSAGE" && exit 1
 fi
 
 _just_d="no" && \
-if [[ "$TYPE" != "compress" && ! ( "$TYPE" == "docs" && "$INPUT_PATH" != "." ) ]]; then
+if [[ "$TYPE" != "compressor" && ! ( "$TYPE" == "generator" && "$INPUT_PATH" != "." ) ]]; then
     if [ -d "deploy" ]; then
         ERROR_MESSAGE=$(ErrorMessage "important_dirs" "0106")
         echo -e "::error::$ERROR_MESSAGE" && exit 1
@@ -271,7 +271,7 @@ if [[ "$TYPE" != "compress" && ! ( "$TYPE" == "docs" && "$INPUT_PATH" != "." ) ]
     fi
     mkdir -p deploy
     mkdir -p _just_data
-elif [ "$TYPE" == "docs" ]; then
+elif [ "$TYPE" == "generator" ]; then
     JDD=$(echo "$INPUT_PATH/_just_data" | sed 's#//*#/#g')
     _just_dir=$(echo "$INPUT_PATH/_just" | sed 's#//*#/#g')
     if [ -d "$JDD" ]; then
@@ -303,8 +303,10 @@ if [ "$TYPE" == "postprocessor" ]; then
     rm -f just.config.json && \
     rm -rf deploy _just_data && \
     echo "postprocessor=1" >> "$GITHUB_OUTPUT" && \
+    ERROR_MESSAGE=$(ErrorMessage "run.sh" "0213") && \
+    echo -e "::warning file=just.config.js::$ERROR_MESSAGE" && \
     echo -e "$msg4"
-elif [ "$TYPE" == "redirect" ]; then
+elif [ "$TYPE" == "redirector" ]; then
     mkdir -p deploy/_just && \
     installNodejs && \
     echo "::group::Redirector mode" && \
@@ -314,7 +316,7 @@ elif [ "$TYPE" == "redirect" ]; then
     DONEIN=$(node "$GITHUB_ACTION_PATH/src/time.js" "$TIME0" "$TIME3") && \
     echo "::endgroup::" && \
     echo -e "$msg5 ($DONEIN)"
-elif [ "$TYPE" == "compress" ]; then
+elif [ "$TYPE" == "compressor" ]; then
     mkdir -p deploy && \
     installNodejs && \
     echo "::group::Compressor mode" && \
@@ -323,7 +325,7 @@ elif [ "$TYPE" == "compress" ]; then
     DONEIN=$(node "$GITHUB_ACTION_PATH/src/time.js" "$TIME0" "$TIME3") && \
     echo "::endgroup::" && \
     echo -e "$msg6 ($DONEIN)"
-elif [ "$TYPE" == "docs" ]; then
+elif [ "$TYPE" == "generator" ]; then
     HTML=$(cat "$GITHUB_ACTION_PATH/src/documentation/templates/page.html") && \
     CSS=$(cat "$GITHUB_ACTION_PATH/src/documentation/templates/base.css") && \
     JS=$(cat "$GITHUB_ACTION_PATH/src/documentation/templates/page.js") && \
