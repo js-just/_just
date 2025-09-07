@@ -1,0 +1,3 @@
+[submodule "src/third-party/emoji-data"]
+	path = src/third-party/emoji-data
+	url = https://github.com/js-just/emoji-data.git

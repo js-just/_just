@@ -25,7 +25,7 @@ SOFTWARE.
 */
 
 const _just = {};
-const [HTMLtemplate, CSStemplate, JStemplate, PATH, repo, owner, customCSS, hljslangs, langs__, CSSHIGHLIGHTtemplate, langstext_, vrsn, CSSBUTTONStemplate, CSSSEARCHtemplate, HIGHLIGHTJSON, fixpathh, THEME, THEMEJS, NAVBARJS, THEMECLASS, EMBEDJS] = process.argv.slice(2);
+const [HTMLtemplate, CSStemplate, JStemplate, PATH, repo, owner, customCSS, hljslangs, langs__, CSSHIGHLIGHTtemplate, langstext_, vrsn, CSSBUTTONStemplate, CSSSEARCHtemplate, HIGHLIGHTJSON, fixpathh, THEME, THEMEJS, NAVBARJS, THEMECLASS, EMBEDJS, EMOJI] = process.argv.slice(2);
 let HTML = HTMLtemplate;
 let CSS = CSStemplate;
 let JS = JStemplate;
@@ -44,6 +44,7 @@ _just.ssapi = require('../../lib/ssapi.js');
 _just.customCSS = require('./customcss.js');
 _just.MDtoHTML = require('./mdtohtml.js');
 _just.line = require('../../lib/line.js');
+const { match } = require('assert');
 const hljs = require('../third-party/highlight.min.js');
 const supportedlangs = JSON.parse(hljslangs);
 const langaliases = JSON.parse(langs__);
@@ -57,6 +58,7 @@ _just.prevnext = require('./prevnext.js');
 const esc = '\x1B';
 _just.parseCSS = require('../../lib/ast/css.js');
 _just.errorprefix = 'Just an Ultimate Site Tool: Generated Content Error:';
+_just.emoji = require('./emoji.js');
 
 const codeRegExp = /```([\w]*)\s*[\r\n]+([^]*?)```/g;
 const notFencedCodeBlock = (text, position) => {
@@ -760,7 +762,23 @@ checkTLD(domain).then(tldvalid => {
                     const checkedAttr = isChecked ? ' checked' : '';
                     return notFencedCodeBlock(text, offset) ? `<input type="checkbox" id="${dataname[10]}${taskid++}" ${checkedAttr} title="${MDcode(text_.trim(), true)}" disabled> ${text_.trim()}` : match;
                 });
-        return _just.MDtoHTML.MDtoHTML(text, cssclass).replace(/~(.*?)~/g, '<sub>$1</sub>').replace(/\^(.*?)\^/g, '<sup>$1</sup>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\*(.*?)\*/g, '<em>$1</em>');
+        return _just.MDtoHTML.MDtoHTML(text, cssclass)
+            .replace(/~(.*?)~/g, '<sub>$1</sub>')
+            .replace(/\^(.*?)\^/g, '<sup>$1</sup>')
+            .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+            .replace(/\*(.*?)\*/g, '<em>$1</em>')
+            .replace(/:(.*?):/g, (match, emojishortcode, offset) => {
+                if (notFencedCodeBlock(text, offset)) {
+                    const emoji = _just.emoji.findEmoji(EMOJI, emojishortcode);
+                    if (emoji) {
+                        return emoji
+                    } else {
+                        return match
+                    }
+                } else {
+                    return match
+                }
+            });
     }
     const dividerRegex = /(\n\s*[*_-]{3,}\s*\n)+/g;
     function hbuoclpMDtoHTML(text, maxBlockquoteLevel = mbl, currentFile) {
