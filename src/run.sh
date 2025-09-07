@@ -214,7 +214,7 @@ checkForDartSass() {
         echo -e "::error::$ERROR_MESSAGE" && exit 1
     fi
 }
-TYPE=$(echo "$CONFIG_JSON" | jq -r '.mode')
+TYPE=$(echo "$CONFIG_JSON" | jq -r '.type')
 USE_TSC=$(echo "$CONFIG_JSON" | jq -r '.install.typescript_compiler')
 USE_SASS=$(echo "$CONFIG_JSON" | jq -r '.install.dart_sass')
 COMPILE_TS=$(echo "$CONFIG_JSON" | jq -r '.compile.ts')
