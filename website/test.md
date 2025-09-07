@@ -114,7 +114,7 @@ https://just.is-a.dev
 | Header      | Title       | Here's this   |
 | Paragraph   | Text        | And more      |
 #### Emoji shortcodes:
-:joy:
+:right: :fog is coming: :left:
 
 _just: prev: /docs/getting-started
 _just: next: /docs/getting-started

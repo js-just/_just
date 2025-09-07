@@ -28,11 +28,15 @@ const fs = require('fs');
 const path = require('path');
 
 /**
- * @param {{unified:string,non_qualified:string|null,short_name:string,short_names:string[]|null}[]} data 
+ * @param {{unified:string,short_name:string,short_names:string[]|null}[]} data 
  * @param {string} searchName 
  * @returns {string|null}
  */
 exports.findEmoji = function (data, searchName) {
+    if (!searchName) {
+        return null;
+    }
+
     const foundItem = data.find(item => 
         item.short_name === searchName || 
         (item.short_names && item.short_names.includes(searchName))
@@ -42,31 +46,18 @@ exports.findEmoji = function (data, searchName) {
         return null;
     }
 
-    const { unified, non_qualified } = foundItem;
+    const { unified } = foundItem;
+    let output = '';
+    unified.split('-').filter(unicode=>unicode).forEach((unicode)=>{
+        output += `&#x${unicode};`
+    });
 
-    if (non_qualified && unified.includes('-')) {
-        const unifiedParts = unified.split('-');
-        const nonQualifiedParts = non_qualified.split('-');
-        
-        const uniquePart = unifiedParts.find(part => !nonQualifiedParts.includes(part));
-        
-        return uniquePart || null;
-    }
-
-    if (non_qualified === null) {
-        if (unified.includes('-')) {
-            return unified.split('-')[0];
-        } else {
-            return unified;
-        }
-    }
-
-    return null;
+    return output || null;
 }
 
 /**
  * 
- * @returns {{unified:string,non_qualified:string|null,short_name:string,short_names:string[]|null}[]}
+ * @returns {{unified:string,short_name:string,short_names:string[]|null}[]}
  */
 exports.jsonEmoji = function () {
     return JSON.parse(fs.readFileSync(path.join(__dirname, '../third-party/emoji-data.json'), 'utf8'));

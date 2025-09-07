@@ -773,9 +773,39 @@ checkTLD(domain).then(tldvalid => {
                     if (!EMOJI) {
                         EMOJI = _just.emoji.jsonEmoji();
                     }
-                    const emoji = _just.emoji.findEmoji(EMOJI, emojishortcode);
+                    const shortcode = emojishortcode.toLowerCase();
+                    function findEmoji2(shortcode) {
+                        return _just.emoji.findEmoji(EMOJI, shortcode) || _just.emoji.findEmoji(EMOJI, JSON.parse(fs.readFileSync(path.join(__dirname, '../../data/emoji.json'), 'utf8'))[shortcode]);
+                    }
+                    function findEmoji3(shortcode) {
+                        if (shortcode.includes(' ')||shortcode.includes('-')||shortcode.includes('_')) {
+                            const a = shortcode.replaceAll(' ','-');
+                            const b = shortcode.replaceAll(' ','_');
+                            const c = shortcode.replaceAll('-','_');
+                            const d = shortcode.replaceAll('_','-');
+                            const e = a.replaceAll('-','_');
+                            const f = a.replaceAll('_','-');
+                            const g = b.replaceAll('_','-');
+                            const h = b.replaceAll('-','_');
+                            const scds = [a,b,c,d,e,f,g,h];
+                            let output = findEmoji2(shortcode);
+                            if (output) {
+                                return output;
+                            }
+                            for (const sc of scds) {
+                                output = findEmoji2(sc);
+                                if (output) {
+                                    break;
+                                }
+                            }
+                            return output;
+                        } else {
+                            return findEmoji2(shortcode);
+                        }
+                    }
+                    const emoji = _just.emoji.findEmoji(EMOJI, shortcode);
                     if (emoji) {
-                        return emoji
+                        return `&#x${emoji};`
                     } else {
                         return match
                     }
