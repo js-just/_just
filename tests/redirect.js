@@ -1,5 +1,5 @@
 module.exports = {
-    type: "redirect", 
+    mode: "redirector", 
     redirect_config: {
         url: "https://juststudio.is-a.dev/", 
         params: {

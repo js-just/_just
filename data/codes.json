@@ -282,7 +282,7 @@
             "link": "",
             "data": {
                 "mg": false,
-                "i": "Post processor mode will be deprecated after v0.1.1."
+                "i": "Postprocessor mode will be deprecated after v0.1.1."
             }
         }
     ],
