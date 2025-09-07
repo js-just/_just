@@ -803,7 +803,7 @@ checkTLD(domain).then(tldvalid => {
                             return findEmoji2(shortcode);
                         }
                     }
-                    const emoji = _just.emoji.findEmoji(EMOJI, shortcode);
+                    const emoji = findEmoji3(shortcode);
                     if (emoji) {
                         return `&#x${emoji};`
                     } else {
