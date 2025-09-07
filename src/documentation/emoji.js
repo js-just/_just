@@ -33,7 +33,7 @@ const path = require('path');
  * @returns {string|null}
  */
 exports.findEmoji = function (data, searchName) {
-    if (!searchName) {
+    if (searchName===undefined) {
         return null;
     }
 
