@@ -38,7 +38,7 @@ const throwerror = (a,b,c='') => {
 }
 
 if (config.watermark && typeof(config.watermark) !== 'boolean') {
-    throwerror('', `Invalid property type: watermark should be boolean.`);
+    throwerror('', `Invalid property type: watermark should be boolean.`, ' file=just.config.js');
 }
 if (v != '24' && v != '26' && v != '32' && v != '') {
     throwerror('', `Invalid input value: postprocessor-version should be one of: "24", "26", "32".`);

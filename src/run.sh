@@ -187,7 +187,7 @@ installDartSass() {
 
 if [ -f "$CONFIG_DATA" ]; then
     ERROR_MESSAGE=$(ErrorMessage "run.sh" "0113")
-    echo -e "::error::$ERROR_MESSAGE" && exit 1
+    echo -e "::error file=just.config.json::$ERROR_MESSAGE" && exit 1
 fi
 
 if [ ! -f "$CONFIG_FILE" ]; then
@@ -198,7 +198,7 @@ fi
 CONFIG_JSON=$(node -e "console.log(JSON.stringify(require('./just.config.js')));")
 if [ $? -ne 0 ]; then
     ERROR_MESSAGE=$(ErrorMessage "run.sh" "0109")
-    echo -e "::error::$ERROR_MESSAGE" && exit 1
+    echo -e "::error file=just.config.js::$ERROR_MESSAGE" && exit 1
 fi
 echo "::debug::Parsed just.config.js module.exports: $CONFIG_JSON"
 echo "$CONFIG_JSON" > "$CONFIG_DATA"
@@ -256,7 +256,7 @@ fi
 
 if [[ "$TYPE" != "postprocessor" && "$TYPE" != "redirector" && "$TYPE" != "compressor" && "$TYPE" != "generator" && "$TYPE" != "void" ]]; then
     ERROR_MESSAGE=$(ErrorMessage "run.sh" "0111")
-    echo -e "::error::$ERROR_MESSAGE" && exit 1
+    echo -e "::error file=just.config.js::$ERROR_MESSAGE" && exit 1
 fi
 
 _just_d="no" && \
@@ -304,7 +304,7 @@ if [ "$TYPE" == "postprocessor" ]; then
     rm -rf deploy _just_data && \
     echo "postprocessor=1" >> "$GITHUB_OUTPUT" && \
     ERROR_MESSAGE=$(ErrorMessage "run.sh" "0213") && \
-    echo -e "::warning::$ERROR_MESSAGE" && \
+    echo -e "::warning file=just.config.js::$ERROR_MESSAGE" && \
     echo -e "$msg4"
 elif [ "$TYPE" == "redirector" ]; then
     mkdir -p deploy/_just && \
@@ -348,7 +348,7 @@ elif [ "$TYPE" == "generator" ]; then
     fi && \
     if [ -f "_just_error" ]; then 
         ERROR_MESSAGE=$(ErrorMessage "run.sh" "0127")
-        echo -e "::error::$ERROR_MESSAGE" && exit 1
+        echo -e "::error file=_just_error::$ERROR_MESSAGE" && exit 1
     fi && \
     mkdir -p _just && \
     mkdir -p deploy && \
