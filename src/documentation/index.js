@@ -90,7 +90,7 @@ const debuglog = (text) => {if (debug_) console.log(`${_just.error.prefix}${esc}
 const configmbl = docsConfig ? docsConfig.mbl || undefined : undefined;
 const JSUsePathInput = docsConfig ? docsConfig.usePathInputInJS || false : false;
 if (configmbl && (configmbl > 4 || configmbl < 1)) {
-    const warningg = `::warning file=just.config.js::${_just.error.prefix}${esc}[0;33mWarning 0209${esc}[0m: ${esc}[0;33mUnstable config: mbl: ${esc}[0m${configmbl}`;
+    const warningg = `::warning::${_just.error.prefix}${esc}[0;33mWarning 0209${esc}[0m: ${esc}[0;33mUnstable config: mbl: ${esc}[0m${configmbl}`;
     console.warn(warningg);
 }
 const mbl = configmbl ? configmbl : 4;
@@ -697,7 +697,7 @@ checkTLD(domain).then(tldvalid => {
                         const filter_ = (inpt) => inpt.replaceAll('\n\n', '\n');
                         const highlightcode = lang_ && lang_ != '';
                         if (highlightcode && !supportedlangs.includes(lang_) && !langaliases[lang_]) {
-                            const warningg = `::warning file=${currentFile}::${_just.error.prefix}${esc}[0;33mWarning 0209${esc}[0m: ${esc}[0;33mUnsuppotred language: hljs: ${esc}[0m${lang_}`;
+                            const warningg = `::warning::${_just.error.prefix}${esc}[0;33mWarning 0209${esc}[0m: ${esc}[0;33mUnsuppotred language: hljs: ${esc}[0m${lang_}`;
                             errorlogs += `${l[1]}AT LINE ${_just.line.line() || '-1'} (__REPLACE_LINE__): ${_just.line.err(warningg)}`;
                             console.warn(warningg);
                         }
