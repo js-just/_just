@@ -1,7 +1,7 @@
 const i = '/img/';
 
 module.exports = {
-    type: "docs",
+    mode: "generator",
     docs_config: {
         metatitle: "Just an Ultimate Site Tool",
         domain: "just.js.org",
