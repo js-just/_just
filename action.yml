@@ -43,13 +43,13 @@ runs:
 
     # Cache
 
-    - name: Setup Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: '20.x'
-      env:
-        ACTIONS_STEP_DEBUG: false
-        ACTIONS_RUNNER_DEBUG: false
+    #- name: Setup Node.js
+    #  uses: actions/setup-node@v3
+    #  with:
+    #    node-version: '20.x'
+    #  env:
+    #    ACTIONS_STEP_DEBUG: false
+    #    ACTIONS_RUNNER_DEBUG: false
     
     - name: Cache Homebrew
       uses: actions/cache@v3
