@@ -687,7 +687,7 @@ code {
     padding-right: 5px;
     border-radius: 5px;
 }
-code, code span {
+code, code span, code pre {
     font-family: monospace;
     cursor: text;
 }

@@ -66,9 +66,9 @@
                 else if(meta.name==="just:name"){output.name=meta.content}
             });
             elem.innerHTML=`${
-                output.name?`<small>${output.name}</small>`:''
+                output.name?`<small>${output.name}<br></small>`:''
             }${
-                output.title?`<strong>${output.title}</strong>`:''
+                output.title?`<strong>${output.title}<br></strong>`:''
             }${
                 output.desc?`<span>${output.desc}</span>`:''
             }${
