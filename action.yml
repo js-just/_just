@@ -39,17 +39,27 @@ inputs:
 runs:
   using: 'composite'
   steps:
+    - id: test1
+      run: |
+        FILE=$(cat just.config.js) && \
+        echo "::warning::$FILE"
+
     - uses: actions/checkout@v4
+
+    - id: test2
+      run: |
+        FILE=$(cat just.config.js) && \
+        echo "::warning::$FILE"
 
     # Cache
 
-    #- name: Setup Node.js
-    #  uses: actions/setup-node@v3
-    #  with:
-    #    node-version: '20.x'
-    #  env:
-    #    ACTIONS_STEP_DEBUG: false
-    #    ACTIONS_RUNNER_DEBUG: false
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '20.x'
+      env:
+        ACTIONS_STEP_DEBUG: false
+        ACTIONS_RUNNER_DEBUG: false
     
     - name: Cache Homebrew
       uses: actions/cache@v3
@@ -76,6 +86,11 @@ runs:
         ACTIONS_STEP_DEBUG: false
         NODE_OPTIONS: "--silent"
       continue-on-error: true
+
+    - id: test3
+      run: |
+        FILE=$(cat just.config.js) && \
+        echo "::warning::$FILE"
 
     # Main
 
