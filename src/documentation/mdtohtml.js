@@ -601,7 +601,7 @@ exports.MDtoHTML = function (text, cssclass) {
 
     text = text.replace(/(?<=\s|^|[.,!?;:])==\*\*(.*?)\*\*==(?=\s|[.,!?;:]|$)/g, '<mark><strong>$1</strong></mark>');
     text = text.replace(/(?<=\s|^|[.,!?;:])\*\*==(.*?)==\*\*(?=\s|[.,!?;:]|$)/g, '<mark><strong>$1</strong></mark>');
-    text = text.replace(new RegExp(`(?<=\\s|^|[${all}])\\*\\*(.*?)\\*\\*(?=\\s|[${all}]|$)`, 'g'), '<strong>$1</strong>');
+    text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
 
 
 
