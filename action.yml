@@ -39,20 +39,6 @@ inputs:
 runs:
   using: 'composite'
   steps:
-    - id: test1
-      run: |
-        FILE=$(cat just.config.js) && \
-        echo "::warning::$FILE"
-      shell: bash
-
-    - uses: actions/checkout@v4
-
-    - id: test2
-      run: |
-        FILE=$(cat just.config.js) && \
-        echo "::warning::$FILE"
-      shell: bash
-
     # Cache
 
     - name: Setup Node.js
@@ -88,12 +74,6 @@ runs:
         ACTIONS_STEP_DEBUG: false
         NODE_OPTIONS: "--silent"
       continue-on-error: true
-
-    - id: test3
-      run: |
-        FILE=$(cat just.config.js) && \
-        echo "::warning::$FILE"
-      shell: bash
 
     # Main
 
