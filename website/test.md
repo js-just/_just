@@ -4,6 +4,13 @@ Generated using [Just an Ultimate Site Tool](https://just.is-a.dev/).
 Some **bold**, *italic*, ***important***, __underlined__, ~~strikethrough~~, ~sub~, ^super^, ==marked==, __***very important***__, __==***extreme important***==__, ~~***not important***~~ text.
 Some `code`; **`bold`**, *`italic`*, ***`important`***, __`underlined`__, ~~`strikethrough`~~, ~`sub`~, ^`super`^, ==`marked`==, __***`very important`***__, __==***`extreme important`***==__, ~~***`not important`***~~ code.
 
+In__middle__here
+In**middle**here
+(__bold__)
+(**bold**)
+\$__0.00__
+\$**0.00**
+
 1. List
 2. (with numbers)
 

@@ -700,6 +700,7 @@ code, code span {
     margin-top: 20px;
     margin-bottom: 1px;
     overflow: hidden;
+    border: none;
 }
 .line:after {
     content: '';
@@ -1370,4 +1371,8 @@ article div[data-link] img {
 }
 article div[data-link] small {
     text-align: left !important;
+}
+
+pre {
+    margin: 0px;
 }

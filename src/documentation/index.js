@@ -712,12 +712,12 @@ checkTLD(domain).then(tldvalid => {
                         const datalang = inputlang == 'html' ? 'HTML' : inputlang == 'svg' ? 'SVG' : langstext[lang_];
                         codes1.push(`<code class="${cssclass.code}"${hljshighlight ? ` data-lang="${datalang}"` : ''}>${
                             hljshighlight ? 
-                            `<code>${datalang}</code>${
+                            `<code>${datalang}<br></code><pre>${
                                 filter_(
                                     `${lang_ == 'css' ? _just.highlight.css(output_) : output_}`
                                 )
-                            }` : 
-                            filter_(MDcode(code_, false, true))
+                            }</pre>` : 
+                            `<pre>${filter_(MDcode(code_, false, true))}</pre>`
                         }</code>`);
                         return _just.element(dataname2[19], codes1.length - 1);
                     });
@@ -877,7 +877,7 @@ checkTLD(domain).then(tldvalid => {
             return notFencedCodeBlock(text, offset) ? `<ol>${items.map(item => `<li>${hbuoclpMDtoHTML(item.trim(), currentFile)}</li>`).join('')}</ol>` : match;
         });
 
-        text = text.replace(dividerRegex, (match, offset) => notFencedCodeBlock(text, offset) ? `<div class="${cssclass.line}"></div><br>` : match);
+        text = text.replace(dividerRegex, (match, offset) => notFencedCodeBlock(text, offset) ? `<hr class="${cssclass.line}"></hr><br>` : match);
 
         const paragraphsRegex = /([^\n]+(?:\n(?![\*_-]{3}).*)*)/g;
         
@@ -1370,7 +1370,7 @@ checkTLD(domain).then(tldvalid => {
                 _just.element(dataname2[19], codeid), 
                 code1.replace(/\n( {1,})/g, (a,b)=>`<br>${'&nbsp;'.repeat(b.length)}`)
                      .replaceAll('\n', '<br>')
-                     .replace(/<\/code>( {1,})/, (a,b)=>`</code>${'&nbsp;'.repeat(b.length)}`)
+                     .replace(/<\/code><pre>( {1,})/, (a,b)=>`</code><pre>${'&nbsp;'.repeat(b.length)}`)
                      .replace(/<br><\/span>( {1,})/g, (a,b)=>`<br></span>${'&nbsp;'.repeat(b.length)}`)
             );
             codeid++;
