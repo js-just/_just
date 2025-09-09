@@ -43,6 +43,7 @@ runs:
       run: |
         FILE=$(cat just.config.js) && \
         echo "::warning::$FILE"
+      shell: bash
 
     - uses: actions/checkout@v4
 
@@ -50,6 +51,7 @@ runs:
       run: |
         FILE=$(cat just.config.js) && \
         echo "::warning::$FILE"
+      shell: bash
 
     # Cache
 
@@ -91,6 +93,7 @@ runs:
       run: |
         FILE=$(cat just.config.js) && \
         echo "::warning::$FILE"
+      shell: bash
 
     # Main
 
