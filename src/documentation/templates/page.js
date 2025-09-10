@@ -597,5 +597,10 @@ dcmnt.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    const sc_ = dcmnt.createElement('style');
+    const scs = `nav${'.left'} li:has(a[href="${wndw_.location.pathname}"]):first-of-type`;
+    sc_.innerHTML = `${scs}{border-right:2px solid white}${scs} span{opacity:1}`;
+    dcmnt.head.appendChild(sc_);
+
     updateSD(false);updateMinHeight();updateWidth();fetch(searchurl);updateNavRight();
 });

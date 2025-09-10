@@ -306,7 +306,7 @@ JS = JS.replaceAll('trimmedStr', jstrimmedstrvar)
     .replaceAll("'--contents'", `'--${cssvar.contents}'`)
     .replace("'REPLACE_NR'", `'${cssid.pageheaders}'`)
     .replace("'REPLACE_CHC'", `'${cssclass.chc}'`)
-    .replace("'.left'", `'.${cssclass.left}'`)
+    .replaceAll("'.left'", `'.${cssclass.left}'`)
     .replace("'REPLACE_NLCSSHV'", `'--${cssvar.liheight}'`)
     .replaceAll("('code.code')", `('code.${cssclass.code}')`)
     .replaceAll("('.copycode')", `('.${cssclass.copycode}')`)
@@ -336,6 +336,8 @@ async function lhl() {
     lhldone = true;
 }
 lhl();
+
+const charsArray = _just.array.shuffleArray(_just.array.abc());
 
 const charset = docsConfig ? docsConfig.charset || template.charset : template.charset;
 
@@ -967,7 +969,7 @@ checkTLD(domain).then(tldvalid => {
     const watermark = config.watermark || false;
     const noWebarchive = config.noWebarchive ? config.noWebarchive : true;
     const searchkey = docsConfig ? docsConfig.searchKey || template.searchkey : template.searchkey;
-    JS = JS.replace("&&'REPLACE_NOWEBARCHIVE'", `&&${noWebarchive}`).replace("'REPLACE_DATAARRAY'", '__just_'+dataname2[11]+'.s').replace('REPLACE_SEARCHKEY', searchkey);
+    JS = JS.replace("&&'REPLACE_NOWEBARCHIVE'", `&&${noWebarchive}`).replace("'REPLACE_DATAARRAY'", '__just_'+dataname2[11]+`.${charsArray[0]}`).replace('REPLACE_SEARCHKEY', searchkey);
     HTML = HTML.replace('REPLACE_SEARCHKEY', searchkey);
 
     const links = docsConfig ? docsConfig.links || [] : [];
@@ -1275,7 +1277,7 @@ checkTLD(domain).then(tldvalid => {
             .replace('<html>', `<html${htmlLang}>`)
             .replaceAll('="/_just/', fixpathh ? `="/${fixpathh}/_just/` : `="${start}${fixpath}_just/`)
             .replace("content: '_just';", `content: '_just ${_just.version}';`)
-            .replace('REPLACE_SCRIPT', `__just_${dataname2[11]}={s:${JSON.stringify(pages[1])},l:[]};${pagejs ? `document.addEventListener('DOMContentLoaded',()=>{${pagejs}});` : ''}${
+            .replace('REPLACE_SCRIPT', `__just_${dataname2[11]}={${charsArray[0]}:${JSON.stringify(pages[1])},${charsArray[1]}:[]};${pagejs ? `document.addEventListener('DOMContentLoaded',()=>{${pagejs}});` : ''}${
                 toHTML.includes('<div data-link="') ? 
                 EMBEDJS
                     .replace('"REPLACE_EXT"', `"${cssid.ext}"`)
