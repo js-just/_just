@@ -812,7 +812,7 @@ checkTLD(domain).then(tldvalid => {
                 return match
             }
         }
-        return _just.MDtoHTML.MDtoHTML(text, cssclass)
+        return _just.MDtoHTML.MDtoHTML(text)
             .replace(/~(.*?)~/g, '<sub>$1</sub>')
             .replace(/\^(.*?)\^/g, '<sup>$1</sup>')
             .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
