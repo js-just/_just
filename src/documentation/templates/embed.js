@@ -10,12 +10,12 @@
             const doc = parser.parseFromString(html, 'text/html');
             const metaTags = doc.querySelectorAll('meta');
             const metaData = Array.from(metaTags).map(meta => {
-                const attributes = {};
+                const attributes_ = {};
                 for (let i = 0; i < meta.attributes.length; i++) {
                     const attr = meta.attributes[i];
-                    attributes[attr.name] = attr.value;
+                    attributes_[attr.name] = attr.value;
                 }
-                return attributes;
+                return attributes_;
             });
             return metaData;
         } catch (error) {
