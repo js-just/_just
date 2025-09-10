@@ -600,7 +600,7 @@ dcmnt.addEventListener('DOMContentLoaded', () => {
     (async()=>{
         const pages_ = dcmnt.querySelectorAll(`nav${'.left'} li a`);
         pages_.forEach(page__=>{
-            if(page__.getAttribute('href')===window.location.href){
+            if(page__.getAttribute('href')===wndw_.location.pathname){
                 page__.closest('li').style.borderRight=`2px solid ${'var(--cl)'}`;
                 page__.querySelector('span').style.opacity='1'
             }
