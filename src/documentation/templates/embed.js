@@ -1,7 +1,7 @@
 (async()=>{
-    const fetchMetaTags=async(url)=>{
+    const fetchMetaTags=async(url,fallback)=>{
         try {
-            const response = await fetch(url).catch(()=>{return false});
+            const response = await fetch(url).catch(fallback);
             if (!response.ok||!response) {
                 return false;
             }
@@ -36,7 +36,7 @@
             elem.innerHTML = `<a href="${link}" target="_blank"${extlink(link)?` id="REPLACE_EXT"`:''}>${link}</a>`;
             return;
         };
-        const metaTags = await fetchMetaTags(link).catch(linkify);
+        const metaTags = await fetchMetaTags(link,linkify).catch(linkify);
         if (!metaTags) linkify;
         let output = {};
         try {
