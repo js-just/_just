@@ -967,13 +967,14 @@ checkTLD(domain).then(tldvalid => {
     const watermark = config.watermark || false;
     const noWebarchive = config.noWebarchive ? config.noWebarchive : true;
     const searchkey = docsConfig ? docsConfig.searchKey || template.searchkey : template.searchkey;
-    JS = JS.replace("&&'REPLACE_NOWEBARCHIVE'", `&&${noWebarchive}`).replace("'REPLACE_DATAARRAY'", dataname2[11]).replace('REPLACE_SEARCHKEY', searchkey);
+    JS = JS.replace("&&'REPLACE_NOWEBARCHIVE'", `&&${noWebarchive}`).replace("'REPLACE_DATAARRAY'", '__just_'+dataname2[11]+'.s').replace('REPLACE_SEARCHKEY', searchkey);
     HTML = HTML.replace('REPLACE_SEARCHKEY', searchkey);
 
     const links = docsConfig ? docsConfig.links || [] : [];
     const buttons = docsConfig ? docsConfig.buttons || [] : [];
 
     const insertHTMLinHead = docsConfig ? docsConfig.insertInHTMLHead || '' : '';
+    const hidePages = docsConfig ? docsConfig.hidePages || [] : [];
 
     const docsUsePathInput = docsConfig ? docsConfig.usePathInput || false : false;
     const HTMLUsePathInput = docsConfig ? docsConfig.usePathInputInHTML || false : false;
@@ -1267,14 +1268,14 @@ checkTLD(domain).then(tldvalid => {
             pagejs += `const ${dataname2[24]}=document.getElementById('${cssid.contents}');const ${dataname2[26]}=()=>{return(${dataname2[24]}.offsetTop+${dataname2[24]}.offsetHeight)>window.innerHeight};window.addEventListener('scroll',()=>{if(${dataname2[26]}()){${dataname2[24]}.scroll({top:document.body.style.getPropertyValue('--${dataname[0].slice(0,-1)}')*20/2,behavior:'smooth'})}});`;
         }
 
-        const pages = generateListItems(addFolderToPageList(pageList).sort((a, b) => a.title.localeCompare(b.title)));
+        const pages = generateListItems(addFolderToPageList(pageList.filter(page=>!hidePages.includes(page.path))).sort((a, b) => a.title.localeCompare(b.title)));
         const start = pathtourl[file] == "" ? '' : '/';
         const fixpath = HTMLUsePathInput && docsUsePathInput ? `${PATH}/`.repeat(2) : HTMLUsePathInput ? PATH+'/' : '';
         let outHTML = HTML
             .replace('<html>', `<html${htmlLang}>`)
             .replaceAll('="/_just/', fixpathh ? `="/${fixpathh}/_just/` : `="${start}${fixpath}_just/`)
             .replace("content: '_just';", `content: '_just ${_just.version}';`)
-            .replace('REPLACE_SCRIPT', `const ${dataname2[11]}=${JSON.stringify(pages[1])};${pagejs ? `document.addEventListener('DOMContentLoaded',()=>{${pagejs}});` : ''}${
+            .replace('REPLACE_SCRIPT', `__just_${dataname2[11]}={s:${JSON.stringify(pages[1])},l:[]};${pagejs ? `document.addEventListener('DOMContentLoaded',()=>{${pagejs}});` : ''}${
                 toHTML.includes('<div data-link="') ? 
                 EMBEDJS
                     .replace('"REPLACE_EXT"', `"${cssid.ext}"`)

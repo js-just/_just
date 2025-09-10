@@ -1,9 +1,9 @@
 (async()=>{
     async function fetchMetaTags(url) {
         try {
-            const response = await fetch(url);
-            if (!response.ok) {
-                throw new Error(response.status);
+            const response = await fetch(url).catch(()=>{return false});
+            if (!response.ok||!response) {
+                return false;
             }
             const html = await response.text();
             const parser = new DOMParser();
