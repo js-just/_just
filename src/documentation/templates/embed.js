@@ -1,5 +1,5 @@
 (async()=>{
-    async function fetchMetaTags(url) {
+    const fetchMetaTags=async(url)=>{
         try {
             const response = await fetch(url).catch(()=>{return false});
             if (!response.ok||!response) {
@@ -23,7 +23,7 @@
         }
     }
     const elems = document.querySelectorAll('div[data-link]');
-    function extlink(url) {
+    const extlink=(url)=>{
         let output = false;
         try {
             output = (new URL(url)).hostname === window.location.hostname
@@ -32,7 +32,7 @@
     };
     elems.forEach(async(elem)=>{
         const link = elem.getAttribute('data-link');
-        function linkify() {
+        const linkify=()=>{
             elem.innerHTML = `<a href="${link}" target="_blank"${extlink(link)?` id="REPLACE_EXT"`:''}>${link}</a>`;
             return;
         }

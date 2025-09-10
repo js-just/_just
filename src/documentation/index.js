@@ -312,7 +312,8 @@ JS = JS.replaceAll('trimmedStr', jstrimmedstrvar)
     .replaceAll("('.copycode')", `('.${cssclass.copycode}')`)
     .replace("'copycode'", `'${cssclass.copycode}'`)
     .replace("'--codewidth'", `'--${cssvar.codewidth}'`)
-    .replace("'--codeheight'", `'--${cssvar.codeheight}'`);
+    .replace("'--codeheight'", `'--${cssvar.codeheight}'`)
+    .replace("'var(--cl)'", `'var(--${cssvar.cl})'`);
 NJS = NJS.replaceAll(".add('l')", `.add('${cssclass.l}','_just_theme_light')`)
     .replaceAll(".remove('l')", `.remove('${cssclass.l}','_just_theme_light')`)
     .replaceAll(".add('a')", `.add('${cssclass.a}','_just_theme_auto')`)
@@ -1279,7 +1280,12 @@ checkTLD(domain).then(tldvalid => {
             .replace("content: '_just';", `content: '_just ${_just.version}';`)
             .replace('REPLACE_SCRIPT', `__just_${dataname2[11]}={${charsArray[0]}:${JSON.stringify(pages[1])},${charsArray[1]}:[]};${pagejs ? `document.addEventListener('DOMContentLoaded',()=>{${pagejs}});` : ''}${
                 toHTML.includes('<div data-link="') ? 
-                EMBEDJS
+                _just.js.set(
+                    EMBEDJS,
+                    _just.js.get(EMBEDJS).names.filter(n => n !== jstrimmedstrvar),
+                    charsArray,
+                    jstrimmedstrvarbasestr
+                )
                     .replace('"REPLACE_EXT"', `"${cssid.ext}"`)
                 : ''
             }`)

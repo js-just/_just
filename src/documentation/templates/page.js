@@ -597,10 +597,15 @@ dcmnt.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    const sc_ = dcmnt.createElement('style');
-    const scs = `nav${'.left'} li:has(a[href="${wndw_.location.pathname}"]):first-of-type`;
-    sc_.innerHTML = `${scs}{border-right:2px solid white}${scs} span{opacity:1}`;
-    dcmnt.head.appendChild(sc_);
+    (async()=>{
+        const pages_ = dcmnt.querySelectorAll(`nav.${'.left'} li a`);
+        pages_.forEach(page__=>{
+            if(page__.getAttribute('href')===window.location.href){
+                page__.closest('li').style.borderRight=`2px solid ${'var(--cl)'}`;
+                page__.querySelector('span').style.opacity='1'
+            }
+        })
+    })();
 
     updateSD(false);updateMinHeight();updateWidth();fetch(searchurl);updateNavRight();
 });
