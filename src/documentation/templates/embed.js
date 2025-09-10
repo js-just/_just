@@ -21,7 +21,7 @@
         } catch (error) {
             return false;
         }
-    }
+    };
     const elems = document.querySelectorAll('div[data-link]');
     const extlink=(url)=>{
         let output = false;
@@ -35,7 +35,7 @@
         const linkify=()=>{
             elem.innerHTML = `<a href="${link}" target="_blank"${extlink(link)?` id="REPLACE_EXT"`:''}>${link}</a>`;
             return;
-        }
+        };
         const metaTags = await fetchMetaTags(link).catch(linkify);
         if (!metaTags) linkify;
         let output = {};
