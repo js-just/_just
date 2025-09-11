@@ -375,4 +375,4 @@ elif [ "$TYPE" == "generator" ]; then
 elif [ "$TYPE" == "void" ]; then
     installNodejs
 fi && \
-node $GITHUB_ACTION_PATH/postprocessor.js
+node $GITHUB_ACTION_PATH/src/postprocessor.js
