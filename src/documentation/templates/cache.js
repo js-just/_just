@@ -1,4 +1,4 @@
-// service worker
+//# serviceWorkerName: Just an Ultimate Site Tool
 const CACHE_NAME = 'just-gha-gm-pages'; /* Just an Ultimate Site Tool - GitHub Action - Generator Mode - pages */
 const URLsToCache = 'REPLACE_PAGES';
 

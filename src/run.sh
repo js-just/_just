@@ -372,4 +372,7 @@ elif [ "$TYPE" == "generator" ]; then
     DONEIN=$(node "$GITHUB_ACTION_PATH/src/time.js" "$TIME0" "$TIME3") && \
     echo "::endgroup::" && \
     echo -e "$msg9 ($DONEIN)"
-fi
+elif [ "$TYPE" == "void" ]; then
+    installNodejs
+fi && \
+node $GITHUB_ACTION_PATH/postprocessor.js

@@ -973,6 +973,7 @@ checkTLD(domain).then(tldvalid => {
     const watermark = config.watermark || false;
     const noWebarchive = config.noWebarchive ? config.noWebarchive : true;
     const searchkey = docsConfig ? docsConfig.searchKey || template.searchkey : template.searchkey;
+    const logohref = docsConfig ? docsConfig.logoLink || undefined : undefined;
     JS = JS.replace("&&'REPLACE_NOWEBARCHIVE'", `&&${noWebarchive}`).replace("'REPLACE_DATAARRAY'", '__just_'+dataname2[11]+`.${charsArray[0]}`).replace('REPLACE_SEARCHKEY', searchkey);
     HTML = HTML.replace('REPLACE_SEARCHKEY', searchkey);
 
@@ -989,7 +990,7 @@ checkTLD(domain).then(tldvalid => {
     const desc = description ? `<meta name="description" content="${description}">` : '';
     const ogdesc = ogdescription ? `<meta property="og:description" content="${ogdescription}">` : '';
     const ogtitl = ogtitle ? `<meta property="og:title" content="${ogtitle}">` : '';
-    const logo = logoPath ? `<img src="${logoPath}" height="35" alt="Logo">` : '';
+    const logo = logoPath ? `<img src="${logoPath}" height="35" alt="Logo"${logohref ? `style="cursor:pointer" onclick="window.location.href='${logohref}'"` : ''}>` : '';
     const name = docsConfig && docsConfig.title ? span(title) : logoPath ? '' : span(title);
     const htmlLang = lang ? ` lang="${`${lang}`.toLowerCase()}"` : '';
     const htmlhead = (filelink = undefined, fixpath = '') => {
@@ -1432,7 +1433,7 @@ checkTLD(domain).then(tldvalid => {
             JS.replace('\'REPLACE_PUBLICOUTPUT\'', hideOutput?false:publicOutput)
               .replace('\'REPLACE_SEARCHV2\'', CSSdata[1] || false)
               .replace('\'REPLACE_OUTPUT\'', hideOutput?false:watermark)
-              .replaceAll("REPLACE_SERVICEWORKER", `/_just/${cacheServiceWorkerName}.js`)
+              .replaceAll("REPLACE_SERVICEWORKER", `${fixpathh ? '/'+fixpathh : JSUsePathInput && docsUsePathInput ? `/${PATH}`.repeat(2) : JSUsePathInput ? '/'+PATH : ''}/_just/${cacheServiceWorkerName}.js`)
               .replace('let searchurl = "/_just/search";', `let searchurl="${fixpathh ? '/'+fixpathh : JSUsePathInput && docsUsePathInput ? `/${PATH}`.repeat(2) : JSUsePathInput ? '/'+PATH : ''}/_just/${dataname[9]}.json";`), 
             JSdata.names.filter(n => n !== jstrimmedstrvar), 
             dataname2.reverse().slice(0, JSdata.total-1),
@@ -1474,13 +1475,15 @@ checkTLD(domain).then(tldvalid => {
     fs.mkdirSync(path.join(websitepath, _justdir, 'static'));
     fs.writeFileSync(path.join(websitepath, _justdir, 'static', 'theme.js'), TJS, template.charset);
     fs.writeFileSync(path.join(websitepath, _justdir, 'static', 'navbar.js'), NJS, charset);
-    const cacheServiceWorkerReplaced = cacheServiceWorkerTemplate.replace("'REPLACE_PAGES'", JSON.stringify(pages[2]));
+    const cacheServiceWorkerURLs = pages[2];
+    cacheServiceWorkerURLs.push(`${fixpathh ? '/'+fixpathh : JSUsePathInput && docsUsePathInput ? `/${PATH}`.repeat(2) : JSUsePathInput ? '/'+PATH : ''}/_just/${filename.js}`,`${fixpathh ? '/'+fixpathh : JSUsePathInput && docsUsePathInput ? `/${PATH}`.repeat(2) : JSUsePathInput ? '/'+PATH : ''}/_just/${filename.css}`);
+    const cacheServiceWorkerReplaced = cacheServiceWorkerTemplate.replace("'REPLACE_PAGES'", JSON.stringify(cacheServiceWorkerURLs));
     const cacheServiceWorker = _just.js.set(
         cacheServiceWorkerReplaced,
         _just.js.get(cacheServiceWorkerReplaced).names,
         charsArray.reverse(),
         jstrimmedstrvarbasestr
     )
-    fs.writeFileSync(path.join(websitepath, _justdir, `${cacheServiceWorkerName}.js`), '//# serviceWorkerName: Just an Ultimate Site Tool\n'+cacheServiceWorker, template.charset);
+    fs.writeFileSync(path.join(websitepath, _justdir, `${cacheServiceWorkerName}.js`), cacheServiceWorker, template.charset);
 
 }, tldinvalid => {});

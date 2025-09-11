@@ -1,3 +1,5 @@
+const hidePages = ['/api-modules/pages/redirect', '/code'];
+
 module.exports = {
     mode: "generator",
     docs_config: {
@@ -16,6 +18,12 @@ module.exports = {
         `,
         footer: '<span onclick="javascript:window.open(\'https://github.com/js-just/_just/blob/main/LICENSE\',\'\_blank\')">Copyright &copy; 2025 &#171;<a href="https://juststudio.is-a.dev/" target="_blank">JustStudio.</a>&#187;</span>',
         keywords: 'Just, an, Ultimate, Site, Tool, Static, Website, GitHub, Action, Postprocessor, Compressor, Generator, Redirector, Compress, Markdown, Redirect, Generate, Documentation, Docs',
-        hidePages: ['/api-modules/pages/redirect', '/code'],
+        hidePages,
+        logoLink: '/'
+    },
+    sitemap: {
+        generateSitemap: true,
+        protocol: 'https:',
+        hidePages,
     }
 }
