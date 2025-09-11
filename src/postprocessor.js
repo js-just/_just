@@ -32,5 +32,5 @@ const debug_ = config.debug || false;
 const debuglog = (text) => {if (debug_) console.log(`${_just.error.prefix}${esc}[0;36mDebug: ${text}`)};
 
 if (config.sitemap) {
-    debuglog(require('../lib/postprocessor/sitemap.js').sitemap(config));
+    require('../lib/postprocessor/sitemap.js').sitemap(config).then(debuglog);
 }
