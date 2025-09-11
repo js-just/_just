@@ -564,7 +564,8 @@ function generateListItems(PageList) {
     return [buildFolderHTML(folderTree, true), pageListJSON, plJSON];
 }
 
-const [psl, getTLD, checkTLD, checkdomain, domainregex] = require('../../lib/domain.js');
+_just.domain = require('../../lib/domain.js');
+const { psl, getTLD, checkTLD, checkdomain, domainregex } = _just.domain;
 const domain = checkdomain(config.domain, true) || undefined;
 const caughterrors = [];
 checkTLD(domain).then(tldvalid => {

@@ -33,7 +33,8 @@ const debuglog = (text) => {if (debug_) console.log(`${_just.error.prefix}${esc}
 const [inputPath, inputFixPath, VERSION] = process.argv.slice(2);
 
 if (config.mode === 'void') {
-    const [psl, getTLD, checkTLD, checkdomain, domainregex] = require('../lib/domain.js');
+    _just.domain = require('../lib/domain.js');
+    const { psl, getTLD, checkTLD, checkdomain, domainregex } = _just.domain;
     const domain = checkdomain(config.domain, true) || undefined;
     checkTLD(domain).then(debuglog);
 }
