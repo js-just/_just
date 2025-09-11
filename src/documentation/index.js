@@ -564,42 +564,8 @@ function generateListItems(PageList) {
     return [buildFolderHTML(folderTree, true), pageListJSON, plJSON];
 }
 
-
-const psl = async () => {
-    const responce = await fetch('https://publicsuffix.org/list/public_suffix_list.dat');
-    let dat_ = await responce.text();
-    dat_ = dat_.replace(/(?<=^|\n)\/\/(.*?)\n/g, '\n').replace(/\n(\n{0,})\n/g, '\n').trim().split('\n').filter(d => !d.startsWith('!'))
-    return [dat_.filter(d => (!d.startsWith('*.') && /\./.test(d))), dat_.filter(d => (!d.startsWith('*.') && !/\./.test(d))), dat_.filter(d => d.startsWith('*.'))] // domains, TLDs, *.domains
-}
-function getTLD(hostname) {
-  const parts = hostname.split('.');
-  if (parts.length < 2) {
-    return null;
-  }
-  return parts[parts.length - 1];
-}
-const checkTLD = async (domain) => {
-    const inputTLD = getTLD(domain);
-    const PSL = await psl();
-    if (PSL[1].includes(inputTLD)) {
-        return domain
-    } else {
-        _just.error.errormessage('0126', `"${inputTLD}" is not a TLD. (${domain})`).then((errmsg)=>{throw new Error(errmsg)});
-    }
-}
-const domainregex = /^(?=.{1,253}$)(?:(?:[_a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)\.)+[a-zA-Z]{2,63}$/; // regex made by @wdhdev - https://github.com/wdhdev ( commit: https://github.com/is-a-dev/register/commit/6339f26bef0d9dbf56737ffddaca7794cf35bd24#diff-80b3110840a7eedb8cc2c29ead4fe4c98f157738ff3dcf22f05f3094ad6ca9bbR6 )
-function checkdomain(input, throwerror) {
-    if (input && domainregex.test(input)) {
-        return input;
-    } else if (!input) {
-        return undefined;
-    } else if (throwerror) {
-        _just.error.errormessage('0122', `"${input}" is not a domain name.`).then((errmsg)=>{throw new Error(errmsg)});
-    } else {
-        return false;
-    }
-}
-const domain = docsConfig ? checkdomain(docsConfig.domain, true) || undefined : undefined;
+const [psl, getTLD, checkTLD, checkdomain, domainregex] = require('../../lib/domain.js');
+const domain = checkdomain(config.domain, true) || undefined;
 const caughterrors = [];
 checkTLD(domain).then(tldvalid => {
     

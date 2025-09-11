@@ -2,9 +2,9 @@ const hidePages = ['/api-modules/pages/redirect', '/code'];
 
 module.exports = {
     mode: "generator",
+    domain: "test.just.is-a.dev",
     docs_config: {
         metatitle: "Just an Ultimate Site Tool",
-        domain: "test.just.is-a.dev",
         logo: "/img/logo.svg",
         links: [
             ["Documentation", "/docs", "_self"],
