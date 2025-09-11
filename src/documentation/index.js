@@ -1422,6 +1422,8 @@ checkTLD(domain).then(tldvalid => {
     console.log(logs);
     fs.writeFileSync(path.join(websitepath, _justdir, `${filename.css}.css`), CSS, template.charset);
 
+    const cacheServiceWorkerName = dataname2[35];
+
     const JSdata = _just.js.get(JS);
     const JSerr = `if(!/\\(03\\d{2}\\)$/.test(e_.message)){document.body.classList.add('${cssclass.error}');document.documentElement.style.setProperty('--${cssvar.edata}',\`'\${e_.message} (0300)'\`);console.warn(e_);throw new Error('${_just.errorprefix} 0300. For more information, visit https://just.is-a.dev/errors/0300')}`;
     fs.writeFileSync(
@@ -1430,7 +1432,7 @@ checkTLD(domain).then(tldvalid => {
             JS.replace('\'REPLACE_PUBLICOUTPUT\'', hideOutput?false:publicOutput)
               .replace('\'REPLACE_SEARCHV2\'', CSSdata[1] || false)
               .replace('\'REPLACE_OUTPUT\'', hideOutput?false:watermark)
-              .replace("REPLACE_SERVICEWORKER", `/_just/${dataname2[35]}.js`)
+              .replace("REPLACE_SERVICEWORKER", `/_just/${cacheServiceWorkerName}.js`)
               .replace('let searchurl = "/_just/search";', `let searchurl="${fixpathh ? '/'+fixpathh : JSUsePathInput && docsUsePathInput ? `/${PATH}`.repeat(2) : JSUsePathInput ? '/'+PATH : ''}/_just/${dataname[9]}.json";`), 
             JSdata.names.filter(n => n !== jstrimmedstrvar), 
             dataname2.reverse().slice(0, JSdata.total-1),
@@ -1472,13 +1474,13 @@ checkTLD(domain).then(tldvalid => {
     fs.mkdirSync(path.join(websitepath, _justdir, 'static'));
     fs.writeFileSync(path.join(websitepath, _justdir, 'static', 'theme.js'), TJS, template.charset);
     fs.writeFileSync(path.join(websitepath, _justdir, 'static', 'navbar.js'), NJS, charset);
-    const cacheServiceWorkerReplaced = cacheServiceWorkerTemplate.replace("'REPLACE_PAGES'", pages[2]);
+    const cacheServiceWorkerReplaced = cacheServiceWorkerTemplate.replace("'REPLACE_PAGES'", JSON.stringify(pages[2]));
     const cacheServiceWorker = _just.js.set(
         cacheServiceWorkerReplaced,
         _just.js.get(cacheServiceWorkerReplaced).names,
         charsArray.reverse(),
         jstrimmedstrvarbasestr
     )
-    fs.writeFileSync(path.join(websitepath, _justdir, `${dataname2[35]}.js`), cacheServiceWorker, template.charset);
+    fs.writeFileSync(path.join(websitepath, _justdir, `${cacheServiceWorkerName}.js`), cacheServiceWorker, template.charset);
 
 }, tldinvalid => {});
