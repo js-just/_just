@@ -30,9 +30,10 @@ const path = require('path');
 const config = JSON.parse(fs.readFileSync('just.config.json', 'utf8'));
 const debug_ = config.debug || false;
 const debuglog = (text) => {if (debug_) console.log(`${_just.error.prefix}${esc}[0;36mDebug: ${text}`)};
+const [inputPath, inputFixPath, VERSION] = process.argv.slice(2);
 
 if (config.sitemap) {
-    require('../lib/postprocessor/sitemap.js').sitemap(config)
+    require('../lib/postprocessor/sitemap.js').sitemap(config, inputPath, inputFixPath)
         .then(debuglog)
         .catch()
 }
