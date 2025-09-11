@@ -1430,7 +1430,7 @@ checkTLD(domain).then(tldvalid => {
             JS.replace('\'REPLACE_PUBLICOUTPUT\'', hideOutput?false:publicOutput)
               .replace('\'REPLACE_SEARCHV2\'', CSSdata[1] || false)
               .replace('\'REPLACE_OUTPUT\'', hideOutput?false:watermark)
-              .replace("REPLACE_SERVICEWORKER", `${dataname2[35]}.js`)
+              .replace("REPLACE_SERVICEWORKER", `/_just/${dataname2[35]}.js`)
               .replace('let searchurl = "/_just/search";', `let searchurl="${fixpathh ? '/'+fixpathh : JSUsePathInput && docsUsePathInput ? `/${PATH}`.repeat(2) : JSUsePathInput ? '/'+PATH : ''}/_just/${dataname[9]}.json";`), 
             JSdata.names.filter(n => n !== jstrimmedstrvar), 
             dataname2.reverse().slice(0, JSdata.total-1),
