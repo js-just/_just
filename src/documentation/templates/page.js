@@ -295,7 +295,9 @@ const cooldown = (timems, cdvarid) => {
 let serviceWorkerInstalled = false;
 (async()=>{
     if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('REPLACE_SERVICEWORKER')
+        navigator.serviceWorker.register('REPLACE_SERVICEWORKER').then(()=>{
+            serviceWorkerInstalled = true;
+        })
     }
 })();
 
