@@ -631,55 +631,157 @@ dcmnt.addEventListener('DOMContentLoaded', () => {
     if (serviceWorkerInstalled) {
         (async()=>{
             const cacheServiceWorker = await navigator.serviceWorker.getRegistration('REPLACE_SERVICEWORKER');
-            dcmnt.querySelector(`nav${'.left'}`).addEventListener('click',async(event)=>{
-                const navpagelink=event.closest(`nav${'.left'} a`);
-                if(!navpagelink||navpagelink.target==='_blank'||navpagelink.download||!cacheServiceWorker)return;
-                const pageurl=navpagelink.getAttribute('href');
-                if(!pageurl||pageurl.startsWith('#')||pageurl.startsWith('javascript:'))return;
-                try {
-                    const url_ = new URL(pageurl, wndw_.location.href);
-                    if (url_.origin !== wndw_.location.origin) return;
-                } catch (e) {
-                    return;
+            const navElement = dcmnt.querySelector(`nav${'.left'}`);
+            
+            navElement.addEventListener('click', async (event) => {
+                const navPageLink = event.target.closest('a');
+                
+                if (!navPageLink || navPageLink.target === '_blank' || navPageLink.download || !cacheServiceWorker || typeof eval != 'function') {
+                    return
                 };
+                
+                const pageUrl = navPageLink.getAttribute('href');
+                if (!pageUrl || pageUrl.startsWith('#') || pageUrl.startsWith('javascript:')) {
+                    return
+                };
+                
+                try {
+                    const urlObj = new URL(pageUrl, wndw_.location.href);
+                    if (urlObj.origin !== wndw_.location.origin) return;
+                } catch (e) {
+                    return
+                };
+                
                 event.preventDefault();
                 event.stopPropagation();
-                const cancel=()=>{
-                    wndw_.location.href=pageurl
+                
+                const cancel = () => {
+                    wndw_.location.href = pageUrl;
                 };
-                const page__ = await fetch(pageurl, {
-                    "headers": {
-                        'X-JUST-GHA-GM-Navigation': 'true', /* Just an Ultimate Site Tool - GitHub Action - Generator Mode - Navigation */
-                        'Accept': 'text/html'
-                    },
-                    priority: 'high'
-                });
-                if(!page__.ok){
-                    cancel();return
-                };
+                
                 try {
-                    const pagetext = await page__.text();
-                    const pageparser = new DOMParser();
-                    if(!pagetext||!pageparser){cancel();return};
-                    const pagehtml = pageparser.parseFromString(pagetext,'text/html');
-                    if(!pagehtml){cancel();return};
-                    const mainselector = 'main:has(footer):has(article)';
-                    const scriptselector = 'script:not([src]):last-of-type';
-                    const pageheader = pagehtml.body.querySelector('header');
-                    const pagemain = pagehtml.body.querySelector(mainselector);
-                    const pagescript = pagehtml.querySelector(scriptselector);
-                    if(!pageheader||!pagemain||!pagescript){cancel();return};
-                    dcmnt.body.querySelector('header').innerHTML = pageheader.innerHTML;
-                    dcmnt.body.querySelector(mainselector).innerHTML = pagemain.innerHTML;
-                    (async()=>{eval(pagescript.innerHTML)})();
-                    wndw_.history.pushState({},'',pageurl);
-                    dcmnt.title = pagehtml.title;
-                    wndw_.scrollTo(0, 0);
+                    const pageResponse = await fetch(pageUrl, {
+                        "headers": {
+                            'X-JUST-GHA-GM-Navigation': 'true', /* Just an Ultimate Site Tool - GitHub Action - Generator Mode - Navigation */
+                            'Accept': 'text/html'
+                        },
+                        priority: 'high'
+                    });
+                    
+                    if (!pageResponse.ok) {
+                        cancel();
+                        return
+                    };
+                    
+                    const pageText = await pageResponse.text();
+                    const pageParser = new DOMParser();
+                    
+                    if (!pageText || !pageParser) {
+                        cancel();
+                        return
+                    };
+                    
+                    const pageHtml = pageParser.parseFromString(pageText, 'text/html');
+                    
+                    if (!pageHtml) {
+                        cancel();
+                        return
+                    };
+                    
+                    const mainSelector = 'main:has(footer):has(article)';
+                    const scriptSelector = 'script:not([src]):last-of-type';
+                    const pageHeader = pageHtml.body.querySelector('header');
+                    const pageMain = pageHtml.body.querySelector(mainSelector);
+                    const pageScript = pageHtml.querySelector(scriptSelector);
+                    
+                    if (!pageHeader || !pageMain || !pageScript) {
+                        cancel();
+                        return
+                    };
+                    
+                    await smoothTransition(() => {
+                        dcmnt.body.querySelector('header').innerHTML = pageHeader.innerHTML;
+                        dcmnt.body.querySelector(mainSelector).innerHTML = pageMain.innerHTML;
+                        
+                        (async() => {
+                            try {
+                                eval(pageScript.innerHTML);
+                            }catch(e){}
+                        })();
+                        
+                        wndw_.history.pushState({}, '', pageUrl);
+                        dcmnt.title = pageHtml.title;
+                        wndw_.scrollTo(0, 0);
+                    });
+                    
                 } catch (e) {
-                    cancel();return
+                    cancel();
                 }
-            })
-        })()
+            });
+        })();
+    };
+
+    const smoothTransition=async(callback)=>{
+        const mainContent = dcmnt.querySelector('main:has(footer):has(article)') || dcmnt.querySelector('main');
+        
+        if (!mainContent) {
+            callback();
+            return
+        };
+        
+        mainContent.style.opacity = '0';
+        mainContent.style.transition = 'opacity 0.3s ease';
+        
+        await new Promise(resolve => setTimeout(resolve, 300));
+        
+        callback();
+        
+        requestAnimationFrame(() => {
+            mainContent.style.opacity = '1';
+        });
+    };
+    wndw_.addEventListener('popstate',async()=>{
+        if (serviceWorkerInstalled) {
+            await loadPage(wndw_.location.href);
+        }
+    });
+    const loadPage=async(url)=>{
+        try {
+            const response = await fetch(url, {
+                "headers": {
+                    'X-JUST-GHA-GM-Navigation': 'true', /* Just an Ultimate Site Tool - GitHub Action - Generator Mode - Navigation */
+                    'Accept': 'text/html'
+                },
+                priority: 'high'
+            });
+            
+            if (!response.ok) return;
+            
+            const text = await response.text();
+            const parser = new DOMParser();
+            const html = parser.parseFromString(text, 'text/html');
+            
+            const mainSelector = 'main:has(footer):has(article)';
+            const scriptSelector = 'script:not([src]):last-of-type';
+            const header = html.body.querySelector('header');
+            const main = html.body.querySelector(mainSelector);
+            const script = html.querySelector(scriptSelector);
+            
+            if (header && main && script) {
+                await smoothTransition(() => {
+                    dcmnt.body.querySelector('header').innerHTML = header.innerHTML;
+                    dcmnt.body.querySelector(mainSelector).innerHTML = main.innerHTML;
+                    
+                    (async() => {
+                        try {
+                            eval(script.innerHTML);
+                        } catch(e){}
+                    })();
+                    
+                    dcmnt.title = html.title;
+                });
+            }
+        } catch(e){}
     };
 
     updateSD(false);updateMinHeight();updateWidth();fetch(searchurl);updateNavRight();
