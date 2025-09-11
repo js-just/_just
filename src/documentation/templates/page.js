@@ -610,12 +610,16 @@ dcmnt.addEventListener('DOMContentLoaded', () => {
         const pages_ = dcmnt.querySelectorAll(`nav${'.left'} li a`);
         pages_.forEach(page__=>{
             if(page__.getAttribute('href')===wndw_.location.pathname){
-                page__.closest('li').style.borderRight=`2px solid ${'var(--cl)'}`;
+                let borderelement = page__.closest('li');
+                if(page__.querySelector('ul')){
+                    borderelement = page__.querySelector('ul')
+                }
+                borderelement.style.borderRight=`2px solid ${'var(--cl)'}`;
                 page__.querySelector('span').style.opacity='1'
             }
             if(serviceWorkerInstalled&&page__.getAttribute('href')){
                 fetch(page__.getAttribute('href'), {
-                    headers: {
+                    "headers": {
                         'X-JUST-GHA-GM-Navigation': 'true', /* Just an Ultimate Site Tool - GitHub Action - Generator Mode - Navigation */
                         'Accept': 'text/html'
                     },
@@ -643,18 +647,18 @@ dcmnt.addEventListener('DOMContentLoaded', () => {
                 const cancel=()=>{
                     wndw_.location.href=pageurl
                 };
-                const Page_ = await fetch(pageurl, {
-                    headers: {
+                const page__ = await fetch(pageurl, {
+                    "headers": {
                         'X-JUST-GHA-GM-Navigation': 'true', /* Just an Ultimate Site Tool - GitHub Action - Generator Mode - Navigation */
                         'Accept': 'text/html'
                     },
                     priority: 'high'
                 });
-                if(!Page_.ok){
+                if(!page__.ok){
                     cancel();return
                 };
                 try {
-                    const pagetext = await Page_.text();
+                    const pagetext = await page__.text();
                     const pageparser = new DOMParser();
                     if(!pagetext||!pageparser){cancel();return};
                     const pagehtml = pageparser.parseFromString(pagetext,'text/html');

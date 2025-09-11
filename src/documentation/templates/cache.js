@@ -30,29 +30,12 @@ self.addEventListener('activate', event => {
     );
 });
 
-self.addEventListener('fetch', event => {
-    if (event.request.method !== 'GET' || !event.request.url.startsWith(self.location.origin)) {
-        return;
-    };
-    
-    const requestUrl = new URL(event.request.url);
-    
-    const shouldCache = URLsToCache.some(url => {
-        return requestUrl.pathname === url;
-    });
-    
-    if (shouldCache) {
+self.addEventListener('fetch', (event) => {
+    if (event.request.headers.get('X-JUST-GHA-GM-Navigation') === 'true') { /* Just an Ultimate Site Tool - GitHub Action - Generator Mode - Navigation */
         event.respondWith(
             caches.open(CACHE_NAME).then(cache => {
                 return cache.match(event.request).then(response => {
-                    if (response) {
-                        return response;
-                    };
-                    
-                    return fetch(event.request).then(networkResponse => {
-                        cache.put(event.request, networkResponse.clone());
-                        return networkResponse;
-                    });
+                    return response || fetch(event.request);
                 });
             })
         );
@@ -60,9 +43,9 @@ self.addEventListener('fetch', event => {
 });
 
 const getCacheId=async()=>{
-    for (const url of CACHE_ID_URLS) {
+    for (const url_ of CACHE_ID_URLS) {
         try {
-            const response = await fetch(url);
+            const response = await fetch(url_);
             if (response.ok) {
                 const data = await response.json();
                 return data.cache || defaultCacheId;

@@ -83,8 +83,10 @@ async function compressFile(filePath) {
     }
 
     if (filePath.endsWith('.js')) {
-        content = content.replace(/(?<!["'`][\s\S]*)(?<!^\/\/#.*)(?<!\n\/\/#.*)\/\/.*\n/g, '\n')
-                         .replace(/\/\*[\s\S]*?\*\//g, '');
+        content = content.replace(/(?<!["'`][\s\S]*)\/\/#(.*?)\n/g, '"_just_put:$1";\n')
+                         .replace(/(?<!["'`][\s\S]*)(?<!^\/\/#.*)(?<!\n\/\/#.*)\/\/.*\n/g, '\n')
+                         .replace(/\/\*[\s\S]*?\*\//g, '')
+                         .replace(/(?<!["'`][\s\S]*)"_just_put:(.*?)";\n/g, '//#$1\n').trim();
     }
 
     if (filePath.endsWith('.html') || filePath.endsWith('.svg') || filePath.endsWith('.xml')) {
