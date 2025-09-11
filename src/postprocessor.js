@@ -27,7 +27,7 @@ SOFTWARE.
 const _just = {};
 const fs = require('fs');
 const path = require('path');
-const config = JSON.parse(fs.readFileSync('just.config.json', template.charset));
+const config = JSON.parse(fs.readFileSync('just.config.json', 'utf8'));
 const debug_ = config.debug || false;
 const debuglog = (text) => {if (debug_) console.log(`${_just.error.prefix}${esc}[0;36mDebug: ${text}`)};
 
