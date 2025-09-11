@@ -1432,7 +1432,7 @@ checkTLD(domain).then(tldvalid => {
             JS.replace('\'REPLACE_PUBLICOUTPUT\'', hideOutput?false:publicOutput)
               .replace('\'REPLACE_SEARCHV2\'', CSSdata[1] || false)
               .replace('\'REPLACE_OUTPUT\'', hideOutput?false:watermark)
-              .replace("REPLACE_SERVICEWORKER", `/_just/${cacheServiceWorkerName}.js`)
+              .replaceAll("REPLACE_SERVICEWORKER", `/_just/${cacheServiceWorkerName}.js`)
               .replace('let searchurl = "/_just/search";', `let searchurl="${fixpathh ? '/'+fixpathh : JSUsePathInput && docsUsePathInput ? `/${PATH}`.repeat(2) : JSUsePathInput ? '/'+PATH : ''}/_just/${dataname[9]}.json";`), 
             JSdata.names.filter(n => n !== jstrimmedstrvar), 
             dataname2.reverse().slice(0, JSdata.total-1),
@@ -1481,6 +1481,6 @@ checkTLD(domain).then(tldvalid => {
         charsArray.reverse(),
         jstrimmedstrvarbasestr
     )
-    fs.writeFileSync(path.join(websitepath, _justdir, `${cacheServiceWorkerName}.js`), cacheServiceWorker, template.charset);
+    fs.writeFileSync(path.join(websitepath, _justdir, `${cacheServiceWorkerName}.js`), '//# serviceWorkerName: Just an Ultimate Site Tool\n'+cacheServiceWorker, template.charset);
 
 }, tldinvalid => {});

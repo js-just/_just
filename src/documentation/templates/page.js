@@ -292,6 +292,7 @@ const cooldown = (timems, cdvarid) => {
     }
 };
 
+let serviceWorkerInstalled = false;
 (async()=>{
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('REPLACE_SERVICEWORKER')
@@ -610,8 +611,70 @@ dcmnt.addEventListener('DOMContentLoaded', () => {
                 page__.closest('li').style.borderRight=`2px solid ${'var(--cl)'}`;
                 page__.querySelector('span').style.opacity='1'
             }
-        })
+            if(serviceWorkerInstalled&&page__.getAttribute('href')){
+                fetch(page__.getAttribute('href'), {
+                    headers: {
+                        'X-JUST-GHA-GM-Navigation': 'true', /* Just an Ultimate Site Tool - GitHub Action - Generator Mode - Navigation */
+                        'Accept': 'text/html'
+                    },
+                    priority: 'low'
+                })
+            }
+        });
     })();
+    if (serviceWorkerInstalled) {
+        (async()=>{
+            const cacheServiceWorker = await navigator.serviceWorker.getRegistration('REPLACE_SERVICEWORKER');
+            dcmnt.querySelector(`nav${'.left'}`).addEventListener('click',async(event)=>{
+                const navpagelink=event.closest(`nav${'.left'} a`);
+                if(!navpagelink||navpagelink.target==='_blank'||navpagelink.download||!cacheServiceWorker)return;
+                const pageurl=navpagelink.getAttribute('href');
+                if(!pageurl||pageurl.startsWith('#')||pageurl.startsWith('javascript:'))return;
+                try {
+                    const url_ = new URL(pageurl, wndw_.location.href);
+                    if (url_.origin !== wndw_.location.origin) return;
+                } catch (e) {
+                    return;
+                };
+                event.preventDefault();
+                event.stopPropagation();
+                const cancel=()=>{
+                    wndw_.location.href=pageurl
+                };
+                const Page_ = await fetch(pageurl, {
+                    headers: {
+                        'X-JUST-GHA-GM-Navigation': 'true', /* Just an Ultimate Site Tool - GitHub Action - Generator Mode - Navigation */
+                        'Accept': 'text/html'
+                    },
+                    priority: 'high'
+                });
+                if(!Page_.ok){
+                    cancel();return
+                };
+                try {
+                    const pagetext = await Page_.text();
+                    const pageparser = new DOMParser();
+                    if(!pagetext||!pageparser){cancel();return};
+                    const pagehtml = pageparser.parseFromString(pagetext,'text/html');
+                    if(!pagehtml){cancel();return};
+                    const mainselector = 'main:has(footer):has(article)';
+                    const scriptselector = 'script:not([src]):last-of-type';
+                    const pageheader = pagehtml.body.querySelector('header');
+                    const pagemain = pagehtml.body.querySelector(mainselector);
+                    const pagescript = pagehtml.querySelector(scriptselector);
+                    if(!pageheader||!pagemain||!pagescript){cancel();return};
+                    dcmnt.body.querySelector('header').innerHTML = pageheader.innerHTML;
+                    dcmnt.body.querySelector(mainselector).innerHTML = pagemain.innerHTML;
+                    (async()=>{eval(pagescript.innerHTML)})();
+                    wndw_.history.pushState({},'',pageurl);
+                    dcmnt.title = pagehtml.title;
+                    wndw_.scrollTo(0, 0);
+                } catch (e) {
+                    cancel();return
+                }
+            })
+        })()
+    };
 
     updateSD(false);updateMinHeight();updateWidth();fetch(searchurl);updateNavRight();
 });

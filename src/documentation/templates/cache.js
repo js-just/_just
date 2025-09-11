@@ -1,5 +1,5 @@
 // service worker
-const CACHE_NAME = 'just-gha-gm-pages';
+const CACHE_NAME = 'just-gha-gm-pages'; /* Just an Ultimate Site Tool - GitHub Action - Generator Mode - pages */
 const URLsToCache = 'REPLACE_PAGES';
 
 const CACHE_ID_URLS = [
