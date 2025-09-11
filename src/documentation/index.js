@@ -1472,7 +1472,7 @@ checkTLD(domain).then(tldvalid => {
     fs.mkdirSync(path.join(websitepath, _justdir, 'static'));
     fs.writeFileSync(path.join(websitepath, _justdir, 'static', 'theme.js'), TJS, template.charset);
     fs.writeFileSync(path.join(websitepath, _justdir, 'static', 'navbar.js'), NJS, charset);
-    const cacheServiceWorkerReplaced = cacheServiceWorkerTemplate.replace("'REPLACE_PAGES'". pages[2]);
+    const cacheServiceWorkerReplaced = cacheServiceWorkerTemplate.replace("'REPLACE_PAGES'", pages[2]);
     const cacheServiceWorker = _just.js.set(
         cacheServiceWorkerReplaced,
         _just.js.get(cacheServiceWorkerReplaced).names,
