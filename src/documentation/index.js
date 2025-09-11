@@ -44,7 +44,6 @@ _just.ssapi = require('../../lib/ssapi.js');
 _just.customCSS = require('./customcss.js');
 _just.MDtoHTML = require('./mdtohtml.js');
 _just.line = require('../../lib/line.js');
-const { match } = require('assert');
 const hljs = require('../third-party/highlight.min.js');
 const supportedlangs = JSON.parse(hljslangs);
 const langaliases = JSON.parse(langs__);
@@ -86,6 +85,8 @@ const config = JSON.parse(fs.readFileSync('just.config.json', template.charset))
 const docsConfig = config.docs_config;
 const debug_ = config.debug || false;
 const debuglog = (text) => {if (debug_) console.log(`${_just.error.prefix}${esc}[0;36mDebug: ${text}`)};
+
+const cacheServiceWorkerTemplate = _just.js.fuck(fs.readFileSync(path.join(__dirname, 'templates', 'cache.js'), 'utf8'));
 
 const configmbl = docsConfig ? docsConfig.mbl || undefined : undefined;
 const JSUsePathInput = docsConfig ? docsConfig.usePathInputInJS || false : false;
@@ -545,6 +546,7 @@ function generateListItems(PageList) {
     }
 
     const pageListJSON = [];
+    const plJSON = [];
     const folders = Object.keys(folderMap);
     const sortedFolders = folders.sort((a, b) => {
         if (a === '' || a === null) return -1;
@@ -555,10 +557,11 @@ function generateListItems(PageList) {
         const pages = folderMap[folderName];
         pages.forEach(page => {;
             pageListJSON.push([page.path, page.title]);
+            plJSON.push(page.path);
         });
     }
 
-    return [buildFolderHTML(folderTree, true), pageListJSON];
+    return [buildFolderHTML(folderTree, true), pageListJSON, plJSON];
 }
 
 
@@ -1173,6 +1176,7 @@ checkTLD(domain).then(tldvalid => {
     const htmlfiles = {};
     const mdlogs = {};
     let mdfilesdone = 0;
+    let pages;
     markdownFiles.forEach(async file => {
         let content = fs.readFileSync(file, charset);
         if (getTitleFromMd(file)) {
@@ -1271,7 +1275,7 @@ checkTLD(domain).then(tldvalid => {
             pagejs += `const ${dataname2[24]}=document.getElementById('${cssid.contents}');const ${dataname2[26]}=()=>{return(${dataname2[24]}.offsetTop+${dataname2[24]}.offsetHeight)>window.innerHeight};window.addEventListener('scroll',()=>{if(${dataname2[26]}()){${dataname2[24]}.scroll({top:document.body.style.getPropertyValue('--${dataname[0].slice(0,-1)}')*20/2,behavior:'smooth'})}});`;
         }
 
-        const pages = generateListItems(addFolderToPageList(pageList.filter(page=>!hidePages.includes(page.path))).sort((a, b) => a.title.localeCompare(b.title)));
+        pages = generateListItems(addFolderToPageList(pageList.filter(page=>!hidePages.includes(page.path))).sort((a, b) => a.title.localeCompare(b.title)));
         const start = pathtourl[file] == "" ? '' : '/';
         const fixpath = HTMLUsePathInput && docsUsePathInput ? `${PATH}/`.repeat(2) : HTMLUsePathInput ? PATH+'/' : '';
         let outHTML = HTML
@@ -1426,6 +1430,7 @@ checkTLD(domain).then(tldvalid => {
             JS.replace('\'REPLACE_PUBLICOUTPUT\'', hideOutput?false:publicOutput)
               .replace('\'REPLACE_SEARCHV2\'', CSSdata[1] || false)
               .replace('\'REPLACE_OUTPUT\'', hideOutput?false:watermark)
+              .replace("REPLACE_SERVICEWORKER", `${dataname2[35]}.js`)
               .replace('let searchurl = "/_just/search";', `let searchurl="${fixpathh ? '/'+fixpathh : JSUsePathInput && docsUsePathInput ? `/${PATH}`.repeat(2) : JSUsePathInput ? '/'+PATH : ''}/_just/${dataname[9]}.json";`), 
             JSdata.names.filter(n => n !== jstrimmedstrvar), 
             dataname2.reverse().slice(0, JSdata.total-1),
@@ -1467,5 +1472,13 @@ checkTLD(domain).then(tldvalid => {
     fs.mkdirSync(path.join(websitepath, _justdir, 'static'));
     fs.writeFileSync(path.join(websitepath, _justdir, 'static', 'theme.js'), TJS, template.charset);
     fs.writeFileSync(path.join(websitepath, _justdir, 'static', 'navbar.js'), NJS, charset);
+    const cacheServiceWorkerReplaced = cacheServiceWorkerTemplate.replace("'REPLACE_PAGES'". pages[2]);
+    const cacheServiceWorker = _just.js.set(
+        cacheServiceWorkerReplaced,
+        _just.js.get(cacheServiceWorkerReplaced).names,
+        charsArray.reverse(),
+        jstrimmedstrvarbasestr
+    )
+    fs.writeFileSync(path.join(websitepath, _justdir, `${dataname2[35]}.js`), cacheServiceWorker, template.charset);
 
 }, tldinvalid => {});

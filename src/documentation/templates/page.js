@@ -292,6 +292,12 @@ const cooldown = (timems, cdvarid) => {
     }
 };
 
+(async()=>{
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('REPLACE_SERVICEWORKER')
+    }
+})();
+
 let searchurl = "/_just/search";
 dcmnt.addEventListener('DOMContentLoaded', () => {
     checkElement([dcmnt.querySelector('.main')]);
