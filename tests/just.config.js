@@ -21,7 +21,7 @@ module.exports = {
         hidePages,
         logoLink: '/',
         env: {
-            test: "This is a test **variable that is specified in the config file**. It can be accessed from any Markdown file by inserting `$${test}$$`."
+            test: "This is a test **variable that is specified in the config file**. It can be accessed from any Markdown file by inserting `\$${test}$$`."
         }
     },
     sitemap: {

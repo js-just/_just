@@ -292,7 +292,8 @@ a#ext:hover:not(:focus):after {
     background-color: var(--cl);
     transition: 150ms;
     z-index: -1;
-    animation: 300ms noline ease-out 1;
+    animation: 0ms noline ease-out 1;
+    pointer-events: none;
 }
 .navbar .links a:hover:not(:focus) {
     opacity: 1;
