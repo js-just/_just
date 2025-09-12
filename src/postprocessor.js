@@ -25,22 +25,62 @@ SOFTWARE.
 */
 
 const _just = {};
-const fs = require('fs');
+const fs = require('fs').promises;
 const path = require('path');
-const config = JSON.parse(fs.readFileSync('just.config.json', 'utf8'));
-const debug_ = config.debug || false;
-const debuglog = (text) => {if (debug_) console.log(`${_just.error.prefix}${esc}[0;36mDebug: ${text}`)};
-const [inputPath, inputFixPath, VERSION] = process.argv.slice(2);
 
-if (config.mode === 'void') {
-    _just.domain = require('../lib/domain.js');
-    const { psl, getTLD, checkTLD, checkdomain, domainregex } = _just.domain;
-    const domain = checkdomain(config.domain, true) || undefined;
-    checkTLD(domain).then(debuglog);
+async function loadConfig() {
+    try {
+        const configData = await fs.readFile('just.config.json', 'utf8');
+        return JSON.parse(configData);
+    } catch (error) {
+        console.error('Error loading config:', error);
+        process.exit(1);
+    }
 }
 
-if (config.sitemap) {
-    require('../lib/postprocessor/sitemap.js').sitemap(config, inputPath, inputFixPath)
-        .then(debuglog)
-        .catch()
+async function main() {
+    const [inputPath, inputFixPath, VERSION] = process.argv.slice(2);
+    
+    const [config, domainModule, sitemapModule] = await Promise.all([
+        loadConfig(),
+        import('../lib/domain.js').catch(() => null),
+        import('../lib/postprocessor/sitemap.js').catch(() => null)
+    ]);
+
+    const debug_ = config.debug || false;
+    const esc = '\x1B';
+    const debuglog = (text) => {
+        if (debug_) console.log(`${_just.error?.prefix || ''}${esc}[0;36mDebug: ${text}`);
+    };
+
+    const tasks = [];
+
+    if (config.mode === 'void' && domainModule) {
+        _just.domain = domainModule;
+        const { checkdomain, checkTLD } = _just.domain;
+        const domain = checkdomain(config.domain, true) || undefined;
+        
+        if (domain) {
+            tasks.push(
+                checkTLD(domain)
+                    .then(debuglog)
+                    .catch(() => {})
+            );
+        }
+    }
+
+    if (config.sitemap && sitemapModule) {
+        tasks.push(
+            sitemapModule.sitemap(config, inputPath, inputFixPath)
+                .then(debuglog)
+                .catch(() => {})
+        );
+    }
+
+    await Promise.allSettled(tasks);
 }
+
+main().catch(error => {
+    console.error(error);
+    process.exit(1);
+});
