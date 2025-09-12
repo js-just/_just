@@ -125,7 +125,14 @@ https://just.is-a.dev
 #### Emoji shortcodes:
 :right: :fog is coming: :left:
 #### Environment variables:
-$${test}
+$${test}$$
+#### Details/Dropdown:
+<details>
+    <summary>Some text here</summary>
+    Some **bold**, *italic*, ***important***, __underlined__, ~~strikethrough~~, ~sub~, ^super^, ==marked==, __***very important***__, __==***extreme important***==__, ~~***not important***~~ text.
+    Some `code`; **`bold`**, *`italic`*, ***`important`***, __`underlined`__, ~~`strikethrough`~~, ~`sub`~, ^`super`^, ==`marked`==, __***`very important`***__, __==***`extreme important`***==__, ~~***`not important`***~~ code.
+</details>
+
 
 _just: prev: /docs/getting-started
 _just: next: /docs/getting-started

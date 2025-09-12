@@ -1161,7 +1161,7 @@ checkTLD(domain).then(tldvalid => {
         }
 
         const headers = [];
-        content = content.replace(/(\\?)\$\${(.*?)}/g, (match, lookbehind, variable) => {
+        content = content.replace(/(\\?)\$\${(.*?)}\$\$/g, (match, lookbehind, variable) => {
             if (!variable || variable === '' || lookbehind || !mdenv || !mdenv[variable]) {
                 return match
             } else {
