@@ -1145,6 +1145,8 @@ checkTLD(domain).then(async tldvalid => {
     const htmlfiles = {};
     const mdlogs = {};
 
+    let pages;
+
     async function processMarkdownFiles() {
         const processingPromises = markdownFiles.map(async (file) => {
             let content = await fs.promises.readFile(file, charset);
@@ -1251,7 +1253,7 @@ checkTLD(domain).then(async tldvalid => {
                 pagejs += `const ${dataname2[24]}=document.getElementById('${cssid.contents}');const ${dataname2[26]}=()=>{return(${dataname2[24]}.offsetTop+${dataname2[24]}.offsetHeight)>window.innerHeight};window.addEventListener('scroll',()=>{if(${dataname2[26]}()){${dataname2[24]}.scroll({top:document.body.style.getPropertyValue('--${dataname[0].slice(0,-1)}')*20/2,behavior:'smooth'})}});`;
             }
 
-            const pages = await generateListItems(addFolderToPageList(pageList.filter(page=>!hidePages.includes(page.path))).sort((a, b) => a.title.localeCompare(b.title)));
+            pages = await generateListItems(addFolderToPageList(pageList.filter(page=>!hidePages.includes(page.path))).sort((a, b) => a.title.localeCompare(b.title)));
             const start = pathtourl[file] == "" ? '' : '/';
             const fixpath = HTMLUsePathInput && docsUsePathInput ? `${PATH}/`.repeat(2) : HTMLUsePathInput ? PATH+'/' : '';
             let outHTML = HTML
