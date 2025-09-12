@@ -1354,18 +1354,28 @@ checkTLD(domain).then(tldvalid => {
         }));
         let codeid = 0;
         debuglog('   C1: '+JSON.stringify(codes1));
-        codes1.forEach(code1 => {
-            const outcode = code1.replace(/\n( {1,})/g, (a,b)=>`<br>${'&nbsp;'.repeat(b.length)}`)
+        codes1.forEach((code1) => {
+            const outcode = code1
+                .replace(/\n( {1,})/g, (a, b) => `<br>${'&nbsp;'.repeat(b.length)}`)
                 .replaceAll('\n', '<br>')
-                .replace(/<\/code><pre>( {1,})/, (a,b)=>`</code><pre>${'&nbsp;'.repeat(b.length)}`)
-                .replace(/<br><\/span>( {1,})/g, (a,b)=>`<br></span>${'&nbsp;'.repeat(b.length)}`);
-            htmloutput = htmloutput.replace(new RegExp('\\$\\{(\\s|){1,}(.*?)(\\s|){1,}\\}\\$\\s'+_just.element(dataname2[19], codeid), 'g'), (match, spaces, fileName) => {
-                return outcode.replace(/<code(.*?)>(<code>.*?<br><\/code>|)(.*?)<\/code>/, `<code$1><code>${fileName}<br></code>$3</code>`)
-            });
+                .replace(/<\/code><pre>( {1,})/, (a, b) => `</code><pre>${'&nbsp;'.repeat(b.length)}`)
+                .replace(/<br><\/span>( {1,})/g, (a, b) => `<br></span>${'&nbsp;'.repeat(b.length)}`);
+            
+            htmloutput = htmloutput.replace(
+                new RegExp(`\\$\\{(\\s|){1,}(.*?)(\\s|){1,}\\}\\$\\s*${_just.element(dataname2[19], codeid)}`, 'g'), 
+                (match, spaces, fileName) => {
+                    return outcode.replace(
+                        /<code(.*?)>(<code>.*?<br><\/code>|)(.*?)<\/code>/, 
+                        `<code$1><code>${fileName}<br></code>$3</code>`
+                    );
+                }
+            );
+            
             htmloutput = htmloutput.replaceAll(
                 _just.element(dataname2[19], codeid), 
                 outcode
             );
+            
             codeid++;
         });
         const updated = _just.customCSS.highlightclasses(CSSHIGHLIGHTtemplate, CSS, htmloutput, dataname[8]);
