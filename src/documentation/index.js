@@ -566,10 +566,10 @@ async function generateListItems(PageList) {
 _just.domain = require('../../lib/domain.js');
 const { psl, getTLD, checkTLD, checkdomain, domainregex } = _just.domain;
 const domain = checkdomain(config.domain, true) || undefined;
-console.log(domain);
 const caughterrors = [];
 checkTLD(domain).then(async tldvalid => {
-    
+    const pageList = await getPageList();
+
     const rootDirB = process.cwd();
     const websitepath = rootDirA !== '.' ? rootDirA : rootDirB;
 
