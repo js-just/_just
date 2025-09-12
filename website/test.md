@@ -22,7 +22,6 @@ In**middle**here
 A line:
 ---
 
-${ test.txt }$
 ```
 Some code here
 ```
@@ -133,26 +132,7 @@ $${test}$$
     Some **bold**, *italic*, ***important***, __underlined__, ~~strikethrough~~, ~sub~, ^super^, ==marked==, __***very important***__, __==***extreme important***==__, ~~***not important***~~ text.
     Some `code`; **`bold`**, *`italic`*, ***`important`***, __`underlined`__, ~~`strikethrough`~~, ~`sub`~, ^`super`^, ==`marked`==, __***`very important`***__, __==***`extreme important`***==__, ~~***`not important`***~~ code.
 </details>
-#### Tabs:
-{% TABS %}
 
-# Tab 1
-Some **bold**, *italic*, ***important***, __underlined__, ~~strikethrough~~, ~sub~, ^super^, ==marked==, __***very important***__, __==***extreme important***==__, ~~***not important***~~ text.
-
-# Tab 2
-Some `code`; **`bold`**, *`italic`*, ***`important`***, __`underlined`__, ~~`strikethrough`~~, ~`sub`~, ^`super`^, ==`marked`==, __***`very important`***__, __==***`extreme important`***==__, ~~***`not important`***~~ code.
-
-{% ENDTABS %}
-#### API Request Element
-{% API GET https://api.just.js.org/v1/latest/ %}
-
-no body/query required
-
-%{ JSON }%
-
-{"success":true,"value":"v0.1.0","message":"Latest version","code":200,"last-updated":{"time":1756491298934,"commit":"456e97ffb47fa9c06dbfca297f6768c0384a9f30","initiator":{"name":"JustDeveloper1","id":176615419}}}
-
-{% ENDAPI %}
 
 _just: prev: /docs/getting-started
 _just: next: /docs/getting-started
