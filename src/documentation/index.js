@@ -337,7 +337,6 @@ async function lhl() {
     });
     lhldone = true;
 }
-lhl();
 
 const charsArray = _just.array.shuffleArray(_just.array.abc());
 
@@ -353,18 +352,19 @@ debuglog(`INFO:${nl}  DNA = DirNameArray${nl}DNA>2 = DirNameArray.length > 2${nl
 const rootDirA = PATH || '.';
 const extensions = ['.md', '.markdown', '.html'];
 
-function getFiles(dir) {
+async function getFiles(dir) {
     let results = [];
-    const list = fs.readdirSync(dir);
-    list.forEach(file => {
+    const list = await fs.promises.readdir(dir);
+    for (const file of list) {
         const filePath = path.join(dir, file);
-        const stat = fs.statSync(filePath);
+        const stat = await fs.promises.stat(filePath);
         if (stat && stat.isDirectory()) {
-            results = results.concat(getFiles(filePath));
+            const subResults = await getFiles(filePath);
+            results = results.concat(subResults);
         } else if (extensions.includes(path.extname(file))) {
             results.push(filePath);
         }
-    });
+    }
     return results;
 }
 
@@ -386,12 +386,12 @@ const pathtourl = {};
 function reporepo() {
     return _just.string.removeLast(`${repo.replace(owner+'/','')}/`.repeat(2), '/')
 }
-function getPageList() {
-    const files = getFiles(rootDirA);
+async function getPageList() {
+    const files = await getFiles(rootDirA);
     const pages = [];
     logs += `${l[0]}PAGE LIST:`;
     let fileID = 0;
-    files.forEach(file => {
+    for (const file of files) {
         fileID++;
         logs += `${l[1]}FILE #${fileID} "${file}":`;
         const extname = path.extname(file);
@@ -421,7 +421,7 @@ function getPageList() {
 
         pages.push({ path: pagePath, title });
         pathtourl[`/home/runner/work/${reporepo()}/${file}`] = pagePath;
-    });
+    }
 
     return pages;
 }
@@ -440,9 +440,8 @@ function addFolderToPageList(pageList) {
         return { ...page, folder: folderName };
     });
 }
-const pageList = getPageList();
 
-function generateListItems(PageList) {
+async function generateListItems(PageList) {
     const folderTree = {};
     const folderMap = {};
     const folders_ = [];
@@ -568,7 +567,7 @@ _just.domain = require('../../lib/domain.js');
 const { psl, getTLD, checkTLD, checkdomain, domainregex } = _just.domain;
 const domain = checkdomain(config.domain, true) || undefined;
 const caughterrors = [];
-checkTLD(domain).then(tldvalid => {
+checkTLD(domain).then(async tldvalid => {
     
     const rootDirB = process.cwd();
     const websitepath = rootDirA !== '.' ? rootDirA : rootDirB;
@@ -898,26 +897,26 @@ checkTLD(domain).then(tldvalid => {
             debuglog(`JUSTC: null`);
         }
     }
-    function findMarkdownFiles(dir) {
+    async function findMarkdownFiles(dir) {
         let results = [];
-        const list = fs.readdirSync(dir);
-        list.forEach(file => {
-            file = path.join(dir, file);
-            const stat = fs.statSync(file);
+        const list = await fs.promises.readdir(dir);
+        for (const file of list) {
+            const filePath = path.join(dir, file);
+            const stat = await fs.promises.stat(filePath);
             if (stat && stat.isDirectory()) {
-                results = results.concat(findMarkdownFiles(file));
-                debuglog('   DF: '+_just.string.runnerPath(file));
-            } else if (file.endsWith('.md') || file.endsWith('.markdown')) {
-                results.push(file);
-                debuglog('   FF: '+_just.string.runnerPath(file));
-                const file_ = file;
-                checkForPageConfig(file_);
+                const subResults = await findMarkdownFiles(filePath);
+                results = results.concat(subResults);
+                debuglog('   DF: '+_just.string.runnerPath(filePath));
+            } else if (filePath.endsWith('.md') || filePath.endsWith('.markdown')) {
+                results.push(filePath);
+                debuglog('   FF: '+_just.string.runnerPath(filePath));
+                checkForPageConfig(filePath);
             }
-        });
+        }
         return usePathInput ? results.filter(f => pathtourl[f] || pathtourl[f] == '') : results;
     }
 
-    const markdownFiles = findMarkdownFiles(rootDirB);
+    const markdownFiles = await findMarkdownFiles(rootDirB);
     debuglog('P2URL: '+JSON.stringify(pathtourl));
     debuglog('  MDF: '+JSON.stringify(markdownFiles));
 
@@ -1144,196 +1143,205 @@ checkTLD(domain).then(tldvalid => {
     }
     const htmlfiles = {};
     const mdlogs = {};
-    let mdfilesdone = 0;
-    let pages;
-    markdownFiles.forEach(async file => {
-        let content = fs.readFileSync(file, charset);
-        if (getTitleFromMd(file)) {
-            content = content.split('\n').slice(1).join('\n');
-        }
-        const fileNameWithoutExt = path.basename(file, path.extname(file));
-        const outFilePath = (ext) => path.join(path.dirname(file), `${fileNameWithoutExt}.${ext}`);
-        fileID++;
-        mdlogs[outFilePath('html')] = `${l[1]}FILE #${fileID} "${_just.string.runnerPath(file)}":${l[2]}INPUT: ${_just.string.fileSize(fs.statSync(file).size)}`;
 
-        if (pathtourl[file] || pathtourl[file] == '') {
-            mdjson[`${JSUsePathInput && docsUsePathInput ? `${PATH}/`.repeat(2) : JSUsePathInput ? PATH+'/' : ''}${pathtourl[file]}`] = toText(content);
-        }
-
-        const headers = [];
-        content = content.replace(/(\\?)\$\${(.*?)}\$\$/g, (match, lookbehind, variable) => {
-            if (!variable || variable === '' || lookbehind || !mdenv || !mdenv[variable]) {
-                return match
-            } else {
-                return mdenv[variable] || match;
+    async function processMarkdownFiles() {
+        const processingPromises = markdownFiles.map(async (file) => {
+            let content = await fs.promises.readFile(file, charset);
+            if (getTitleFromMd(file)) {
+                content = content.split('\n').slice(1).join('\n');
             }
-        });
+            const fileNameWithoutExt = path.basename(file, path.extname(file));
+            const outFilePath = (ext) => path.join(path.dirname(file), `${fileNameWithoutExt}.${ext}`);
+            fileID++;
+            mdlogs[outFilePath('html')] = `${l[1]}FILE #${fileID} "${_just.string.runnerPath(file)}":${l[2]}INPUT: ${_just.string.fileSize((await fs.promises.stat(file)).size)}`;
 
-        let toHTML = content.replace(codeRegExp, (match, lang_, code_) => {
-            if (lang_ !== 'CODEID') {
-                codes0.push([lang_, code_]);
-                codes00.push(code_);
-                return `\`\`\`CODEID\n${codes0.length - 1}\n\`\`\``;
-            } else {
-                return `\`\`\`${lang_}\n${code_}\n\`\`\``;
+            if (pathtourl[file] || pathtourl[file] == '') {
+                mdjson[`${JSUsePathInput && docsUsePathInput ? `${PATH}/`.repeat(2) : JSUsePathInput ? PATH+'/' : ''}${pathtourl[file]}`] = toText(content);
             }
-        }).replace(codeRegExp, (match, lang_, code_) => {
-            if (lang_ == 'CODEID') {
-                const codeid = parseInt(code_.trim(), 10);
-                if (isNaN(codeid) || !codes0[codeid]) {
-                    _just.error.errormessage('0128', `"${codeid}" is not a code id.`).then((errmsg)=>{throw new Error(errmsg)});
+
+            const headers = [];
+            content = content.replace(/(\\?)\$\${(.*?)}\$\$/g, (match, lookbehind, variable) => {
+                if (!variable || variable === '' || lookbehind || !mdenv || !mdenv[variable]) {
+                    return match
+                } else {
+                    return mdenv[variable] || match;
                 }
+            });
+
+            let toHTML = content.replace(codeRegExp, (match, lang_, code_) => {
+                if (lang_ !== 'CODEID') {
+                    codes0.push([lang_, code_]);
+                    codes00.push(code_);
+                    return `\`\`\`CODEID\n${codes0.length - 1}\n\`\`\``;
+                } else {
+                    return `\`\`\`${lang_}\n${code_}\n\`\`\``;
+                }
+            }).replace(codeRegExp, (match, lang_, code_) => {
+                if (lang_ == 'CODEID') {
+                    const codeid = parseInt(code_.trim(), 10);
+                    if (isNaN(codeid) || !codes0[codeid]) {
+                        _just.error.errormessage('0128', `"${codeid}" is not a code id.`).then((errmsg)=>{throw new Error(errmsg)});
+                    }
+                }
+                return `\`\`\`${lang_}\n${code_}\n\`\`\``;
+            });
+            debuglog('   C0: '+JSON.stringify(codes0));
+
+            const preToHTML = addEnd(content, '\n')
+                .replace(/> (.*?)\n\n> (.*?)\n/g, `> $1\n\n> ${_just.element(dataname[7])}$2\n`)
+                .replaceAll('\n>\n> ', '\n> ');
+            toHTML = hbuoclpMDtoHTML(
+                preToHTML
+                    .replace(new RegExp(`(?<=^|\n)([>|> ]{2,${mbl}}) `, 'g'), (match, bqs, offset) => notFencedCodeBlock(preToHTML, offset) ? `\n${bqs.replaceAll(' ', '').split('').join(' ').trim()} ` : match),
+                mbl, file
+            ).replace(/<(h1|h2|h3|h4)>(.*?)<\/\1>/g, (match, p1, p2) => {
+                return `<${p1} id="${uniqueName(encodeURIComponent(p2))}">${p2}</${p1}>`;
+            }).replace(/<(h1|h2|h3|h4) id="([^"]+)">(.*?)<\/\1>/g, (match, p1, p2, p3) => {headers.push(p2);return`<${p1} id="${p2}">${p3}</${p1}>`});
+
+            const H1 = [...toHTML.matchAll(/<(h1|h2) id="([^"]+)">(.*?)<\/\1>/g)];
+            const HT = [...toHTML.matchAll(/<(h3|h4) id="([^"]+)">(.*?)<\/\1>/g)];
+
+            const h1 = H1.map(match => [match[3], match[2]]);
+            const hT = HT.map(match => [match[3], match[2]]);
+
+            const headermap = new Map(headers.map((id, index) => [id, index]));
+            const contents = [
+                ...h1.map(item => ([ ...item, false ])),
+                ...hT.map(item => ([ ...item, true ]))
+            ];
+            contents.sort((a, b) => {
+                const indexA = headermap.get(a[1]) ?? Infinity;
+                const indexB = headermap.get(b[1]) ?? Infinity;
+                return indexA - indexB;
+            });
+            let pageHeaders = '';
+            let pageHeaderID= 0;
+            const insertclass = (hd2, hID) => {
+                const classoutput = [];
+                if (hd2) {
+                    classoutput.push(cssclass.secondary);
+                }
+                if (hID === 0) {
+                    classoutput.push(cssclass.chc)
+                }
+                return classoutput.join(' ');
             }
-            return `\`\`\`${lang_}\n${code_}\n\`\`\``;
-        });
-        debuglog('   C0: '+JSON.stringify(codes0));
-
-        const preToHTML = addEnd(content, '\n')
-            .replace(/> (.*?)\n\n> (.*?)\n/g, `> $1\n\n> ${_just.element(dataname[7])}$2\n`)
-            .replaceAll('\n>\n> ', '\n> ');
-        toHTML = hbuoclpMDtoHTML(
-            preToHTML
-                .replace(new RegExp(`(?<=^|\n)([>|> ]{2,${mbl}}) `, 'g'), (match, bqs, offset) => notFencedCodeBlock(preToHTML, offset) ? `\n${bqs.replaceAll(' ', '').split('').join(' ').trim()} ` : match),
-            mbl, file
-        ).replace(/<(h1|h2|h3|h4)>(.*?)<\/\1>/g, (match, p1, p2) => {
-            return `<${p1} id="${uniqueName(encodeURIComponent(p2))}">${p2}</${p1}>`;
-        }).replace(/<(h1|h2|h3|h4) id="([^"]+)">(.*?)<\/\1>/g, (match, p1, p2, p3) => {headers.push(p2);return`<${p1} id="${p2}">${p3}</${p1}>`});
-
-        const H1 = [...toHTML.matchAll(/<(h1|h2) id="([^"]+)">(.*?)<\/\1>/g)];
-        const HT = [...toHTML.matchAll(/<(h3|h4) id="([^"]+)">(.*?)<\/\1>/g)];
-
-        const h1 = H1.map(match => [match[3], match[2]]);
-        const hT = HT.map(match => [match[3], match[2]]);
-
-        const headermap = new Map(headers.map((id, index) => [id, index]));
-        const contents = [
-            ...h1.map(item => ([ ...item, false ])),
-            ...hT.map(item => ([ ...item, true ]))
-        ];
-        contents.sort((a, b) => {
-            const indexA = headermap.get(a[1]) ?? Infinity;
-            const indexB = headermap.get(b[1]) ?? Infinity;
-            return indexA - indexB;
-        });
-        let pageHeaders = '';
-        let pageHeaderID= 0;
-        const insertclass = (hd2, hID) => {
-            const classoutput = [];
-            if (hd2) {
-                classoutput.push(cssclass.secondary);
+            for (const [idk, headerdata] of Object.entries(contents)) {
+                const classoutput = insertclass(headerdata[2], pageHeaderID);
+                pageHeaders += `<li${ classoutput.length > 0 ? ` class="${classoutput}"` : '' } id="${cssid.pageheaders}${pageHeaderID++}">
+                                    <a href="#${headerdata[1]}">
+                                        ${span(_just.string.toText(headerdata[0]))}
+                                    </a>
+                                </li>`;
             }
-            if (hID === 0) {
-                classoutput.push(cssclass.chc)
+
+            const idk_ = toHTML.endsWith('</p>');
+            const prevnext = _just.prevnext.get(idk_ ? _just.string.removeLast(toHTML, '</p>') : toHTML);
+            toHTML = idk_ ? prevnext[0].replace(_just.prevnext.regex, '') + '</p>' : prevnext[0].replace(_just.prevnext.regex, '');
+            let pagejs = '';
+            const btnjs = (id, href) => `document.getElementById('${id}').addEventListener("click",()=>{const ${id.replace('-','_')}=document.createElement('a');${id.replace('-','_')}.href='/${href}';${id.replace('-','_')}.target='_self';${id.replace('-','_')}.style.display='none';document.body.appendChild(${id.replace('-','_')});${id.replace('-','_')}.click();document.body.removeChild(${id.replace('-','_')})});`;
+            if (prevnext[1].prev) {
+                pagejs = btnjs(filename.js, prevnext[1].prev)
             }
-            return classoutput.join(' ');
-        }
-        for (const [idk, headerdata] of Object.entries(contents)) {
-            const classoutput = insertclass(headerdata[2], pageHeaderID);
-            pageHeaders += `<li${ classoutput.length > 0 ? ` class="${classoutput}"` : '' } id="${cssid.pageheaders}${pageHeaderID++}">
-                                <a href="#${headerdata[1]}">
-                                    ${span(_just.string.toText(headerdata[0]))}
-                                </a>
-                            </li>`;
-        }
+            if (prevnext[1].next) {
+                pagejs += btnjs(filename.css, prevnext[1].next)
+            }
+            if (pageHeaders.length > 0) {
+                pagejs += `const ${dataname2[24]}=document.getElementById('${cssid.contents}');const ${dataname2[26]}=()=>{return(${dataname2[24]}.offsetTop+${dataname2[24]}.offsetHeight)>window.innerHeight};window.addEventListener('scroll',()=>{if(${dataname2[26]}()){${dataname2[24]}.scroll({top:document.body.style.getPropertyValue('--${dataname[0].slice(0,-1)}')*20/2,behavior:'smooth'})}});`;
+            }
 
-        const idk_ = toHTML.endsWith('</p>');
-        const prevnext = _just.prevnext.get(idk_ ? _just.string.removeLast(toHTML, '</p>') : toHTML);
-        toHTML = idk_ ? prevnext[0].replace(_just.prevnext.regex, '') + '</p>' : prevnext[0].replace(_just.prevnext.regex, '');
-        let pagejs = '';
-        const btnjs = (id, href) => `document.getElementById('${id}').addEventListener("click",()=>{const ${id.replace('-','_')}=document.createElement('a');${id.replace('-','_')}.href='/${href}';${id.replace('-','_')}.target='_self';${id.replace('-','_')}.style.display='none';document.body.appendChild(${id.replace('-','_')});${id.replace('-','_')}.click();document.body.removeChild(${id.replace('-','_')})});`;
-        if (prevnext[1].prev) {
-            pagejs = btnjs(filename.js, prevnext[1].prev)
-        }
-        if (prevnext[1].next) {
-            pagejs += btnjs(filename.css, prevnext[1].next)
-        }
-        if (pageHeaders.length > 0) {
-            pagejs += `const ${dataname2[24]}=document.getElementById('${cssid.contents}');const ${dataname2[26]}=()=>{return(${dataname2[24]}.offsetTop+${dataname2[24]}.offsetHeight)>window.innerHeight};window.addEventListener('scroll',()=>{if(${dataname2[26]}()){${dataname2[24]}.scroll({top:document.body.style.getPropertyValue('--${dataname[0].slice(0,-1)}')*20/2,behavior:'smooth'})}});`;
-        }
+            const pages = generateListItems(addFolderToPageList(pageList.filter(page=>!hidePages.includes(page.path))).sort((a, b) => a.title.localeCompare(b.title)));
+            const start = pathtourl[file] == "" ? '' : '/';
+            const fixpath = HTMLUsePathInput && docsUsePathInput ? `${PATH}/`.repeat(2) : HTMLUsePathInput ? PATH+'/' : '';
+            let outHTML = HTML
+                .replace('<html>', `<html${htmlLang}>`)
+                .replaceAll('="/_just/', fixpathh ? `="/${fixpathh}/_just/` : `="${start}${fixpath}_just/`)
+                .replace("content: '_just';", `content: '_just ${_just.version}';`)
+                .replace('REPLACE_SCRIPT', `__just_${dataname2[11]}={${charsArray[0]}:${JSON.stringify(pages[1])},${charsArray[1]}:[]};${pagejs ? `document.addEventListener('DOMContentLoaded',()=>{${pagejs}});` : ''}${
+                    toHTML.includes('<div data-link="') ? 
+                    _just.js.set(
+                        EMBEDJS,
+                        _just.js.get(EMBEDJS).names.filter(n => n !== jstrimmedstrvar),
+                        charsArray,
+                        jstrimmedstrvarbasestr
+                    )
+                        .replace('"REPLACE_EXT"', `"${cssid.ext}"`)
+                    : ''
+                }`)
+                .replaceAll('REPLACE_CSS', filename.css)
+                .replaceAll('REPLACE_JS', filename.js)
+                .replace('REPLACE_CHARSET', charset)
+                .replace('REPLACE_VIEWPORT', viewport)
+                .replace('REPLACE_TITLE', metatitle)
+                .replace('REPLACE_DATA', htmlhead(pathtourl[file], fixpath))
+                .replace('REPLACE_CUSTOM', insertHTMLinHead)
+                .replace('REPLACE_LOGO', logo)
+                .replace('REPLACE_NAME', filterText(name))
+                .replace('REPLACE_PAGES', filterText(pages[0]))
+                .replace('REPLACE_CONTENTS', `<div id="${cssid.contents}">${pageHeaders.length > 0 ? `<span>On this page</span><ul id="${cssid.pageheaders}">${filterText(pageHeaders)}</ul><div class="${cssclass.slider}" style="margin-top:-50px;"></div>` : ''}</div>`)
+                .replace('REPLACE_FOOTER', docsConfig && docsConfig.footer ? span(filterText(footer)) : '')
+                .replace('REPLACE_LINKS', htmlnav())
+                .replace('REPLACE_BUTTONS', htmlnav(1));
 
-        pages = generateListItems(addFolderToPageList(pageList.filter(page=>!hidePages.includes(page.path))).sort((a, b) => a.title.localeCompare(b.title)));
-        const start = pathtourl[file] == "" ? '' : '/';
-        const fixpath = HTMLUsePathInput && docsUsePathInput ? `${PATH}/`.repeat(2) : HTMLUsePathInput ? PATH+'/' : '';
-        let outHTML = HTML
-            .replace('<html>', `<html${htmlLang}>`)
-            .replaceAll('="/_just/', fixpathh ? `="/${fixpathh}/_just/` : `="${start}${fixpath}_just/`)
-            .replace("content: '_just';", `content: '_just ${_just.version}';`)
-            .replace('REPLACE_SCRIPT', `__just_${dataname2[11]}={${charsArray[0]}:${JSON.stringify(pages[1])},${charsArray[1]}:[]};${pagejs ? `document.addEventListener('DOMContentLoaded',()=>{${pagejs}});` : ''}${
-                toHTML.includes('<div data-link="') ? 
-                _just.js.set(
-                    EMBEDJS,
-                    _just.js.get(EMBEDJS).names.filter(n => n !== jstrimmedstrvar),
-                    charsArray,
-                    jstrimmedstrvarbasestr
-                )
-                    .replace('"REPLACE_EXT"', `"${cssid.ext}"`)
-                : ''
-            }`)
-            .replaceAll('REPLACE_CSS', filename.css)
-            .replaceAll('REPLACE_JS', filename.js)
-            .replace('REPLACE_CHARSET', charset)
-            .replace('REPLACE_VIEWPORT', viewport)
-            .replace('REPLACE_TITLE', metatitle)
-            .replace('REPLACE_DATA', htmlhead(pathtourl[file], fixpath))
-            .replace('REPLACE_CUSTOM', insertHTMLinHead)
-            .replace('REPLACE_LOGO', logo)
-            .replace('REPLACE_NAME', filterText(name))
-            .replace('REPLACE_PAGES', filterText(pages[0]))
-            .replace('REPLACE_CONTENTS', `<div id="${cssid.contents}">${pageHeaders.length > 0 ? `<span>On this page</span><ul id="${cssid.pageheaders}">${filterText(pageHeaders)}</ul><div class="${cssclass.slider}" style="margin-top:-50px;"></div>` : ''}</div>`)
-            .replace('REPLACE_FOOTER', docsConfig && docsConfig.footer ? span(filterText(footer)) : '')
-            .replace('REPLACE_LINKS', htmlnav())
-            .replace('REPLACE_BUTTONS', htmlnav(1));
-
-        if (debug_) fs.writeFileSync(outFilePath('txt'), toHTML, charset);
-        htmlfiles[outFilePath('html')] = outHTML.replace('REPLACE_PREVNEXT', _just.prevnext.html(prevnext[1], cssclass.next, cssclass.next1, cssclass.next2, filename.js, filename.css, pages[1])).replace(
-                'REPLACE_CONTENT',
-                _just.string.removeLast(
-                    addEnd(
-                        toHTML
-                            .replaceAll('\n', '<br>')
-                            .replaceAll('</h1><br>', '</h1>')
-                            .replaceAll('</h2><br>', '</h2>')
-                            .replaceAll('</h3><br>', '</h3>')
-                            .replaceAll('</h4><br>', '</h4>')
-                            .replaceAll('</h5><br>', '</h5>')
-                            .replaceAll('</h6><br>', '</h6>')
-                            .replaceAll('</ol><br>', '</ol>')
-                            .replaceAll('</ul><br>', '</ul>')
-                            .replace(/<blockquote><br>((?:(?!<h[1-6][^>]*>.*?<\/h[1-6]>).)*?)<\/blockquote>/g, '<blockquote><blockquote>$1</blockquote></blockquote>')
-                            .replace(/<blockquote><br>> ((?:(?!<h[1-6][^>]*>.*?<\/h[1-6]>).)*?)<\/blockquote>/g, '<blockquote><blockquote><blockquote>$1</blockquote></blockquote></blockquote>')
-                            .replaceAll('</blockquote><br>', '</blockquote>')
-                            .replaceAll('<br><blockquote', '<blockquote')
-                            .replaceAll('</blockquote><blockquote>', '<br>')
-                            .replaceAll('<br><blockquote><br>', '<blockquote>')
-                            .replace(/<blockquote>> ((?:(?!<h[1-6][^>]*>.*?<\/h[1-6]>).)*?)<\/blockquote>/g, '<blockquote><blockquote>$1</blockquote></blockquote>')
-                            .replaceAll('</blockquote></blockquote><blockquote><blockquote>', '<br>')
-                            .replaceAll('</blockquote><blockquote>', '<br>')
-                            .replace(/<blockquote>((?:(?!<h[1-6][^>]*>.*?<\/h[1-6]>).)*?)<br>> ((?:(?!<h[1-6][^>]*>.*?<\/h[1-6]>).)*?)<br>((?:(?!<h[1-6][^>]*>.*?<\/h[1-6]>).)*?)<\/blockquote>/g, '<blockquote>$1<blockquote>$2</blockquote><br>$3</blockquote>')
-                            .replaceAll('</blockquote><br>', '</blockquote>')
-                            .replace(/<\/blockquote>> ((?:(?!<h[1-6][^>]*>.*?<\/h[1-6]>).)*?)<blockquote>/g, '</blockquote><blockquote>$1</blockquote><blockquote>')
-                            .replaceAll('</blockquote><blockquote>', '<br>')
-                            .replaceAll(_just.element(dataname[7]), '</blockquote><blockquote>')
-                            .replaceAll('</blockquote><br><blockquote>', '<br>')
-                            .replaceAll('<blockquote></blockquote>', '')
-                            .replace(/<blockquote>\[!(NOTE|TIP|IMPORTANT|WARNING|CAUTION)\]/g, (match, blockquote) => `<blockquote class="${blockquoteToCSSclass[blockquote]}">`),
+            if (debug_) await fs.promises.writeFile(outFilePath('txt'), toHTML, charset);
+            htmlfiles[outFilePath('html')] = outHTML.replace('REPLACE_PREVNEXT', _just.prevnext.html(prevnext[1], cssclass.next, cssclass.next1, cssclass.next2, filename.js, filename.css, pages[1])).replace(
+                    'REPLACE_CONTENT',
+                    _just.string.removeLast(
+                        addEnd(
+                            toHTML
+                                .replaceAll('\n', '<br>')
+                                .replaceAll('</h1><br>', '</h1>')
+                                .replaceAll('</h2><br>', '</h2>')
+                                .replaceAll('</h3><br>', '</h3>')
+                                .replaceAll('</h4><br>', '</h4>')
+                                .replaceAll('</h5><br>', '</h5>')
+                                .replaceAll('</h6><br>', '</h6>')
+                                .replaceAll('</ol><br>', '</ol>')
+                                .replaceAll('</ul><br>', '</ul>')
+                                .replace(/<blockquote><br>((?:(?!<h[1-6][^>]*>.*?<\/h[1-6]>).)*?)<\/blockquote>/g, '<blockquote><blockquote>$1</blockquote></blockquote>')
+                                .replace(/<blockquote><br>> ((?:(?!<h[1-6][^>]*>.*?<\/h[1-6]>).)*?)<\/blockquote>/g, '<blockquote><blockquote><blockquote>$1</blockquote></blockquote></blockquote>')
+                                .replaceAll('</blockquote><br>', '</blockquote>')
+                                .replaceAll('<br><blockquote', '<blockquote')
+                                .replaceAll('</blockquote><blockquote>', '<br>')
+                                .replaceAll('<br><blockquote><br>', '<blockquote>')
+                                .replace(/<blockquote>> ((?:(?!<h[1-6][^>]*>.*?<\/h[1-6]>).)*?)<\/blockquote>/g, '<blockquote><blockquote>$1</blockquote></blockquote>')
+                                .replaceAll('</blockquote></blockquote><blockquote><blockquote>', '<br>')
+                                .replaceAll('</blockquote><blockquote>', '<br>')
+                                .replace(/<blockquote>((?:(?!<h[1-6][^>]*>.*?<\/h[1-6]>).)*?)<br>> ((?:(?!<h[1-6][^>]*>.*?<\/h[1-6]>).)*?)<br>((?:(?!<h[1-6][^>]*>.*?<\/h[1-6]>).)*?)<\/blockquote>/g, '<blockquote>$1<blockquote>$2</blockquote><br>$3</blockquote>')
+                                .replaceAll('</blockquote><br>', '</blockquote>')
+                                .replace(/<\/blockquote>> ((?:(?!<h[1-6][^>]*>.*?<\/h[1-6]>).)*?)<blockquote>/g, '</blockquote><blockquote>$1</blockquote><blockquote>')
+                                .replaceAll('</blockquote><blockquote>', '<br>')
+                                .replaceAll(_just.element(dataname[7]), '</blockquote><blockquote>')
+                                .replaceAll('</blockquote><br><blockquote>', '<br>')
+                                .replaceAll('<blockquote></blockquote>', '')
+                                .replace(/<blockquote>\[!(NOTE|TIP|IMPORTANT|WARNING|CAUTION)\]/g, (match, blockquote) => `<blockquote class="${blockquoteToCSSclass[blockquote]}">`),
+                            '<br>'
+                        ),
                         '<br>'
-                    ),
-                    '<br>'
-                ).replace(/<blockquote>((?:(?!<h[1-6][^>]*>.*?<\/h[1-6]>).)*?)<br><br><blockquote>/, '<blockquote>$1<blockquote>')
-                .replaceAll('</blockquote><br><blockquote>', '<br>')
-                .replace(/<br><blockquote><blockquote>((?:(?!<h[1-6][^>]*>.*?<\/h[1-6]>).)*?)<\/blockquote><\/blockquote>/g, '<blockquote>$1</blockquote>')
-                //.replaceAll(`${_just.element(dataname[5])}<h1 id=`, `<h1 class="${dataname[5]}" id=`)
-                //.replaceAll(`${_just.element(dataname[6])}<h2 id=`, `<h2 class="${dataname[6]}" id=`)
-                .replace(new RegExp(`(?<=<code class="${cssclass.code}"><code>(${getlangs()})</code>)(.*?)(?=</code>)`, 'g'), (match, lng, cde) => cde.replace(/<br><br>/g, '<br>')),
-            )
-        mdfilesdone++;
-    });
+                    ).replace(/<blockquote>((?:(?!<h[1-6][^>]*>.*?<\/h[1-6]>).)*?)<br><br><blockquote>/, '<blockquote>$1<blockquote>')
+                    .replaceAll('</blockquote><br><blockquote>', '<br>')
+                    .replace(/<br><blockquote><blockquote>((?:(?!<h[1-6][^>]*>.*?<\/h[1-6]>).)*?)<\/blockquote><\/blockquote>/g, '<blockquote>$1</blockquote>')
+                    .replace(new RegExp(`(?<=<code class="${cssclass.code}"><code>(${getlangs()})</code>)(.*?)(?=</code>)`, 'g'), (match, lng, cde) => cde.replace(/<br><br>/g, '<br>')),
+                )
+            
+            const outputlogs = `OUTPUT: ${_just.string.runnerPath(outFilePath('html'))} (${_just.string.fileSize((await fs.promises.stat(outFilePath('html'))).size)})`;
+            logs += mdlogs[outFilePath('html')] ? `${mdlogs[outFilePath('html')]}${l[2]}${outputlogs}` : `${l[1]}ERROR:${l[2]}MESSAGE: NO LOGS FOUND FOR FILE ${_just.string.runnerPath(outFilePath('html'))}${l[2]}FILE ${outputlogs}`;
+            
+            return outFilePath('html');
+        });
 
-    while (mdfilesdone < markdownFiles.length || !lhldone) {};
+        return Promise.all(processingPromises);
+    }
+
+    const [lhlResult, processedFiles] = await Promise.all([
+        lhl(),
+        processMarkdownFiles()
+    ]);
 
     const CSSdata = _just.customCSS.customcss(CSS, customCSS == 'false' ? undefined : customCSS, CSSHIGHLIGHT, insertedcode, CSSBUTTONS, CSSSEARCH);
     CSS = CSSdata[0];
-    for (const [pathh, htmlcontent] of Object.entries(htmlfiles)) {
+    
+    const writePromises = Object.entries(htmlfiles).map(async ([pathh, htmlcontent]) => {
         const fixlinkregex = (char) => new RegExp(`<a href="(.*?)" target="_blank" id="${cssid.ext}"(.*?)>(.*?)</a>${char}`, 'g');
         let htmloutput = htmlcontent
             .replace(fixlinkregex(' '), (match, href_, title_, text_) => `<a href="${href_}" target="_blank" id="${cssid.ext}"${title_} class="${cssclass.linkspace}">${text_}</a>`)
@@ -1374,40 +1382,35 @@ checkTLD(domain).then(tldvalid => {
             .replace(/<details>([^<^>]+?)<summary>/g, `${detSumSpan}$1`)
             .replace(/<\/summary>(<br>){1,}/g, '</summary>')
             .replace(/<\/details>(<br>){1,}/g, '</details>');
-        fs.writeFileSync(
-            pathh,
-            htmloutput,
-            charset
-        );
-        const outputlogs = `OUTPUT: ${_just.string.runnerPath(pathh)} (${_just.string.fileSize(fs.statSync(pathh).size)})`;
-        logs += mdlogs[pathh] ? `${mdlogs[pathh]}${l[2]}${outputlogs}` : `${l[1]}ERROR:${l[2]}MESSAGE: NO LOGS FOUND FOR FILE ${_just.string.runnerPath(pathh)}${l[2]}FILE ${outputlogs}`;
-    }
+        
+        await fs.promises.writeFile(pathh, htmloutput, charset);
+    });
+
+    await Promise.all(writePromises);
+
     CSS = CSS.replace(new RegExp(`.${dataname[8]}6ibute`, 'g'), `.${dataname[8]}32`).replace("content: '_just' !important;", `content: '_just ${_just.version}' !important;`);
     
     const _justdir = docsUsePathInput ? `${PATH}/_just`: '_just';
     const _just_datadir = docsUsePathInput ? `${PATH}/_just_data`: '_just_data';
     if(docsUsePathInput && !fs.existsSync(path.join(websitepath, PATH))) {
-        new Promise ((resolve, reject) => {
-            fs.mkdirSync(path.join(websitepath, PATH));
-            resolve();
-        }).catch();
+        await fs.promises.mkdir(path.join(websitepath, PATH), { recursive: true });
     }
-    new Promise ((resolve, reject) => {
-        if (!fs.existsSync(path.join(websitepath, _justdir))) {fs.mkdirSync(path.join(websitepath, _justdir))};
-        if (!fs.existsSync(path.join(websitepath, _just_datadir))) {fs.mkdirSync(path.join(websitepath, _just_datadir))};
-        resolve();
-    }).catch();
+    
+    await Promise.all([
+        fs.promises.mkdir(path.join(websitepath, _justdir), { recursive: true }),
+        fs.promises.mkdir(path.join(websitepath, _just_datadir), { recursive: true })
+    ]);
 
     logs += linklogs; logs += buttonlogs;
     logs += `${l[0]}USED NAMES:${l[1]}"${uniqueNames_.join('", "')}"${l[0]}DATA NAMES:${l[1]}"${dataname.join('", "')}"${l[0]}OTHER:${l[1]}JSTRIMMEDVAR:${l[2]}NAME: ${jstrimmedstrvar == null ? '(FAILED. WILL BE REPLACED WITH ID)' : `"${jstrimmedstrvar}"`}${l[2]}CUSTOM BASE: ${jstrimmedstrvarbasestr.length}${l[2]}CUSTOM BASE STRING: "${jstrimmedstrvarbasestr}"`;
     console.log(logs);
-    fs.writeFileSync(path.join(websitepath, _justdir, `${filename.css}.css`), CSS, template.charset);
+    await fs.promises.writeFile(path.join(websitepath, _justdir, `${filename.css}.css`), CSS, template.charset);
 
     const cacheServiceWorkerName = dataname2[35];
 
     const JSdata = _just.js.get(JS);
     const JSerr = `if(!/\\(03\\d{2}\\)$/.test(e_.message)){document.body.classList.add('${cssclass.error}');document.documentElement.style.setProperty('--${cssvar.edata}',\`'\${e_.message} (0300)'\`);console.warn(e_);throw new Error('${_just.errorprefix} 0300. For more information, visit https://just.is-a.dev/errors/0300')}`;
-    fs.writeFileSync(
+    await fs.promises.writeFile(
         path.join(websitepath, _justdir, `${filename.js}.js`),
         "try{"+_just.js.set(
             JS.replace('\'REPLACE_PUBLICOUTPUT\'', hideOutput?false:publicOutput)
@@ -1428,7 +1431,7 @@ checkTLD(domain).then(tldvalid => {
         const data1 = response1 ? await response1.json() || undefined : undefined;
         const response2 = await fetch(`${protocol}://${domain}/_just/${data1.json}.json`).catch() || undefined;
         const data2 = response2 ? await response2.json() || undefined : undefined;
-        if (data1 && data2) fs.writeFileSync(path.join(websitepath, _justdir, `${data1.json}.json`), JSON.stringify(data2));
+        if (data1 && data2) await fs.promises.writeFile(path.join(websitepath, _justdir, `${data1.json}.json`), JSON.stringify(data2));
     }
     if (domain) {
         fetchjson('http').catch((ee)=>{
@@ -1443,18 +1446,18 @@ checkTLD(domain).then(tldvalid => {
     if (debug_) console.log(errorlogs + configlogs);
     const outlogs = hideOutput?'':logs+errorlogs+configlogs;
     if (debug_) fs.writeFileSync(path.join(websitepath, _just_datadir, 'output.txt'), outlogs, template.charset);
-    fs.writeFileSync(path.join(websitepath, _justdir, `${dataname[9]}.json`), JSON.stringify(mdjson), template.charset);
-    fs.writeFileSync(path.join(websitepath, _justdir, 'index.json'), JSON.stringify({
+    await fs.promises.writeFile(path.join(websitepath, _justdir, `${dataname[9]}.json`), JSON.stringify(mdjson), template.charset);
+    await fs.promises.writeFile(path.join(websitepath, _justdir, 'index.json'), JSON.stringify({
         "js": filename.js,
         "css": filename.css,
         "json": dataname[9]
     }), template.charset);
-    fs.writeFileSync(path.join(websitepath, '.', '.nojekyll'), '', template.charset);
+    await fs.promises.writeFile(path.join(websitepath, '.', '.nojekyll'), '', template.charset);
 
     NJS = NJS.replace("'REPLACE_NAVBAR'", `'<header><nav class="${cssclass.navbar}"><div class="${cssclass.heading}">${logo}${filterText(name)}</div><div class="${cssclass.links}">${htmlnav()}</div><div class="${cssclass.buttons}">${htmlnav(1)}</div></nav></header>'`).replace("'REPLACE_BUTTONS';", `dcmnt.addEventListener('DOMContentLoaded',()=>{${btnsjs}});`);
-    fs.mkdirSync(path.join(websitepath, _justdir, 'static'));
-    fs.writeFileSync(path.join(websitepath, _justdir, 'static', 'theme.js'), TJS, template.charset);
-    fs.writeFileSync(path.join(websitepath, _justdir, 'static', 'navbar.js'), NJS, charset);
+    await fs.promises.mkdir(path.join(websitepath, _justdir, 'static'));
+    await fs.promises.writeFile(path.join(websitepath, _justdir, 'static', 'theme.js'), TJS, template.charset);
+    await fs.promises.writeFile(path.join(websitepath, _justdir, 'static', 'navbar.js'), NJS, charset);
     const cacheServiceWorkerURLs = pages[2];
     cacheServiceWorkerURLs.push(`${fixpathh ? '/'+fixpathh : JSUsePathInput && docsUsePathInput ? `/${PATH}`.repeat(2) : JSUsePathInput ? '/'+PATH : ''}/_just/${filename.js}`,`${fixpathh ? '/'+fixpathh : JSUsePathInput && docsUsePathInput ? `/${PATH}`.repeat(2) : JSUsePathInput ? '/'+PATH : ''}/_just/${filename.css}`);
     const cacheServiceWorkerReplaced = cacheServiceWorkerTemplate.replace("'REPLACE_PAGES'", JSON.stringify(cacheServiceWorkerURLs));
@@ -1464,6 +1467,9 @@ checkTLD(domain).then(tldvalid => {
         charsArray.reverse(),
         jstrimmedstrvarbasestr
     )
-    fs.writeFileSync(path.join(websitepath, _justdir, `${cacheServiceWorkerName}.js`), cacheServiceWorker, template.charset);
+    await fs.promises.writeFile(path.join(websitepath, _justdir, `${cacheServiceWorkerName}.js`), cacheServiceWorker, template.charset);
 
-}, tldinvalid => {});
+}).catch(error => {
+    console.log(error.startsWith('::') ? error : '::error::'+error);
+    process.exit(1);
+});
