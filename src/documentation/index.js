@@ -946,6 +946,7 @@ checkTLD(domain).then(tldvalid => {
 
     const links = docsConfig ? docsConfig.links || [] : [];
     const buttons = docsConfig ? docsConfig.buttons || [] : [];
+    const mdenv = docsConfig ? docsConfig.env || {} : {};
 
     const insertHTMLinHead = docsConfig ? docsConfig.insertInHTMLHead || '' : '';
     const hidePages = docsConfig ? docsConfig.hidePages || [] : [];
@@ -1160,6 +1161,13 @@ checkTLD(domain).then(tldvalid => {
         }
 
         const headers = [];
+        content = content.replace(/(\\?)\$\${(.*?)}/g, (match, lookbehind, variable) => {
+            if (!variable || variable === '' || lookbehind || !mdenv || !mdenv[variable]) {
+                return match
+            } else {
+                return mdenv[variable] || match;
+            }
+        });
 
         let toHTML = content.replace(codeRegExp, (match, lang_, code_) => {
             if (lang_ !== 'CODEID') {

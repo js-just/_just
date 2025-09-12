@@ -19,7 +19,10 @@ module.exports = {
         footer: '<span onclick="javascript:window.open(\'https://github.com/js-just/_just/blob/main/LICENSE\',\'\_blank\')">Copyright &copy; 2025 &#171;<a href="https://juststudio.is-a.dev/" target="_blank">JustStudio.</a>&#187;</span>',
         keywords: 'Just, an, Ultimate, Site, Tool, Static, Website, GitHub, Action, Postprocessor, Compressor, Generator, Redirector, Compress, Markdown, Redirect, Generate, Documentation, Docs',
         hidePages,
-        logoLink: '/'
+        logoLink: '/',
+        env: {
+            test: "This is a test **variable that is specified in the config file**. It can be accessed from any Markdown file by inserting `${test}`."
+        }
     },
     sitemap: {
         generateSitemap: true,

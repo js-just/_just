@@ -124,6 +124,8 @@ https://just.is-a.dev
 | Paragraph   | Text        | And more      |
 #### Emoji shortcodes:
 :right: :fog is coming: :left:
+#### Environment variables:
+$${test}
 
 _just: prev: /docs/getting-started
 _just: next: /docs/getting-started
