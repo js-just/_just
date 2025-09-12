@@ -285,7 +285,7 @@ compile_assets && \
 if [[ "$PREPROCESSED" == "y" ]]; then
     TIME5=$(current_time_ms) && \
     PRESECONDS=$(calculate_duration "$TIME4" "$TIME5") && \
-    echo -e "$msg16$_BLUE$PRESECONDS$_RESET"
+    echo -e "$msg16 $_BLUE$PRESECONDS$_RESET"
 fi
 
 if [[ "$TYPE" != "postprocessor" && "$TYPE" != "redirector" && "$TYPE" != "compressor" && "$TYPE" != "generator" && "$TYPE" != "void" ]]; then
@@ -439,4 +439,4 @@ TIME6=$(current_time_ms) && \
 node $GITHUB_ACTION_PATH/src/postprocessor.js "$INPUT_PATH" "$INPUT_FIXPATH" "$VERSION" && \
 TIME7=$(current_time_ms) && \
 POSTSECONDS=$(calculate_duration "$TIME6" "$TIME7") && \
-echo -e "$msg17$_BLUE$POSTSECONDS$_RESET"
+echo -e "$msg17 $_BLUE$POSTSECONDS$_RESET"
