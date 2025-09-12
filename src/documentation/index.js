@@ -1325,7 +1325,7 @@ checkTLD(domain).then(async tldvalid => {
                     .replace(new RegExp(`(?<=<code class="${cssclass.code}"><code>(${getlangs()})</code>)(.*?)(?=</code>)`, 'g'), (match, lng, cde) => cde.replace(/<br><br>/g, '<br>')),
                 )
             
-            const outputlogs = `OUTPUT: ${_just.string.runnerPath(outFilePath('html'))} (${_just.string.fileSize((await fs.promises.stat(outFilePath('html'))).size)})`;
+            const outputlogs = `OUTPUT: ${_just.string.runnerPath(outFilePath('html'))}`;//(${_just.string.fileSize((await fs.promises.stat(outFilePath('html'))).size)})`;
             logs += mdlogs[outFilePath('html')] ? `${mdlogs[outFilePath('html')]}${l[2]}${outputlogs}` : `${l[1]}ERROR:${l[2]}MESSAGE: NO LOGS FOUND FOR FILE ${_just.string.runnerPath(outFilePath('html'))}${l[2]}FILE ${outputlogs}`;
             
             return outFilePath('html');
