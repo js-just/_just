@@ -49,7 +49,7 @@ try {
             const stat = fs.statSync(file);
             if (stat && stat.isDirectory()) {
                 results = results.concat(findMarkdownFiles(file));
-            } else if (file.endsWith('.md') || file.endsWith('.mdx')) {
+            } else if (file.endsWith('.md') || file.endsWith('.markdown')) {
                 results.push(file);
             }
         });

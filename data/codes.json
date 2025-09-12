@@ -507,5 +507,39 @@
                 "i": "look up for Dart Sass error in your terminal/console output and fix your .scss or .sass file"
             }
         }
+    ],
+    "sitemap.js": [
+        {
+            "code": "0136",
+            "message": "Invalid protocol. Invalid value of property \"protocol\" in \"sitemap\" in module.exports of just.config.js. It must be one of: \"http:\", \"https:\".",
+            "crashed": true,
+            "link": "",
+            "data": {
+                "mg": false,
+                "i": "The protocol you choose does not exist or is not supported."
+            }
+        },
+        {
+            "code": "0137",
+            "message": "Failed to read a file or directory.",
+            "crashed": true,
+            "link": "",
+            "data": {
+                "mg": false,
+                "i": "Just an Ultimate Site Tool cannot read a file or directory."
+            }
+        }
+    ],
+    "domain.js": [
+        {
+            "code": "0138",
+            "message": "Failed to fetch The Public Suffix List.",
+            "crashed": true,
+            "link": "",
+            "data": {
+                "mg": false,
+                "i": "Just an Ultimate Site Tool is unable to fetch <a href=\"https://publicsuffix.org/list/public_suffix_list.dat\" target=\"_blank\"><code>https://publicsuffix.org/list/public_suffix_list.dat</code></a>."
+            }
+        }
     ]
 }

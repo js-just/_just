@@ -351,7 +351,7 @@ const nl = l[2].slice(0,-2)+' '.repeat(7);
 debuglog(`INFO:${nl}  DNA = DirNameArray${nl}DNA>2 = DirNameArray.length > 2${nl}   DN = DirName${nl}   PL = PageList${nl}   FT = FolderTree${nl}   FL = FolderList${nl}  CID = Code ID${nl}   CL = Code Language${nl}   DF = Dir Found${nl}   FF = File Found${nl}JUSTC = A .justc file (Just an Ultimate Site Tool Configuration file) path (if found) or null${nl}P2URL = PathToURL${nl}  MDF = Markdown Files${nl} PIDs = Pages (Page IDs)${nl}  PID = Page ID${nl}   C0 = Codes0${nl}   C1 = Codes1`);
 
 const rootDirA = PATH || '.';
-const extensions = ['.md', '.mdx', '.html'];
+const extensions = ['.md', '.markdown', '.html'];
 
 function getFiles(dir) {
     let results = [];
@@ -413,7 +413,7 @@ function getPageList() {
         if (extname === '.html') {
             const htmlTitle = getTitleFromHtml(file);
             if (htmlTitle) title = htmlTitle;
-        } else if (extname === '.md' || extname === '.mdx') {
+        } else if (extname === '.md' || extname === '.markdown') {
             const mdTitle = getTitleFromMd(file);
             if (mdTitle) title = mdTitle;
         }
@@ -907,7 +907,7 @@ checkTLD(domain).then(tldvalid => {
             if (stat && stat.isDirectory()) {
                 results = results.concat(findMarkdownFiles(file));
                 debuglog('   DF: '+_just.string.runnerPath(file));
-            } else if (file.endsWith('.md') || file.endsWith('.mdx')) {
+            } else if (file.endsWith('.md') || file.endsWith('.markdown')) {
                 results.push(file);
                 debuglog('   FF: '+_just.string.runnerPath(file));
                 const file_ = file;
