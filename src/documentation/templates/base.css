@@ -1376,3 +1376,68 @@ article div[data-link] small {
 pre {
     margin: 0px;
 }
+
+mark {
+    white-space: nowrap;
+}
+mark:has(code), mark:has(code) * {
+    align-content: center;
+    display: inline-flex;
+}
+mark:has(code) {
+    padding-block: 2px;
+    margin-block: -2px;
+}
+
+details {
+    border: 2px solid var(--md);
+    border-radius: 20px;
+    display: grid;
+    align-content: center;
+    padding: 10px;
+    position: relative;
+    overflow: hidden;
+}
+summary {
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+    user-select: none;
+    list-style: none;
+    cursor: pointer;
+}
+details[open] summary {
+    border-bottom: 2px solid var(--md);
+    margin-bottom: 1rem;
+    padding-bottom: 10px;
+}
+details::details-content {
+    max-height: 0px;
+    overflow: hidden;
+    transition: 300ms, content-visibility 300ms;
+    opacity: 0;
+    filter: blur(2px);
+    transition-behavior: allow-discrete;
+    position: relative;
+    display: block;
+    height: 0px;
+}
+details[open]::details-content {
+    max-height: 100%;
+    opacity: 1;
+    filter: none;
+    height: max-content;
+}
+summary::-webkit-details-marker {
+    display: none;
+}
+details:not([open]) summary:hover, summary:focus-visible {
+    background-color: var(--md);
+    border-radius: 10px;
+}
+details:has(summary:focus-visible) {
+    outline: 2px solid var(--kb);
+}
+details:not([open]) summary {
+    padding-inline: 10px;
+}
+

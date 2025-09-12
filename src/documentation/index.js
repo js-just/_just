@@ -1368,7 +1368,9 @@ checkTLD(domain).then(tldvalid => {
         CSS = updated[0];
         htmloutput = updated[1]
             .replace(/(<br>){1,}<table>/g, '<table>')
-            .replace(/(<br>){1,}<table class="/g, '<table class="');
+            .replace(/(<br>){1,}<table class="/g, '<table class="')
+            .replace(/<details>(<br>){1,}<summary>/g, '<details><summary>')
+            .replace(/<\/summary>(<br>){1,}/g, '</summary>');
         fs.writeFileSync(
             pathh,
             htmloutput,
