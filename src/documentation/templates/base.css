@@ -1400,10 +1400,11 @@ details {
 }
 summary {
     border-bottom: 2px solid transparent;
-    margin-bottom: -2px;
+    margin-bottom: 0px;
     user-select: none;
     list-style: none;
     cursor: pointer;
+    padding-top: 1px;
 }
 details[open] summary {
     border-bottom: 2px solid var(--md);
@@ -1437,7 +1438,13 @@ details:not([open]) summary:hover, summary:focus-visible {
 details:has(summary:focus-visible) {
     outline: 2px solid var(--kb);
 }
-details:not([open]) summary {
-    padding-inline: 10px;
+summary > span:first-of-type {
+    padding-inline: 5px;
+    display: inline-block;
 }
-
+details[open] summary > span:first-of-type {
+    rotate: 90deg
+}
+details[open] summary:hover {
+    border-bottom-color: var(--md);
+}
