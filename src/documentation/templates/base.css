@@ -263,6 +263,8 @@ a#ext:hover:not(:focus):after {
 }
 .navbar .heading img {
     width: 35px;
+    user-select: none;
+    -webkit-user-drag: none;
 }
 .navbar .links {
     position: fixed;
@@ -1417,6 +1419,7 @@ details::details-content {
     transition: 300ms, content-visibility 300ms;
     opacity: 0;
     filter: blur(2px);
+    -webkit-filter: blur(2px);
     transition-behavior: allow-discrete;
     position: relative;
     display: block;
@@ -1426,6 +1429,7 @@ details[open]::details-content {
     max-height: 100%;
     opacity: 1;
     filter: none;
+    -webkit-filter: none;
     height: max-content;
 }
 summary::-webkit-details-marker {
@@ -1447,4 +1451,31 @@ details[open] summary > span:first-of-type {
 }
 details[open] summary:hover {
     border-bottom-color: var(--md);
+}
+
+a:hover {
+    filter: none !important;
+    -webkit-filter: none !important;
+}
+
+::selection {
+    background-color: var(--kb);
+}
+article a::selection {
+    color: var(--bg)
+}
+.note::selection {
+    background-color: var(--nt);
+}
+.ntip::selection {
+    background-color: var(--tt);
+}
+.impr::selection {
+    background-color: var(--it);
+}
+.warn::selection {
+    background-color: var(--wt);
+}
+.caut::selection {
+    background-color: var(--ct);
 }

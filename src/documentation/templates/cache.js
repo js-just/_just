@@ -47,8 +47,8 @@ const getCacheId=async()=>{
         try {
             const response = await fetch(url_);
             if (response.ok) {
-                const data = await response.json();
-                return data.cache || defaultCacheId;
+                const data_ = await response.json();
+                return data_.cache || defaultCacheId;
             }
         }catch(error){}
     }
