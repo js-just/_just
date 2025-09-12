@@ -27,20 +27,43 @@ SOFTWARE.
 const fs = require('fs');
 const path = require('path');
 
+let emojiIndex = null;
+function buildEmojiIndex(data) {
+    const index = new Map();
+    
+    for (const item of data) {
+        if (item.short_name) {
+            index.set(item.short_name.toLowerCase(), item);
+        }
+        
+        if (item.short_names) {
+            for (const name of item.short_names) {
+                if (name) {
+                    index.set(name.toLowerCase(), item);
+                }
+            }
+        }
+    }
+    
+    return index;
+}
+
 /**
  * @param {{unified:string,short_name:string,short_names:string[]|null}[]} data 
  * @param {string} searchName 
  * @returns {string|null}
  */
 exports.findEmoji = function (data, searchName) {
-    if (searchName===undefined) {
+    if (searchName === undefined || searchName === null || searchName === '') {
         return null;
     }
 
-    const foundItem = data.find(item => 
-        item.short_name === searchName || 
-        (item.short_names && item.short_names.includes(searchName))
-    );
+    if (!emojiIndex) {
+        emojiIndex = buildEmojiIndex(data);
+    }
+
+    const searchNameLower = searchName.toLowerCase();
+    const foundItem = emojiIndex.get(searchNameLower);
 
     if (!foundItem) {
         return null;
@@ -48,15 +71,14 @@ exports.findEmoji = function (data, searchName) {
 
     const { unified } = foundItem;
     let output = '';
-    unified.split('-').filter(unicode=>unicode).forEach((unicode)=>{
-        output += `&#x${unicode};`
+    unified.split('-').filter(unicode => unicode).forEach((unicode) => {
+        output += `&#x${unicode};`;
     });
 
     return output || null;
 }
 
 /**
- * 
  * @returns {{unified:string,short_name:string,short_names:string[]|null}[]}
  */
 exports.jsonEmoji = function () {
