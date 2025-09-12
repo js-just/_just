@@ -1470,6 +1470,7 @@ checkTLD(domain).then(async tldvalid => {
     await fs.promises.writeFile(path.join(websitepath, _justdir, `${cacheServiceWorkerName}.js`), cacheServiceWorker, template.charset);
 
 }).catch(error => {
-    console.log(error.startsWith('::') ? error : '::error::'+error);
+    console.log(error);
+    console.log(String(error).startsWith('::') ? String(error) : '::error::'+String(error));
     process.exit(1);
 });
