@@ -1464,18 +1464,18 @@ a:hover {
 article a::selection {
     color: var(--bg)
 }
-.note::selection {
+.note::selection, .note *::selection {
     background-color: var(--nt);
 }
-.ntip::selection {
+.ntip::selection, .ntip *::selection {
     background-color: var(--tt);
 }
-.impr::selection {
+.impr::selection, .impr *::selection {
     background-color: var(--it);
 }
-.warn::selection {
+.warn::selection, .warn *::selection {
     background-color: var(--wt);
 }
-.caut::selection {
+.caut::selection, .caut *::selection {
     background-color: var(--ct);
 }
