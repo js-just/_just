@@ -24,9 +24,12 @@
 ERRORS_FILE="$GITHUB_ACTION_PATH/data/codes.json"
 CONFIG_FILE="just.config.js"
 CONFIG_DATA="just.config.json"
+
 source $GITHUB_ACTION_PATH/lib/errmsg.sh
 source $GITHUB_ACTION_PATH/lib/color.sh
 source $GITHUB_ACTION_PATH/lib/runts.sh
+source $GITHUB_ACTION_PATH/lib/time.sh
+
 if [ "$INPUT_PATH" == ""]; then
     INPUT_PATH="."
 elif [ -z "$INPUT_PATH" ]; then
@@ -72,18 +75,18 @@ msg9=$(_justMessage "$_GREEN Generating completed$_RESET")
 msg10=$(_justMessage "$_BLUE Installing TypeScript compiler$_RESET...")
 msg11=$(_justMessage "$_BLUE Installed TypeScript compiler$_RESET")
 msg12=$(_justMessage "$_BLUE Installing Homebrew$_RESET...")
-msg13=$(_justMessage "$_BLUE Installed Homebrew$_RESET")
+msg13=$(_justMessage "$_BLUE Installed$_RESET")
 msg14=$(_justMessage "$_BLUE Installing Dart Sass$_RESET...")
 msg15=$(_justMessage "$_BLUE Installed Dart Sass$_RESET")
+msg16=$(_justMessage "$_BLUE Preprocessed in$_RESET")
+msg17=$(_justMessage "$_BLUE Postprocessed in$_RESET")
 echo -e "$msg1"
 
-chmod +x "$GITHUB_ACTION_PATH/src/time.py" # use python to get current time in ms cuz yes
-TIME0=$(python3 "$GITHUB_ACTION_PATH/src/time.py")
 NODEJSINSTALLED="n"
 installNodejs() {
     if [ "$NODEJSINSTALLED" != "y" ]; then
         echo -e "$msg2"
-        local TIME1=$(python3 "$GITHUB_ACTION_PATH/src/time.py")
+        local TIME1=$(current_time_ms)
         if ! command -v node > /dev/null; then # attempt 0: nodejs installed before running _just
             # attempt 1: install via curl
             sudo apt-get remove -y nodejs npm > /dev/null 2>&1 || true
@@ -114,15 +117,15 @@ installNodejs() {
             fi
         fi
         NODEJSINSTALLED="y"
-        local TIME2=$(python3 "$GITHUB_ACTION_PATH/src/time.py")
+        local TIME2=$(current_time_ms)
         NODEVERSION=$(node --version)
-        NODESECONDS=$(node "$GITHUB_ACTION_PATH/src/time.js" "$TIME1" "$TIME2") # use js to get nodejs installing duration cuz yes
+        NODESECONDS=$(calculate_duration "$TIME1" "$TIME2")
         echo -e "$msg3 $NODEVERSION ($NODESECONDS)"
     fi
 }
 installTypeScriptCompiler() {
     echo -e "$msg10"
-    local TIME1=$(python3 "$GITHUB_ACTION_PATH/src/time.py")
+    local TIME1=$(current_time_ms)
     if ! command -v tsc > /dev/null; then # attempt 0: tsc installed before running _just
         # attempt 1: install without logs
         sudo apt remove -y typescript > /dev/null 2>&1 || true
@@ -137,15 +140,15 @@ installTypeScriptCompiler() {
             sudo apt install -y typescript
         fi
     fi
-    local TIME2=$(python3 "$GITHUB_ACTION_PATH/src/time.py")
+    local TIME2=$(current_time_ms)
     TSCVERSION=$(tsc --version 2>/dev/null)
-    TSCSECONDS=$(node "$GITHUB_ACTION_PATH/src/time.js" "$TIME1" "$TIME2")
+    TSCSECONDS=$(calculate_duration "$TIME1" "$TIME2")
     echo -e "$msg11 $TSCVERSION ($TSCSECONDS)"
 }
 installHomebrew() {
     installNodejs
     echo -e "$msg12"
-    local TIME1=$(python3 "$GITHUB_ACTION_PATH/src/time.py")
+    local TIME1=$(current_time_ms)
     if ! command -v brew &> /dev/null; then # attempt 0: homebrew installed before running _just
         # attempt 1: install without logs
         NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" > /dev/null 2>&1
@@ -162,14 +165,14 @@ installHomebrew() {
             eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
         fi
     fi
-    local TIME2=$(python3 "$GITHUB_ACTION_PATH/src/time.py")
+    local TIME2=$(current_time_ms)
     HBVERSION=$(brew --version)
-    HBSECONDS=$(node "$GITHUB_ACTION_PATH/src/time.js" "$TIME1" "$TIME2")
+    HBSECONDS=$(calculate_duration "$TIME1" "$TIME2")
     echo -e "$msg13 $HBVERSION ($HBSECONDS)"
 }
 installDartSass() {
     echo -e "$msg14"
-    local TIME1=$(python3 "$GITHUB_ACTION_PATH/src/time.py")
+    local TIME1=$(current_time_ms)
     if ! command -v sass &> /dev/null; then # attempt 0: dart sass installed before running _just
         # attempt 1: install without logs
         brew install sass/sass/sass > /dev/null 2>&1
@@ -180,8 +183,8 @@ installDartSass() {
             brew install sass/sass/sass
         fi
     fi
-    local TIME2=$(python3 "$GITHUB_ACTION_PATH/src/time.py")
-    DSSECONDS=$(node "$GITHUB_ACTION_PATH/src/time.js" "$TIME1" "$TIME2")
+    local TIME2=$(current_time_ms)
+    DSSECONDS=$(calculate_duration)
     echo -e "$msg15 ($DSSECONDS)"
 }
 
@@ -214,44 +217,75 @@ checkForDartSass() {
         echo -e "::error::$ERROR_MESSAGE" && exit 1
     fi
 }
-TYPE=$(echo "$CONFIG_JSON" | jq -r '.mode')
-USE_TSC=$(echo "$CONFIG_JSON" | jq -r '.install.typescript_compiler')
-USE_SASS=$(echo "$CONFIG_JSON" | jq -r '.install.dart_sass')
-COMPILE_TS=$(echo "$CONFIG_JSON" | jq -r '.compile.ts')
-COMPILE_SASS=$(echo "$CONFIG_JSON" | jq -r '.compile.sass')
-COMPILE_SCSS=$(echo "$CONFIG_JSON" | jq -r '.compile.scss')
+
+CONFIG_VALUES=$(echo "$CONFIG_JSON" | jq -r '
+.mode,
+.install.typescript_compiler,
+.install.dart_sass,
+.compile.ts,
+.compile.sass,
+.compile.scss
+')
+
+{
+    read -r TYPE
+    read -r USE_TSC
+    read -r USE_SASS  
+    read -r COMPILE_TS
+    read -r COMPILE_SASS
+    read -r COMPILE_SCSS
+} <<< "$CONFIG_VALUES"
+
+install_dependencies() {
+    if [[ "${USE_TSC,,}" == "true" ]]; then
+        installTypeScriptCompiler &
+    fi
+    
+    if [[ "${USE_SASS,,}" == "true" ]]; then
+        installHomebrew &
+        installDartSass &
+    fi
+    
+    wait
+}
+TIME4=$(current_time_ms)
+PREPROCESSED="n"
+compile_assets() {
+    if [[ "${COMPILE_TS,,}" == "true" ]]; then
+        PREPROCESSED="y"
+        source "$GITHUB_ACTION_PATH/lib/compile.sh"
+        tojs "$INPUT_PATH" &
+    fi
+    
+    if [[ "${COMPILE_SASS,,}" == "true" ]]; then
+        PREPROCESSED="y"
+        checkForDartSass
+        source "$GITHUB_ACTION_PATH/lib/compile.sh"
+        tocss "$INPUT_PATH" "sass" &
+    fi
+    
+    if [[ "${COMPILE_SCSS,,}" == "true" ]]; then
+        PREPROCESSED="y"
+        checkForDartSass
+        source "$GITHUB_ACTION_PATH/lib/compile.sh"
+        tocss "$INPUT_PATH" "scss" &
+    fi
+    
+    wait
+}
+
 Y="true"
 if [ -z "$TYPE" ]; then
     ERROR_MESSAGE=$(ErrorMessage "run.sh" "0110")
     echo -e "::error::$ERROR_MESSAGE" && exit 1
 fi
-if [[ "${USE_TSC,,}" == "$Y" ]]; then
-    installTypeScriptCompiler
-fi
-if [[ "${USE_SASS,,}" == "$Y" ]]; then
-    if [ -d "_just_temp" ]; then
-        ERROR_MESSAGE=$(ErrorMessage "important_dirs" "0130")
-        echo -e "::error::$ERROR_MESSAGE" && exit 1
-    fi
-    installHomebrew && installDartSass
-fi
-if [[ "${COMPILE_TS,,}" == "$Y" ]]; then
-    if ! command -v tsc > /dev/null; then
-        ERROR_MESSAGE=$(ErrorMessage "run.sh" "0133")
-        echo -e "::error::$ERROR_MESSAGE" && exit 1
-    fi
-    source $GITHUB_ACTION_PATH/lib/compile.sh
-    tojs "$INPUT_PATH"
-fi
-if [[ "${COMPILE_SASS,,}" == "$Y" ]]; then
-    checkForDartSass
-    source $GITHUB_ACTION_PATH/lib/compile.sh
-    tocss "$INPUT_PATH" "sass"
-fi
-if [[ "${COMPILE_SCSS,,}" == "$Y" ]]; then
-    checkForDartSass
-    source $GITHUB_ACTION_PATH/lib/compile.sh
-    tocss "$INPUT_PATH" "scss"
+
+install_dependencies && \
+compile_assets && \
+if [[ "$PREPROCESSED" == "y" ]]; then
+    TIME5=$(current_time_ms) && \
+    PRESECONDS=$(calculate_duration "$TIME4" "$TIME5") && \
+    echo -e "$msg16$_BLUE$PRESECONDS$_RESET"
 fi
 
 if [[ "$TYPE" != "postprocessor" && "$TYPE" != "redirector" && "$TYPE" != "compressor" && "$TYPE" != "generator" && "$TYPE" != "void" ]]; then
@@ -299,33 +333,38 @@ if [ "$TYPE" != "postprocessor" ]; then
     echo "postprocessor=0" >> "$GITHUB_OUTPUT"
 fi
 
-if [ "$TYPE" == "postprocessor" ]; then
+TIME0=$(current_time_ms)
+
+mode_postprocessor() {
     rm -f just.config.json && \
     rm -rf deploy _just_data && \
     echo "postprocessor=1" >> "$GITHUB_OUTPUT" && \
     ERROR_MESSAGE=$(ErrorMessage "run.sh" "0213") && \
     echo -e "::warning file=just.config.js::$ERROR_MESSAGE" && \
     echo -e "$msg4"
-elif [ "$TYPE" == "redirector" ]; then
+}
+mode_redirector() {
     mkdir -p deploy/_just && \
     installNodejs && \
     echo "::group::Redirector mode" && \
     bash $GITHUB_ACTION_PATH/src/redirect/checks.sh && \
     node $GITHUB_ACTION_PATH/src/redirect/index.js "$VERSION" && \
-    TIME3=$(python3 "$GITHUB_ACTION_PATH/src/time.py") && \
-    DONEIN=$(node "$GITHUB_ACTION_PATH/src/time.js" "$TIME0" "$TIME3") && \
+    TIME3=$(current_time_ms) && \
+    DONEIN=$(calculate_duration "$TIME0" "$TIME3") && \
     echo "::endgroup::" && \
     echo -e "$msg5 ($DONEIN)"
-elif [ "$TYPE" == "compressor" ]; then
+}
+mode_compressor() {
     mkdir -p deploy && \
     installNodejs && \
     echo "::group::Compressor mode" && \
     node $GITHUB_ACTION_PATH/src/compress.js "$INPUT_PATH" && \
-    TIME3=$(python3 "$GITHUB_ACTION_PATH/src/time.py") && \
-    DONEIN=$(node "$GITHUB_ACTION_PATH/src/time.js" "$TIME0" "$TIME3") && \
+    TIME3=$(current_time_ms) && \
+    DONEIN=$(calculate_duration "$TIME0" "$TIME3") && \
     echo "::endgroup::" && \
     echo -e "$msg6 ($DONEIN)"
-elif [ "$TYPE" == "generator" ]; then
+}
+mode_generator() {
     HTML=$(cat "$GITHUB_ACTION_PATH/src/documentation/templates/page.html") && \
     CSS=$(cat "$GITHUB_ACTION_PATH/src/documentation/templates/base.css") && \
     JS=$(cat "$GITHUB_ACTION_PATH/src/documentation/templates/page.js") && \
@@ -368,11 +407,36 @@ elif [ "$TYPE" == "generator" ]; then
     node "$INDEXJS0" "$HTML" "$CSS" "$JS" "$INPUT_PATH" "$GITHUB_REPOSITORY" "$GITHUB_REPOSITORY_OWNER" "$CUSTOMCSS" "$HLJSLANGS" "$LANGS" "$HIGHLIGHTCSS" "$LANGSTEXT" "$VERSION" "$BUTTONSCSS" "$SEARCHCSS" "$HIGHLIGHTJSON" "$INPUT_FIXPATH" "$JST" "$JSIT" "$JSIN" "$JSTC" "$EMBEDJS" || jserr && \
     node $GITHUB_ACTION_PATH/src/compress.js "$INPUT_PATH" && \
     node "$GITHUB_ACTION_PATH/src/documentation/logs.js" "$INPUT_PATH" && \
-    TIME3=$(python3 "$GITHUB_ACTION_PATH/src/time.py") && \
-    DONEIN=$(node "$GITHUB_ACTION_PATH/src/time.js" "$TIME0" "$TIME3") && \
+    TIME3=$(current_time_ms) && \
+    DONEIN=$(calculate_duration "$TIME0" "$TIME3") && \
     echo "::endgroup::" && \
     echo -e "$msg9 ($DONEIN)"
-elif [ "$TYPE" == "void" ]; then
-    installNodejs
-fi && \
-node $GITHUB_ACTION_PATH/src/postprocessor.js "$INPUT_PATH" "$INPUT_FIXPATH" "$VERSION"
+}
+
+case "$TYPE" in
+    "postprocessor")
+        mode_postprocessor
+        ;;
+    "redirector") 
+        mode_redirector
+        ;;
+    "compressor")
+        mode_compressor
+        ;;
+    "generator")
+        mode_generator
+        ;;
+    "void")
+        installNodejs
+        ;;
+    *)
+        ERROR_MESSAGE=$(ErrorMessage "run.sh" "0111")
+        echo -e "::error file=just.config.js::$ERROR_MESSAGE" >&2
+        exit 1
+        ;;
+esac && \
+TIME6=$(current_time_ms) && \
+node $GITHUB_ACTION_PATH/src/postprocessor.js "$INPUT_PATH" "$INPUT_FIXPATH" "$VERSION" && \
+TIME7=$(current_time_ms) && \
+POSTSECONDS=$(calculate_duration "$TIME6" "$TIME7") && \
+echo -e "$msg17$_BLUE$POSTSECONDS$_RESET"

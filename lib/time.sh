@@ -20,7 +20,42 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-#!/usr/bin/env python3
-import time
-out = int(time.time() * 1000)
-print(out)
+#!/bin/bash
+current_time_ms() {
+    echo $(($(date +%s%N) / 1000000))
+}
+format_duration() {
+    local ms=$1
+    local seconds minutes result
+    
+    if [ "$ms" -lt 0 ]; then
+        echo "0ms"
+        return
+    fi
+    
+    if [ "$ms" -lt 1000 ]; then
+        echo "${ms}ms"
+        return
+    fi
+    
+    seconds=$((ms / 1000))
+    
+    if [ "$seconds" -le 60 ]; then
+        # Округляем до десятых: ms/100 = десятые, затем делим на 10
+        local tenths=$(( (ms + 50) / 100 ))
+        echo "${tenths%?}.${tenths: -1}s"
+    else
+        # Минуты: округляем до сотых
+        minutes=$(echo "scale=2; $seconds / 60" | bc)
+        echo "${minutes}m"
+    fi
+}
+calculate_duration() {
+    local time1=$1
+    local time2=$2
+    local diff=$((time2 - time1))
+    format_duration "$diff"
+}
+
+export -f current_time_ms
+export -f calculate_duration
