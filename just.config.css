@@ -1,1 +1,9 @@
-/*test*/
+@_just base;
+@_just highlight;
+@_just buttons;
+@_just search;
+
+html {
+    color: red !important;
+    background-color: blue !important;
+}
