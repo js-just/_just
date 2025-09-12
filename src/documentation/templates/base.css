@@ -1377,7 +1377,7 @@ pre {
     margin: 0px;
 }
 
-mark {
+mark, code:not(.code) {
     white-space: nowrap;
 }
 mark:has(code), mark:has(code) * {

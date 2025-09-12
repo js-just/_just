@@ -1366,11 +1366,14 @@ checkTLD(domain).then(tldvalid => {
         });
         const updated = _just.customCSS.highlightclasses(CSSHIGHLIGHTtemplate, CSS, htmloutput, dataname[8]);
         CSS = updated[0];
+        const detSumSpan = '<details><summary><span>&rsaquo;</span>';
         htmloutput = updated[1]
             .replace(/(<br>){1,}<table>/g, '<table>')
             .replace(/(<br>){1,}<table class="/g, '<table class="')
-            .replace(/<details>(<br>){1,}<summary>/g, '<details><summary>')
-            .replace(/<\/summary>(<br>){1,}/g, '</summary>');
+            .replace(/<details>(\s|){1,}(<br>(\s|){1,}|){1,}<summary>/g, detSumSpan)
+            .replace(/<details>([^<^>]+?)<summary>/g, `${detSumSpan}$1`)
+            .replace(/<\/summary>(<br>){1,}/g, '</summary>')
+            .replace(/<\/details>(<br>){1,}/g, '</details>');
         fs.writeFileSync(
             pathh,
             htmloutput,
