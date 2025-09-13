@@ -889,6 +889,7 @@ checkTLD(domain).then(async tldvalid => {
     }
 
     const usePathInput = config.usePathInput ? config.usePathInput : true;
+    const ignoreFiles = docsConfig ? docsConfig.ignore || [] : [];
     const pageConfigs = [];
     function checkForPageConfig(file) {
         const justc_path = path.join(path.dirname(file), `${path.basename(file, path.extname(file))}.justc`);
@@ -908,7 +909,7 @@ checkTLD(domain).then(async tldvalid => {
                 const subResults = await findMarkdownFiles(filePath);
                 results = results.concat(subResults);
                 debuglog('   DF: '+_just.string.runnerPath(filePath));
-            } else if (filePath.endsWith('.md') || filePath.endsWith('.markdown')) {
+            } else if ((filePath.endsWith('.md') || filePath.endsWith('.markdown')) && (!pathtourl[f] || (pathtourl[f] && !ignoreFiles.includes(pathtourl[f])))) {
                 results.push(filePath);
                 debuglog('   FF: '+_just.string.runnerPath(filePath));
                 checkForPageConfig(filePath);
