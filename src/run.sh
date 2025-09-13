@@ -91,7 +91,7 @@ installNodejs() {
             # attempt 1: install via curl
             sudo apt-get remove -y nodejs npm > /dev/null 2>&1 || true
             sudo apt-get update -qq > /dev/null 2>&1
-            curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash - > /dev/null 2>&1
+            curl -fsSL https://deb.nodesource.com/setup_24.x | sudo -E bash - > /dev/null 2>&1
             sudo apt-get install -y nodejs > /dev/null 2>&1
             if ! command -v node > /dev/null; then
                 # attempt 2: install via curl with logs
@@ -99,7 +99,7 @@ installNodejs() {
                 echo -e "$ERROR_MESSAGE"
                 sudo apt-get remove -y nodejs npm || true
                 sudo apt-get update -qq
-                curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+                curl -fsSL https://deb.nodesource.com/setup_24.x | sudo -E bash -
                 sudo apt-get install -y nodejs
                 if ! command -v node > /dev/null; then
                     # attempt 3: install via sudo apt install
