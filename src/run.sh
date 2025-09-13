@@ -30,6 +30,7 @@ source $GITHUB_ACTION_PATH/lib/color.sh
 source $GITHUB_ACTION_PATH/lib/runts.sh
 source $GITHUB_ACTION_PATH/lib/time.sh
 source $GITHUB_ACTION_PATH/lib/js.sh
+source $GITHUB_ACTION_PATH/lib/cleanup.sh
 
 if [ "$INPUT_PATH" == ""]; then
     INPUT_PATH="."
@@ -256,21 +257,33 @@ compile_assets() {
     if [[ "${COMPILE_TS,,}" == "true" ]]; then
         PREPROCESSED="y"
         source "$GITHUB_ACTION_PATH/lib/compile.sh"
-        tojs "$INPUT_PATH" &
+        tojs "$INPUT_PATH"
+        local DOCLEANUP=$(javascript $GITHUB_ACTION_PATH/src/check-cleanup.js "") && \
+        if [[ "$DOCLEANUP" == 'y' ]]; then
+            clearall "$INPUT_PATH" "ts"
+        fi &
     fi
     
     if [[ "${COMPILE_SASS,,}" == "true" ]]; then
         PREPROCESSED="y"
         checkForDartSass
         source "$GITHUB_ACTION_PATH/lib/compile.sh"
-        tocss "$INPUT_PATH" "sass" &
+        tocss "$INPUT_PATH" "sass"
+        local DOCLEANUP=$(javascript $GITHUB_ACTION_PATH/src/check-cleanup.js "") && \
+        if [[ "$DOCLEANUP" == 'y' ]]; then
+            clearall "$INPUT_PATH" "sass"
+        fi &
     fi
     
     if [[ "${COMPILE_SCSS,,}" == "true" ]]; then
         PREPROCESSED="y"
         checkForDartSass
         source "$GITHUB_ACTION_PATH/lib/compile.sh"
-        tocss "$INPUT_PATH" "scss" &
+        tocss "$INPUT_PATH" "scss"
+        local DOCLEANUP=$(javascript $GITHUB_ACTION_PATH/src/check-cleanup.js "") && \
+        if [[ "$DOCLEANUP" == 'y' ]]; then
+            clearall "$INPUT_PATH" "scss"
+        fi &
     fi
     
     wait
@@ -407,6 +420,10 @@ mode_generator() {
     javascript "$INDEXJS0" "$HTML" "$CSS" "$JS" "$INPUT_PATH" "$GITHUB_REPOSITORY" "$GITHUB_REPOSITORY_OWNER" "$CUSTOMCSS" "$HLJSLANGS" "$LANGS" "$HIGHLIGHTCSS" "$LANGSTEXT" "$VERSION" "$BUTTONSCSS" "$SEARCHCSS" "$HIGHLIGHTJSON" "$INPUT_FIXPATH" "$JST" "$JSIT" "$JSIN" "$JSTC" "$EMBEDJS" || jserr && \
     javascript $GITHUB_ACTION_PATH/src/compress.js "$INPUT_PATH" && \
     javascript "$GITHUB_ACTION_PATH/src/generator/logs.js" "$INPUT_PATH" && \
+    local DOCLEANUP=$(javascript $GITHUB_ACTION_PATH/src/check-cleanup.js "generator") && \
+    if [[ "$DOCLEANUP" == 'y' ]]; then
+        clearall "$INPUT_PATH" "md,markdown"
+    fi && \
     TIME3=$(current_time_ms) && \
     DONEIN=$(calculate_duration "$TIME0" "$TIME3") && \
     echo "::endgroup::" && \
