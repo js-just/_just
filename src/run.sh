@@ -337,8 +337,6 @@ TIME0=$(current_time_ms)
 
 javascript() {
     node --max-old-space-size=4096 \
-         --optimize-for-size \
-         --max-semi-space-size=1024 \
          "$@"
 }
 
