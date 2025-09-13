@@ -22,15 +22,30 @@
 
 #!/bin/bash
 source "$GITHUB_ACTION_PATH/lib/errmsg.sh"
+
+if [ ! -f "just.config.json" ]; then
+    ERROR_MESSAGE=$(ErrorMessage "docs/checks.sh" "0108")
+    echo -e "::error::$ERROR_MESSAGE" >&2
+    exit 1
+fi
+
 config=$(cat just.config.json)
+if ! jq -e . >/dev/null 2>&1 <<< "$config"; then
+    ERROR_MESSAGE=$(ErrorMessage "run.sh" "0112")
+    echo -e "::error::$ERROR_MESSAGE" >&2
+    exit 1
+fi
 
 if ! echo "$config" | jq -e '.docs_config' > /dev/null 2>&1; then
     ERROR_MESSAGE=$(ErrorMessage "docs/checks.sh" "0118")
     echo -e "::error::$ERROR_MESSAGE" >&2
     exit 1
 fi
+
 validation_result=$(echo "$config" | jq -r '
-    if (.domain | type != "string" or .domain == "") then
+    if (. | type != "object") then
+        "invalid_json"
+    elif (.domain | type != "string" or .domain == "") then
         "domain_error"
     elif (.docs_config | type != "object") then
         "docs_config_error" 
@@ -43,6 +58,11 @@ validation_result=$(echo "$config" | jq -r '
 ')
 
 case "$validation_result" in
+    "invalid_json")
+        ERROR_MESSAGE=$(ErrorMessage "run.sh" "0112")
+        echo -e "::error::$ERROR_MESSAGE" >&2
+        exit 1
+        ;;
     "domain_error")
         ERROR_MESSAGE=$(ErrorMessage "docs/checks.sh" "0120")
         echo -e "::error::$ERROR_MESSAGE" >&2
@@ -59,5 +79,6 @@ case "$validation_result" in
         exit 1
         ;;
     *)
+        echo "::debug::Running Just an Ultimate Site Tool Generator Mode"
         ;;
 esac
