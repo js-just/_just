@@ -80,5 +80,6 @@ case "$validation_result" in
         ;;
     *)
         echo "::debug::Running Just an Ultimate Site Tool Generator Mode"
+        exit 0
         ;;
 esac
