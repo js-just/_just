@@ -21,26 +21,43 @@
 # SOFTWARE.
 
 #!/bin/bash
-source $GITHUB_ACTION_PATH/lib/errmsg.sh
+source "$GITHUB_ACTION_PATH/lib/errmsg.sh"
 config=$(cat just.config.json)
 
-docs_config=$(echo "$config" | jq -r '.docs_config')
-if ! echo "$config" | jq -e '.docs_config' > /dev/null; then
+if ! echo "$config" | jq -e '.docs_config' > /dev/null 2>&1; then
     ERROR_MESSAGE=$(ErrorMessage "docs/checks.sh" "0118")
-    echo -e "::error::$ERROR_MESSAGE" && exit 1
+    echo -e "::error::$ERROR_MESSAGE" >&2
+    exit 1
 fi
+validation_result=$(echo "$config" | jq -r '
+    if (.domain | type != "string" or .domain == "") then
+        "domain_error"
+    elif (.docs_config | type != "object") then
+        "docs_config_error" 
+    elif ((.docs_config.title | type != "string" or .docs_config.title == "") and 
+          (.docs_config.metatitle | type != "string" or .docs_config.metatitle == "")) then
+        "title_error"
+    else
+        "success"
+    end
+')
 
-validate_docs_config() {
-    local metatitle=$(echo "$config" | jq -r '.docs_config.metatitle' > /dev/null)
-    if [[ -z "$metatitle" ]]; then
-        local ERROR_MESSAGE=$(ErrorMessage "docs/checks.sh" "0119")
-        echo -e "::error::$ERROR_MESSAGE" && exit 1
-    fi
-    local domain=$(echo "$config" | jq -r '.docs_config.domain' > /dev/null)
-    if [[ -z "$domain" ]]; then
-        local ERROR_MESSAGE=$(ErrorMessage "docs/checks.sh" "0120")
-        echo -e "::error::$ERROR_MESSAGE" && exit 1
-    fi
-}
-
-# validate_docs_config
+case "$validation_result" in
+    "domain_error")
+        ERROR_MESSAGE=$(ErrorMessage "docs/checks.sh" "0120")
+        echo -e "::error::$ERROR_MESSAGE" >&2
+        exit 1
+        ;;
+    "docs_config_error")
+        ERROR_MESSAGE=$(ErrorMessage "docs/checks.sh" "0118")
+        echo -e "::error::$ERROR_MESSAGE" >&2
+        exit 1
+        ;;
+    "title_error")
+        ERROR_MESSAGE=$(ErrorMessage "docs/checks.sh" "0119")
+        echo -e "::error::$ERROR_MESSAGE" >&2
+        exit 1
+        ;;
+    *)
+        ;;
+esac

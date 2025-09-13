@@ -324,9 +324,9 @@ fi
 jserr() {
     echo -e "::error::$(cat "_just_data/e.txt")" && exit 1
 }
-HLJSCSS="$GITHUB_ACTION_PATH/src/documentation/templates/hljs-themes"
+HLJSCSS="$GITHUB_ACTION_PATH/src/generator/templates/hljs-themes"
 hljsstyles() {
-    echo "$(node $GITHUB_ACTION_PATH/src/documentation/hljscss.js "$(cat "$HLJSCSS/_just_default_light.css")")"
+    echo "$(node $GITHUB_ACTION_PATH/src/generator/hljscss.js "$(cat "$HLJSCSS/_just_default_light.css")")"
 }
 
 if [ "$TYPE" != "postprocessor" ]; then
@@ -334,6 +334,13 @@ if [ "$TYPE" != "postprocessor" ]; then
 fi
 
 TIME0=$(current_time_ms)
+
+javascript() {
+    node --max-old-space-size=4096 \
+         --optimize-for-size \
+         --max-semi-space-size=1024 \
+         "$@"
+}
 
 mode_postprocessor() {
     rm -f just.config.json && \
@@ -348,7 +355,7 @@ mode_redirector() {
     installNodejs && \
     echo "::group::Redirector mode" && \
     bash $GITHUB_ACTION_PATH/src/redirect/checks.sh && \
-    node $GITHUB_ACTION_PATH/src/redirect/index.js "$VERSION" && \
+    javascript $GITHUB_ACTION_PATH/src/redirect/index.js "$VERSION" && \
     TIME3=$(current_time_ms) && \
     DONEIN=$(calculate_duration "$TIME0" "$TIME3") && \
     echo "::endgroup::" && \
@@ -358,24 +365,24 @@ mode_compressor() {
     mkdir -p deploy && \
     installNodejs && \
     echo "::group::Compressor mode" && \
-    node $GITHUB_ACTION_PATH/src/compress.js "$INPUT_PATH" && \
+    javascript $GITHUB_ACTION_PATH/src/compress.js "$INPUT_PATH" && \
     TIME3=$(current_time_ms) && \
     DONEIN=$(calculate_duration "$TIME0" "$TIME3") && \
     echo "::endgroup::" && \
     echo -e "$msg6 ($DONEIN)"
 }
 mode_generator() {
-    HTML=$(cat "$GITHUB_ACTION_PATH/src/documentation/templates/page.html") && \
-    CSS=$(cat "$GITHUB_ACTION_PATH/src/documentation/templates/base.css") && \
-    JS=$(cat "$GITHUB_ACTION_PATH/src/documentation/templates/page.js") && \
-    JST=$(cat "$GITHUB_ACTION_PATH/src/documentation/templates/themePart.js") && \
-    JSIT=$(cat "$GITHUB_ACTION_PATH/src/documentation/templates/theme.js") && \
-    JSIN=$(cat "$GITHUB_ACTION_PATH/src/documentation/templates/navbar.js") && \
-    JSTC=$(cat "$GITHUB_ACTION_PATH/src/documentation/templates/themeClass.js") && \
+    HTML=$(cat "$GITHUB_ACTION_PATH/src/generator/templates/page.html") && \
+    CSS=$(cat "$GITHUB_ACTION_PATH/src/generator/templates/base.css") && \
+    JS=$(cat "$GITHUB_ACTION_PATH/src/generator/templates/page.js") && \
+    JST=$(cat "$GITHUB_ACTION_PATH/src/generator/templates/themePart.js") && \
+    JSIT=$(cat "$GITHUB_ACTION_PATH/src/generator/templates/theme.js") && \
+    JSIN=$(cat "$GITHUB_ACTION_PATH/src/generator/templates/navbar.js") && \
+    JSTC=$(cat "$GITHUB_ACTION_PATH/src/generator/templates/themeClass.js") && \
     HIGHLIGHTCSS=$(cat "$HLJSCSS/_just_default_dark.css") && \
     HIGHLIGHTJSON=$(hljsstyles) && \
-    BUTTONSCSS=$(cat "$GITHUB_ACTION_PATH/src/documentation/templates/buttons.css") && \
-    SEARCHCSS=$(cat "$GITHUB_ACTION_PATH/src/documentation/templates/search.css") && \
+    BUTTONSCSS=$(cat "$GITHUB_ACTION_PATH/src/generator/templates/buttons.css") && \
+    SEARCHCSS=$(cat "$GITHUB_ACTION_PATH/src/generator/templates/search.css") && \
     CUSTOMCSS=false && \
     CUSTOMCSSPATH="just.config.css" && \
     if [ -f "$CUSTOMCSSPATH" ]; then
@@ -393,20 +400,20 @@ mode_generator() {
     mkdir -p deploy && \
     installNodejs && \
     echo "::group::Generator mode" && \
-    bash $GITHUB_ACTION_PATH/src/documentation/checks.sh && \
-    INDEXJS0="$GITHUB_ACTION_PATH/src/documentation/index.js"
+    bash $GITHUB_ACTION_PATH/src/generator/checks.sh && \
+    INDEXJS0="$GITHUB_ACTION_PATH/src/generator/index.js"
     INDEXJS1=$(cat "$INDEXJS0") && \
     INDEXJS2=$(cat "$GITHUB_ACTION_PATH/src/line.js") && \
     echo "$INDEXJS2" > "$INDEXJS0" && \
-    INDEXJS3=$(node "$INDEXJS0" "$INDEXJS1") && \
+    INDEXJS3=$(javascript "$INDEXJS0" "$INDEXJS1") && \
     echo "$INDEXJS3" > "$INDEXJS0" && \
     HLJSLANGS=$(cat "$GITHUB_ACTION_PATH/data/hljslangs.json") && \
     LANGS=$(cat "$GITHUB_ACTION_PATH/data/langs.json") && \
     LANGSTEXT=$(cat "$GITHUB_ACTION_PATH/data/langstext.json") && \
-    EMBEDJS=$(cat "$GITHUB_ACTION_PATH/src/documentation/templates/embed.js") && \
-    node "$INDEXJS0" "$HTML" "$CSS" "$JS" "$INPUT_PATH" "$GITHUB_REPOSITORY" "$GITHUB_REPOSITORY_OWNER" "$CUSTOMCSS" "$HLJSLANGS" "$LANGS" "$HIGHLIGHTCSS" "$LANGSTEXT" "$VERSION" "$BUTTONSCSS" "$SEARCHCSS" "$HIGHLIGHTJSON" "$INPUT_FIXPATH" "$JST" "$JSIT" "$JSIN" "$JSTC" "$EMBEDJS" || jserr && \
-    node $GITHUB_ACTION_PATH/src/compress.js "$INPUT_PATH" && \
-    node "$GITHUB_ACTION_PATH/src/documentation/logs.js" "$INPUT_PATH" && \
+    EMBEDJS=$(cat "$GITHUB_ACTION_PATH/src/generator/templates/embed.js") && \
+    javascript "$INDEXJS0" "$HTML" "$CSS" "$JS" "$INPUT_PATH" "$GITHUB_REPOSITORY" "$GITHUB_REPOSITORY_OWNER" "$CUSTOMCSS" "$HLJSLANGS" "$LANGS" "$HIGHLIGHTCSS" "$LANGSTEXT" "$VERSION" "$BUTTONSCSS" "$SEARCHCSS" "$HIGHLIGHTJSON" "$INPUT_FIXPATH" "$JST" "$JSIT" "$JSIN" "$JSTC" "$EMBEDJS" || jserr && \
+    javascript $GITHUB_ACTION_PATH/src/compress.js "$INPUT_PATH" && \
+    javascript "$GITHUB_ACTION_PATH/src/generator/logs.js" "$INPUT_PATH" && \
     TIME3=$(current_time_ms) && \
     DONEIN=$(calculate_duration "$TIME0" "$TIME3") && \
     echo "::endgroup::" && \
@@ -436,7 +443,7 @@ case "$TYPE" in
         ;;
 esac && \
 TIME6=$(current_time_ms) && \
-node $GITHUB_ACTION_PATH/src/postprocessor.js "$INPUT_PATH" "$INPUT_FIXPATH" "$VERSION" && \
+javascript $GITHUB_ACTION_PATH/src/postprocessor.js "$INPUT_PATH" "$INPUT_FIXPATH" "$VERSION" && \
 TIME7=$(current_time_ms) && \
 POSTSECONDS=$(calculate_duration "$TIME6" "$TIME7") && \
 echo -e "$msg17 $_BLUE$POSTSECONDS$_RESET"

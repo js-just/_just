@@ -429,9 +429,13 @@
         },
         {
             "code": "0119",
-            "message": "Missing \"metatitle\" in \"docs_config\" in \"module.exports\" of \"just.config.js\" file.",
+            "message": "Missing \"title\" and \"metatitle\" in \"docs_config\" in \"module.exports\" of \"just.config.js\" file.",
             "crashed": true,
-            "link": ""
+            "link": "",
+            "data": {
+                "mg": false,
+                "i": "add either the <code>title</code> or <code>metatitle</code> to the <code>docs_config</code> in the <code>module.exports</code> of the <code>just.config.js</code> file"
+            }
         },
         {
             "code": "0120",
