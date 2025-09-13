@@ -1378,7 +1378,7 @@ checkTLD(domain).then(async tldvalid => {
         });
         const updated = _just.customCSS.highlightclasses(CSSHIGHLIGHTtemplate, CSS, htmloutput, dataname[8]);
         CSS = updated[0];
-        const detSumSpan = '<details><summary><span>&rsaquo;</span>';
+        const detSumSpan = '<details style="display:block"><summary><span>&rsaquo;</span>';
         htmloutput = updated[1]
             .replace(/(<br>){1,}<table>/g, '<table>')
             .replace(/(<br>){1,}<table class="/g, '<table class="')
