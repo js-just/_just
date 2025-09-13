@@ -909,7 +909,7 @@ checkTLD(domain).then(async tldvalid => {
                 const subResults = await findMarkdownFiles(filePath);
                 results = results.concat(subResults);
                 debuglog('   DF: '+_just.string.runnerPath(filePath));
-            } else if ((filePath.endsWith('.md') || filePath.endsWith('.markdown')) && (!pathtourl[f] || (pathtourl[f] && !ignoreFiles.includes(pathtourl[f])))) {
+            } else if ((filePath.endsWith('.md') || filePath.endsWith('.markdown')) && (!pathtourl[filePath] || (pathtourl[filePath] && !ignoreFiles.includes(pathtourl[filePath])))) {
                 results.push(filePath);
                 debuglog('   FF: '+_just.string.runnerPath(filePath));
                 checkForPageConfig(filePath);
