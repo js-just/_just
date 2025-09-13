@@ -22,45 +22,45 @@
 
 #!/bin/bash
 clearall() {
-    local target_path="$1"
-    local extensions="$2"
+    local path="${1:-.}"
+    local extensions="${2}"
     
-    if [[ ! -d "$target_path" ]]; then
+    if [[ -z "$extensions" ]]; then
+        return 1
+    fi
+    if [[ ! -d "$path" ]]; then
         return 0
     fi
     
-    local find_extensions=()
-    IFS=',' read -ra ext_array <<< "$extensions"
-    for ext in "${ext_array[@]}"; do
-        ext="${ext#.}"
-        find_extensions+=(-name "*.${ext}")
-    done
-    
-    if [[ ${#find_extensions[@]} -eq 0 ]]; then
-        return 0
-    fi
+    path="${path%/}"
     
     local start_time=$(date +%s%3N)
+    local deleted_count=0
     
-    if [[ ${#find_extensions[@]} -eq 1 ]]; then
-        find "$target_path" -type f "${find_extensions[0]}" -print0 | \
-        xargs -0 -P $(nproc) -I {} rm -f {} 2>/dev/null
+    IFS=',' read -ra ext_array <<< "$extensions"
+    
+    if [[ ${#ext_array[@]} -eq 1 ]]; then
+        local ext="${ext_array[0]#.}"
+        deleted_count=$(find "$path" -type f -name "*.${ext}" 2>/dev/null | wc -l)
+        if [[ $deleted_count -gt 0 ]]; then
+            find "$path" -type f -name "*.${ext}" -delete 2>/dev/null
+        fi
     else
-        local find_cmd=("find" "$target_path" "-type" "f")
-        for ((i=0; i<${#find_extensions[@]}; i++)); do
-            find_cmd+=("${find_extensions[i]}")
-            if [[ $i -lt $((${#find_extensions[@]} - 1)) ]]; then
-                find_cmd+=("-o")
+        for ext in "${ext_array[@]}"; do
+            ext="${ext#.}"
+            local count=$(find "$path" -type f -name "*.${ext}" 2>/dev/null | wc -l)
+            if [[ $count -gt 0 ]]; then
+                find "$path" -type f -name "*.${ext}" -delete 2>/dev/null
+                deleted_count=$((deleted_count + count))
             fi
         done
-        
-        "${find_cmd[@]}" -print0 | \
-        xargs -0 -P $(nproc) -I {} rm -f {} 2>/dev/null
     fi
     
     local end_time=$(date +%s%3N)
-    local deleted_count=$(find "$target_path" -type f \( $(echo "${find_extensions[@]}" | tr ' ' '|') \) 2>/dev/null | wc -l)
+    local duration=$((end_time - start_time))
     
-    echo "::debug::Deleted $deleted_count files in $((end_time - start_time))ms"
+    echo "::debug::Deleted $deleted_count files in ${duration}ms"
+    
+    return 0
 }
 export -f clearall
