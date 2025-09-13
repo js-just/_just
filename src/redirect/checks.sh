@@ -59,5 +59,6 @@ validate_paths() {
     fi
 }
 
-validate_redirect_config
-validate_paths
+validate_redirect_config && \
+validate_paths && \
+echo "::debug::Running Just an Ultimate Site Tool Redirector Mode"

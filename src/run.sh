@@ -29,6 +29,7 @@ source $GITHUB_ACTION_PATH/lib/errmsg.sh
 source $GITHUB_ACTION_PATH/lib/color.sh
 source $GITHUB_ACTION_PATH/lib/runts.sh
 source $GITHUB_ACTION_PATH/lib/time.sh
+source $GITHUB_ACTION_PATH/lib/js.sh
 
 if [ "$INPUT_PATH" == ""]; then
     INPUT_PATH="."
@@ -198,7 +199,8 @@ if [ ! -f "$CONFIG_FILE" ]; then
     echo -e "::error::$ERROR_MESSAGE" && exit 1
 fi
 
-CONFIG_JSON=$(node -e "console.log(JSON.stringify(require('./just.config.js')));")
+installNodejs && \
+CONFIG_JSON=$(javascript -e "console.log(JSON.stringify(require('./just.config.js')));")
 if [ $? -ne 0 ]; then
     ERROR_MESSAGE=$(ErrorMessage "run.sh" "0109")
     echo -e "::error file=just.config.js::$ERROR_MESSAGE" && exit 1
@@ -326,7 +328,7 @@ jserr() {
 }
 HLJSCSS="$GITHUB_ACTION_PATH/src/generator/templates/hljs-themes"
 hljsstyles() {
-    echo "$(node $GITHUB_ACTION_PATH/src/generator/hljscss.js "$(cat "$HLJSCSS/_just_default_light.css")")"
+    echo "$(javascript $GITHUB_ACTION_PATH/src/generator/hljscss.js "$(cat "$HLJSCSS/_just_default_light.css")")"
 }
 
 if [ "$TYPE" != "postprocessor" ]; then
@@ -334,14 +336,6 @@ if [ "$TYPE" != "postprocessor" ]; then
 fi
 
 TIME0=$(current_time_ms)
-
-javascript() {
-    node --max-old-space-size=4096 \
-         --optimize-for-size \
-         --max-semi-space-size=1024 \
-         --v8-pool-size=0 \
-         "$@"
-}
 
 mode_postprocessor() {
     rm -f just.config.json && \
@@ -353,7 +347,6 @@ mode_postprocessor() {
 }
 mode_redirector() {
     mkdir -p deploy/_just && \
-    installNodejs && \
     echo "::group::Redirector mode" && \
     bash $GITHUB_ACTION_PATH/src/redirect/checks.sh && \
     javascript $GITHUB_ACTION_PATH/src/redirect/index.js "$VERSION" && \
@@ -364,7 +357,7 @@ mode_redirector() {
 }
 mode_compressor() {
     mkdir -p deploy && \
-    installNodejs && \
+    echo "::debug::Running Just an Ultimate Site Tool Compressor Mode" && \
     echo "::group::Compressor mode" && \
     javascript $GITHUB_ACTION_PATH/src/compress.js "$INPUT_PATH" && \
     TIME3=$(current_time_ms) && \
@@ -399,7 +392,6 @@ mode_generator() {
     fi && \
     mkdir -p _just && \
     mkdir -p deploy && \
-    installNodejs && \
     echo "::group::Generator mode" && \
     bash $GITHUB_ACTION_PATH/src/generator/checks.sh && \
     INDEXJS0="$GITHUB_ACTION_PATH/src/generator/index.js"
@@ -435,7 +427,7 @@ case "$TYPE" in
         mode_generator
         ;;
     "void")
-        installNodejs
+        echo "::debug::Running Just an Ultimate Site Tool Void Mode"
         ;;
     *)
         ERROR_MESSAGE=$(ErrorMessage "run.sh" "0111")

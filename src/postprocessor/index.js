@@ -44,6 +44,8 @@ if (v != '24' && v != '26' && v != '32' && v != '') {
     throwerror('', `Invalid input value: postprocessor-version should be one of: "24", "26", "32".`);
 }
 
+console.log("::debug::Running Just an Ultimate Site Tool Postprocessor Mode")
+
 function getFiles(dir) {
     let results = [];
     const list = fs.readdirSync(dir);

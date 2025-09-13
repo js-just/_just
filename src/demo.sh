@@ -21,10 +21,11 @@
 # SOFTWARE.
 
 #!/bin/bash
+source lib/js.sh && \
 mkdir -p demo && \
-DEMO_LATEST_ID=$(node -e "await fetch('https://api.just.js.org/v1/demo-id/').then(async resp => {return await resp.json()}).then(resp => {console.log(resp.value)})") && \
-DEMO_BUILT_ID=$(node "src/demo.js" "$INPUT_FILES" "$DEMO_LATEST_ID") && \
-DEMO_NEW_ID=$(node -e "console.log($DEMO_LATEST_ID + 1)") && \
+DEMO_LATEST_ID=$(javascript -e "await fetch('https://api.just.js.org/v1/demo-id/').then(async resp => {return await resp.json()}).then(resp => {console.log(resp.value)})") && \
+DEMO_BUILT_ID=$(javascript "src/demo.js" "$INPUT_FILES" "$DEMO_LATEST_ID") && \
+DEMO_NEW_ID=$(javascript -e "console.log($DEMO_LATEST_ID + 1)") && \
 rm -f "just.config.js" && \
 echo "$INPUT_CONFIG" > just.config.js && \
 echo "id=id/$DEMO_BUILT_ID" >> $GITHUB_OUTPUT && \

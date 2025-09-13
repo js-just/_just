@@ -21,9 +21,11 @@
 # SOFTWARE.
 
 #!/bin/bash
+source $GITHUB_ACTION_PATH/lib/js.sh
+
 runTS() {
     tsc "$1.ts" && \
-    node "$1.js" "$2" "$3" "$4" "$5"
+    javascript "$1.js" "$2" "$3" "$4" "$5"
 }
 
 export -f runTS

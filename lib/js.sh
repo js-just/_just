@@ -21,39 +21,12 @@
 # SOFTWARE.
 
 #!/bin/bash
-current_time_ms() {
-    echo $(($(date +%s%N) / 1000000))
-}
-format_duration() {
-    local ms=$1
-    local seconds minutes result
-    
-    if [ "$ms" -lt 0 ]; then
-        echo "0ms"
-        return
-    fi
-    
-    if [ "$ms" -lt 1000 ]; then
-        echo "${ms}ms"
-        return
-    fi
-    
-    seconds=$((ms / 1000))
-    
-    if [ "$seconds" -le 60 ]; then
-        local tenths=$(( (ms + 50) / 100 ))
-        echo "${tenths%?}.${tenths: -1}s"
-    else
-        minutes=$(echo "scale=2; $seconds / 60" | bc)
-        echo "${minutes}m"
-    fi
-}
-calculate_duration() {
-    local time1=$1
-    local time2=$2
-    local diff=$((time2 - time1))
-    format_duration "$diff"
+javascript() {
+    node --max-old-space-size=4096 \
+         --optimize-for-size \
+         --max-semi-space-size=1024 \
+         --v8-pool-size=0 \
+         "$@"
 }
 
-export -f current_time_ms
-export -f calculate_duration
+export -f javascript
