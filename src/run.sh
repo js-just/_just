@@ -335,10 +335,6 @@ fi
 
 TIME0=$(current_time_ms)
 
-javascript() {
-    node "$@"
-}
-
 mode_postprocessor() {
     rm -f just.config.json && \
     rm -rf deploy _just_data && \
@@ -352,7 +348,7 @@ mode_redirector() {
     installNodejs && \
     echo "::group::Redirector mode" && \
     bash $GITHUB_ACTION_PATH/src/redirect/checks.sh && \
-    javascript $GITHUB_ACTION_PATH/src/redirect/index.js "$VERSION" && \
+    node $GITHUB_ACTION_PATH/src/redirect/index.js "$VERSION" && \
     TIME3=$(current_time_ms) && \
     DONEIN=$(calculate_duration "$TIME0" "$TIME3") && \
     echo "::endgroup::" && \
@@ -362,7 +358,7 @@ mode_compressor() {
     mkdir -p deploy && \
     installNodejs && \
     echo "::group::Compressor mode" && \
-    javascript $GITHUB_ACTION_PATH/src/compress.js "$INPUT_PATH" && \
+    node $GITHUB_ACTION_PATH/src/compress.js "$INPUT_PATH" && \
     TIME3=$(current_time_ms) && \
     DONEIN=$(calculate_duration "$TIME0" "$TIME3") && \
     echo "::endgroup::" && \
@@ -402,15 +398,15 @@ mode_generator() {
     INDEXJS1=$(cat "$INDEXJS0") && \
     INDEXJS2=$(cat "$GITHUB_ACTION_PATH/src/line.js") && \
     echo "$INDEXJS2" > "$INDEXJS0" && \
-    INDEXJS3=$(javascript "$INDEXJS0" "$INDEXJS1") && \
+    INDEXJS3=$(node "$INDEXJS0" "$INDEXJS1") && \
     echo "$INDEXJS3" > "$INDEXJS0" && \
     HLJSLANGS=$(cat "$GITHUB_ACTION_PATH/data/hljslangs.json") && \
     LANGS=$(cat "$GITHUB_ACTION_PATH/data/langs.json") && \
     LANGSTEXT=$(cat "$GITHUB_ACTION_PATH/data/langstext.json") && \
     EMBEDJS=$(cat "$GITHUB_ACTION_PATH/src/generator/templates/embed.js") && \
-    javascript "$INDEXJS0" "$HTML" "$CSS" "$JS" "$INPUT_PATH" "$GITHUB_REPOSITORY" "$GITHUB_REPOSITORY_OWNER" "$CUSTOMCSS" "$HLJSLANGS" "$LANGS" "$HIGHLIGHTCSS" "$LANGSTEXT" "$VERSION" "$BUTTONSCSS" "$SEARCHCSS" "$HIGHLIGHTJSON" "$INPUT_FIXPATH" "$JST" "$JSIT" "$JSIN" "$JSTC" "$EMBEDJS" || jserr && \
-    javascript $GITHUB_ACTION_PATH/src/compress.js "$INPUT_PATH" && \
-    javascript "$GITHUB_ACTION_PATH/src/generator/logs.js" "$INPUT_PATH" && \
+    node --v8-pool-size=0 "$INDEXJS0" "$HTML" "$CSS" "$JS" "$INPUT_PATH" "$GITHUB_REPOSITORY" "$GITHUB_REPOSITORY_OWNER" "$CUSTOMCSS" "$HLJSLANGS" "$LANGS" "$HIGHLIGHTCSS" "$LANGSTEXT" "$VERSION" "$BUTTONSCSS" "$SEARCHCSS" "$HIGHLIGHTJSON" "$INPUT_FIXPATH" "$JST" "$JSIT" "$JSIN" "$JSTC" "$EMBEDJS" || jserr && \
+    node $GITHUB_ACTION_PATH/src/compress.js "$INPUT_PATH" && \
+    node "$GITHUB_ACTION_PATH/src/generator/logs.js" "$INPUT_PATH" && \
     TIME3=$(current_time_ms) && \
     DONEIN=$(calculate_duration "$TIME0" "$TIME3") && \
     echo "::endgroup::" && \
@@ -440,7 +436,7 @@ case "$TYPE" in
         ;;
 esac && \
 TIME6=$(current_time_ms) && \
-javascript $GITHUB_ACTION_PATH/src/postprocessor.js "$INPUT_PATH" "$INPUT_FIXPATH" "$VERSION" && \
+node $GITHUB_ACTION_PATH/src/postprocessor.js "$INPUT_PATH" "$INPUT_FIXPATH" "$VERSION" && \
 TIME7=$(current_time_ms) && \
 POSTSECONDS=$(calculate_duration "$TIME6" "$TIME7") && \
 echo -e "$msg17 $_BLUE$POSTSECONDS$_RESET"
