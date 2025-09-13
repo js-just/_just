@@ -336,8 +336,7 @@ fi
 TIME0=$(current_time_ms)
 
 javascript() {
-    node --max-old-space-size=4096 \
-         "$@"
+    node "$@"
 }
 
 mode_postprocessor() {
