@@ -32,9 +32,7 @@ source $GITHUB_ACTION_PATH/lib/time.sh
 source $GITHUB_ACTION_PATH/lib/js.sh
 source $GITHUB_ACTION_PATH/lib/cleanup.sh
 
-if [ "$INPUT_PATH" == ""]; then
-    INPUT_PATH="."
-elif [ -z "$INPUT_PATH" ]; then
+if [ -z "$INPUT_PATH" ] || [ "$INPUT_PATH" == "" ]; then
     INPUT_PATH="."
 fi
 
@@ -266,7 +264,7 @@ compile_assets() {
     
     if [[ "${COMPILE_SASS,,}" == "true" ]]; then
         PREPROCESSED="y"
-        checkForDartSass
+        #checkForDartSass
         source "$GITHUB_ACTION_PATH/lib/compile.sh"
         tocss "$INPUT_PATH" "sass"
         local DOCLEANUP=$(javascript $GITHUB_ACTION_PATH/src/check-cleanup.js "") && \
@@ -277,7 +275,7 @@ compile_assets() {
     
     if [[ "${COMPILE_SCSS,,}" == "true" ]]; then
         PREPROCESSED="y"
-        checkForDartSass
+        #checkForDartSass
         source "$GITHUB_ACTION_PATH/lib/compile.sh"
         tocss "$INPUT_PATH" "scss"
         local DOCLEANUP=$(javascript $GITHUB_ACTION_PATH/src/check-cleanup.js "") && \
