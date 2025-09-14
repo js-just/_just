@@ -148,7 +148,7 @@ installTypeScriptCompiler() {
 installHomebrew() {
     installNodejs
     echo -e "$msg12"
-    local TIME1=$(current_time_ms)
+    local TIME1=$(python3 "$GITHUB_ACTION_PATH/src/time.py")
     if ! command -v brew &> /dev/null; then # attempt 0: homebrew installed before running _just
         # attempt 1: install without logs
         NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" > /dev/null 2>&1
@@ -165,26 +165,26 @@ installHomebrew() {
             eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
         fi
     fi
-    local TIME2=$(current_time_ms)
+    local TIME2=$(python3 "$GITHUB_ACTION_PATH/src/time.py")
     HBVERSION=$(brew --version)
-    HBSECONDS=$(calculate_duration "$TIME1" "$TIME2")
+    HBSECONDS=$(node "$GITHUB_ACTION_PATH/src/time.js" "$TIME1" "$TIME2")
     echo -e "$msg13 $HBVERSION ($HBSECONDS)"
 }
 installDartSass() {
     echo -e "$msg14"
-    local TIME1=$(current_time_ms) && \
+    local TIME1=$(python3 "$GITHUB_ACTION_PATH/src/time.py")
     if ! command -v sass &> /dev/null; then # attempt 0: dart sass installed before running _just
         # attempt 1: install without logs
-        brew install sass/sass/sass > /dev/null 2>&1 && \
+        brew install sass/sass/sass > /dev/null 2>&1
         if ! command -v sass &> /dev/null; then
             # attempt 2: install with logs
-            local ERROR_MESSAGE=$(ErrorMessage "run.sh" "0212") && \
-            echo -e "$ERROR_MESSAGE" && \
+            local ERROR_MESSAGE=$(ErrorMessage "run.sh" "0212")
+            echo -e "$ERROR_MESSAGE"
             brew install sass/sass/sass
         fi
-    fi && \
-    local TIME2=$(current_time_ms) && \
-    DSSECONDS=$(calculate_duration "$TIME1" "$TIME2") && \
+    fi
+    local TIME2=$(python3 "$GITHUB_ACTION_PATH/src/time.py")
+    DSSECONDS=$(node "$GITHUB_ACTION_PATH/src/time.js" "$TIME1" "$TIME2")
     echo -e "$msg15 ($DSSECONDS)"
 }
 
@@ -236,6 +236,7 @@ install_dependencies() {
     fi
     
     if [[ "${USE_SASS,,}" == "true" ]]; then
+        chmod +x "$GITHUB_ACTION_PATH/src/time.py" && \
         installHomebrew && \
         installDartSass &
     fi
@@ -264,7 +265,7 @@ compile_assets() {
     
     if [[ "${COMPILE_SASS,,}" == "true" ]]; then
         PREPROCESSED="y"
-        #checkForDartSass
+        checkForDartSass
         source "$GITHUB_ACTION_PATH/lib/compile.sh"
         tocss "$INPUT_PATH" "sass"
         local DOCLEANUP=$(javascript $GITHUB_ACTION_PATH/src/check-cleanup.js "") && \
@@ -275,7 +276,7 @@ compile_assets() {
     
     if [[ "${COMPILE_SCSS,,}" == "true" ]]; then
         PREPROCESSED="y"
-        #checkForDartSass
+        checkForDartSass
         source "$GITHUB_ACTION_PATH/lib/compile.sh"
         tocss "$INPUT_PATH" "scss"
         local DOCLEANUP=$(javascript $GITHUB_ACTION_PATH/src/check-cleanup.js "") && \
