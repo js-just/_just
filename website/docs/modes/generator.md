@@ -8,10 +8,10 @@ This mode requires the `just.config.js` file and the workflow file.
 -# `just.config.js`
 ```js
 module.exports = {
-  type: "docs",
+  mode: "generator",
+  domain: "example.com", // Required. Replace with your domain name. Domain name should be valid.
   docs_config: {
     title: "Documentation title", // Required. Replace with your documentation title.
-    domain: "example.com" // Required. Replace with your domain name. Domain name should be valid.
   }
 }
 ```

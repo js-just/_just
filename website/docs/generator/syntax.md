@@ -12,12 +12,15 @@ _just: title: Supported markdown syntax
 - [Horizontal Rules](https://www.markdownguide.org/basic-syntax/#horizontal-rules)
 - [Links](https://www.markdownguide.org/basic-syntax/#links)
 - [Images](https://www.markdownguide.org/basic-syntax/#images-1)
+- [Tables](https://www.markdownguide.org/extended-syntax/#tables)
 - [Fenced Code Blocks](https://www.markdownguide.org/extended-syntax/#fenced-code-blocks) (Use triple backticks (\`\`\`). Spaces/Tabs aren’t supported.)
 - [Syntax Highlighting](https://www.markdownguide.org/extended-syntax/#syntax-highlighting)
 - [Heading IDs](https://www.markdownguide.org/extended-syntax/#heading-ids) (Automatically generated.)
+- [Definition Lists](https://www.markdownguide.org/extended-syntax/#definition-lists)
 - [Strikethrough](https://www.markdownguide.org/extended-syntax/#strikethrough)
 - [Task Lists](https://www.markdownguide.org/extended-syntax/#task-lists)
 - [Emoji (copy and paste)](https://www.markdownguide.org/extended-syntax/#copying-and-pasting-emoji)
+- [Emoji (shortcodes)](https://www.markdownguide.org/extended-syntax/#using-emoji-shortcodes)
 - [Highlight](https://www.markdownguide.org/extended-syntax/#highlight)
 - [Subscript](https://www.markdownguide.org/extended-syntax/#subscript)
 - [Superscript](https://www.markdownguide.org/extended-syntax/#superscript)
@@ -28,12 +31,7 @@ _just: title: Supported markdown syntax
 ### Not supported elements
 - [Paragraphs](https://www.markdownguide.org/basic-syntax/#paragraphs-1)
 - [Footnotes](https://www.markdownguide.org/extended-syntax/#footnotes)
-- [Definition Lists](https://www.markdownguide.org/extended-syntax/#definition-lists)
 - Abbreviation
-- [Tables](https://www.markdownguide.org/extended-syntax/#tables)
-
-### Planned
-- [Emoji (shortcodes)](https://www.markdownguide.org/extended-syntax/#using-emoji-shortcodes)
 
 ## Support for Additional Syntax Elements
 - Note, tip, important, warning, caution blockquotes:
@@ -55,6 +53,11 @@ __This text will be underlined.__
 -# Subtext example
 ```md
 -# This line will be made smaller and greyed out.
+```
+
+- Embeds:
+```md
+{https://juststudio.is-a.dev/}
 ```
 
 ## Escaping

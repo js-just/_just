@@ -1,24 +1,23 @@
 _just: title: Docs
-# _just Docs
-Welcome to Just an Ultimate Site Tool documentation!
--# "**`_just`**" is an abbreviation of **Just an Ultimate Site Tool**.
+# $${name}$$ Docs
+Welcome to $${name}$$ documentation!
+-# "**`_just`**" is an abbreviation of **$${name}$$**.
 ---
-## What is _just?
-Just an Ultimate Site Tool is a GitHub Action for building static websites. 
+## What is $${name}$$?
+$${name}$$ is a GitHub Action for building static websites. 
 Currently it have 4 modes: 
 - `Postprocessor`: Add your own files to generated Next.js website.
 - `Redirector`: Client-side redirect using JavaScript.
 - `Compressor`: Compresses your website.
 - `Generator`: Generates documentation website using Markdown.
 
-> [!WARNING] Just an Ultimate Site Tool is still in development at the **beta** stage. Expect regular updates, possible bugs, and changes. If you have found a bug, please [report it here](https://github.com/js-just/_just/issues/new?labels=bug&template=bug.md).
-> [!NOTE] Just an Ultimate Site Tool assumes that a modern browser and a modern operating system are used.
-> [!TIP] Do not use `Redirector` if you can make server-side `HTTP 3XX` redirects.
+> [!WARNING] $${name}$$ is still in development at the **beta** stage. Expect regular updates, possible bugs, and changes. If you have found a bug, please [report it here](https://github.com/js-just/_just/issues/new?labels=bug&template=bug.md).
+> [!NOTE] $${name}$$ assumes that a modern browser and a modern operating system are used.
 
-## Why _just?
+## Why $${name}$$?
 1. __No packages.__
 2. __Fast build.__
 3. __**No watermarks.**__
--# _just uses Node.js, but _just does not require you to use Node.js/npm/pnpm/Yarn/related packages stuff.
+-# $${name}$$ uses Node.js, but $${name}$$ does not require you to use Node.js/npm/pnpm/Yarn/related packages stuff.
 
 _just: next: /docs/getting-started

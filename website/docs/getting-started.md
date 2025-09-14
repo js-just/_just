@@ -74,32 +74,39 @@ Choose what mode you want to use.
 Using `Postprocessor` mode:
 ```js
 module.exports = {
-  type: "postprocessor"
+  mode: "postprocessor"
 }
 ```
 Using `Redirector` mode: 
 ```js
 module.exports = {
-    type: "redirect", 
-    redirect_config: {
-        url: "https://example.com/", // Required. Replace with destination URL.
-    }
+  mode: "redirector", 
+  redirect_config: {
+    url: "https://example.com/", // Required. Replace with destination URL.
+  }
 }
 ```
 Using `Compressor` mode:
 ```js
 module.exports = {
-    type: "compress"
+  mode: "compressor"
 }
 ```
 Using `Generator` mode:
 ```js
 module.exports = {
-    type: "docs",
-    docs_config: {
-        title: "Documentation title", // Required. Replace with your documentation title.
-        domain: "example.com" // Required. Replace with your domain name. Domain name should be valid.
-    }
+  mode: "generator",
+  domain: "example.com", // Required. Replace with your domain name. Domain name should be valid.
+  docs_config: {
+    title: "Documentation title" // Required. Replace with your documentation title.
+  }
+}
+```
+Using `Void` mode:
+```js
+module.exports = {
+  mode: "void",
+  domain: "example.com" // Required. Replace with your domain name. Domain name should be valid.
 }
 ```
 - Read the documentation for the mode that you’ve chosen.
@@ -130,7 +137,7 @@ jobs:
 Basic usage:
 ```js
 module.exports = {
-  type: "(postprocessor/redirect/compress/docs)"
+  mode: "(postprocessor/redirector/compressor/generator/void)"
 }
 ```
 
@@ -142,9 +149,24 @@ module.exports = {
 - [Compressor](/docs/modes/compressor)
 - [Generator](/docs/modes/generator)
 
+<details>
+    <summary>What is **Void mode**?</summary>
+    Void mode does nothing. You can use it when you want to use pre- and/or post-processor features and you don't want to use any other mode.
+-# `just.config.js`
+```js
+module.exports = {
+  mode: "void",
+  domain: "example.com" // Required. Replace with your domain name. Domain name should be valid.
+}
+```
+</details>
+
+**Also we recommend reading the [config](/docs/config) documentation.**
+
 ## Reserved directories
 Your repository should not have these directories:
 - _just_data
+- _just_temp
 - deploy
 If your repository has any of these, _just will throw an error.
 

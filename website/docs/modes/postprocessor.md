@@ -4,6 +4,8 @@ _just: title: Postprocessor Mode
 
 > With this mode you can add your own files to generated Next.js website. <br>This mode creates the `deploy` directory and outputs files into it.<br> If your Next.js website outputs an `en.html` file, it will be copied into the `index.html` file.
 
+> [!WARNING] This mode will be deprecated after v0.1.1.
+
 This mode requires the `just.config.js` file, the workflow file, some directories and `_just/404.html`.
 Next.js website should be generated **before** running this mode.
 Generated Next.js website should be in `.next/server/pages/` and `.next/static/` directories.
