@@ -1,6 +1,6 @@
 const hidePages = ['/api-modules/pages/redirect', '/code'];
 
-export default {
+module.exports = {
     mode: "generator",
     domain: "test.just.is-a.dev",
     docs_config: {
