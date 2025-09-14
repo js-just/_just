@@ -245,7 +245,7 @@ install_dependencies() {
     fi
     
     if [[ "${USE_SASS,,}" == "true" ]]; then
-        installHomebrew &
+        installHomebrew && \
         installDartSass &
     fi
     
