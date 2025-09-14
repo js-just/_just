@@ -31,5 +31,8 @@ module.exports = {
         generateSitemap: true,
         protocol: 'https:',
         hidePages,
+    },
+    insert: {
+        htmlHead: '<!-- Test /-->'
     }
 }

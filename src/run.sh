@@ -416,7 +416,7 @@ mode_generator() {
     HLJSLANGS=$(cat "$GITHUB_ACTION_PATH/data/hljslangs.json") && \
     LANGS=$(cat "$GITHUB_ACTION_PATH/data/langs.json") && \
     LANGSTEXT=$(cat "$GITHUB_ACTION_PATH/data/langstext.json") && \
-    EMBEDJS=$(cat "$GITHUB_ACTION_PATH/src/generator/templates/embed.js") && \
+    EMBEDJS=$(cat "$GITHUB_ACTION_PATH/src/generator/elements/embed.js") && \
     javascript "$INDEXJS0" "$HTML" "$CSS" "$JS" "$INPUT_PATH" "$GITHUB_REPOSITORY" "$GITHUB_REPOSITORY_OWNER" "$CUSTOMCSS" "$HLJSLANGS" "$LANGS" "$HIGHLIGHTCSS" "$LANGSTEXT" "$VERSION" "$BUTTONSCSS" "$SEARCHCSS" "$HIGHLIGHTJSON" "$INPUT_FIXPATH" "$JST" "$JSIT" "$JSIN" "$JSTC" "$EMBEDJS" || jserr && \
     javascript $GITHUB_ACTION_PATH/src/compress.js "$INPUT_PATH" && \
     javascript "$GITHUB_ACTION_PATH/src/generator/logs.js" "$INPUT_PATH" && \

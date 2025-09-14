@@ -72,8 +72,18 @@ const generatePage = (url, params, path_) => {
     
     const ogTitle = params && params.og ? params.og.title || title : title;
     const ogDescription = params && params.og ? params.og.description || description : description;
+
+    const justTitle = params && params.just ? params.just.title || title : title;
+    const justDesc = params && params.just ? params.just.description || description : description;
+    const justName = params && params.just ? params.just.name || undefined : undefined;
+    const justColor = params && params.just ? params.just.color || undefined : undefined;
     
     const twitterCard = params && params.twitter ? params.twitter.card || template.twitter : template.twitter;
+    const twitterTitle = String(params && params.twitter ? params.twitter.title || title : title).slice(0, 70);
+    const twitterDesc = params && params.twitter ? params.twitter.description || description : description;
+    const twitterDescription = twitterDesc && twitterDesc != undefined ? String(twitterDesc).slice(0, 200) : undefined;
+    const twitterSite = params && params.twitter ? params.twitter.site || undefined : undefined;
+    const twitterCreator = params && params.twitter ? params.twitter.creator || undefined : undefined;
 
     const yandexVerification = params ? params.yandex || undefined : undefined;
 
@@ -119,11 +129,19 @@ const generatePage = (url, params, path_) => {
         `<link rel="stylesheet" href="/_just/style.css">` +
         `${description ? `<meta name="description" content="${description}">` : ''}${keywords}` +
         `${meta}"og:type" content="website">` +
-        `${meta}"twitter:card" content="${twitterCard}">` +
+        `<meta name="twitter:card" content="${twitterCard}">` +
         `${meta}"og:title" content="${ogTitle}">` +
         `${ogDescription ? `${meta}"og:description" content="${ogDescription}">` : ''}` +
         `${meta}"og:url" content="${URL}">${optionalstuff()}` +
         `<meta name="generator" content="Just an Ultimate Site Tool (Redirector) ${vrsn}">` +
+        `<meta name="twitter:title" content="${twitterTitle}">` +
+        `${twitterDescription ? `<meta name="twitter:description" content="${twitterDescription}">` : ''}` +
+        `${twitterSite ? `<meta name="twitter:site" content="${twitterSite}">` : ''}` +
+        `${twitterCreator ? `<meta name="twitter:creator" content="${twitterCreator}">` : ''}` +
+        `${justTitle ? `<meta name="just:title" content="${justTitle}">` : ''}` +
+        `${justDesc ? `<meta name="just:description" content="${justDesc}">` : ''}` +
+        `${justName ? `<meta name="just:name" content="${justName}">` : ''}` +
+        `${justColor ? `<meta name="just:color" content="${justColor}">` : ''}` +
     '</head>' +
     '<body>' +
         `<h1>${title}</h1>` +

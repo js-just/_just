@@ -923,7 +923,7 @@ checkTLD(domain).then(async tldvalid => {
     debuglog('  MDF: '+JSON.stringify(markdownFiles));
 
     const title = docsConfig ? docsConfig.title || template.title : template.title;
-    const metatitle = docsConfig ? docsConfig.metatitle || title : title;
+    const metatitle = docsConfig ? docsConfig.metaTitle || title : title;
     const ogtitle = docsConfig && docsConfig.og ? docsConfig.og.title || metatitle : metatitle;
     const description = docsConfig ? docsConfig.description || undefined : undefined;
     const ogdescription = docsConfig && docsConfig.og ? docsConfig.og.description || description : description;
@@ -948,6 +948,20 @@ checkTLD(domain).then(async tldvalid => {
     const links = docsConfig ? docsConfig.links || [] : [];
     const buttons = docsConfig ? docsConfig.buttons || [] : [];
     const mdenv = docsConfig ? docsConfig.env || {} : {};
+
+    const themeColor = docsConfig ? docsConfig.metaColor || undefined : undefined;
+    const ogName = docsConfig && docsConfig.og ? docsConfig.og.site_name || undefined : undefined;
+
+    const _justTitle = (docsConfig && docsConfig.just ? docsConfig.just.title || undefined : undefined) || metatitle;
+    const _justName = (docsConfig && docsConfig.just ? docsConfig.just.name || undefined : undefined) || ogName;
+    const _justDesc = (docsConfig && docsConfig.just ? docsConfig.just.description || undefined : undefined) || description;
+    const _justColor = (docsConfig && docsConfig.just ? docsConfig.just.color || undefined : undefined) || themeColor;
+
+    const twitterTitle = String(docsConfig && docsConfig.twitter ? docsConfig.twitter.title || title : title).slice(0, 70);
+    const twitterDesc = docsConfig && docsConfig.twitter ? docsConfig.twitter.description || description : description;
+    const twitterDescription = twitterDesc && twitterDesc != undefined ? String(twitterDesc).slice(0, 200) : undefined;
+    const twitterSite = docsConfig && docsConfig.twitter ? docsConfig.twitter.site || undefined : undefined;
+    const twitterCreator = docsConfig && docsConfig.twitter ? docsConfig.twitter.creator || undefined : undefined;
 
     const insertHTMLinHead = docsConfig ? docsConfig.insertInHTMLHead || '' : '';
     const hidePages = docsConfig ? docsConfig.hidePages || [] : [];
@@ -984,13 +998,13 @@ checkTLD(domain).then(async tldvalid => {
             output += `<meta property="twitter:card" content="${twitter}">`
         }
         if (yandexVerification) {
-            output += `\n<meta name="yandex-verification" content="${yandexVerification}">`;
+            output += `<meta name="yandex-verification" content="${yandexVerification}">`;
         }
         if (googleVerification) {
-            output += `\n<meta name="google-site-verification" content="${googleVerification}">`;
+            output += `<meta name="google-site-verification" content="${googleVerification}">`;
         }
         if (googleAnalytics) {
-            output += `\n<script async src="https://www.googletagmanager.com/gtag/js?id=${googleAnalytics}"></script>
+            output += `<script async src="https://www.googletagmanager.com/gtag/js?id=${googleAnalytics}"></script>
                         <script>
                             window.dataLayer = window.dataLayer || [];
                             function gtag() {
@@ -1000,7 +1014,29 @@ checkTLD(domain).then(async tldvalid => {
                             gtag('config', '${googleAnalytics}');
                         </script>`
         }
-        return output;
+        if (themeColor) {
+            output += `<meta name="theme-color" content="${themeColor}">`
+        }
+        if (ogName) {
+            output += `<meta property="og:site_name" content="${ogName}">`
+        }
+        if (_justTitle) {
+            output += `<meta name="just:title" content="${_justTitle}">`
+        }
+        if (_justName) {
+            output += `<meta name="just:name" content="${_justName}">`
+        }
+        if (_justDesc) {
+            output += `<meta name="just:description" content="${_justDesc}">`
+        }
+        if (_justColor) {
+            output += `<meta name="just:color" content="${_justColor}">`
+        }
+        return output+
+        `<meta name="twitter:title" content="${twitterTitle}">` +
+        `${twitterDescription ? `<meta name="twitter:description" content="${twitterDescription}">` : ''}` +
+        `${twitterSite ? `<meta name="twitter:site" content="${twitterSite}">` : ''}` +
+        `${twitterCreator ? `<meta name="twitter:creator" content="${twitterCreator}">` : ''}`;
     }
 
     const configlogs = `${l[0]}DOMAIN: ${domain}${l[0]}CONFIG TO HTML:${l[1]}DOCSCONFIG:${l[2]}TITLE: ${title}${l[2]}TITLE (HTML): ${name}${l[2]}METATITLE: ${metatitle}${l[2]}OGTITLE: ${ogtitle}${l[2]}OGTITLE (HTML): ${ogtitl}${l[2]}DESCRIPTION: ${description}${l[2]}DESCRIPTION (HTML): ${desc}${l[2]}OGDESCRIPTION: ${ogdescription}${l[2]}OGDESCRIPTION (HTML): ${ogdesc}${l[2]}VIEWPORT: ${viewport}${l[2]}TWITTER CARD: ${twitter}${l[2]}KEYWORDS: ${metaKeywords}${l[2]}KEYWORDS (HTML): ${keywords}${l[2]}LANG: ${lang}${l[2]}LANG (HTML): ${htmlLang}${l[2]}GOOGLE ANALYTICS: ${googleAnalytics}${l[2]}GOOGLE SITE VERIFICATION: ${googleVerification}${l[2]}YANDEX SITE VERIFICATION: ${yandexVerification}${l[2]}LOGO: ${logoPath}${l[2]}LOGO (HTML): ${logo}${l[2]}FOOTER: ${footer}${l[2]}HTML: ${htmlhead().replaceAll('\n', '').trim().replace(/ {2,}/g, ' ')}`
