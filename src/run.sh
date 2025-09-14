@@ -174,19 +174,19 @@ installHomebrew() {
 }
 installDartSass() {
     echo -e "$msg14"
-    local TIME1=$(current_time_ms)
+    local TIME1=$(current_time_ms) && \
     if ! command -v sass &> /dev/null; then # attempt 0: dart sass installed before running _just
         # attempt 1: install without logs
-        brew install sass/sass/sass > /dev/null 2>&1
+        brew install sass/sass/sass > /dev/null 2>&1 && \
         if ! command -v sass &> /dev/null; then
             # attempt 2: install with logs
-            local ERROR_MESSAGE=$(ErrorMessage "run.sh" "0212")
-            echo -e "$ERROR_MESSAGE"
+            local ERROR_MESSAGE=$(ErrorMessage "run.sh" "0212") && \
+            echo -e "$ERROR_MESSAGE" && \
             brew install sass/sass/sass
         fi
-    fi
-    local TIME2=$(current_time_ms)
-    DSSECONDS=$(calculate_duration)
+    fi && \
+    local TIME2=$(current_time_ms) && \
+    DSSECONDS=$(calculate_duration) && \
     echo -e "$msg15 ($DSSECONDS)"
 }
 
