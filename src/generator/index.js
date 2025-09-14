@@ -1494,7 +1494,7 @@ checkTLD(domain).then(async tldvalid => {
     }), template.charset);
     await fs.promises.writeFile(path.join(websitepath, '.', '.nojekyll'), '', template.charset);
 
-    NJS = NJS.replace("'REPLACE_NAVBAR'", `'<header><nav class="${cssclass.navbar}"><div class="${cssclass.heading}">${logo}${filterText(name)}</div><div class="${cssclass.links}">${htmlnav()}</div><div class="${cssclass.buttons}">${htmlnav(1)}</div></nav></header>'`).replace("'REPLACE_BUTTONS';", `dcmnt.addEventListener('DOMContentLoaded',()=>{${btnsjs}});`);
+    NJS = NJS.replace("'REPLACE_NAVBAR'", `'<header><nav class="${cssclass.navbar}"><div class="${cssclass.heading}">${logo.replaceAll("'","\\'")}${filterText(name)}</div><div class="${cssclass.links}">${htmlnav()}</div><div class="${cssclass.buttons}">${htmlnav(1)}</div></nav></header>'`).replace("'REPLACE_BUTTONS';", `dcmnt.addEventListener('DOMContentLoaded',()=>{${btnsjs}});`);
     await fs.promises.mkdir(path.join(websitepath, _justdir, 'static'));
     await fs.promises.writeFile(path.join(websitepath, _justdir, 'static', 'theme.js'), TJS, template.charset);
     await fs.promises.writeFile(path.join(websitepath, _justdir, 'static', 'navbar.js'), NJS, charset);
