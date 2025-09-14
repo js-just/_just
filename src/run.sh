@@ -186,7 +186,7 @@ installDartSass() {
         fi
     fi && \
     local TIME2=$(current_time_ms) && \
-    DSSECONDS=$(calculate_duration) && \
+    DSSECONDS=$(calculate_duration "$TIME1" "$TIME2") && \
     echo -e "$msg15 ($DSSECONDS)"
 }
 
@@ -213,13 +213,6 @@ if [ -z "$(echo "$CONFIG_JSON" | jq -r '.module.exports')" ]; then
     ERROR_MESSAGE=$(ErrorMessage "run.sh" "0112")
     echo -e "::error::$ERROR_MESSAGE" && exit 1
 fi
-
-checkForDartSass() {
-    if ! command -v sass &> /dev/null; then
-        local ERROR_MESSAGE=$(ErrorMessage "run.sh" "0134")
-        echo -e "::error::$ERROR_MESSAGE" && exit 1
-    fi
-}
 
 CONFIG_VALUES=$(echo "$CONFIG_JSON" | jq -r '
 .mode,
@@ -254,6 +247,13 @@ install_dependencies() {
 TIME4=$(current_time_ms)
 PREPROCESSED="n"
 compile_assets() {
+    checkForDartSass() {
+        if ! command -v sass &> /dev/null; then
+            local ERROR_MESSAGE=$(ErrorMessage "run.sh" "0134")
+            echo -e "::error::$ERROR_MESSAGE" && exit 1
+        fi
+    }
+
     if [[ "${COMPILE_TS,,}" == "true" ]]; then
         PREPROCESSED="y"
         source "$GITHUB_ACTION_PATH/lib/compile.sh"
