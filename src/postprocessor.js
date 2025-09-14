@@ -46,6 +46,4 @@ if (config.sitemap) {
 }
 if (config.insert) {
     require('../lib/postprocessor/insert.js').insert(config, inputPath)
-        .then(debuglog)
-        .catch()
 }
