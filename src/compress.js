@@ -44,9 +44,9 @@ async function serializeRules(rules) {
             return `${rule.name}{${innerContent}}`;
         } else if (rule.type === 'rule') {
             const props = [];
-            for (const [key, value] of Object.entries(rule.properties)) {
+            rule.properties.forEach(([key, value]) => {
                 props.push(`${key}:${value}`);
-            }
+            });
             return `${rule.selectors.join(',')}{${props.join(';')}}`;
         } else if (rule.type === 'insert') {
             return rule.text;

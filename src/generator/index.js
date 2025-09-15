@@ -328,9 +328,9 @@ async function lhl() {
     const lighthighlight = await _just.parseCSS.JSON(JSON.parse(HIGHLIGHTJSON)["_just_light"]);
     lighthighlight.forEach(rule => {
         const props = [];
-        for (const [keyy, valme] of Object.entries(rule.properties)) {
+        rule.properties.forEach(([keyy, valme]) => {
             props.push(`${keyy}:${valme}`);
-        }
+        });
         const outstr = (addclass) => `${rule.selectors.map(s => `.${addclass} ${s}`).join(',')}{${props.join(';')}}`;
         CSSHIGHLIGHT += outstr(cssclass.l);
         CSSHIGHLIGHT += `@media (prefers-color-scheme: light) {${outstr(cssclass.a)}}`;
