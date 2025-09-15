@@ -230,62 +230,13 @@ CONFIG_VALUES=$(echo "$CONFIG_JSON" | jq -r '
     read -r COMPILE_SCSS
 } <<< "$CONFIG_VALUES"
 
-install_dependencies() {
-    if [[ "${USE_TSC,,}" == "true" ]]; then
-        installTypeScriptCompiler &
-    fi
-    
-    if [[ "${USE_SASS,,}" == "true" ]]; then
-        chmod +x "$GITHUB_ACTION_PATH/src/time.py" && \
-        installHomebrew && \
-        installDartSass &
-    fi
-    
-    wait
-}
 TIME4=$(current_time_ms)
 PREPROCESSED="n"
-compile_assets() {
-    checkForDartSass() {
-        if ! command -v sass &> /dev/null; then
-            local ERROR_MESSAGE=$(ErrorMessage "run.sh" "0134")
-            echo -e "::error::$ERROR_MESSAGE" && exit 1
-        fi
-    }
-
-    if [[ "${COMPILE_TS,,}" == "true" ]]; then
-        PREPROCESSED="y"
-        source "$GITHUB_ACTION_PATH/lib/compile.sh"
-        tojs "$INPUT_PATH"
-        local DOCLEANUP=$(javascript $GITHUB_ACTION_PATH/src/check-cleanup.js "") && \
-        if [[ "$DOCLEANUP" == 'y' ]]; then
-            clearall "$INPUT_PATH" "ts"
-        fi &
+checkForDartSass() {
+    if ! command -v sass &> /dev/null; then
+        local ERROR_MESSAGE=$(ErrorMessage "run.sh" "0134")
+        echo -e "::error::$ERROR_MESSAGE" && exit 1
     fi
-    
-    if [[ "${COMPILE_SASS,,}" == "true" ]]; then
-        PREPROCESSED="y"
-        checkForDartSass
-        source "$GITHUB_ACTION_PATH/lib/compile.sh"
-        tocss "$INPUT_PATH" "sass"
-        local DOCLEANUP=$(javascript $GITHUB_ACTION_PATH/src/check-cleanup.js "") && \
-        if [[ "$DOCLEANUP" == 'y' ]]; then
-            clearall "$INPUT_PATH" "sass"
-        fi &
-    fi
-    
-    if [[ "${COMPILE_SCSS,,}" == "true" ]]; then
-        PREPROCESSED="y"
-        checkForDartSass
-        source "$GITHUB_ACTION_PATH/lib/compile.sh"
-        tocss "$INPUT_PATH" "scss"
-        local DOCLEANUP=$(javascript $GITHUB_ACTION_PATH/src/check-cleanup.js "") && \
-        if [[ "$DOCLEANUP" == 'y' ]]; then
-            clearall "$INPUT_PATH" "scss"
-        fi &
-    fi
-    
-    wait
 }
 
 Y="true"
@@ -294,8 +245,37 @@ if [ -z "$TYPE" ]; then
     echo -e "::error::$ERROR_MESSAGE" && exit 1
 fi
 
-install_dependencies && \
-compile_assets && \
+if [[ "${USE_TSC,,}" == "$Y" ]]; then
+    installTypeScriptCompiler
+fi && \
+if [[ "${USE_SASS,,}" == "$Y" ]]; then
+    if [ -d "_just_temp" ]; then
+        ERROR_MESSAGE=$(ErrorMessage "important_dirs" "0130")
+        echo -e "::error::$ERROR_MESSAGE" && exit 1
+    fi
+    installHomebrew && installDartSass
+fi && \
+if [[ "${COMPILE_TS,,}" == "$Y" ]]; then
+    PREPROCESSED="y"
+    if ! command -v tsc > /dev/null; then
+        ERROR_MESSAGE=$(ErrorMessage "run.sh" "0133")
+        echo -e "::error::$ERROR_MESSAGE" && exit 1
+    fi
+    source $GITHUB_ACTION_PATH/lib/compile.sh
+    tojs "$INPUT_PATH"
+fi && \
+if [[ "${COMPILE_SASS,,}" == "$Y" ]]; then
+    PREPROCESSED="y"
+    checkForDartSass
+    source $GITHUB_ACTION_PATH/lib/compile.sh
+    tocss "$INPUT_PATH" "sass"
+fi && \
+if [[ "${COMPILE_SCSS,,}" == "$Y" ]]; then
+    PREPROCESSED="y"
+    checkForDartSass
+    source $GITHUB_ACTION_PATH/lib/compile.sh
+    tocss "$INPUT_PATH" "scss"
+fi && \
 if [[ "$PREPROCESSED" == "y" ]]; then
     TIME5=$(current_time_ms) && \
     PRESECONDS=$(calculate_duration "$TIME4" "$TIME5") && \
