@@ -262,19 +262,31 @@ if [[ "${COMPILE_TS,,}" == "$Y" ]]; then
         echo -e "::error::$ERROR_MESSAGE" && exit 1
     fi
     source $GITHUB_ACTION_PATH/lib/compile.sh
-    tojs "$INPUT_PATH"
+    tojs "$INPUT_PATH" && \
+    DOCLEANUP=$(javascript $GITHUB_ACTION_PATH/src/check-cleanup.js "") && \
+    if [[ "$DOCLEANUP" == 'y' ]]; then
+        clearall "$INPUT_PATH" "ts"
+    fi
 fi && \
 if [[ "${COMPILE_SASS,,}" == "$Y" ]]; then
     PREPROCESSED="y"
     checkForDartSass
     source $GITHUB_ACTION_PATH/lib/compile.sh
-    tocss "$INPUT_PATH" "sass"
+    tocss "$INPUT_PATH" "sass" && \
+    DOCLEANUP=$(javascript $GITHUB_ACTION_PATH/src/check-cleanup.js "") && \
+    if [[ "$DOCLEANUP" == 'y' ]]; then
+        clearall "$INPUT_PATH" "sass"
+    fi
 fi && \
 if [[ "${COMPILE_SCSS,,}" == "$Y" ]]; then
     PREPROCESSED="y"
     checkForDartSass
     source $GITHUB_ACTION_PATH/lib/compile.sh
-    tocss "$INPUT_PATH" "scss"
+    tocss "$INPUT_PATH" "scss" && \
+    DOCLEANUP=$(javascript $GITHUB_ACTION_PATH/src/check-cleanup.js "") && \
+    if [[ "$DOCLEANUP" == 'y' ]]; then
+        clearall "$INPUT_PATH" "scss"
+    fi
 fi && \
 if [[ "$PREPROCESSED" == "y" ]]; then
     TIME5=$(current_time_ms) && \
