@@ -148,7 +148,7 @@ installTypeScriptCompiler() {
 installHomebrew() {
     installNodejs
     echo -e "$msg12"
-    local TIME1=$(python3 "$GITHUB_ACTION_PATH/src/time.py")
+    local TIME1=$(current_time_ms)
     if ! command -v brew &> /dev/null; then # attempt 0: homebrew installed before running _just
         # attempt 1: install without logs
         NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" > /dev/null 2>&1
@@ -165,14 +165,14 @@ installHomebrew() {
             eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
         fi
     fi
-    local TIME2=$(python3 "$GITHUB_ACTION_PATH/src/time.py")
+    local TIME2=$(current_time_ms)
     HBVERSION=$(brew --version)
-    HBSECONDS=$(node "$GITHUB_ACTION_PATH/src/time.js" "$TIME1" "$TIME2")
+    HBSECONDS=$(calculate_duration "$TIME1" "$TIME2")
     echo -e "$msg13 $HBVERSION ($HBSECONDS)"
 }
 installDartSass() {
     echo -e "$msg14"
-    local TIME1=$(python3 "$GITHUB_ACTION_PATH/src/time.py")
+    local TIME1=$(current_time_ms)
     if ! command -v sass &> /dev/null; then # attempt 0: dart sass installed before running _just
         # attempt 1: install without logs
         brew install sass/sass/sass > /dev/null 2>&1
@@ -183,8 +183,8 @@ installDartSass() {
             brew install sass/sass/sass
         fi
     fi
-    local TIME2=$(python3 "$GITHUB_ACTION_PATH/src/time.py")
-    DSSECONDS=$(node "$GITHUB_ACTION_PATH/src/time.js" "$TIME1" "$TIME2")
+    local TIME2=$(current_time_ms)
+    DSSECONDS=$(calculate_duration "$TIME1" "$TIME2")
     echo -e "$msg15 ($DSSECONDS)"
 }
 
