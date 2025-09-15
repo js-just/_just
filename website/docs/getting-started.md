@@ -159,15 +159,16 @@ module.exports = {
   domain: "example.com" // Required. Replace with your domain name. Domain name should be valid.
 }
 ```
-</details>
+</details><br>
 
 **Also we recommend reading the [config](/docs/config) documentation.**
 
 ## Reserved directories
 Your repository should not have these directories:
-- _just_data
-- _just_temp
-- deploy
+- `_just_data`
+- `_just_temp`
+- `deploy`
 If your repository has any of these, _just will throw an error.
 
 _just: prev: /docs
+_just: next: /docs/config
