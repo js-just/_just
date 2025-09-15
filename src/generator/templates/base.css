@@ -1400,6 +1400,7 @@ details {
     padding: 10px;
     position: relative;
     overflow: hidden;
+    margin-bottom: 1.5rem;
 }
 summary {
     border-bottom: 2px solid transparent;
