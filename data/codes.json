@@ -216,6 +216,16 @@
             }
         },
         {
+            "code": "0139",
+            "message": "UglifyJS Error.",
+            "crashed": true,
+            "link": "",
+            "data": {
+                "mg": false,
+                "i": "Failed to compress JavaScript file using UglifyJS"
+            }
+        },
+        {
             "code": "0205",
             "message": "Error occurred during Node.js installation. Retrying to install Node.js with console output enabled... (Attempt #4)",
             "crashed": false,
@@ -283,6 +293,16 @@
             "data": {
                 "mg": false,
                 "i": "Postprocessor mode will be deprecated after v0.1.1."
+            }
+        },
+        {
+            "code": "0214",
+            "message": "Error occurred during UglifyJS installation. Retrying to install UglifyJS... (Attempt #2)",
+            "crashed": false,
+            "link": "",
+            "data": {
+                "mg": false,
+                "i": "Just an Ultimate Site Tool is unable to install UglifyJS."
             }
         }
     ],

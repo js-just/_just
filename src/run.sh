@@ -80,6 +80,8 @@ msg14=$(_justMessage "$_BLUE Installing Dart Sass$_RESET...")
 msg15=$(_justMessage "$_BLUE Installed Dart Sass$_RESET")
 msg16=$(_justMessage "$_BLUE Preprocessed in$_RESET")
 msg17=$(_justMessage "$_BLUE Postprocessed in$_RESET")
+msg18=$(_justMessage "$_BLUE Installing UglifyJS$_RESET...")
+msg19=$(_justMessage "$_BLUE Installed UglifyJS$_RESET...")
 echo -e "$msg1"
 
 NODEJSINSTALLED="n"
@@ -187,6 +189,27 @@ installDartSass() {
     DSSECONDS=$(calculate_duration "$TIME1" "$TIME2")
     echo -e "$msg15 ($DSSECONDS)"
 }
+installUglifyJS() {
+    echo -e "$msg17"
+    local TIME1=$(current_time_ms)
+    if ! command -v uglifyjs &> /dev/null; then # attempt 0: UglifyJS installed before running _just
+        # attempt 1: install without logs
+        mkdir -p ~/.local/bin && \
+        wget -O ~/.local/bin/uglifyjs https://github.com/mishoo/UglifyJS/releases/download/v3.17.4/uglifyjs-linux > /dev/null 2>&1 && \
+        chmod +x ~/.local/bin/uglifyjs && \
+        echo "$HOME/.local/bin" >> $GITHUB_PATH && \
+        if ! command -v uglifyjs &> /dev/null; then
+            # attempt 2: install with logs
+            local ERROR_MESSAGE=$(ErrorMessage "run.sh" "0214")
+            echo -e "$ERROR_MESSAGE"
+            mkdir -p ~/.local/bin && \
+            wget -O ~/.local/bin/uglifyjs https://github.com/mishoo/UglifyJS/releases/download/v3.17.4/uglifyjs-linux && \
+            chmod +x ~/.local/bin/uglifyjs && \
+            echo "$HOME/.local/bin" >> $GITHUB_PATH
+        fi
+    fi
+    local TIME2=$(current_time_ms)
+}
 
 if [ -f "$CONFIG_DATA" ]; then
     ERROR_MESSAGE=$(ErrorMessage "run.sh" "0113")
@@ -218,7 +241,8 @@ CONFIG_VALUES=$(echo "$CONFIG_JSON" | jq -r '
 .install.dart_sass,
 .compile.ts,
 .compile.sass,
-.compile.scss
+.compile.scss,
+.install.uglifyjs
 ')
 
 {
@@ -228,6 +252,7 @@ CONFIG_VALUES=$(echo "$CONFIG_JSON" | jq -r '
     read -r COMPILE_TS
     read -r COMPILE_SASS
     read -r COMPILE_SCSS
+    read -r USE_UGLIFYJS
 } <<< "$CONFIG_VALUES"
 
 TIME4=$(current_time_ms)
@@ -254,6 +279,9 @@ if [[ "${USE_SASS,,}" == "$Y" ]]; then
         echo -e "::error::$ERROR_MESSAGE" && exit 1
     fi
     installHomebrew && installDartSass
+fi && \
+if [[ "${USE_UGLIFYJS,,}" == "$Y" ]]; then
+    installUglifyJS
 fi && \
 if [[ "${COMPILE_TS,,}" == "$Y" ]]; then
     PREPROCESSED="y"
@@ -366,6 +394,14 @@ mode_compressor() {
     javascript $GITHUB_ACTION_PATH/src/compress.js "$INPUT_PATH" && \
     TIME3=$(current_time_ms) && \
     DONEIN=$(calculate_duration "$TIME0" "$TIME3") && \
+    if [[ "${USE_UGLIFYJS,,}" == "$Y" ]]; then
+        while IFS= read -r -d '' js_file; do
+            if ! uglifyjs "$js_file" -o "$js_file" -c -m --comments; then
+                local ERROR_MESSAGE=$(ErrorMessage "run.sh" "0139") && \
+                echo -e "$ERROR_MESSAGE Failed to compress $js_file"
+            fi
+        done < <(find "$INPUT_PATH" -type f -name "*.js" -print0)
+    fi && \
     echo "::endgroup::" && \
     echo -e "$msg6 ($DONEIN)"
 }
