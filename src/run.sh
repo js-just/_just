@@ -222,7 +222,7 @@ CONFIG_VALUES=$(echo "$CONFIG_JSON" | jq -r '
 .compile.sass,
 .compile.scss,
 .install.uglifyjs,
-(.uglifyjs.reserve // []) | tojson,
+(.uglifyjs?.reserve // []) | tojson,
 .uglifyjs.unsafe,
 .uglifyjs.source_map,
 .uglifyjs.disable.dead_code,
