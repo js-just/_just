@@ -194,17 +194,17 @@ installUglifyJS() {
     local TIME1=$(current_time_ms)
     if ! command -v uglifyjs &> /dev/null; then # attempt 0: UglifyJS installed before running _just
         # attempt 1: install without logs
-        mkdir -p ~/.local/bin && \
-        wget -O ~/.local/bin/uglifyjs https://github.com/mishoo/UglifyJS/releases/download/v3.17.4/uglifyjs-linux > /dev/null 2>&1 && \
-        chmod +x ~/.local/bin/uglifyjs && \
+        sudo mkdir -p ~/.local/bin && \
+        sudo wget -O ~/.local/bin/uglifyjs https://github.com/mishoo/UglifyJS/releases/download/v3.17.4/uglifyjs-linux > /dev/null 2>&1 && \
+        sudo chmod +x ~/.local/bin/uglifyjs && \
         echo "$HOME/.local/bin" >> $GITHUB_PATH && \
         if ! command -v uglifyjs &> /dev/null; then
             # attempt 2: install with logs
             local ERROR_MESSAGE=$(ErrorMessage "run.sh" "0214")
             echo -e "$ERROR_MESSAGE"
-            mkdir -p ~/.local/bin && \
-            wget -O ~/.local/bin/uglifyjs https://github.com/mishoo/UglifyJS/releases/download/v3.17.4/uglifyjs-linux && \
-            chmod +x ~/.local/bin/uglifyjs && \
+            sudo mkdir -p ~/.local/bin && \
+            sudo wget -O ~/.local/bin/uglifyjs https://github.com/mishoo/UglifyJS/releases/download/v3.17.4/uglifyjs-linux && \
+            sudo chmod +x ~/.local/bin/uglifyjs && \
             echo "$HOME/.local/bin" >> $GITHUB_PATH
         fi
     fi
@@ -392,7 +392,7 @@ mode_compressor() {
     TIME3=$(current_time_ms) && \
     DONEIN=$(calculate_duration "$TIME0" "$TIME3") && \
     if [[ "${USE_UGLIFYJS,,}" == "$Y" ]]; then
-        sudo bash -c "$(declare -f installUglifyJS); installUglifyJS" && \
+        installUglifyJS && \
         while IFS= read -r -d '' js_file; do
             if ! uglifyjs "$js_file" -o "$js_file" -c -m --comments; then
                 local ERROR_MESSAGE=$(ErrorMessage "run.sh" "0139") && \
