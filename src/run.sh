@@ -402,9 +402,10 @@ mode_compressor() {
                 args+=(--source-map)
             fi
 
-            if ! npx uglify-js@3 "${args[@]}" 2>/dev/null; then
+            local UGLIFYJS_OUTPUT=$(npx uglify-js@3 "${args[@]}" 2>&1 >/dev/null)
+            if [ $? -ne 0 ]; then
                 local ERROR_MESSAGE=$(ErrorMessage "run.sh" "0139") && \
-                echo -e "$ERROR_MESSAGE Failed to compress $js_file" && exit 1
+                echo -e "$ERROR_MESSAGE Failed to compress $js_file" && echo -e "::error::$UGLIFYJS_OUTPUT" && exit 1
             fi
         done < <(find "$INPUT_PATH" -type f -name "*.js" -print0)
     fi && \
