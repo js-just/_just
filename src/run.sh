@@ -221,7 +221,12 @@ CONFIG_VALUES=$(echo "$CONFIG_JSON" | jq -r '
 .compile.ts,
 .compile.sass,
 .compile.scss,
-.install.uglifyjs
+.install.uglifyjs,
+.uglifyjs.reserved,
+.uglifyjs.unsafe,
+.uglifyjs.source-map,
+.uglifyjs.disable.dead_code,
+.uglifyjs.disable.sequences
 ')
 
 {
@@ -232,6 +237,11 @@ CONFIG_VALUES=$(echo "$CONFIG_JSON" | jq -r '
     read -r COMPILE_SASS
     read -r COMPILE_SCSS
     read -r USE_UGLIFYJS
+    read -r UGLIFYJS_R
+    read -r UGLIFYJS_U
+    read -r UGLIFYJS_SM
+    read -r UGLIFYJS_DC
+    read -r UGLIFYJS_S
 } <<< "$CONFIG_VALUES"
 
 TIME4=$(current_time_ms)
@@ -371,7 +381,28 @@ mode_compressor() {
     if [[ "${USE_UGLIFYJS,,}" == "$Y" ]]; then
         installNodejs && \
         while IFS= read -r -d '' js_file; do
-            if ! npx uglify-js@3 "$js_file" -o "$js_file" -c -m --comments 2>/dev/null; then
+            local args=("$js_file" -o "$js_file" -m --comments)
+            local compress_opts=()
+            if [ -n "$UGLIFYJS_R" ]; then
+                args+=(-r "$UGLIFYJS_R")
+            fi
+            if [[ "${UGLIFYJS_U,,}" == "$Y" ]]; then
+                compress_opts+=("unsafe")
+            fi
+            if [[ "${UGLIFYJS_DC,,}" == "$Y" ]]; then
+                compress_opts+=("dead_code=false")
+            fi
+            if [[ "${UGLIFYJS_S,,}" == "$Y" ]]; then
+                compress_opts+=("sequences=false")
+            fi
+            if [ ${#compress_opts[@]} -gt 0 ]; then
+                args+=(-c "$(IFS=,; echo "${compress_opts[*]}")")
+            fi
+            if [[ "${UGLIFYJS_SM,,}" == "$Y" ]]; then 
+                args+=(--source-map)
+            fi
+
+            if ! npx uglify-js@3 "${args[@]}" 2>/dev/null; then
                 local ERROR_MESSAGE=$(ErrorMessage "run.sh" "0139") && \
                 echo -e "$ERROR_MESSAGE Failed to compress $js_file" && exit 1
             fi
