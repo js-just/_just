@@ -381,7 +381,7 @@ mode_compressor() {
     if [[ "${USE_UGLIFYJS,,}" == "$Y" ]]; then
         installNodejs && \
         while IFS= read -r -d '' js_file; do
-            local args=("$js_file" -o "$js_file" -m --comments)
+            local args=("$js_file" -o "$js_file" --comments)
             local compress_opts=()
             if [ -n "$UGLIFYJS_R" ]; then
                 args+=(-m -r "$UGLIFYJS_R")
