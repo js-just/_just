@@ -189,29 +189,6 @@ installDartSass() {
     DSSECONDS=$(calculate_duration "$TIME1" "$TIME2")
     echo -e "$msg15 ($DSSECONDS)"
 }
-installUglifyJS() {
-    echo -e "$msg18"
-    local TIME1=$(current_time_ms)
-    if ! command -v uglifyjs &> /dev/null; then # attempt 0: UglifyJS installed before running _just
-        # attempt 1: install without logs
-        mkdir -p ~/.local/bin && \
-        wget -q -O ~/.local/bin/uglifyjs https://github.com/mishoo/UglifyJS/releases/download/v3.17.4/uglifyjs-linux && \
-        chmod +x ~/.local/bin/uglifyjs && \
-        export PATH="$HOME/.local/bin:$PATH"
-        if ! command -v uglifyjs &> /dev/null; then
-            # attempt 2: install with logs
-            local ERROR_MESSAGE=$(ErrorMessage "run.sh" "0214")
-            echo -e "$ERROR_MESSAGE"
-            mkdir -p ~/.local/bin && \
-            wget -O ~/.local/bin/uglifyjs https://github.com/mishoo/UglifyJS/releases/download/v3.17.4/uglifyjs-linux && \
-            chmod +x ~/.local/bin/uglifyjs && \
-            export PATH="$HOME/.local/bin:$PATH"
-        fi
-    fi
-    local TIME2=$(current_time_ms)
-    UJSSECONDS=$(calculate_duration "$TIME1" "$TIME2")
-    echo -e "$msg19 ($UJSSECONDS)"
-}
 
 if [ -f "$CONFIG_DATA" ]; then
     ERROR_MESSAGE=$(ErrorMessage "run.sh" "0113")
@@ -391,17 +368,17 @@ mode_compressor() {
     echo "::debug::Running Just an Ultimate Site Tool Compressor Mode" && \
     echo "::group::Compressor mode" && \
     javascript $GITHUB_ACTION_PATH/src/compress.js "$INPUT_PATH" && \
-    TIME3=$(current_time_ms) && \
-    DONEIN=$(calculate_duration "$TIME0" "$TIME3") && \
     if [[ "${USE_UGLIFYJS,,}" == "$Y" ]]; then
-        installUglifyJS && \
+        installNodejs && \
         while IFS= read -r -d '' js_file; do
-            if ! uglifyjs "$js_file" -o "$js_file" -c -m --comments; then
+            if ! npx uglify-js@3 "$js_file" -o "$js_file" -c -m --comments 2>/dev/null; then
                 local ERROR_MESSAGE=$(ErrorMessage "run.sh" "0139") && \
                 echo -e "$ERROR_MESSAGE Failed to compress $js_file" && exit 1
             fi
         done < <(find "$INPUT_PATH" -type f -name "*.js" -print0)
     fi && \
+    TIME3=$(current_time_ms) && \
+    DONEIN=$(calculate_duration "$TIME0" "$TIME3") && \
     echo "::endgroup::" && \
     echo -e "$msg6 ($DONEIN)"
 }
