@@ -224,7 +224,7 @@ CONFIG_VALUES=$(echo "$CONFIG_JSON" | jq -r '
 .install.uglifyjs,
 .uglifyjs.reserved,
 .uglifyjs.unsafe,
-.uglifyjs.source-map,
+.uglifyjs.source_map,
 .uglifyjs.disable.dead_code,
 .uglifyjs.disable.sequences
 ')
