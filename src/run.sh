@@ -384,7 +384,7 @@ mode_compressor() {
             local args=("$js_file" -o "$js_file" -m --comments)
             local compress_opts=()
             if [ -n "$UGLIFYJS_R" ]; then
-                args+=(-r "$UGLIFYJS_R")
+                args+=(-m -r "$UGLIFYJS_R")
             fi
             if [[ "${UGLIFYJS_U,,}" == "$Y" ]]; then
                 compress_opts+=("unsafe")
