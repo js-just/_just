@@ -190,25 +190,27 @@ installDartSass() {
     echo -e "$msg15 ($DSSECONDS)"
 }
 installUglifyJS() {
-    echo -e "$msg17"
+    echo -e "$msg18"
     local TIME1=$(current_time_ms)
     if ! command -v uglifyjs &> /dev/null; then # attempt 0: UglifyJS installed before running _just
         # attempt 1: install without logs
-        sudo mkdir -p ~/.local/bin && \
-        sudo wget -O ~/.local/bin/uglifyjs https://github.com/mishoo/UglifyJS/releases/download/v3.17.4/uglifyjs-linux > /dev/null 2>&1 && \
-        sudo chmod +x ~/.local/bin/uglifyjs && \
-        echo "$HOME/.local/bin" >> $GITHUB_PATH && \
+        mkdir -p ~/.local/bin && \
+        wget -q -O ~/.local/bin/uglifyjs https://github.com/mishoo/UglifyJS/releases/download/v3.17.4/uglifyjs-linux && \
+        chmod +x ~/.local/bin/uglifyjs && \
+        export PATH="$HOME/.local/bin:$PATH"
         if ! command -v uglifyjs &> /dev/null; then
             # attempt 2: install with logs
             local ERROR_MESSAGE=$(ErrorMessage "run.sh" "0214")
             echo -e "$ERROR_MESSAGE"
-            sudo mkdir -p ~/.local/bin && \
-            sudo wget -O ~/.local/bin/uglifyjs https://github.com/mishoo/UglifyJS/releases/download/v3.17.4/uglifyjs-linux && \
-            sudo chmod +x ~/.local/bin/uglifyjs && \
-            echo "$HOME/.local/bin" >> $GITHUB_PATH
+            mkdir -p ~/.local/bin && \
+            wget -O ~/.local/bin/uglifyjs https://github.com/mishoo/UglifyJS/releases/download/v3.17.4/uglifyjs-linux && \
+            chmod +x ~/.local/bin/uglifyjs && \
+            export PATH="$HOME/.local/bin:$PATH"
         fi
     fi
     local TIME2=$(current_time_ms)
+    UJSSECONDS=$(calculate_duration "$TIME1" "$TIME2")
+    echo -e "$msg19 ($UJSSECONDS)"
 }
 
 if [ -f "$CONFIG_DATA" ]; then
