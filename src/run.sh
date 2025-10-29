@@ -406,6 +406,8 @@ mode_compressor() {
                 args+=(--source-map)
             fi
 
+            echo "$args"
+
             local UGLIFYJS_OUTPUT=$(npx uglify-js@3 "${args[@]}") # 2>&1 >/dev/null)
             if [ $? -ne 0 ]; then
                 local ERROR_MESSAGE=$(ErrorMessage "run.sh" "0139") && \
