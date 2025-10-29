@@ -384,7 +384,7 @@ mode_compressor() {
             local args=("$js_file")
             local compress_opts=()
             if [ -n "$UGLIFYJS_R" ]; then
-                args+=(-m -r "$UGLIFYJS_R")
+                args+=(-m --reserved "$UGLIFYJS_R")
             else
                 args+=(-m)
             fi
