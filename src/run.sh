@@ -280,9 +280,6 @@ if [[ "${USE_SASS,,}" == "$Y" ]]; then
     fi
     installHomebrew && installDartSass
 fi && \
-if [[ "${USE_UGLIFYJS,,}" == "$Y" ]]; then
-    installUglifyJS
-fi && \
 if [[ "${COMPILE_TS,,}" == "$Y" ]]; then
     PREPROCESSED="y"
     if ! command -v tsc > /dev/null; then
@@ -395,10 +392,11 @@ mode_compressor() {
     TIME3=$(current_time_ms) && \
     DONEIN=$(calculate_duration "$TIME0" "$TIME3") && \
     if [[ "${USE_UGLIFYJS,,}" == "$Y" ]]; then
+        sudo bash -c "$(declare -f installUglifyJS); installUglifyJS" && \
         while IFS= read -r -d '' js_file; do
             if ! uglifyjs "$js_file" -o "$js_file" -c -m --comments; then
                 local ERROR_MESSAGE=$(ErrorMessage "run.sh" "0139") && \
-                echo -e "$ERROR_MESSAGE Failed to compress $js_file"
+                echo -e "$ERROR_MESSAGE Failed to compress $js_file" && exit 1
             fi
         done < <(find "$INPUT_PATH" -type f -name "*.js" -print0)
     fi && \
