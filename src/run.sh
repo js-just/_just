@@ -381,11 +381,14 @@ mode_compressor() {
     if [[ "${USE_UGLIFYJS,,}" == "$Y" ]]; then
         installNodejs && \
         while IFS= read -r -d '' js_file; do
-            local args=("$js_file" -o "$js_file" --comments)
+            local args=("$js_file")
             local compress_opts=()
             if [ -n "$UGLIFYJS_R" ]; then
                 args+=(-m -r "$UGLIFYJS_R")
+            else
+                args+=(-m)
             fi
+            args+=(-o "$js_file" --comments)
             if [[ "${UGLIFYJS_U,,}" == "$Y" ]]; then
                 compress_opts+=("unsafe")
             fi
