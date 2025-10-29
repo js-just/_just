@@ -222,7 +222,7 @@ CONFIG_VALUES=$(echo "$CONFIG_JSON" | jq -r '
 .compile.sass,
 .compile.scss,
 .install.uglifyjs,
-.uglifyjs.reserve // "",
+(.uglifyjs.reserve // []) | tojson,
 .uglifyjs.unsafe,
 .uglifyjs.source_map,
 .uglifyjs.disable.dead_code,
@@ -383,8 +383,7 @@ mode_compressor() {
         while IFS= read -r -d '' js_file; do
             local args=("$js_file")
             local compress_opts=()
-            if [ -n "$UGLIFYJS_R" ]; then
-                echo "uglifyjs.reserve = $UGLIFYJS_R"
+            if [ "$UGLIFYJS_R" != "[]" ]; then
                 args+=(-m "reserved=$UGLIFYJS_R")
             else
                 args+=(-m)
