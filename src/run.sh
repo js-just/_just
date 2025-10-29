@@ -384,7 +384,7 @@ mode_compressor() {
             local args=("$js_file")
             local compress_opts=()
             if [ "$UGLIFYJS_R" != "[]" ]; then
-                local UGLIFYJS_R_ARG=$(echo "$UGLIFYJS_R" | jq -r '.[]' | tr '\n' ',' | sed 's/,$//')
+                local UGLIFYJS_R_ARG=$(echo "$UGLIFYJS_R]" | jq -r '.[]' | tr '\n' ',' | sed 's/,$//')
                 if [ -n "$UGLIFYJS_R_ARG" ]; then
                     args+=(-m "reserved=[$UGLIFYJS_R_ARG]")
                 else
