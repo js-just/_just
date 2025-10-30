@@ -383,7 +383,7 @@ mode_compressor() {
         while IFS= read -r -d '' js_file; do
             local args=("$js_file")
             local compress_opts=()
-            if [ "$UGLIFYJS_R" != "[]" && "$UGLIFYJS_R" != "" ]; then
+            if [[ "$UGLIFYJS_R" != "[]" && "$UGLIFYJS_R" != "" ]]; then
                 args+=(-m "reserved=$UGLIFYJS_R")
             else
                 args+=(-m)
