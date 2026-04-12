@@ -1,6 +1,6 @@
 {
-  "name": "just",
-  "version": "0.1.0",
+  "name": "js-just",
+  "version": "0.1.1",
   "description": "Just an Ultimate Site Tool",
   "main": "index.sh",
   "scripts": {
