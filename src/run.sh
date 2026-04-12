@@ -182,6 +182,7 @@ installDartSass() {
             # attempt 2: install with logs
             local ERROR_MESSAGE=$(ErrorMessage "run.sh" "0212")
             echo -e "$ERROR_MESSAGE"
+            brew tap dart-lang/dart
             brew install sass/sass/sass
         fi
     fi
